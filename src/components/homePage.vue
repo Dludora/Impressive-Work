@@ -4,20 +4,13 @@
   </n-space>
 </template>
 
-<script>
+<script setup lang="ts">
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 
-export default {
-  name: 'homePage',
-  components: {
-
-  },
-
-  methods: {
-    regisRouter () {
-        this.$router.push('/regisTer')
-      },
-  }
+const regisRouter = () => {
+  router.push('/regisTer');
 }
 </script>
 

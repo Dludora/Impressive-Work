@@ -1,24 +1,10 @@
 <template>
-  <div id='root'>
-    <router-view />
-  </div>
+  <router-view to="/">
+  </router-view>
 </template>
 
-<script>
+<script lang="ts">
 
-
-export default {
-  name: 'App',
-  components: {
-
-  },
-
-  methods: {
-    regisRouter () {
-        this.$router.push('/regisTer')
-      },
-  }
-}
 </script>
 
 <style>
