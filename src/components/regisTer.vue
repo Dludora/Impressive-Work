@@ -1,5 +1,5 @@
 <template>
-  <n-space>
+  <n-space class="back-g">
     <n-card id="regis-card">
       <n-tabs
           class="card-tabs"
@@ -51,6 +51,9 @@ export default {
 </script>
 
 <style>
+.back-g{
+  background-color: #161622;
+}
 .card-tabs .n-tabs-nav--bar-type {
   padding-left: 4px
 }
