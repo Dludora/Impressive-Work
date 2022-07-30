@@ -1,15 +1,22 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <n-space>
+    <n-button @click="regisRouter">注册</n-button>
+  </n-space>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+
+  },
+
+  methods: {
+    regisRouter () {
+        this.$router.push('/regisTer')
+      },
   }
 }
 </script>
