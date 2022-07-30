@@ -1,14 +1,14 @@
 <template>
-  <div id='root'>
-    <router-view />
-  </div>
+  <n-space>
+    <n-button @click="regisRouter">注册</n-button>
+  </n-space>
 </template>
 
 <script>
 
 
 export default {
-  name: 'App',
+  name: 'homePage',
   components: {
 
   },

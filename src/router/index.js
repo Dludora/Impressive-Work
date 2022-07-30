@@ -1,20 +1,20 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import regisTer from "@/components/regisTer";
+import { createRouter, createWebHistory } from 'vue-router'
 
-Vue.use(VueRouter)
+import regisTer from "@/components/regisTer"
+import homePage from "@/components/homePage";
 
-const routes = [//添加路由对象
-    {
-        path: '/regisTer',
-        name: 'regisTer',
-        component: regisTer
-    },
-]
-
-const router = new VueRouter({
-    mode:'history',//采用哪种路由模式,默认是history,可改为hash
-    routes
+const routerHistory = createWebHistory()
+const router = createRouter({
+    history: routerHistory,
+    routes: [
+        {
+            path: '/',
+            component: homePage
+        },
+        {
+            path: '/regisTer',
+            component: regisTer
+        },
+    ]
 })
-
 export default router
