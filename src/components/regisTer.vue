@@ -50,7 +50,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .card-tabs .n-tabs-nav--bar-type {
   padding-left: 4px
 }
