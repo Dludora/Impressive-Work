@@ -32,12 +32,6 @@ const router = createRouter({
             name: 'team',
             path: '/team',
             component: () => import("../views/Team/TeamMain.vue"),
-            
-        },
-        {
-            name: 'someTeam',
-            path: '/someTeam',
-            component: someTeam,
             children: [
                 {
                     name: 'teamProjects',
@@ -54,7 +48,14 @@ const router = createRouter({
                     path: 'teamSettings',
                     component: teamSettings
                 },
-            ]},
+            ]
+            
+        },
+        {
+            name: 'someTeam',
+            path: '/someTeam',
+            component: someTeam,
+        },
         {
             name:'vDitor',
             path: '/vDitor',
