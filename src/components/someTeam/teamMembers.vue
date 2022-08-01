@@ -1,0 +1,122 @@
+<template>
+  <div v-for="member in members" :key="member" class="member-card">
+    <div class="member-avatar">
+      <n-avatar round class="avatar"/>
+    </div>
+    <div class="member-message">
+      <p id="name">{{member.nickname}}({{member.name}})</p>
+      <p id="email">{{member.email}}</p>
+    </div>
+    <div class="member-operate">
+      <Icon id="star" size="36" color="#FFFFFF"><IosStarOutline /></Icon>
+<!--      <Icon id="" size="36" color="#FFFFFF"><IosStarOutline /></Icon>-->
+    </div>
+  </div>
+  <div class="member-card">
+    <Icon size="36" color="#FFFFFF" id="add"> <PlusOutlined/></Icon>
+    <a href="#" id="invite">邀请成员</a>
+  </div>
+</template>
+
+<script setup lang="ts">
+import {PlusOutlined} from "@vicons/antd";
+import {IosStarOutline} from "@vicons/ionicons4"
+import {Icon} from "@vicons/utils";
+
+const members = [
+    {
+      nickname: 'Dludora',
+      name: '寇书瑞',
+      email: 'koushurui@outlook.com',
+    },
+    {
+      nickname: 'Dludora',
+      name: '寇书瑞',
+      email: 'koushurui@outlook.com',
+    },
+    {
+      nickname: 'Dludora',
+      name: '寇书瑞',
+      email: 'koushurui@outlook.com',
+    },
+]
+</script>
+
+<style scoped>
+.member-card {
+  position: relative;
+  width: 100%;
+  height: 70px;
+  padding: 10px 12px;
+  display: flex;
+  background: #16181D;
+}
+.member-card:hover {
+  width: 100%;
+  display: flex;
+  background: #414958;
+}
+.avatar {
+  position: absolute;
+  top: calc(50% - 56px / 2);
+  left: calc(50% - 56px / 2);
+  width: 56px;
+  height: 56px;
+}
+.member-avatar {
+  position: relative;
+  width: 70px;
+  margin-right: 5px;
+}
+.member-message {
+  flex: 2;
+}
+#name {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+  margin: 10px;
+  color: #FFFFFF;
+}
+#email {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  display: flex;
+  align-items: flex-end;
+  margin: 10px;
+  color: #A7AFBE;
+}
+.member-operate {
+  position: relative;
+  flex: 2;
+}
+#star {
+  position: absolute;
+  top: calc(50% - 36px / 2);
+  left: 300px;
+}
+#add {
+  position: absolute;
+  top: calc(50% - 36px / 2);
+  left: 27px;
+  cursor: pointer;
+}
+#invite {
+  position: absolute;
+  left: 100px;
+  line-height: 70px;
+  height: 70px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  text-decoration: none;
+
+  color: #A7AFBE;
+}
+</style>

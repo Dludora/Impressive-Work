@@ -1,5 +1,5 @@
 <template>
-  <n-space>
+  <n-space class="back-g">
     <n-card id="regis-card">
       <n-tabs
         class="card-tabs"
@@ -19,23 +19,23 @@
               <n-input />
             </n-form-item-row>
           </n-form>
-          <n-button class="logon-button" type="primary" block secondary strong>
+          <n-button class="logon-button" @click="login" type="primary" block secondary strong>
             登录
           </n-button>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
           <n-form>
-            <n-form-item-row label="用户名">
-              <n-input />
+            <n-form-item-row label="用户ID" >
+              <n-input v-model:value="username" />
             </n-form-item-row>
-            <n-form-item-row label="密码">
-              <n-input />
+            <n-form-item-row label="密码" >
+              <n-input v-model:value="password1" />
             </n-form-item-row>
-            <n-form-item-row label="重复密码">
-              <n-input />
+            <n-form-item-row label="昵称">
+              <n-input v-model:value="nick" />
             </n-form-item-row>
           </n-form>
-          <n-button type="primary" block secondary strong> 注册 </n-button>
+          <n-button type="primary" @click="register" block secondary strong> 注册 </n-button>
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -44,7 +44,33 @@
 
 <script setup lang="ts">
 import { gsap } from "gsap";
+import axios from 'axios';
+import {ref} from 'vue'
+import { colorPickerLight } from "naive-ui/es/color-picker/styles";
 
+let username = ref('');
+let password1 = ref('');
+let nick = ref('');
+
+const register = () =>{
+  axios.post('/auth/register',
+  {
+    'uid': username.value,
+    'passwd': password1.value,
+    'nick': nick.value
+  }
+  ).then(res=>{
+    alert(res.data.msg);
+  })
+}
+const login = () =>{
+  axios.post('/auth/token',{
+    'uid':username.value,
+    'passwd':password1.value
+  }).then(res=>{
+    console.log(res.data)
+  })
+}
 const SwitchState = (value: string | number) => {
   switch (value) {
     case "signin": {
@@ -66,6 +92,7 @@ const SwitchState = (value: string | number) => {
 </script>
 
 <style scoped>
+
 .card-tabs .n-tabs-nav--bar-type {
   padding-left: 4px;
 }
@@ -91,3 +118,5 @@ logon-button {
   border-radius: 2px;
 }
 </style>
+
+
