@@ -2,6 +2,9 @@
   <n-space>
     <div id="vditor" name="description" ></div>
     <n-button @click="showContent">显示内容</n-button>
+    <n-button @click="showPosition">显示光标位置</n-button>
+    <n-button @click="showSelection">显示selection位置</n-button>
+    <n-button @click="setContent">更新内容</n-button>
   </n-space>
 </template>...
 <script>
@@ -86,6 +89,19 @@ export default {
 
     showContent(){
       console.log(this.contentEditor.getValue());
+    },
+
+    showPosition(){
+      console.log(this.contentEditor.getCursorPosition());
+
+    },
+
+    showSelection(){
+      console.log(window.getSelection().getRangeAt(0));
+    },
+
+    setContent(){
+      this.contentEditor.setValue("测试内容");
     },
 
     // 我的提交表单代码大致如下,这段代码核心是this.ruleForm.content = this.contentEditor.getValue()

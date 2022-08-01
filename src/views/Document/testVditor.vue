@@ -1,5 +1,5 @@
 <template>
-<v-ditor :></v-ditor>
+<v-ditor></v-ditor>
 </template>
 
 <script setup>

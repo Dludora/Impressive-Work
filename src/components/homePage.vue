@@ -1,7 +1,8 @@
 <template>
   <n-space>
     <n-button @click="regisRouter">注册</n-button>
-    <n-button @click="testVditor">文档编辑</n-button>
+    <n-button @click="vDitor">文档编辑</n-button>
+    <n-button @click="testVditor">测试文档组件</n-button>
   </n-space>
 </template>
 
@@ -12,6 +13,10 @@ const router = useRouter();
 
 const regisRouter = () => {
   router.push('/regisTer');
+}
+
+const vDitor = () => {
+  router.push('/vDitor');
 }
 
 const testVditor = () => {
