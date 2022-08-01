@@ -1,5 +1,5 @@
 <template>
-  <n-space>
+  <n-space class="back-g">
     <n-card id="regis-card">
       <n-tabs
         class="card-tabs"
@@ -92,6 +92,7 @@ const SwitchState = (value: string | number) => {
 </script>
 
 <style scoped>
+
 .card-tabs .n-tabs-nav--bar-type {
   padding-left: 4px;
 }

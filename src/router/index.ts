@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
+import vDitor from "../components/Document/vDitor.vue";
+import testVditor from "../views/Document/testVditor.vue"
 
 const routerHistory = createWebHistory()
 const router = createRouter({
@@ -22,7 +24,17 @@ const router = createRouter({
             path: '/team',
             component: () => import("../views/Team/TeamMain.vue"),
             
-        }
+        },
+        {
+            name:'vDitor',
+            path: '/vDitor',
+            component: vDitor
+        },
+        {
+            name:'testVditor',
+            path: '/testVditor',
+            component: testVditor
+        },
     ]
 })
 export default router
