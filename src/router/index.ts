@@ -17,6 +17,12 @@ const router = createRouter({
             path: '/regisTer',
             component: regisTer
         },
+        {
+            name: 'team',
+            path: '/team',
+            component: () => import("../views/Team/TeamMain.vue"),
+            
+        }
     ]
 })
 export default router
