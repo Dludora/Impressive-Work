@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/regisTer.vue";
 import homePage from "../components/homePage.vue";
+import layoutPage from "../components/DesignPage/layoutPage.vue"
 
 const routerHistory = createWebHistory()
 const router = createRouter({
@@ -17,6 +18,11 @@ const router = createRouter({
             path: '/regisTer',
             component: regisTer
         },
+        {
+            name:'layoutPage',
+            path:"/layout",
+            component: layoutPage
+        }
     ]
 })
 export default router

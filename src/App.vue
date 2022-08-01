@@ -1,5 +1,5 @@
 <template>
-  <router-view to="/">
+  <router-view to="/layout">
   </router-view>
 </template>
 
@@ -8,5 +8,11 @@
 </script>
 
 <style>
-
+*{
+  margin: 0px;
+  padding: 0px;
+  outline: none;
+  z-index: inherit;
+  overflow: visible;
+}
 </style>
