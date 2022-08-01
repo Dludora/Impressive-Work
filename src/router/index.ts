@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import regisTer from "../components/regisTer.vue";
+import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
 
 const routerHistory = createWebHistory()
