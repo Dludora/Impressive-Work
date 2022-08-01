@@ -12,8 +12,12 @@
     "core-js": "^3.8.3",
     "css-loader": "^6.7.1",
     "gsap": "^3.10.4",
+<<<<<<< HEAD
+    "interactjs": "^1.10.17",
+=======
     "mavon-editor": "^2.10.4",
     "vditor": "^3.8.15",
+>>>>>>> c9b46fba9b0c31b8309964b0d6f073fe732fb4e4
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.1.3"

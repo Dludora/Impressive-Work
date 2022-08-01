@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
+import layoutPage from "../components/DesignPage/layoutPage.vue"
 
 import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
@@ -28,7 +29,11 @@ const router = createRouter({
             component: regisTer
         },
         {
-
+            name:'layoutPage',
+            path:"/layout",
+            component: layoutPage
+        },
+        {
             name: 'team',
             path: '/team',
             component: () => import("../views/Team/TeamMain.vue"),
