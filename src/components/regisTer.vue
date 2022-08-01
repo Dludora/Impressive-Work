@@ -19,7 +19,7 @@
               <n-input />
             </n-form-item-row>
           </n-form>
-          <n-button class="logon-button" type="primary" block secondary strong>
+          <n-button class="logon-button" @click="login" type="primary" block secondary strong>
             登录
           </n-button>
         </n-tab-pane>
@@ -46,15 +46,13 @@
 import { gsap } from "gsap";
 import axios from 'axios';
 import {ref} from 'vue'
+import { colorPickerLight } from "naive-ui/es/color-picker/styles";
 
 let username = ref('');
 let password1 = ref('');
 let nick = ref('');
 
 const register = () =>{
-  console.log(username.value)
-  console.log(password1.value)
-  console.log(nick.value)
   axios.post('/auth/register',
   {
     'uid': username.value,
@@ -63,6 +61,14 @@ const register = () =>{
   }
   ).then(res=>{
     alert(res.data.msg);
+  })
+}
+const login = () =>{
+  axios.post('/auth/token',{
+    'uid':username.value,
+    'passwd':password1.value
+  }).then(res=>{
+    console.log(res.data)
   })
 }
 const SwitchState = (value: string | number) => {
