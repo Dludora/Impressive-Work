@@ -6,11 +6,15 @@
     <div>
       <up-bar></up-bar>
     </div>
+
+    <div>
+
+    </div>
   </div>
 
 </template>
 
-<script  setup lang="ts">
+<script setup lang="ts">
 import LeftNav from '@/components/Team/LeftNav.vue';
 import UpBar from "@/components/Document/upBar.vue";
 </script>
