@@ -16,16 +16,10 @@
       <div class="teamsHead">
           团队和项目
         </div>
-      <div :key="item.id" v-for="(item) in teams" class="team">
-        <router-link to="#">
-          <div class="pack">
-            <div class="src"></div>
-            <div class="TeamName">
-              {{ item.name }}
-            </div>
-          </div>
-        </router-link>
-
+      <div class="team">
+        <n-config-provider :theme="theme">
+          <n-menu  :options="menuOptions"/>
+        </n-config-provider>
       </div>
       <div class="addTeam">
         <div class="addImg">
@@ -157,28 +151,129 @@
   cursor: pointer;
 }
 </style>
-<script setup lang="ts">
+<script lang="ts">
 import {ref} from 'vue'
+import { defineComponent, h, Component } from 'vue'
+import {darkTheme, NIcon, useMessage} from 'naive-ui'
+import type { MenuOption } from 'naive-ui'
+import {
+  BookOutline as BookIcon,
+  PersonOutline as PersonIcon,
+  WineOutline as WineIcon
+} from '@vicons/ionicons5'
+import {RouterLink} from "vue-router";
+import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
-let nickname = ref<String>('Loading...')
-let email = ref<String>('email@163.com')
-const teams = ref([
-  {
-    id: 1,
-    src: 'T',
-    name: 'Team'
+function renderIcon (icon: Component) {
+  return () => h(NIcon, null, { default: () => h(icon) })
+}
+
+// const menuOptions: MenuOption[] = [
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => '团队一' }
+//         ),
+//     key: '1',
+//     icon: renderIcon(Team)
+//   },
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => '团队二' }
+//         ),
+//     key: '2',
+//     icon: renderIcon(Team)
+//   },
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => '团队三' }
+//         ),
+//     key: '3',
+//     icon: renderIcon(Team)
+//   },
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => '团队四' }
+//         ),
+//     key: '4',
+//     icon: renderIcon(Team)
+//   },
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => '团队五' }
+//         ),
+//     key: '5',
+//     icon: renderIcon(Team)
+//   },
+//   {
+//     label: () =>
+//         h(
+//             RouterLink,
+//             {
+//               to: {
+//                 path: '/team'
+//               }
+//             },
+//             { default: () => ['团队六', {
+//
+//               } ]}
+//         ),
+//     key: '6',
+//     icon: renderIcon(Team)
+//   },
+// ]
+
+export default defineComponent({
+  props: {
+    menuOptions: Array
   },
-  {
-    id: 1,
-    src: 'T',
-    name: 'Team'
+  data() {
+    return {
+      nickname: ref<String>('Loading...'),
+      email: ref<String>('email@163.com')
+    }
   },
-  {
-    id: 1,
-    src: 'T',
-    name: 'Team'
+  setup () {
+    return {
+      theme: darkTheme,
+      // menuOptions,
+    }
   }
-])
+})
 
 
 </script>

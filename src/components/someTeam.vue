@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav />
+      <LeftNav :menu-options="sideMenuOptions"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
@@ -30,9 +30,10 @@ import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 import {RouterLink} from "vue-router";
 
-import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import {  PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
+import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 
 function renderIcon (icon: Component) {
@@ -51,7 +52,7 @@ const menuOptions: MenuOption[] = [
             { default: () => '项目' }
         ),
     key: 'go-to-projects',
-    icon: renderIcon(Team)
+    icon: renderIcon(Project)
   },
   {
     label: () =>
@@ -66,7 +67,7 @@ const menuOptions: MenuOption[] = [
             { default: () => '成员' }
         ),
       key: 'go-to-members',
-      icon: renderIcon(Project)
+      icon: renderIcon(PersonIcon)
   },
   {
     label: () =>
@@ -83,7 +84,94 @@ const menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
+const sideMenuOptions: MenuOption[] = [
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队一' }
+        ),
+    key: '1',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队二' }
+        ),
+    key: '2',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队三' }
+        ),
+    key: '3',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队四' }
+        ),
+    key: '4',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队五' }
+        ),
+    key: '5',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => ['团队六', {
 
+              } ]}
+        ),
+    key: '6',
+    icon: renderIcon(Team)
+  },
+]
 export default defineComponent({
   components: {
     LeftNav,
@@ -93,6 +181,7 @@ export default defineComponent({
     return {
       theme: darkTheme,
       menuOptions,
+      sideMenuOptions,
     }
   }
 })
