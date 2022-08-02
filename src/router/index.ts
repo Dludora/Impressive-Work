@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
 
+import layoutPage from "../components/DesignPage/layoutPage.vue"
+
 import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
@@ -10,6 +12,10 @@ import teamProjects from "../components/someTeam/teamProjects.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
+
+import upBar from "../components/Document/upBar.vue";
+import programView from "../views/Document/programView.vue";
+
 
 
 const routerHistory = createWebHistory()
@@ -28,8 +34,13 @@ const router = createRouter({
             component: regisTer
         },
         {
-            name: 'someTeam',
-            path: '/someTeam',
+            name:'layoutPage',
+            path:"/layout",
+            component: layoutPage
+        },
+        {
+            name: 'team',
+            path: '/team',
             component: someTeam,
             children: [
                 {
@@ -59,6 +70,16 @@ const router = createRouter({
             path: '/testVditor',
             component: testVditor
         },
+        {
+            name:'upBar',
+            path: '/upBar',
+            component: upBar
+        },
+        {
+            name:'programView',
+            path:'/programView',
+            component: programView
+        }
     ]
 })
 export default router

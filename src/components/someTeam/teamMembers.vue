@@ -12,8 +12,10 @@
 <!--      <Icon id="" size="36" color="#FFFFFF"><IosStarOutline /></Icon>-->
     </div>
   </div>
-  <div class="member-card">
-    <Icon size="36" color="#FFFFFF" id="add"> <PlusOutlined/></Icon>
+  <div class="member-add ">
+    <div class="add-icon">
+      <Icon size="36" color="#FFFFFF" id="add"> <PlusOutlined/></Icon>
+    </div>
     <a href="#" id="invite">邀请成员</a>
   </div>
 </template>
@@ -43,15 +45,15 @@ const members = [
 </script>
 
 <style scoped>
-.member-card {
+.member-card, .member-add {
   position: relative;
   width: 100%;
   height: 70px;
-  padding: 10px 12px;
+  padding: 10px 24px;
   display: flex;
   background: #16181D;
 }
-.member-card:hover {
+.member-card:hover, .member-add:hover {
   width: 100%;
   display: flex;
   background: #414958;
@@ -63,7 +65,7 @@ const members = [
   width: 56px;
   height: 56px;
 }
-.member-avatar {
+.member-avatar, .add-icon {
   position: relative;
   width: 70px;
   margin-right: 5px;
@@ -103,7 +105,7 @@ const members = [
 #add {
   position: absolute;
   top: calc(50% - 36px / 2);
-  left: 27px;
+  left: calc(50% - 36px / 2);
   cursor: pointer;
 }
 #invite {
@@ -118,5 +120,8 @@ const members = [
   text-decoration: none;
 
   color: #A7AFBE;
+}
+#invite:hover {
+  color: pink;
 }
 </style>

@@ -1,21 +1,24 @@
 <template>
-  <n-grid cols="2 s:3 m:4 l:5 xl:6 2xl:7" responsive="screen" :x-gap="12" :y-gap="12">
-    <n-grid-item v-for="project in projects" :key="project">
-      <div class="project-item" >
-        <div class="pic"></div>
-        <div class="info">
-          <p id="team">{{project.team}}的项目
-            <Icon id="edit" size="20"><Edit /></Icon>
-            <Icon id="del" size="20"><Edit /></Icon>
-          </p>
-          <p id="time">创建于 {{project.time}}</p>
+  <div class="team-projects">
+    <n-grid cols="2 s:3 m:4 l:5 xl:6 2xl:7" responsive="screen" :x-gap="12" :y-gap="12">
+      <n-grid-item v-for="project in projects" :key="project">
+        <div class="project-item" >
+          <div class="pic"></div>
+          <div class="info">
+            <p id="team">
+              {{project.team}}的项目
+              <Icon id="edit" size="20"><Edit /></Icon>
+              <Icon id="del" size="20"><Edit /></Icon>
+            </p>
+            <p id="time">创建于 {{project.time}}</p>
+          </div>
         </div>
-      </div>
-    </n-grid-item>
-    <n-grid-item>
-      <div></div>
-    </n-grid-item>
-  </n-grid>
+      </n-grid-item>
+      <n-grid-item>
+        <div></div>
+      </n-grid-item>
+    </n-grid>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +62,9 @@ let projects = [
 </script>
 
 <style scoped>
+.team-projects {
+  padding: 12px 36px;
+}
 .project-item {
   height: 240px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
@@ -87,6 +93,7 @@ p {
   position: relative;
   margin-top: 0;
   margin-bottom: 5px;
+  margin-left: 5px;
 }
 #team {
   font-family: 'Inter';

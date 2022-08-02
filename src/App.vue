@@ -1,6 +1,6 @@
 <template>
-  <router-view to="/">
-    </router-view>
+  <router-view to="/layout">
+  </router-view>
 </template>
 
 <script lang="ts">
@@ -8,6 +8,13 @@
 </script>
 
 <style>
+*{
+  margin: 0px;
+  padding: 0px;
+  outline: none;
+  z-index: inherit;
+  overflow: visible;
+}
 body {
   height: 100%;
 }
