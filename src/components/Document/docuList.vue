@@ -12,7 +12,7 @@
       </n-button>
     </div>
     <div class="items">
-      <n-grid :x-gap="35" :y-gap="20" cols="6" responsive="screen" >
+      <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
         <n-grid-item v-for="document in documents" :key="document">
           <div class="docu-item">
             <div class="docu-cover">
@@ -86,10 +86,6 @@ let documents=[
     title: '文档12',
     creatTime: '2022/8/2',
   },
-  {
-    title: '文档13',
-    creatTime: '2022/8/2',
-  },
 ]
 
 </script>
@@ -97,10 +93,10 @@ let documents=[
 <style scoped>
 
 .big-contain{
-  position: absolute;
-  left:300px;
-  top:230px;
-  width:calc(100%- 300px);
+  position: relative;
+  top: 10px;
+  width: fit-content;
+  left: 2%;
 }
 
 .docu-all{
@@ -179,13 +175,13 @@ let documents=[
 .docu-title{
 
   width: 100%;
-  height: 40px;
+  height: 30px;
 
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 15px;
+  line-height: 20px;
   display: flex;
   align-items: flex-end;
   text-align: center;

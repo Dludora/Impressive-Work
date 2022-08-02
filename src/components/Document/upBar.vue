@@ -21,21 +21,18 @@ import {ref } from "vue"
 
 <style scoped>
 .up{
-  position: absolute;
-  width: 1440px;
+  position: relative;
   height: 224px;
-  left: 240px;
   top: 0px;
 
   background: #16181D;
 }
 
 .pro-name{
-  position: absolute;
-  width: 1008px;
+  position: relative;
   height: 40px;
   left: 61px;
-  top: 51px;
+  top: 0px;
 
   font-family: 'Inter';
   font-style: normal;
@@ -49,11 +46,10 @@ import {ref } from "vue"
 }
 
 .pro-des{
-  position: absolute;
-  width: 1008px;
+  position: relative;
   height: 43px;
   left: 61px;
-  top: 101px;
+  top: 10 px;
 
   font-family: 'Inter';
   font-style: normal;

@@ -91,7 +91,31 @@ const router = createRouter({
             name:'docuList',
             path:'/docuList',
             component: docuList
-        }
+        },
+        {
+            name: 'programBig',
+            path: '/programBig',
+            component: () => import("../views/Document/programView.vue"),
+            children: [
+                {
+                    name: 'layoutPage',
+                    path: '',
+                    component: layoutPage
+                },
+            /*  {
+                    name: 'drawUML',
+                    path: 'drawUML',
+                    component: drawUML
+                },
+             */
+                {
+                    name: 'docuList',
+                    path: 'docuList',
+                    component: docuList
+                },
+            ]
+
+        },
     ]
 })
 export default router
