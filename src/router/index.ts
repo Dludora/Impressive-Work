@@ -16,6 +16,8 @@ import upBar from "../components/Document/upBar.vue";
 
 import programView from "../views/Document/programView.vue";
 
+import docuList from "../components/Document/docuList.vue";
+
 
 const routerHistory = createWebHistory()
 // @ts-ignore
@@ -84,6 +86,11 @@ const router = createRouter({
             name:'programView',
             path:'/programView',
             component: programView
+        },
+        {
+            name:'docuList',
+            path:'/docuList',
+            component: docuList
         }
     ]
 })
