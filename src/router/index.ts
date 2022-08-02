@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
+
 import layoutPage from "../components/DesignPage/layoutPage.vue"
 
 import someTeam from "../components/someTeam.vue";
@@ -10,13 +11,13 @@ import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
-import testVditor from "../views/Document/testVditor.vue";
+import testVditor from "../views/Document/testVditor.vue"
 
 import upBar from "../components/Document/upBar.vue";
-
 import programView from "../views/Document/programView.vue";
 
 import docuList from "../components/Document/docuList.vue";
+
 
 
 const routerHistory = createWebHistory()
@@ -42,7 +43,7 @@ const router = createRouter({
         {
             name: 'team',
             path: '/team',
-            component: () => import("../views/Team/TeamMain.vue"),
+            component: someTeam,
             children: [
                 {
                     name: 'teamProjects',
@@ -60,12 +61,6 @@ const router = createRouter({
                     component: teamSettings
                 },
             ]
-            
-        },
-        {
-            name: 'someTeam',
-            path: '/someTeam',
-            component: someTeam,
         },
         {
             name:'vDitor',

@@ -1,42 +1,57 @@
 <template>
-  <n-layout has-sider>
-    <n-layout-sider content-style="padding: 24px;">
-      海淀桥
+  <n-layout has-sider native-scrollbar="false">
+    <n-layout-sider content-style="padding: 0;">
+      <LeftNav />
     </n-layout-sider>
     <n-layout>
-      <n-layout-header>颐和园路</n-layout-header>
-      <n-layout-content content-style="padding: 24px;">
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+      <n-layout-header>
+        <TeamHead style="margin-left: 30px"/>
+      </n-layout-header>
+      <n-layout-content content-style="padding: 24px 0px;">
+        <div class="menu">
+          <n-config-provider :theme="theme">
+            <n-menu mode="horizontal" :options="menuOptions"/>
+          </n-config-provider>
+        </div>
         <router-view/>
       </n-layout-content>
-      <n-layout-footer>成府路</n-layout-footer>
     </n-layout>
   </n-layout>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import axios from 'axios';
+import LeftNav from "./Team/LeftNav.vue"
+import TeamHead from "./Team/TeamHead.vue"
+
 import {ref, h, Component, defineComponent} from 'vue'
-import {MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
+import {NIcon, useMessage} from "naive-ui";
+import type {MenuOption} from "naive-ui";
+import {darkTheme} from "naive-ui";
 import {RouterLink} from "vue-router";
+
+import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import {ProjectOutlined as Project} from "@vicons/antd"
+import {IosSettings as Settings} from "@vicons/ionicons4"
 
 
 function renderIcon (icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
-const menuOptions: MentionOption[] = [
+const menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
               to: {
-                path: '/someTeam'
+                path: '/team'
               }
             },
             { default: () => '项目' }
         ),
-    key: 'go-to-members',
+    key: 'go-to-projects',
+    icon: renderIcon(Team)
   },
   {
     label: () =>
@@ -46,11 +61,12 @@ const menuOptions: MentionOption[] = [
               to: {
                 name: 'teamMembers',
                 path: 'teamMembers'
-              }
+              },
             },
             { default: () => '成员' }
         ),
       key: 'go-to-members',
+      icon: renderIcon(Project)
   },
   {
     label: () =>
@@ -63,17 +79,20 @@ const menuOptions: MentionOption[] = [
             },
             { default: () => '设置' }
         ),
-    key: 'go-to-members',
+    key: 'go-to-settings',
+    icon: renderIcon(Settings)
   },
 ]
 
-defineComponent({
+export default defineComponent({
+  components: {
+    LeftNav,
+    TeamHead
+  },
   setup () {
-    const message = useMessage()
     return {
+      theme: darkTheme,
       menuOptions,
-      handleUpdateValue (key: string, item: MenuOption) {
-      }
     }
   }
 })
@@ -82,22 +101,25 @@ defineComponent({
 
 <style scoped>
 .n-layout {
-  height: 100%;
+  height: calc(100%);
 }
 
 .n-layout-header,
 .n-layout-footer {
-  background: rgba(128, 128, 128, 0.2);
-  padding: 24px;
+  background: #16181D;
+  padding: 36px;
 }
 
 .n-layout-sider {
-  background: rgba(128, 128, 128, 0.3);
+  height: calc(100%);
+  background: #2B303B;
 }
 
 .n-layout-content {
-  background: rgba(128, 128, 128, 0.4);
+  background: #16181D;
 }
+.menu {
+  margin-left: 30px;
+}
+
 </style>
-
-
