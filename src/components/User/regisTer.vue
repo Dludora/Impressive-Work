@@ -1,16 +1,13 @@
 <template>
   <div class="back-g">
     <n-card id="regis-card"
-    content-style="color:white"
     >
       <n-tabs
         class="card-tabs"
         default-value="signin"
-        :size="size"
         type="bar"
         animated
         justify-content="space-around"
-        bar-width="200"
         tab-style="color:white"
         pane-style="padding-left: 4px; color:white; padding-right: 4px; box-sizing: border-box;"
         :on-update:value="SwitchState"
@@ -18,10 +15,12 @@
         <n-tab-pane name="signin" tab="登录">
           <n-form content-style="color:white">
             <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input v-model:value="email" />
+              <n-input style="width=50%;" v-model:value="email" 
+              placeholder="请输入您的邮箱..."
+              />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="密码">
-              <n-input v-model:value="password1" />
+              <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
             </n-form-item-row>
           </n-form>
           <n-button class="success" @click="login" type="primary" block secondary strong>
@@ -31,19 +30,19 @@
         <n-tab-pane name="signup" tab="注册">
           <n-form >
             <n-form-item-row label-style="color:white" label="电子邮箱" >
-              <n-input v-model:value="email" />
+              <n-input placeholder="请输入正确邮箱" v-model:value="email" />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="昵称">
-              <n-input v-model:value="nick" />
+              <n-input placeholder="请输入您的昵称"  v-model:value="nick" />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="真实姓名">
-              <n-input v-model:value="name" />
+              <n-input placeholder="请输入姓名"  v-model:value="name" />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="密码" >
-              <n-input v-model:value="password1" />
+              <n-input placeholder="设置密码"  type="password" v-model:value="password1" />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="确认密码" >
-              <n-input v-model:value="password2" />
+              <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
             </n-form-item-row>
             
           </n-form>
