@@ -12,6 +12,8 @@
 
     <n-button @click="programView">项目大页面</n-button>
 
+    <n-button @click="docuList">文档list</n-button>
+
   </n-space>
 </template>
 
@@ -45,6 +47,10 @@ const upBar = () => {
 
 const programView = () => {
   router.push('/programView');
+}
+
+const docuList = () => {
+  router.push('/docuList');
 }
 
 </script>
