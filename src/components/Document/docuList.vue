@@ -1,34 +1,39 @@
 <template>
-  <div class="big-contain">
-    <div>
-      <p class="docu-all">
-        管理你的 {{ documents.length }} 个文档
-      </p>
-      <n-button icon-placement="right" class="docu-add">
-        新建文档
-        <template #icon>
-          <n-icon ><Add /></n-icon>
-        </template>
-      </n-button>
-    </div>
-    <div class="items">
-      <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
-        <n-grid-item v-for="(document,ind) in documents" :key="document">
-          <div class="docu-item">
-            <div class="docu-cover">
-              <div class="docu-cover-word">文档简介</div>
-              <Icon id="edi" size="24"><Edit /></Icon>
-              <Icon id="del" size="24"><Delete48Regular /></Icon>
+
+    <div class="big-contain">
+      <n-config-provider  :theme="darkTheme">
+      <div>
+        <p class="docu-all">
+          管理你的 {{ documents.length }} 个文档
+        </p>
+        <n-button icon-placement="right" class="docu-add">
+          新建文档
+          <template #icon>
+            <n-icon ><Add /></n-icon>
+          </template>
+        </n-button>
+      </div>
+      </n-config-provider>
+      <div class="items">
+        <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
+          <n-grid-item v-for="(document,ind) in documents" :key="document">
+            <div class="docu-item">
+              <div class="docu-cover">
+                <div class="docu-cover-word">文档简介</div>
+                <Icon id="edi" size="24"><Edit /></Icon>
+                <Icon id="del" size="24"><Delete48Regular /></Icon>
+              </div>
+              <div class="docu-title" @click="openDocu(ind)">
+                {{document.title}}
+              </div>
             </div>
-            <div class="docu-title" @click="openDocu(ind)">
-              {{document.title}}
-            </div>
-          </div>
-        </n-grid-item>
-      </n-grid>
+          </n-grid-item>
+        </n-grid>
+      </div>
     </div>
 
-  </div>
+
+
 </template>
 
 <script setup lang="ts">
@@ -36,6 +41,8 @@ import {Add} from "@vicons/ionicons5";
 import {Edit} from "@vicons/tabler";
 import {Delete48Regular} from "@vicons/fluent";
 import {Icon} from "@vicons/utils";
+
+import {darkTheme, NIcon} from "naive-ui";
 
 function openDocu(index: any){
   console.log(index);
