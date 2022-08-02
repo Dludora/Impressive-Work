@@ -1,29 +1,60 @@
 <template>
-  <div class="big-bg">
-    <div class="left">
-      <LeftNav></LeftNav>
-    </div>
-    <div class="content">
-      <div  class="top">
-        <up-bar></up-bar>
-      </div>
+  <n-layout has-sider native-scrollbar="false">
 
-      <div class="three-cls">
-        <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+    <n-layout-sider content-style="padding: 0;">
+      <LeftNav :menu-options="sideMenuOptions"/>
+    </n-layout-sider>
+
+    <n-layout>
+      <n-layout-header>
+        <UpBar style="margin-left: 30px"/>
+      </n-layout-header>
+      <n-layout-content content-style="padding: 24px 0px;">
+        <div class="three-cls">
+          <n-config-provider :theme="theme">
+            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+          </n-config-provider>
+        </div>
         <router-view/>
-      </div>
-    </div>
-  </div>
+      </n-layout-content>
+    </n-layout>
+  </n-layout>
 
 </template>
 
-<script setup lang="ts">
-import LeftNav from '@/components/Team/LeftNav.vue';
-import UpBar from "@/components/Document/upBar.vue";
+<script lang="ts">
+import LeftNav from "@/components/Team/LeftNav.vue";
+import UpBar from "@/components/Document/upBar.vue"
 
-import {ref, h, Component, defineComponent} from 'vue'
-import {MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
+import {h, Component, defineComponent} from 'vue'
+import {darkTheme,MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
 import {RouterLink} from "vue-router";
+
+import {PeopleTeam16Filled as Team} from "@vicons/fluent";
+import {Brush} from "@vicons/ionicons5";
+import {Analytics} from "@vicons/ionicons5";
+import {DocumentText} from "@vicons/ionicons5";
+
+export default defineComponent(
+    {
+      components: {
+        LeftNav,
+        UpBar
+      },
+      setup(){
+        return{
+          theme: darkTheme,
+          menuOptions,
+          sideMenuOptions,
+        }
+      },
+
+    }
+)
+
+function renderIcon (icon: Component) {
+  return () => h(NIcon, null, {default: () => h(icon)})
+}
 
 const menuOptions: MentionOption[] = [
   {
@@ -38,6 +69,8 @@ const menuOptions: MentionOption[] = [
             { default: () => '原型设计' }
         ),
     key: 'toLayout',
+    icon: renderIcon(Brush),
+    disabled: true,
   },
   {
     label: () =>
@@ -51,6 +84,7 @@ const menuOptions: MentionOption[] = [
             { default: () => '图' }
         ),
     key: 'toUML',
+    icon: renderIcon(Analytics),
     disabled: true,
   },
   {
@@ -66,22 +100,119 @@ const menuOptions: MentionOption[] = [
             { default: () => '文档' }
         ),
     key: 'toDocu',
+    icon: renderIcon(DocumentText)
   },
 ]
 
-defineComponent({
-  setup () {
-    const message = useMessage()
-    return {
-      menuOptions,
-      handleUpdateValue (key: string, item: MenuOption) {
-      }
-    }
-  }
-})
+const sideMenuOptions: MenuOption[] = [
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队一' }
+        ),
+    key: '1',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队二' }
+        ),
+    key: '2',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队三' }
+        ),
+    key: '3',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队四' }
+        ),
+    key: '4',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => '团队五' }
+        ),
+    key: '5',
+    icon: renderIcon(Team)
+  },
+  {
+    label: () =>
+        h(
+            RouterLink,
+            {
+              to: {
+                path: '/team'
+              }
+            },
+            { default: () => ['团队六', {
+
+              } ]}
+        ),
+    key: '6',
+    icon: renderIcon(Team)
+  },
+]
 </script>
 
 <style scoped>
+.n-layout {
+  height: calc(100%);
+}
+
+.n-layout-header,
+.n-layout-footer {
+  background: #16181D;
+  padding: 36px;
+}
+
+.n-layout-sider {
+  height: calc(100%);
+  background: #2B303B;
+}
+
+.n-layout-content {
+  background: #16181D;
+}
 .big-bg{
   position: absolute;
   left:0px;
@@ -107,7 +238,9 @@ defineComponent({
   margin-top: 36px;
 }
 .three-cls{
+  position: absolute;
   min-width: 100%;
-  margin-left: 4%;
+  top:0%;
+  padding: 0px 50px;
 }
 </style>

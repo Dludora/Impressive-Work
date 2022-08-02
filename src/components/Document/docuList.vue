@@ -6,9 +6,9 @@
       </p>
       <n-button icon-placement="right" class="docu-add">
         新建文档
-          <template #icon>
-            <n-icon ><Add /></n-icon>
-          </template>
+        <template #icon>
+          <n-icon ><Add /></n-icon>
+        </template>
       </n-button>
     </div>
     <div class="items">
@@ -96,15 +96,18 @@ let documents=[
   position: relative;
   top: 10px;
   width: fit-content;
+  min-height: 100%;
   left: 2%;
 }
 
 .docu-all{
 
+  position: relative;
+
   width: 357px;
   height: 40px;
-  left: 0px;
-  top: 0px;
+  left: 50px;
+  top: 10px;
 
   font-family: 'Inter';
   font-style: normal;
@@ -123,8 +126,8 @@ let documents=[
   position: absolute;
   width: 150px;
   height: 32px;
-  left: 875px;
-  top: 0px;
+  left: 925px;
+  top: 16px;
 
   border: 1px solid #A7AFBE;
   border-radius: 2px;
@@ -132,7 +135,8 @@ let documents=[
 
 .items{
   position: relative;
-  top:20px;
+  left: 50px;
+  top:30px;
 }
 
 .docu-item{

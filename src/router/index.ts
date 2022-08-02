@@ -90,14 +90,15 @@ const router = createRouter({
         {
             name: 'programBig',
             path: '/programBig',
-            component: () => import("../views/Document/programView.vue"),
+            component:  programView,
             children: [
+            /*
                 {
                     name: 'layoutPage',
                     path: '',
                     component: layoutPage
                 },
-            /*  {
+                {
                     name: 'drawUML',
                     path: 'drawUML',
                     component: drawUML
@@ -105,7 +106,7 @@ const router = createRouter({
              */
                 {
                     name: 'docuList',
-                    path: 'docuList',
+                    path: '',
                     component: docuList
                 },
             ]
