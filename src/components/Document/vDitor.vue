@@ -3,11 +3,11 @@
     <n-space style="alignment: center">
       <div id="vditor" name="description"></div>
 
-            <n-button @click="showContent">显示内容</n-button><br>
-            <n-button @click="showPosition">显示光标位置</n-button><br>
-            <n-button @click="showSelection">显示selection位置</n-button><br>
-            <n-button @click="setContent">更新内容</n-button><br>
 
+      <n-button @click="showContent">显示内容</n-button><br>
+      <n-button @click="showPosition">显示光标位置</n-button><br>
+      <n-button @click="showSelection">显示selection位置</n-button><br>
+      <n-button @click="setContent">更新内容</n-button><br>
     </n-space>
 
   </div>
@@ -25,10 +25,10 @@ export default {
   },
   mounted() {
     this.contentEditor = new Vditor('vditor', { //4.刚刚声明的变量contentEditor被赋值为一个Vditor实例,
-      height: 500,
-      width: 800,
+      height: 700,
+      width: 1168,
       placeholder: '此处为话题内容……',
-      theme: 'classic',
+      theme: 'light',
       counter: {
         enable: true,
         type: 'markdown'

@@ -10,6 +10,8 @@
 
     <n-button @click="programView">项目大页面</n-button>
 
+    <n-button @click="docuEdit">文档编辑页面</n-button>
+
   </n-space>
 </template>
 
@@ -47,6 +49,10 @@ const testVditor = () => {
 
 const programView = () => {
   router.push('/programView');
+}
+
+const docuEdit = () => {
+  router.push('/docuEdit');
 }
 
 </script>

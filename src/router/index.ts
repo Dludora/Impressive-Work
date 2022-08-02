@@ -18,7 +18,7 @@ import programView from "../views/Document/programView.vue";
 
 import docuList from "../components/Document/docuList.vue";
 
-
+import docuEdit from "../views/Document/docuEdit.vue";
 
 const routerHistory = createWebHistory()
 // @ts-ignore
@@ -88,6 +88,11 @@ const router = createRouter({
             component: docuList
         },
         {
+            name:'docuEdit',
+            path:'/docuEdit',
+            component: docuEdit,
+        },
+        {
             name: 'programBig',
             path: '/programBig',
             component:  programView,
@@ -110,7 +115,6 @@ const router = createRouter({
                     component: docuList
                 },
             ]
-
         },
     ]
 })

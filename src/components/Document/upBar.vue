@@ -33,6 +33,10 @@ import {ref } from "vue"
   height: 40px;
   top: 0px;
 
+  display: inline-block;
+
+  vertical-align: center;
+
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
