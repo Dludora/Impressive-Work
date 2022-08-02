@@ -1,6 +1,7 @@
 <template>
   <n-space>
-    <n-button @click="regisRouter">注册</n-button>
+    <n-button @click="regisRouter">登录/注册</n-button>
+    <n-button @click="logout">登出</n-button>
 
     <n-button @click="teamRouter">团队</n-button>
 
@@ -17,13 +18,24 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-
+import axios from 'axios';
+import utils from "@/Utils";
 const router = useRouter();
-
+const headers= {
+  Authorization:utils.getCookie('Authorization') }
 const regisRouter = () => {
   router.push('/regisTer');
 }
-
+const logout = () => {
+  console.log(headers)
+  axios.delete('/auth/token',
+  {
+    headers:headers
+  }
+  ).then(res=>{
+    console.log(res.data)
+  })
+}
 const teamMain= () =>{
   router.push('/team');
 }
