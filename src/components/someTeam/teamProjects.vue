@@ -1,4 +1,5 @@
 <template>
+<div>
   <n-grid cols="2 s:3 m:4 l:5 xl:6 2xl:7" responsive="screen" :x-gap="12" :y-gap="12">
     <n-grid-item v-for="project in projects" :key="project">
       <div class="project-item" >
@@ -16,6 +17,7 @@
       <div></div>
     </n-grid-item>
   </n-grid>
+</div>
 </template>
 
 <script setup lang="ts">
