@@ -168,101 +168,12 @@ function renderIcon (icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
-// const menuOptions: MenuOption[] = [
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => '团队一' }
-//         ),
-//     key: '1',
-//     icon: renderIcon(Team)
-//   },
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => '团队二' }
-//         ),
-//     key: '2',
-//     icon: renderIcon(Team)
-//   },
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => '团队三' }
-//         ),
-//     key: '3',
-//     icon: renderIcon(Team)
-//   },
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => '团队四' }
-//         ),
-//     key: '4',
-//     icon: renderIcon(Team)
-//   },
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => '团队五' }
-//         ),
-//     key: '5',
-//     icon: renderIcon(Team)
-//   },
-//   {
-//     label: () =>
-//         h(
-//             RouterLink,
-//             {
-//               to: {
-//                 path: '/team'
-//               }
-//             },
-//             { default: () => ['团队六', {
-//
-//               } ]}
-//         ),
-//     key: '6',
-//     icon: renderIcon(Team)
-//   },
-// ]
-
 export default defineComponent({
   props: {
     menuOptions: Array
   },
   data() {
-    return {
+    return { 
       nickname: ref<String>('Loading...'),
       email: ref<String>('email@163.com')
     }
