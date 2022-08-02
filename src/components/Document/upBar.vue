@@ -22,7 +22,7 @@ import {ref } from "vue"
 <style scoped>
 .up{
   position: relative;
-  height: 224px;
+  height: 100%;
   top: 0px;
 
   background: #16181D;
@@ -31,7 +31,6 @@ import {ref } from "vue"
 .pro-name{
   position: relative;
   height: 40px;
-  left: 61px;
   top: 0px;
 
   font-family: 'Inter';
@@ -47,9 +46,8 @@ import {ref } from "vue"
 
 .pro-des{
   position: relative;
-  height: 43px;
-  left: 61px;
-  top: 10 px;
+  height: 40px;
+  top: 10px;
 
   font-family: 'Inter';
   font-style: normal;
