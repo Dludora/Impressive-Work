@@ -16,13 +16,9 @@
           <div class="form">
           <n-form content-style="color:white;width:50%">
             <n-form-item-row label-style="color:white" label="电子邮箱">
-<<<<<<< HEAD
-              <n-input style="width=50%;" v-model:value="email"
-                       placeholder="请输入您的邮箱..."
-=======
+
               <n-input  v-model:value="email"
               placeholder="请输入您的邮箱..."
->>>>>>> cf0b1046b6c600a045c3c23596681d275f317f12
               />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="密码">
@@ -35,16 +31,11 @@
           </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
-<<<<<<< HEAD
-          <n-form>
-            <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
-=======
+
           <div class="form">
           <n-form >
             <n-form-item-row label-style="color:white" label="电子邮箱" >
               <n-input placeholder="请输入正确邮箱" v-model:value="email" />
->>>>>>> cf0b1046b6c600a045c3c23596681d275f317f12
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="昵称">
               <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
@@ -58,18 +49,12 @@
             <n-form-item-row label-style="color:white" label="确认密码">
               <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
             </n-form-item-row>
-<<<<<<< HEAD
-
-          </n-form>
-          <n-button type="success" text-color="white" @click="register" block secondary strong> 注册</n-button>
-=======
             <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
             
           </n-form>
           <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
           <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
           </div>
->>>>>>> cf0b1046b6c600a045c3c23596681d275f317f12
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -90,9 +75,6 @@ let password2 = ref('');
 let nick = ref('');
 import utils from '../../Utils'
 
-<<<<<<< HEAD
-const register = () => {
-=======
 const register = () =>{
   if(email.value===''||nick.value===''||name.value==='')
   {
@@ -104,7 +86,6 @@ const register = () =>{
     alert("密码不可为空！")
     return;
   }
->>>>>>> cf0b1046b6c600a045c3c23596681d275f317f12
   axios.post('/auth/register',
       {
         'email': email.value,
@@ -128,39 +109,7 @@ const login = () => {
     alert("用户邮箱或密码不能为空！")
     return;
   }
-<<<<<<< HEAD
 
-  let a = 0;
-  axios.get('/user/info').then(res => {
-    console.log(res.data)
-    if (res.data.msg === "成功") {
-      alert("用户" + res.data.data.nick + "已登录")
-      a = 1;
-      return;
-    } else {
-      axios.post('/auth/token', {
-            'email': email.value,
-            'passwd': password1.value
-          }
-      ).then(res => {
-        console.log(headers)
-        console.log(res.data)
-        if (res.data.msg === "成功") {
-          axios.defaults.headers.common['Authorization'] = res.data.data;
-          axios.get('/user/info').then(res => {
-            console.log(res.data.data)
-            if (res.data.msg === "成功")
-              alert("欢迎 " + res.data.data.nickname)
-          })
-          axios.defaults.headers.common['Authorization'] = res.data.data;
-          utils.setCookie('Authorization', res.data.data)
-          console.log(utils.getCookie('Authorization'))
-          router.push('/')
-        } else {
-          alert(res.data.msg)
-        }
-      })
-=======
   console.log( "head:"+axios.defaults.headers.common['Authorization'])
   console.log("cookie:"+utils.getCookie("Authorization"))
   let a=0;
@@ -172,13 +121,13 @@ const login = () => {
          a=1;
          return;
       }
-         else{
+      else{
             axios.post('/auth/token',{
-    'email': email.value,
-    'passwd':password1.value
-  }
-  ).then(res=>{
-    console.log(headers)
+          'email': email.value,
+          'passwd':password1.value
+            }
+      ).then(res=>{
+        console.log(headers)
     console.log(res.data)
     if(res.data.msg==="成功")
     {
@@ -193,13 +142,15 @@ const login = () => {
       axios.defaults.headers.common['Authorization'] = res.data.data;
       utils.setCookie('Authorization',res.data.data)
       console.log(utils.getCookie('Authorization'))
-     router.push('/')
->>>>>>> cf0b1046b6c600a045c3c23596681d275f317f12
+      router.push('/')
+
     }
   })
-
-
+      }
+    }
+    )
 }
+
 const SwitchState = (value: string | number) => {
   switch (value) {
     case "signin": {
