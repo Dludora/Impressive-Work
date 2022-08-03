@@ -136,7 +136,6 @@ const menuOptions: MentionOption[] = [
         ),
     key: 'toLayout',
     icon: renderIcon(Brush),
-    disabled: true,
   },
   {
     label: () =>
@@ -278,6 +277,7 @@ const sideMenuOptions: MenuOption[] = [
 
 .n-layout-content {
   background: #16181D;
+  height: calc(100%);
 }
 .big-bg{
   position: absolute;

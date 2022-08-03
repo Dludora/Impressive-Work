@@ -111,7 +111,7 @@ defineComponent({
     top: 0px;
     bottom: 0px;
     width: 100%;
-    height: 100%;
+    height: auto;
     background-color:rgba(22, 24, 29, 1);
 
 }

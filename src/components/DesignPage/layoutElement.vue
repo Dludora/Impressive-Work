@@ -1,17 +1,23 @@
 <template>
   <div
-    :id="'content' + elementParams.id"
-    class="content"
+    :id="'contentBox' + elementParams.index"
+    class="contentBox"
+    v-if="exist"
     @mouseenter="Highlight"
     @mouseleave="UnHighlight"
     @mousedown="select"
-    @click.stop="selectContent"
-    ref="content"
-    v-if="exist"
+    @click.stop
+    @dblclick="selectContent"
   >
-    <div :id="'textDiv' + elementParams.id">
+    <div
+      :id="'content' + elementParams.index"
+      class="content"
+      v-if="showContent"
+      ref="content"
+    ></div>
+    <div :id="'textDiv' + elementParams.index">
       <n-input
-        :id="'textInputer' + elementParams.id"
+        :id="'textInputer' + elementParams.index"
         ref="inputer"
         v-if="textModifying"
         v-model:value="text"
@@ -21,7 +27,7 @@
           minRows: 0,
         }"
       ></n-input>
-      <div v-show="!textModifying">{{ text }}</div>
+      <div v-else>{{ text }}</div>
     </div>
 
     <div
@@ -72,31 +78,44 @@ import { onMounted, ref, watch } from "vue";
 import interact from "interactjs";
 import { gsap } from "gsap";
 import { InputInst } from "naive-ui";
+import { borderTopLeftRadius } from "html2canvas/dist/types/css/property-descriptors/border-radius";
+
+type Params = {
+  index: number;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  borderWidth: number;
+  borderRadius: number;
+  type: string;
+  locked: boolean;
+  color: string;
+  borderColor: string;
+  src: string;
+  fontSize: number;
+};
 
 type Props = {
-  elementParams?: {
-    id: number;
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    typeOrSrc: string;
-    locked: boolean;
-    update:boolean;
-  };
+  elementParams?: Params;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   elementParams: () => {
     return {
-      id: -1,
+      index: -1,
       x: 0,
       y: 0,
       width: 0,
       height: 0,
-      typeOrSrc: "Rect",
+      borderWidth: 0,
+      borderRadius: 0,
+      type: "Rect",
       locked: false,
-      update:false
+      fontSize: 0,
+      src: "",
+      color: "red",
+      borderColor: "blue",
     };
   },
 });
@@ -105,16 +124,32 @@ const exist = ref<boolean>(true);
 const selected = ref<boolean>(false);
 const textModifying = ref<boolean>(false);
 const text = ref<string>("");
+const showContent = ref<boolean>(true);
 const inputer = ref<InputInst | null>(null);
 
 const snapGrid = interact.snappers.grid({
   x: 10,
   y: 10,
+  offset: { x: 0.5, y: 0 },
 });
 
-const transform = {id:0, x: 0, y: 0, width:0,height:0 };
+const transform = {
+  index: -1,
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  borderWidth: 0,
+  borderRadius: 0,
+  type: "Rect",
+  locked: false,
+  fontSize: 0,
+  src: "",
+  color: "red",
+  borderColor: "blue",
+};
 
-interact(`#content${props.elementParams.id}`).draggable({
+interact(`#contentBox${props.elementParams.index}`).draggable({
   listeners: {
     move(event) {
       if (!props.elementParams.locked) {
@@ -130,15 +165,12 @@ interact(`#content${props.elementParams.id}`).draggable({
     interact.modifiers.snap({
       targets: [snapGrid],
       range: Infinity,
-      relativePoints: [
-        { x: 0, y: 0 },
-        { x: 1, y: 1 },
-      ],
+      relativePoints: [{ x: 0, y: 0 }],
     }),
   ],
 });
 
-interact(`#content${props.elementParams.id}`).resizable({
+interact(`#content${props.elementParams.index}`).resizable({
   edges: { top: true, left: true, bottom: true, right: true },
   modifiers: [
     interact.modifiers.snap({
@@ -164,9 +196,8 @@ interact(`#content${props.elementParams.id}`).resizable({
         Object.assign(event.target.style, {
           width: `${width}px`,
           height: `${height}px`,
-          transform: `translate(${x}px, ${y}px)`,
         });
-
+        event.target.parentNode.style.transform = `translate(${x}px, ${y}px)`;
         Object.assign(transform, { x, y });
         transform.width = event.target.clientWidth;
         transform.height = event.target.clientHeight;
@@ -176,16 +207,17 @@ interact(`#content${props.elementParams.id}`).resizable({
   },
 });
 
-const emits = defineEmits(["select", "destroy","updateParams"]);
+const emits = defineEmits(["select", "destroy", "updateParams"]);
 
-const updateParams = ()=>{
-  emits("updateParams",transform);
-}
+const updateParams = () => {
+  console.log(transform);
+  emits("updateParams", transform);
+};
 
 const Highlight = () => {
   if (!props.elementParams.locked) {
-    if (!selected.value && props.elementParams.typeOrSrc != "text") {
-      gsap.to(`#content${props.elementParams.id}`, {
+    if (!selected.value && props.elementParams.type != "text") {
+      gsap.to(`#contentBox${props.elementParams.index}`, {
         duration: 0.15,
         borderWidth: "4px",
       });
@@ -194,8 +226,8 @@ const Highlight = () => {
 };
 
 const UnHighlight = () => {
-  if (!selected.value && props.elementParams.typeOrSrc != "text") {
-    gsap.to(`#content${props.elementParams.id}`, {
+  if (!selected.value && props.elementParams.type != "text") {
+    gsap.to(`#contentBox${props.elementParams.index}`, {
       duration: 0.15,
       borderWidth: "0px",
     });
@@ -206,15 +238,15 @@ let selectEns = false;
 const select = () => {
   if (!props.elementParams.locked) {
     selected.value = true;
-    if (props.elementParams.typeOrSrc != "text") {
-      gsap.to(`#content${props.elementParams.id}`, {
+    if (props.elementParams.type != "text") {
+      gsap.to(`#contentBox${props.elementParams.index}`, {
         duration: 0.15,
         borderWidth: "6px",
       });
     }
 
     selectEns = true;
-    emits("select", props.elementParams.id);
+    emits("select", props.elementParams.index);
     setTimeout(() => {
       selectEns = false;
     }, 500);
@@ -224,7 +256,7 @@ const select = () => {
 const selectContent = () => {
   if (!props.elementParams.locked) {
     if (selectEns) {
-      switch (props.elementParams.typeOrSrc) {
+      switch (props.elementParams.type) {
         case "text": {
           textModifying.value = true;
           break;
@@ -237,18 +269,18 @@ const selectContent = () => {
 const UnSelect = () => {
   selected.value = false;
 
-  switch (props.elementParams.typeOrSrc) {
+  switch (props.elementParams.type) {
     case "text": {
       console.log(text.value == "");
       if (text.value == "") {
         console.log(text.value);
-        emits("destroy", props.elementParams.id);
+        emits("destroy", props.elementParams.index);
       }
       textModifying.value = false;
       break;
     }
     default: {
-      gsap.to(`#content${props.elementParams.id}`, {
+      gsap.to(`#contentBox${props.elementParams.index}`, {
         duration: 0.15,
         borderWidth: "0px",
       });
@@ -261,28 +293,22 @@ defineExpose({
 });
 
 onMounted(() => {
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.transform = `translate(${props.elementParams.x}px, ${props.elementParams.y}px)`;
-  transform.x = props.elementParams.x;
-  transform.y = props.elementParams.y;
-  transform.id = props.elementParams.id;
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.width = `${props.elementParams.width}px`;
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.height = `${props.elementParams.height}px`;
-  switch (props.elementParams.typeOrSrc) {
+  ResetTrans(props.elementParams);
+  showContent.value = true;
+  switch (props.elementParams.type) {
     case "circle": {
       document.getElementById(
-        `content${props.elementParams.id}`
+        `contentBox${props.elementParams.index}`
+      )!.style.borderRadius = "50% 50%";
+      document.getElementById(
+        `content${props.elementParams.index}`
       )!.style.borderRadius = "50% 50%";
       break;
     }
     case "text": {
+      showContent.value = false;
       Object.assign(
-        document.getElementById(`content${props.elementParams.id}`)!.style,
+        document.getElementById(`contentBox${props.elementParams.index}`)!.style,
         {
           width: `auto`,
           height: `auto`,
@@ -290,9 +316,9 @@ onMounted(() => {
           borderColor: `transparent`,
         }
       );
-      document.getElementById(
-        `textDiv${props.elementParams.id}`
-      )!.style.padding = "20px";
+      // document.getElementById(
+      //   `textDiv${props.elementParams.index}`
+      // )!.style.padding = "20px";
       textModifying.value = true;
     }
   }
@@ -306,45 +332,102 @@ watch(
       exist.value = false;
       return;
     }
-    if(!newVal.update){
+    if (document.getElementById(`contentBox${newVal.index}`) == null) {
       return;
     }
-    if (document.getElementById(`content${newVal.id}`) == null) {
-      return;
-    }
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
-    transform.x = newVal.x;
-    transform.y = newVal.y;
-    transform.width = newVal.width;
-    transform.height = newVal.height;
-    transform.id = newVal.id;
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.width = `${newVal.width}px`;
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.height = `${newVal.height}px`;
+    ResetTrans(newVal);
   },
   {
     deep: true,
     immediate: true,
   }
 );
+
+const ResetTrans = (newVal: Params) => {
+  document.getElementById(
+    `contentBox${newVal.index}`
+  )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
+  transform.x = newVal.x;
+  transform.y = newVal.y;
+  transform.width = newVal.width;
+  transform.height = newVal.height;
+  transform.borderWidth = newVal.borderWidth;
+  transform.borderRadius = newVal.borderRadius;
+  transform.index = newVal.index;
+  transform.type = newVal.type;
+  transform.color = newVal.color;
+  transform.borderColor = newVal.borderColor;
+  transform.src = newVal.src;
+  transform.locked = newVal.locked;
+  transform.fontSize = newVal.fontSize;
+  console.log("outer" + newVal.fontSize);
+  switch (newVal.type) {
+    case "text": {
+      document.getElementById(
+        `textDiv${newVal.index}`
+      )!.style.fontSize = `${newVal.fontSize}px`;
+      document.getElementById(`textDiv${newVal.index}`)!.style.color =
+        newVal.color;
+      break;
+    }
+    case "rect": {
+      var maxR = Math.max(
+        document.getElementById(`content${newVal.index}`)!.clientHeight,
+        document.getElementById(`content${newVal.index}`)!.clientWidth
+      );
+      if (newVal.borderRadius > maxR) {
+        transform.borderRadius = maxR;
+        updateParams();
+      } else {
+        document.getElementById(
+          `content${newVal.index}`
+        )!.style.borderRadius = `${newVal.borderRadius}px`;
+      }
+    }
+    default: {
+      document.getElementById(
+        `content${newVal.index}`
+      )!.style.width = `${newVal.width}px`;
+      document.getElementById(
+        `content${newVal.index}`
+      )!.style.height = `${newVal.height}px`;
+      document.getElementById(`content${newVal.index}`)!.style.borderColor =
+        newVal.borderColor;
+      document.getElementById(
+        `content${newVal.index}`
+      )!.style.borderWidth = `${newVal.borderWidth}px`;
+      document.getElementById(`content${newVal.index}`)!.style.backgroundColor =
+        newVal.color;
+      if (newVal.src == "" || newVal.src == "none") {
+        document.getElementById(`content${newVal.index}`)!.style.backgroundImage =
+          "none";
+      } else {
+        document.getElementById(
+          `content${newVal.index}`
+        )!.style.backgroundImage = `url(\"${newVal.src}\")`;
+        document.getElementById(`content${newVal.index}`)!.style.backgroundColor =
+          newVal.color;
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-.content {
+.contentBox {
   display: block;
   position: absolute;
-  background-color: red;
   border-color: blue;
+  border-style: solid;
+  border-width: 0px;
+  box-sizing: border-box;
+}
+.content {
+  box-sizing: border-box;
   border-style: solid;
   border-width: 0px;
   width: 200px;
   height: 200px;
-  box-sizing: border-box;
 }
 .resizer {
   display: block;

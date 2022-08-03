@@ -5,6 +5,6 @@ import naive from 'naive-ui'
 import axios from 'axios'
 
 
-axios.defaults.baseURL = 'http://127.0.0.1:4523/m1/1374485-0-default/';
+axios.defaults.baseURL = 'http://82.156.125.202/soft2test/';
 
 createApp(App).use(router).use(naive).mount('#app')

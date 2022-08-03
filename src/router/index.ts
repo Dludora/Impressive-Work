@@ -6,7 +6,7 @@ import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import prototypes from "../ProjectManager/PrototypeList.vue"
 
-import someTeam from "../components/someTeam.vue";
+import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";
@@ -48,7 +48,7 @@ const router = createRouter({
             children: [
                 {
                     name: 'teamProjects',
-                    path: '',
+                    path: 'teamProjects',
                     component: teamProjects
                 },
                 {
@@ -100,7 +100,7 @@ const router = createRouter({
             children: [
                 {
                     name: 'prototypes',
-                    path: 'prototypes',
+                    path: '',
                     component: prototypes
                 },
                 // {
@@ -110,7 +110,7 @@ const router = createRouter({
                 // },
                 {
                     name: 'docuList',
-                    path: '',
+                    path: 'docuList',
                     component: docuList
                 },
             ]

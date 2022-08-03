@@ -1,11 +1,11 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
-        <TeamHead style="margin-left: 30px"/>
+        <TeamHead ref="com" style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content content-style="padding: 24px 0px;">
 
@@ -43,27 +43,40 @@
 
 <script lang="ts">
 import axios from 'axios';
-import LeftNav from "./Team/LeftNav.vue"
-import TeamHead from "./Team/TeamHead.vue"
+import LeftNav from "../Team/LeftNav.vue"
+import TeamHead from "../Team/TeamHead.vue"
 
-import {ref, h, Component, defineComponent} from 'vue'
+import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon, useMessage, useDialog} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink} from "vue-router";
+import {RouterLink,useRouter} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import utils from "@/Utils";
 
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
 
-const menuOptions: MenuOption[] = [
+let profile = {
+  ID: null,
+  email: "",
+  id: null,
+  name: "",
+  nickname: "",
+  src: ""
+}
+
+let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
@@ -108,106 +121,31 @@ const menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
-const sideMenuOptions: MenuOption[] = [
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队一'}
-        ),
-    key: '1',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队二'}
-        ),
-    key: '2',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队三'}
-        ),
-    key: '3',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队四'}
-        ),
-    key: '4',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队五'}
-        ),
-    key: '5',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {
-              default: () => ['团队六', {}]
-            }
-        ),
-    key: '6',
-    icon: renderIcon(Team)
-  },
-]
 export default defineComponent({
   components: {
     LeftNav,
     TeamHead
   },
   setup() {
+    const router = useRouter()
+    let teamID = ref(-1)
+    const com = ref(null)
     const showModalRef = ref(false)
     const formRef = ref<FormData | null>(null)
     const modelRef = ref({
       name: "",
       description: "",
     })
+    const getID = (msg:any) =>{
+        console.log("father get:"+msg)
+        teamID.value = parseInt(msg)
+        com.value.teamData.ID=teamID.value
+        console.log(com.value.teamData)
+        console.log("father push"+teamID.value)
+        router.push({path:'/team/teamProjects',
+          query:{teamID:teamID.value}
+        })
+    }
     const ruleName = {
       required: true,
       validator() {
@@ -224,30 +162,60 @@ export default defineComponent({
     const ruleDescription = {
       required: false,
     }
+    const getChildList = ref()
+    const onNegativeClick = () => {
+      showModalRef.value = false
+    }
+    const onPositiveClick = () => {
+      showModalRef.value = false
+      axios.post('/team', {
+        'name': modelRef.value.name,
+        'src': profile.src,
+        'introduction': modelRef.value.description
+      }, {headers: headers}).then(res => {
+        console.log(res)
+        getChildList.value.getAllTeams(0, 8)
+        modelRef.value.name = ""
+        modelRef.value.description = ""
+      })
+      onMounted(()=>{
+        router.push({path:'/team/teamProjects',
+          query:{teamID:teamID.value}
+        })
+      })
+    }
     return {
       theme: darkTheme,
       menuOptions,
-      sideMenuOptions,
-
+      getChildList,
+      com,
+      router,
       // 横态框
       showModal: showModalRef,
-      onNegativeClick() {
-        showModalRef.value = false
-      },
-      onPositiveClick() {
-        showModalRef.value = false
-      },
-
+      onNegativeClick,
+      onPositiveClick,
+      getID,
       // 表单验证
       ruleDescription,
       ruleName,
       modelRef,
       formRef,
+      teamID,
       formatFeedback(raw: string | undefined) {
         h('div', {style: 'color: green'}, [raw + '而且是绿的'])
       },
     }
-  }
+  },
+  methods: {
+    load() {
+      axios.get('user/info', {headers: headers}).then(res => {
+        profile = res.data.data
+      })
+    },
+  },
+  created() {
+    this.load()
+  },
 })
 
 </script>
