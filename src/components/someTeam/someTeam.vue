@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav  @addTeam="showModal=true" ref="getChildList"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
@@ -132,6 +132,9 @@ export default defineComponent({
       name: "",
       description: "",
     })
+    const getID = (msg:any) =>{
+        alert("father get:"+msg)
+    }
     const ruleName = {
       required: true,
       validator() {
@@ -173,7 +176,7 @@ export default defineComponent({
       showModal: showModalRef,
       onNegativeClick,
       onPositiveClick,
-
+      getID,
       // 表单验证
       ruleDescription,
       ruleName,
