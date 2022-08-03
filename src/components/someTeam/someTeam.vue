@@ -160,12 +160,14 @@ export default defineComponent({
       onPositiveClick() {
         showModalRef.value = false
         axios.post('/team', {
-          headers: headers,
           'name': modelRef.value.name,
           'src': profile.src,
           'introduction': modelRef.value.description
-        }).then(res => {
+        },{headers: headers}).then(res => {
           console.log(res)
+          if(res.data.msg==="成功"){
+            
+          }
         })
       },
 

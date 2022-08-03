@@ -18,7 +18,7 @@
           团队和项目
         </div>
         <div class="team">
-          <n-menu :options="sideMenuOptions"/>
+          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
         <div class="addTeam" @click="addTeam">
           <div class="addImg">
@@ -190,6 +190,8 @@ export default defineComponent({
       nickname: "",
       src: ""
     })
+    //传值
+
     const total = ref(0)
     const currentPage = ref(0)
     const addTeam = () => {
@@ -197,6 +199,7 @@ export default defineComponent({
     }
     const load = () => {
       axios.get('user/info', {headers: headers}).then(res => {
+        console.log(res.data)
         profile.value = res.data.data
       })
     }
@@ -238,11 +241,14 @@ export default defineComponent({
       addTeam,
       load,
       getAllTeams,
-
+      sideMenuOptions,
+       handleUpdateValue (key: string, item: MenuOption) {
+        alert('[onUpdate:value]: ' + JSON.stringify(key))
+       },
       // 个人信息
       profile,
       total,
-      sideMenuOptions
+      
     }
   },
 })
