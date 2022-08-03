@@ -91,12 +91,12 @@
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
 import {darkTheme} from "naive-ui";
-import {defineComponent, h, reactive, ref} from "vue";
-
+import {defineComponent, h, onMounted, reactive, ref} from "vue";
+import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
-
-
+const router = useRoute();
+let teamID = ref(0);
 const theme = darkTheme
 let projects = [
   {
@@ -139,6 +139,11 @@ let showModalRef = ref(false)
 const formRef = ref<FormData | null>(null)
 const modelRef = ref({
   name: ""
+})
+onMounted(()=>{
+  console.log("project get :"+router.query.teamID)
+  teamID.value=parseInt(JSON.stringify(router.query.teamID))
+
 })
 const ruleAdd = {
   required: true,
