@@ -100,6 +100,42 @@ import {ref} from "vue";
 import utils from "@/Utils";
 
 let index = 0;
+let programID = ref(0);
+
+
+//获取项目id
+programID.value=parseInt(utils.getCookie('proID')) ;
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+// 添加文档
+
+const addDocuAbl = () =>{
+  if(addModelRef.value.addName === '')
+  {
+    alert("文档名不可为空！")
+    return;
+  }
+
+  axios.post('/document',
+      {
+        'content': "",
+        'title': addModelRef.value.addName,
+        'src': null,
+        'programID': programID,
+      }
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(addModelRef.value.addName);
+      console.log("创建文档成功");
+
+      //刷新 获取文档列表
+
+    }
+  })
+}
 
 // 添加文档
 
@@ -114,6 +150,8 @@ const viewAddDocu = () => {
 const posAdd = () => {
 
   //成功添加文档
+
+  addDocuAbl
 
   console.log("成功添加文档");
 
