@@ -43,8 +43,8 @@
 
 <script lang="ts">
 import axios from 'axios';
-import LeftNav from "./Team/LeftNav.vue"
-import TeamHead from "./Team/TeamHead.vue"
+import LeftNav from "../Team/LeftNav.vue"
+import TeamHead from "../Team/TeamHead.vue"
 
 import {ref, h, Component, defineComponent} from 'vue'
 import {NIcon, useMessage, useDialog} from "naive-ui";
@@ -63,7 +63,15 @@ function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
 
-const menuOptions: MenuOption[] = [
+let profile = {
+  ID: null,
+  email: "",
+  id: null,
+  name: "",
+  nickname: "",
+  src: ""
+}
+let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
@@ -108,94 +116,6 @@ const menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
-const sideMenuOptions: MenuOption[] = [
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队一'}
-        ),
-    key: '1',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队二'}
-        ),
-    key: '2',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队三'}
-        ),
-    key: '3',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队四'}
-        ),
-    key: '4',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {default: () => '团队五'}
-        ),
-    key: '5',
-    icon: renderIcon(Team)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: '/team'
-              }
-            },
-            {
-              default: () => ['团队六', {}]
-            }
-        ),
-    key: '6',
-    icon: renderIcon(Team)
-  },
-]
 export default defineComponent({
   components: {
     LeftNav,
@@ -227,7 +147,7 @@ export default defineComponent({
     return {
       theme: darkTheme,
       menuOptions,
-      sideMenuOptions,
+
 
       // 横态框
       showModal: showModalRef,
@@ -236,6 +156,13 @@ export default defineComponent({
       },
       onPositiveClick() {
         showModalRef.value = false
+        axios.post('/team', {
+          'name': modelRef.value.name,
+          'src': profile.src,
+          'introduction': modelRef.value.description
+        }).then(res => {
+          console.log(res)
+        })
       },
 
       // 表单验证
@@ -247,7 +174,18 @@ export default defineComponent({
         h('div', {style: 'color: green'}, [raw + '而且是绿的'])
       },
     }
-  }
+  },
+  methods: {
+    load() {
+      axios.get('user/info').then(res => {
+        profile = res.data.data
+        console.log(profile)
+      })
+    },
+  },
+  created() {
+    this.load()
+  },
 })
 
 </script>

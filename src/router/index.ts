@@ -4,7 +4,7 @@ import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
 import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
-import someTeam from "../components/someTeam.vue";
+import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";

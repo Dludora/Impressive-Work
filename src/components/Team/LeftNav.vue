@@ -1,35 +1,35 @@
 <template>
   <n-config-provider :theme="theme">
-  <div class="nav">
-    <div class="logo">This is a logo</div>
-    <div class="user-info">
-      <div class="avatar">
-        <n-avatar class="pic">
-          {{ nickname[0] }}
-        </n-avatar>
+    <div class="nav">
+      <div class="logo">This is a logo</div>
+      <div class="user-info">
+        <div class="avatar">
+          <n-avatar class="pic">
+            {{ profile.nickname }}
+          </n-avatar>
+        </div>
+        <div class="user">
+          <p>{{ profile.nickname }}</p>
+          <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
+        </div>
       </div>
-      <div class="user">
-        <p>{{ nickname }}</p>
-        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ email }}</p>
-      </div>
-    </div>
-    <div class="teams">
-      <div class="teamsHead">
+      <div class="teams">
+        <div class="teamsHead">
           团队和项目
         </div>
-      <div class="team">
-        <n-menu  :options="menuOptions"/>
-      </div>
-      <div class="addTeam" @click="addTeam">
-        <div class="addImg">
-          <img src="@/assets/plus.png"/>
+        <div class="team">
+          <n-menu :options="sideMenuOptions"/>
         </div>
-        <div class="word">
-          新建团队
+        <div class="addTeam" @click="addTeam">
+          <div class="addImg">
+            <img src="@/assets/plus.png"/>
+          </div>
+          <div class="word">
+            新建团队
+          </div>
         </div>
       </div>
     </div>
-  </div>
   </n-config-provider>
 </template>
 <style scoped>
@@ -115,7 +115,7 @@
   color: #E2E4E9;
 }
 
-.team:hover .TeamName{
+.team:hover .TeamName {
   color: pink;
 }
 
@@ -139,6 +139,7 @@
   text-align: center;
   margin-right: 15px;
 }
+
 .addImg img {
   margin-top: 12px;
   width: 20px;
@@ -153,9 +154,9 @@
 </style>
 <script lang="ts">
 import {ref} from 'vue'
-import { defineComponent, h, Component } from 'vue'
+import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
-import type { MenuOption } from 'naive-ui'
+import type {MenuOption} from 'naive-ui'
 import {
   BookOutline as BookIcon,
   PersonOutline as PersonIcon,
@@ -163,32 +164,78 @@ import {
 } from '@vicons/ionicons5'
 import {RouterLink} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import axios from "axios";
 
-function renderIcon (icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) })
+function renderIcon(icon: Component) {
+  return () => h(NIcon, null, {default: () => h(icon)})
 }
 
+let sideMenuOptions: MenuOption[] = []
 
 
 export default defineComponent({
-  props: {
-    menuOptions: Array
-  },
   data() {
-    return { 
-      nickname: ref<String>('Loading...'),
-      email: ref<String>('email@163.com')
+    return {
+      profile: {
+        ID: null,
+        email: "",
+        id: null,
+        name: "",
+        nickname: "",
+        src: ""
+      },
+      total: 0,
     }
   },
-  setup (props, {emit}) {
+  methods: {
+    load() {
+      axios.get('user/info').then(res => {
+        this.profile = res.data.data
+        console.log(this.profile)
+      })
+    },
+    getAllTeams() {
+      axios.get('/team/list',
+          {params: {page: 0, size: 5}})
+          .then(res => {
+            let array = ref(res.data.data.items)
+            console.log(array)
+            for (let i = 0; i < array.value.length; i++) {
+              sideMenuOptions.push(
+                  {
+                    label: () =>
+                        h(
+                            RouterLink,
+                            {
+                              to: {
+                                path: '/team'
+                              }
+                            },
+                            {default: () => '傻子'}
+                        ),
+                    key: i,
+                    icon: renderIcon(Team)
+                  }
+              )
+            }
+          })
+    }
+  },
+  setup(props, {emit}) {
     function addTeam() {
       emit('addTeam');
     }
+
     return {
       theme: darkTheme,
-      addTeam
-
+      addTeam,
+      sideMenuOptions,
     }
+  },
+  created() {
+    this.load();
+    this.getAllTeams();
+
   }
 })
 
