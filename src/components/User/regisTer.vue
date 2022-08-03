@@ -13,7 +13,8 @@
         :on-update:value="SwitchState"
       >
         <n-tab-pane name="signin" tab="登录">
-          <n-form content-style="color:white">
+          <div class="form">
+          <n-form content-style="color:white;width:50%">
             <n-form-item-row label-style="color:white" label="电子邮箱">
               <n-input style="width=50%;" v-model:value="email" 
               placeholder="请输入您的邮箱..."
@@ -23,11 +24,13 @@
               <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
             </n-form-item-row>
           </n-form>
-          <n-button class="success" @click="login" type="primary" block secondary strong>
+          <n-button class="success" @click="login" type="primary" block  strong>
             登录
           </n-button>
+          </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
+          <div class="form">
           <n-form >
             <n-form-item-row label-style="color:white" label="电子邮箱" >
               <n-input placeholder="请输入正确邮箱" v-model:value="email" />
@@ -44,9 +47,12 @@
             <n-form-item-row label-style="color:white" label="确认密码" >
               <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
             </n-form-item-row>
+            <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
             
           </n-form>
-          <n-button type="success" text-color="white" @click="register" block secondary strong> 注册 </n-button>
+          <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+          <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+          </div>
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -68,6 +74,16 @@ let nick = ref('');
 import utils from '../../Utils'
 
 const register = () =>{
+  if(email.value===''||nick.value===''||name.value==='')
+  {
+    alert("信息不可为空！")
+    return;
+  }
+  if(password1.value===''||password2.value==='')
+  {
+    alert("密码不可为空！")
+    return;
+  }
   axios.post('/auth/register',
   {
     'email': email.value,
@@ -78,7 +94,7 @@ const register = () =>{
   }
   ).then(res=>{
     alert(res.data.msg);
-
+    router.go(0)
   })
 }
 
@@ -154,9 +170,15 @@ const SwitchState = (value: string | number) => {
 </script>
 
 <style scoped>
+.form{
+  width: 80%;
+  padding-left: 10%;
+  padding-right: 10%;
+  text-align: center;
 
+}
 .card-tabs .n-tabs-nav--bar-type {
-  padding-left: 4px;
+  padding-left: 4px; 
   color: aliceblue;
 }
 .card-tabs{
