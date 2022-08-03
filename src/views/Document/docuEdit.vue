@@ -33,7 +33,7 @@
             <p style="position: absolute;top:calc(35px + 92.5px);left:250px;right: 0"> > </p>
           </n-layout-sider>
           <n-layout-content>
-            <vDitor></vDitor>
+            <vDitor style=""></vDitor>
           </n-layout-content>
         </n-layout>
 

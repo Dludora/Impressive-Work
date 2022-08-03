@@ -4,7 +4,9 @@ import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
 import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
-import someTeam from "../components/someTeam/someTeam.vue";
+import prototypes from "../ProjectManager/PrototypeList.vue"
+
+import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";
@@ -96,21 +98,19 @@ const router = createRouter({
             path: '/programBig',
             component:  programView,
             children: [
-            /*
                 {
-                    name: 'layoutPage',
+                    name: 'prototypes',
                     path: '',
-                    component: layoutPage
+                    component: prototypes
                 },
-                {
-                    name: 'drawUML',
-                    path: 'drawUML',
-                    component: drawUML
-                },
-             */
+                // {
+                //     name: 'drawUML',
+                //     path: 'drawUML',
+                //     component: drawUML
+                // },
                 {
                     name: 'docuList',
-                    path: '',
+                    path: 'docuList',
                     component: docuList
                 },
             ]
