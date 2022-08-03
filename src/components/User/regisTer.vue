@@ -3,25 +3,26 @@
     <n-card id="regis-card"
     >
       <n-tabs
-        class="card-tabs"
-        default-value="signin"
-        type="bar"
-        animated
-        justify-content="space-around"
-        tab-style="color:white"
-        pane-style="padding-left: 4px; color:white; padding-right: 4px; box-sizing: border-box;"
-        :on-update:value="SwitchState"
+          class="card-tabs"
+          default-value="signin"
+          type="bar"
+          animated
+          justify-content="space-around"
+          tab-style="color:white"
+          pane-style="padding-left: 4px; color:white; padding-right: 4px; box-sizing: border-box;"
+          :on-update:value="SwitchState"
       >
         <n-tab-pane name="signin" tab="登录">
           <div class="form">
           <n-form content-style="color:white;width:50%">
             <n-form-item-row label-style="color:white" label="电子邮箱">
+
               <n-input  v-model:value="email"
               placeholder="请输入您的邮箱..."
               />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="密码">
-              <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
+              <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
             </n-form-item-row>
           </n-form>
           <n-button class="success" @click="login" type="primary" block  strong>
@@ -30,22 +31,23 @@
           </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
+
           <div class="form">
           <n-form >
             <n-form-item-row label-style="color:white" label="电子邮箱" >
               <n-input placeholder="请输入正确邮箱" v-model:value="email" />
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="昵称">
-              <n-input placeholder="请输入您的昵称"  v-model:value="nick" />
+              <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
             </n-form-item-row>
             <n-form-item-row label-style="color:white" label="真实姓名">
-              <n-input placeholder="请输入姓名"  v-model:value="name" />
+              <n-input placeholder="请输入姓名" v-model:value="name"/>
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="密码" >
-              <n-input placeholder="设置密码"  type="password" v-model:value="password1" />
+            <n-form-item-row label-style="color:white" label="密码">
+              <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="确认密码" >
-              <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
+            <n-form-item-row label-style="color:white" label="确认密码">
+              <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
             </n-form-item-row>
             <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
             
@@ -60,10 +62,10 @@
 </template>
 
 <script setup lang="ts">
-import { gsap } from "gsap";
+import {gsap} from "gsap";
 import axios from 'axios';
 import {ref} from 'vue'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 
 const router = useRouter();
 let email = ref('')
@@ -85,14 +87,14 @@ const register = () =>{
     return;
   }
   axios.post('/auth/register',
-  {
-    'email': email.value,
-    'nick': nick.value,
-    'name': name.value,
-    'passwd': password1.value,
-    
-  }
-  ).then(res=>{
+      {
+        'email': email.value,
+        'nick': nick.value,
+        'name': name.value,
+        'passwd': password1.value,
+
+      }
+  ).then(res => {
     alert(res.data.msg);
     router.go(0)
   })
@@ -101,12 +103,13 @@ const register = () =>{
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-const login = () =>{
-  
-  if(email.value.length===0||password1.value.length===0){
+const login = () => {
+
+  if (email.value.length === 0 || password1.value.length === 0) {
     alert("用户邮箱或密码不能为空！")
     return;
   }
+
   console.log( "head:"+axios.defaults.headers.common['Authorization'])
   console.log("cookie:"+utils.getCookie("Authorization"))
   let a=0;
@@ -118,13 +121,13 @@ const login = () =>{
          a=1;
          return;
       }
-         else{
+      else{
             axios.post('/auth/token',{
-    'email': email.value,
-    'passwd':password1.value
-  }
-  ).then(res=>{
-    console.log(headers)
+          'email': email.value,
+          'passwd':password1.value
+            }
+      ).then(res=>{
+        console.log(headers)
     console.log(res.data)
     if(res.data.msg==="成功")
     {
@@ -139,20 +142,15 @@ const login = () =>{
       axios.defaults.headers.common['Authorization'] = res.data.data;
       utils.setCookie('Authorization',res.data.data)
       console.log(utils.getCookie('Authorization'))
-     router.push('/')
-    }
-    else{
-      alert(res.data.msg)
-    }
-  
-    
-  })
-         }
-      })
-    
-  
+      router.push('/')
 
+    }
+  })
+      }
+    }
+    )
 }
+
 const SwitchState = (value: string | number) => {
   switch (value) {
     case "signin": {
@@ -185,19 +183,24 @@ const SwitchState = (value: string | number) => {
   padding-left: 4px; 
   color: aliceblue;
 }
-.card-tabs{
-  color:white
+
+.card-tabs {
+  color: white
 }
-.back-g{
+
+.back-g {
   margin-top: 50px;
   color: white;
 }
-span{
+
+span {
   color: white;
 }
-.custom-tabs{
+
+.custom-tabs {
   color: white;
 }
+
 #regis-card {
   position: absolute;
   width: 480px;
