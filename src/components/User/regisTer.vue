@@ -14,50 +14,51 @@
       >
         <n-tab-pane name="signin" tab="登录">
           <div class="form">
-            <n-form content-style="color:white;width:50%">
-              <n-form-item-row label-style="color:white" label="电子邮箱">
-
-                <n-input v-model:value="email"
-                         placeholder="请输入您的邮箱..."
-                />
-              </n-form-item-row>
-              <n-form-item-row label-style="color:white" label="密码">
-                <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
-              </n-form-item-row>
-            </n-form>
-            <n-button class="success" @click="login" type="primary" block strong>
-              登录
-            </n-button>
+            <n-config-provider :theme="theme">
+              <n-form content-style="width:50%">
+                <n-form-item-row label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
+                  <n-input v-model:value="email"
+                           placeholder="请输入您的邮箱..."
+                  />
+                </n-form-item-row>
+                <n-form-item-row label="密码">
+                  <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
+                </n-form-item-row>
+              </n-form>
+              <n-button class="success" @click="login" type="primary" block strong>
+                登录
+              </n-button>
+            </n-config-provider>
           </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
-
           <div class="form">
-            <n-form>
-              <n-form-item-row label-style="color:white" label="电子邮箱">
-                <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
-              </n-form-item-row>
-              <n-form-item-row label-style="color:white" label="昵称">
-                <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
-              </n-form-item-row>
-              <n-form-item-row label-style="color:white" label="真实姓名">
-                <n-input placeholder="请输入姓名" v-model:value="name"/>
-              </n-form-item-row>
-              <n-form-item-row label-style="color:white" label="密码">
-                <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
-              </n-form-item-row>
-              <n-form-item-row label-style="color:white" label="确认密码">
-                <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
-              </n-form-item-row>
-              <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
+            <n-config-provider :theme="theme">
+              <n-form>
+                <n-form-item label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
+                  <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
+                </n-form-item>
+                <n-form-item label="昵称">
+                  <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
+                </n-form-item>
+                <n-form-item label="真实姓名">
+                  <n-input placeholder="请输入姓名" v-model:value="name"/>
+                </n-form-item>
+                <n-form-item label="密码" :rule="rulePass" :render-feedback="formatFeedback">
+                  <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
+                </n-form-item>
+                <n-form-item-row label="确认密码" :rule="rulePass2" :render-feedback="formatFeedback">
+                  <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
+                </n-form-item-row>
 
-            </n-form>
-            <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block strong>
-              注册
-            </n-button>
-            <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register"
-                      block strong> 注册
-            </n-button>
+              </n-form>
+              <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block strong>
+                注册
+              </n-button>
+              <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register"
+                        block strong> 注册
+              </n-button>
+            </n-config-provider>
           </div>
         </n-tab-pane>
       </n-tabs>
@@ -66,11 +67,13 @@
 </template>
 
 <script setup lang="ts">
+import {darkTheme} from "naive-ui"
 import {gsap} from "gsap";
 import axios from 'axios';
-import {ref} from 'vue'
+import {h, ref} from 'vue'
 import {useRouter} from 'vue-router'
 
+const theme = darkTheme
 const router = useRouter();
 let email = ref('')
 let name = ref('');
@@ -79,6 +82,55 @@ let password2 = ref('');
 let nick = ref('');
 import utils from '../../Utils'
 
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+const formatFeedback = (raw: string | undefined) => {
+  h('div', {style: 'color: green'}, [raw + '而且是绿的'])
+}
+const ruleEmail = {
+  required: true,
+  validator() {
+    if (email.value.length === 0) {
+      return new Error("邮箱不能为空")
+    } else {
+      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (!reg.test(email.value)) {
+        return new Error('请输入有效的邮箱')
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
+
+const rulePass = {
+  required: true,
+  validator() {
+    if (password1.value.length === 0) {
+      return new Error("请输入密码")
+    } else {
+      const reg_pwd = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,18}$/;
+      if (!reg_pwd.test(password1.value)) {
+        return new Error('密码至少同时包含字母和数字，且长度为8-18')
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
+
+const rulePass2 = {
+  required: true,
+  validator() {
+    if (password2.value.length === 0) {
+      return new Error('请再次输入密码')
+    } else if (password2.value !== password1.value) {
+      return new Error('两次输入密码不一致!')
+    }
+  },
+  trigger: ['input', 'blur']
+
+};
 const register = () => {
   if (email.value === '' || nick.value === '' || name.value === '') {
     alert("信息不可为空！")
@@ -102,9 +154,6 @@ const register = () => {
   })
 }
 
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
 const login = () => {
 
   if (email.value.length === 0 || password1.value.length === 0) {
@@ -205,8 +254,8 @@ span {
   width: 480px;
   height: 340px;
   left: calc(50% - 480px / 2);
-  top: calc(50% - 430px / 2);
-  color: white;
+  top: calc(40% - 430px / 2);
+  /*color: white;*/
   background: rgba(43, 48, 59, 1);
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
 }

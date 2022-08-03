@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions" @addTeam="showModal=true"/>
+      <LeftNav  @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
@@ -148,26 +148,31 @@ export default defineComponent({
     const ruleDescription = {
       required: false,
     }
+    const getChildList = ref()
+    const onNegativeClick = () => {
+      showModalRef.value = false
+    }
+    const onPositiveClick = () => {
+      showModalRef.value = false
+      axios.post('/team', {
+        'name': modelRef.value.name,
+        'src': profile.src,
+        'introduction': modelRef.value.description
+      }, {headers: headers}).then(res => {
+        console.log(res)
+        getChildList.value.getAllTeams(0, 8)
+        modelRef.value.name = ""
+        modelRef.value.description = ""
+      })
+    }
     return {
       theme: darkTheme,
       menuOptions,
-
+      getChildList,
       // 横态框
       showModal: showModalRef,
-      onNegativeClick() {
-        showModalRef.value = false
-      },
-      onPositiveClick() {
-        showModalRef.value = false
-        axios.post('/team', {
-          headers: headers,
-          'name': modelRef.value.name,
-          'src': profile.src,
-          'introduction': modelRef.value.description
-        }).then(res => {
-          console.log(res)
-        })
-      },
+      onNegativeClick,
+      onPositiveClick,
 
       // 表单验证
       ruleDescription,
