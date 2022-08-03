@@ -14,46 +14,50 @@
       >
         <n-tab-pane name="signin" tab="登录">
           <div class="form">
-          <n-form content-style="color:white;width:50%">
-            <n-form-item-row label-style="color:white" label="电子邮箱">
+            <n-form content-style="color:white;width:50%">
+              <n-form-item-row label-style="color:white" label="电子邮箱">
 
-              <n-input  v-model:value="email"
-              placeholder="请输入您的邮箱..."
-              />
-            </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="密码">
-              <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
-            </n-form-item-row>
-          </n-form>
-          <n-button class="success" @click="login" type="primary" block  strong>
-            登录
-          </n-button>
+                <n-input v-model:value="email"
+                         placeholder="请输入您的邮箱..."
+                />
+              </n-form-item-row>
+              <n-form-item-row label-style="color:white" label="密码">
+                <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
+              </n-form-item-row>
+            </n-form>
+            <n-button class="success" @click="login" type="primary" block strong>
+              登录
+            </n-button>
           </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
 
           <div class="form">
-          <n-form >
-            <n-form-item-row label-style="color:white" label="电子邮箱" >
-              <n-input placeholder="请输入正确邮箱" v-model:value="email" />
-            </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="昵称">
-              <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
-            </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="真实姓名">
-              <n-input placeholder="请输入姓名" v-model:value="name"/>
-            </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="密码">
-              <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
-            </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="确认密码">
-              <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
-            </n-form-item-row>
-            <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
-            
-          </n-form>
-          <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
-          <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+            <n-form>
+              <n-form-item-row label-style="color:white" label="电子邮箱">
+                <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
+              </n-form-item-row>
+              <n-form-item-row label-style="color:white" label="昵称">
+                <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
+              </n-form-item-row>
+              <n-form-item-row label-style="color:white" label="真实姓名">
+                <n-input placeholder="请输入姓名" v-model:value="name"/>
+              </n-form-item-row>
+              <n-form-item-row label-style="color:white" label="密码">
+                <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
+              </n-form-item-row>
+              <n-form-item-row label-style="color:white" label="确认密码">
+                <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
+              </n-form-item-row>
+              <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
+
+            </n-form>
+            <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block strong>
+              注册
+            </n-button>
+            <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register"
+                      block strong> 注册
+            </n-button>
           </div>
         </n-tab-pane>
       </n-tabs>
@@ -75,14 +79,12 @@ let password2 = ref('');
 let nick = ref('');
 import utils from '../../Utils'
 
-const register = () =>{
-  if(email.value===''||nick.value===''||name.value==='')
-  {
+const register = () => {
+  if (email.value === '' || nick.value === '' || name.value === '') {
     alert("信息不可为空！")
     return;
   }
-  if(password1.value===''||password2.value==='')
-  {
+  if (password1.value === '' || password2.value === '') {
     alert("密码不可为空！")
     return;
   }
@@ -110,45 +112,41 @@ const login = () => {
     return;
   }
 
-  console.log( "head:"+axios.defaults.headers.common['Authorization'])
-  console.log("cookie:"+utils.getCookie("Authorization"))
-  let a=0;
-    axios.get('/user/info',{headers:headers}).then(res=>{
-      console.log(res.data)
-      if(res.data.msg==="成功")
-      {
-         alert("用户"+res.data.data.nickname+"已登录")
-         a=1;
-         return;
-      }
-      else{
-            axios.post('/auth/token',{
-          'email': email.value,
-          'passwd':password1.value
+  console.log("head:" + axios.defaults.headers.common['Authorization'])
+  console.log("cookie:" + utils.getCookie("Authorization"))
+  let a = 0;
+  axios.get('/user/info', {headers: headers}).then(res => {
+        console.log(res.data)
+        if (res.data.msg === "成功") {
+          alert("用户" + res.data.data.nickname + "已登录")
+          a = 1;
+          router.push('/')
+        } else {
+          axios.post('/auth/token', {
+                'email': email.value,
+                'passwd': password1.value
+              }
+          ).then(res => {
+            console.log(headers)
+            console.log(res.data)
+            if (res.data.msg === "成功") {
+              console.log("登录成功->")
+              axios.defaults.headers.common['Authorization'] = res.data.data;
+              axios.get('/user/info').then(res2 => {
+                console.log(res2.data.data)
+                console.log("登录成功=>")
+                if (res2.data.msg === "成功")
+                  alert("欢迎 " + res2.data.data.nickname)
+              })
+              axios.defaults.headers.common['Authorization'] = res.data.data;
+              utils.setCookie('Authorization', res.data.data)
+              console.log(utils.getCookie('Authorization'))
+              router.push('/')
             }
-      ).then(res=>{
-        console.log(headers)
-    console.log(res.data)
-    if(res.data.msg==="成功")
-    {
-      console.log("登录成功->")
-      axios.defaults.headers.common['Authorization'] = res.data.data;
-      axios.get('/user/info').then(res2=>{
-        console.log(res2.data.data)
-        console.log("登录成功=>")
-        if(res2.data.msg==="成功")
-         alert("欢迎 "+res2.data.data.nickname)
-      })
-      axios.defaults.headers.common['Authorization'] = res.data.data;
-      utils.setCookie('Authorization',res.data.data)
-      console.log(utils.getCookie('Authorization'))
-      router.push('/')
-
-    }
-  })
+          })
+        }
       }
-    }
-    )
+  )
 }
 
 const SwitchState = (value: string | number) => {
@@ -172,15 +170,16 @@ const SwitchState = (value: string | number) => {
 </script>
 
 <style scoped>
-.form{
+.form {
   width: 80%;
   padding-left: 10%;
   padding-right: 10%;
   text-align: center;
 
 }
+
 .card-tabs .n-tabs-nav--bar-type {
-  padding-left: 4px; 
+  padding-left: 4px;
   color: aliceblue;
 }
 
