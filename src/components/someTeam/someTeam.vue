@@ -75,6 +75,7 @@ let profile = {
   nickname: "",
   src: ""
 }
+
 let menuOptions: MenuOption[] = [
   {
     label: () =>
@@ -134,6 +135,7 @@ export default defineComponent({
     })
     const getID = (msg) =>{
         alert("father get:"+msg)
+      
     }
     const ruleName = {
       required: true,
