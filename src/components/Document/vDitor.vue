@@ -32,7 +32,7 @@ export default {
       height: 700,
       width: 1168,
       placeholder: '此处为话题内容……',
-      theme: 'light',
+      theme: 'dark',
 
       counter: {
         enable: true,
@@ -40,6 +40,7 @@ export default {
         max: 99999,
       },
       preview: {
+        theme: 'dark',
         delay: 0,
         hljs: {
           style: 'monokai',
