@@ -28,7 +28,12 @@
             新建团队
           </div>
         </div>
-        <n-pagination v-model:page="currentPage" :page-count="pageNum" show-quick-jumper :page-slot="3" size="small"
+        {{ pageNum }}
+        <n-pagination v-model:page="currentPage"
+                      :page-count="pageNum"
+                      show-quick-jumper
+                      :page-slot="3" size="small"
+                      :on-update:page="changePage"
                       id="pagination">
           <template #goto>
             请回答
@@ -37,7 +42,7 @@
       </div>
     </div>
   </n-config-provider>
-</template>\
+</template>
 
 <script lang="ts">
 import {onMounted, reactive, ref} from 'vue'
@@ -74,6 +79,7 @@ export default defineComponent({
     })
     const total = ref(0)
     const currentPage = ref(0)
+    const pageNum = ref(0)
     const addTeam = () => {
       emit('addTeam');
     }
@@ -87,8 +93,8 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             let array = ref(res.data.data.items)
-            console.log(res.data.data)
-            // console.log(res.data.data.items)
+            total.value = res.data.data.total
+            pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
               sideMenuOptions.value.push(
@@ -110,7 +116,9 @@ export default defineComponent({
             }
           })
     }
-
+    const changePage = (page: number) => {
+      getAllTeams(page-1, 8)
+    }
     onMounted(async () => {
       load()
       getAllTeams(0, 8)
@@ -121,14 +129,15 @@ export default defineComponent({
       addTeam,
       load,
       getAllTeams,
-
+      changePage,
       // 个人信息
       profile,
       sideMenuOptions,
 
       // 分页
       currentPage,
-      pageNum: ref(total.value % 8 === 0 ? total.value / 8 : total.value / 8 + 1),
+      total,
+      pageNum,
     }
   },
 })
