@@ -7,7 +7,7 @@
           管理你的 {{ documents.length }} 个文档
         </p>
         <n-button icon-placement="right" class="docu-add">
-          新建文档
+          新 建 文 档
           <template #icon>
             <n-icon ><Add /></n-icon>
           </template>
@@ -142,8 +142,8 @@ let documents=[
   left: 925px;
   top: 5px;
 
-  border: 1px solid #A7AFBE;
-  border-radius: 2px;
+  /*border: 1px solid #A7AFBE;
+  border-radius: 2px;*/
 }
 
 .items{

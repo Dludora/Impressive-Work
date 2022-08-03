@@ -5,6 +5,8 @@ import homePage from "../components/homePage.vue";
 
 import layoutPage from "../components/DesignPage/layoutPage.vue"
 
+import prototypes from "../ProjectManager/PrototypeList.vue"
+
 import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
@@ -97,18 +99,16 @@ const router = createRouter({
             path: '/programBig',
             component:  programView,
             children: [
-            /*
                 {
-                    name: 'layoutPage',
-                    path: '',
-                    component: layoutPage
+                    name: 'prototypes',
+                    path: 'prototypes',
+                    component: prototypes
                 },
-                {
-                    name: 'drawUML',
-                    path: 'drawUML',
-                    component: drawUML
-                },
-             */
+                // {
+                //     name: 'drawUML',
+                //     path: 'drawUML',
+                //     component: drawUML
+                // },
                 {
                     name: 'docuList',
                     path: '',
