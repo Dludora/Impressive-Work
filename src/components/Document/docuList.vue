@@ -6,8 +6,8 @@
         <p class="docu-all">
           管理你的 {{ documents.length }} 个文档
         </p>
-        <n-button icon-placement="right" class="docu-add">
-          新建文档
+        <n-button icon-placement="right" class="docu-add" @click="viewAddDocu">
+          新 建 文 档
           <template #icon>
             <n-icon ><Add /></n-icon>
           </template>
@@ -20,10 +20,10 @@
             <div class="docu-item">
               <div class="docu-cover">
                 <div class="docu-cover-word">文档简介</div>
-                <Icon id="edi" size="24"><Edit /></Icon>
-                <Icon id="del" size="24"><Delete48Regular /></Icon>
+                <Icon id="edi" size="24" @click="viewEdiDocu(ind)"><Edit /></Icon>
+                <Icon id="del" size="24" @click="viewDelDocu(ind)"><Delete48Regular /></Icon>
               </div>
-              <div class="docu-title" @click="openDocu(ind)">
+              <div class="docu-title" @click="openDocu(ind)" style="cursor: pointer">
                 {{document.title}}
               </div>
             </div>
@@ -32,17 +32,218 @@
       </div>
     </div>
 
+  <n-config-provider  :theme="darkTheme">
+    <n-modal
+        v-model:show="showAdd"
+        preset="dialog"
+        title="新建文档"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="posAdd"
+        @negative-click="negAdd"
+    >
+      <n-form ref="addFormRef" :model="addModelRef">
+        <n-form-item label="项目名称" :rule="addRule" >
+          <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
+        </n-form-item>
+      </n-form>
+
+    </n-modal>
+
+    <n-modal
+        v-model:show="showEdi"
+        preset="dialog"
+        title="重命名文档"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="posEdi"
+        @negative-click="negEdi"
+    >
+      <n-form ref="ediFormRef" :model="ediModelRef">
+        <n-form-item label="项目名称 · 新" :rule="ediRule" >
+          <n-input v-model:value="ediModelRef.ediName" @keydown.enter.prevent/>
+        </n-form-item>
+      </n-form>
+
+    </n-modal>
+
+      <n-modal
+          v-model:show="showDel"
+          preset="dialog"
+          title="删除文档"
+          positive-text="确认"
+          negative-text="取消"
+          @positive-click="posDel"
+          @negative-click="negDel"
+      >
+        <p style="font-size: 15px">
+          确定删除文档 {{utils.getCookie(docIndex)}}
+        </p>
+
+      </n-modal>
+
+  </n-config-provider>
 
 
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import {Add} from "@vicons/ionicons5";
 import {Edit} from "@vicons/tabler";
 import {Delete48Regular} from "@vicons/fluent";
 import {Icon} from "@vicons/utils";
 
-import {darkTheme, NIcon} from "naive-ui";
+import {darkTheme, NIcon, useMessage} from "naive-ui";
+
+import {ref} from "vue";
+import utils from "@/Utils";
+
+let index = 0;
+let programID = ref(0);
+
+
+//获取项目id
+programID.value=parseInt(utils.getCookie('proID')) ;
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+// 添加文档
+
+const addDocuAbl = () =>{
+  if(addModelRef.value.addName === '')
+  {
+    alert("文档名不可为空！")
+    return;
+  }
+
+  axios.post('/document',
+      {
+        'content': "",
+        'title': addModelRef.value.addName,
+        'src': null,
+        'programID': programID,
+      }
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(addModelRef.value.addName);
+      console.log("创建文档成功");
+
+      //刷新 获取文档列表
+
+    }
+  })
+}
+
+// 添加文档
+
+const showAdd= ref (false);
+const addFormRef = ref<FormData | null>(null)
+const addModelRef = ref({ addName: ""})
+
+const viewAddDocu = () => {
+  showAdd.value = true;
+}
+
+const posAdd = () => {
+
+  //成功添加文档
+
+  addDocuAbl
+
+  console.log("成功添加文档");
+
+  addModelRef.value.addName = "";
+
+  showAdd.value = false
+}
+
+const negAdd = () => {
+  addModelRef.value.addName = "";
+  showAdd.value = false;
+};
+
+const addRule = {
+  required: true,
+  validator() {
+    if (addModelRef.value.addName.length === 0 ) {
+      return new Error("文档名称不可为空")
+    } else {
+      if (addModelRef.value.addName.length >= 12) {
+        return new Error("文档名称长度不能大于8")
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
+
+// 删除文档
+
+let docIndex: string;
+
+const showDel= ref (false);
+
+function viewDelDocu(ind: number) {
+  utils.setCookie(docIndex,ind);
+  showDel.value = true;
+}
+
+const posDel = () => {
+
+  //成功删除文档 序号: ind
+
+  console.log(utils.getCookie(docIndex));
+
+  showDel.value = false
+}
+
+const negDel = () => {
+  showDel.value = false;
+};
+
+// 重命名文档
+
+const showEdi= ref (false);
+const ediFormRef = ref<FormData | null>(null)
+const ediModelRef = ref({ ediName: ""})
+
+function viewEdiDocu(ind: number) {
+  utils.setCookie(docIndex,ind);
+  showEdi.value = true;
+}
+
+const posEdi = () => {
+
+  //成功重命名文档
+
+  console.log(utils.getCookie(docIndex));
+  ediModelRef.value.ediName = "";
+
+  showEdi.value = false
+}
+
+const negEdi = () => {
+  ediModelRef.value.ediName = "";
+  showEdi.value = false;
+};
+
+const ediRule = {
+  required: true,
+  validator() {
+    if (ediModelRef.value.ediName.length === 0 ) {
+      return new Error("文档名称不可为空")
+    } else {
+      if (ediModelRef.value.ediName.length >= 12) {
+        return new Error("文档名称长度不能大于8")
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
+
+// 打开文档
 
 function openDocu(index: any){
   console.log(index);
@@ -105,10 +306,10 @@ let documents=[
 
 .big-contain{
   position: relative;
-  top: 10px;
+  top: 3%;
   width: fit-content;
-  min-height: 100%;
-  left: 2%;
+  min-height: min-content;
+  left: 0%;
 }
 
 .docu-all{
@@ -142,8 +343,8 @@ let documents=[
   left: 925px;
   top: 5px;
 
-  border: 1px solid #A7AFBE;
-  border-radius: 2px;
+  /*border: 1px solid #A7AFBE;
+  border-radius: 2px;*/
 }
 
 .items{
