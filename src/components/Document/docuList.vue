@@ -30,15 +30,7 @@
           </n-grid-item>
         </n-grid>
 
-        <n-config-provider  :theme="darkTheme">
-        <n-pagination
-            v-model:page="page"
-            :page-count="100"
-            size="small"
-            show-quick-jumper
-            show-size-picker
-        />
-        </n-config-provider>
+
       </div>
     </div>
 
@@ -374,11 +366,8 @@ function openDocu(index: any){
 <style scoped>
 
 .big-contain{
-  position: relative;
-  top: 3%;
-  width: fit-content;
-  min-height: min-content;
-  left: 0%;
+  width:fit-content;
+  margin:39px 43px 0 61px;
 }
 
 .docu-all{
@@ -387,15 +376,15 @@ function openDocu(index: any){
 
   width: 357px;
   height: 40px;
-  left: 50px;
-  top: 10px;
+  left: 0px;
+  top: -26px;
 
   display: inline-block;
 
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 24px;
+  font-size: 30px;
   line-height: 29px;
 
   align-items: center;
@@ -406,11 +395,11 @@ function openDocu(index: any){
 .docu-add{
   box-sizing: border-box;
 
-  position: absolute;
+  position: relative;
   width: 150px;
   height: 32px;
-  left: 925px;
-  top: 5px;
+  left: 500px;
+  top: -32px;
 
   /*border: 1px solid #A7AFBE;
   border-radius: 2px;*/
@@ -418,8 +407,8 @@ function openDocu(index: any){
 
 .items{
   position: relative;
-  left: 50px;
-  top:30px;
+  left: 0px;
+  top:-15px;
 }
 
 .docu-item{
