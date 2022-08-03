@@ -40,7 +40,6 @@
               <n-button @click="showPosition">显示光标位置</n-button><br>
               <n-button @click="showSelection">显示selection位置</n-button><br>
               <n-button @click="setContent">更新内容</n-button><br>
-              <n-button @click="settheme">更新内容</n-button><br>
             </n-space>
           </n-layout-content>
         </n-layout>
@@ -109,6 +108,7 @@ export default({
 
     settheme() {
       this.contentEditor.setTheme("dark");
+      this.contentEditor.setContentTheme("dark");
     },
 
     exitEdit() {
