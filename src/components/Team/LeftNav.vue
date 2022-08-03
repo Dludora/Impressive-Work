@@ -1,4 +1,5 @@
 <template>
+  <n-config-provider :theme="theme">
   <div class="nav">
     <div class="logo">This is a logo</div>
     <div class="user-info">
@@ -17,11 +18,9 @@
           团队和项目
         </div>
       <div class="team">
-        <n-config-provider :theme="theme">
-          <n-menu  :options="menuOptions"/>
-        </n-config-provider>
+        <n-menu  :options="menuOptions"/>
       </div>
-      <div class="addTeam">
+      <div class="addTeam" @click="addTeam">
         <div class="addImg">
           <img src="@/assets/plus.png"/>
         </div>
@@ -31,6 +30,7 @@
       </div>
     </div>
   </div>
+  </n-config-provider>
 </template>
 <style scoped>
 .nav {
@@ -168,6 +168,8 @@ function renderIcon (icon: Component) {
   return () => h(NIcon, null, { default: () => h(icon) })
 }
 
+
+
 export default defineComponent({
   props: {
     menuOptions: Array
@@ -178,10 +180,14 @@ export default defineComponent({
       email: ref<String>('email@163.com')
     }
   },
-  setup () {
+  setup (props, {emit}) {
+    function addTeam() {
+      emit('addTeam');
+    }
     return {
       theme: darkTheme,
-      // menuOptions,
+      addTeam
+
     }
   }
 })

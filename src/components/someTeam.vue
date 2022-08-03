@@ -1,13 +1,14 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions"/>
+      <LeftNav :menu-options="sideMenuOptions" @addTeam="showModal=true"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
         <TeamHead style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content content-style="padding: 24px 0px;">
+
         <div class="menu">
           <n-config-provider :theme="theme">
             <n-menu mode="horizontal" :options="menuOptions"/>
@@ -17,6 +18,27 @@
       </n-layout-content>
     </n-layout>
   </n-layout>
+  <n-config-provider :theme="theme">
+    <n-modal
+        v-model:show="showModal"
+        :mask-closable="false"
+        preset="dialog"
+        title="创建团队"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="onPositiveClick"
+        @negative-click="onNegativeClick"
+    >
+      <n-form :ref="formRef" :model="modelRef">
+        <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
+          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item label="团队描述" :rule="ruleDescription" :render-feedback="formatFeedback">
+          <n-input v-model:value="modelRef.description" @keydown.enter.prevent type="textarea"/>
+        </n-form-item>
+      </n-form>
+    </n-modal>
+  </n-config-provider>
 </template>
 
 <script lang="ts">
@@ -181,10 +203,49 @@ export default defineComponent({
   },
   setup() {
     const showModalRef = ref(false)
+    const formRef = ref<FormData | null>(null)
+    const modelRef = ref({
+      name: "",
+      description: "",
+    })
+    const ruleName = {
+      required: true,
+      validator() {
+        if (modelRef.value.name.length === 0) {
+          return new Error("新团队名不能为空!")
+        } else {
+          if (modelRef.value.name.length >= 8) {
+            return new Error("新团队名长度不能大于8!")
+          }
+        }
+      },
+      trigger: ['input', 'blur']
+    }
+    const ruleDescription = {
+      required: false,
+    }
     return {
       theme: darkTheme,
       menuOptions,
       sideMenuOptions,
+
+      // 横态框
+      showModal: showModalRef,
+      onNegativeClick() {
+        showModalRef.value = false
+      },
+      onPositiveClick() {
+        showModalRef.value = false
+      },
+
+      // 表单验证
+      ruleDescription,
+      ruleName,
+      modelRef,
+      formRef,
+      formatFeedback(raw: string | undefined) {
+        h('div', {style: 'color: green'}, [raw + '而且是绿的'])
+      },
     }
   }
 })

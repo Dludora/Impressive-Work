@@ -8,8 +8,8 @@
       <p id="email">{{member.email}}</p>
     </div>
     <div class="member-operate">
-      <Icon id="star" size="36" color="#FFFFFF"><IosStarOutline /></Icon>
-<!--      <Icon id="" size="36" color="#FFFFFF"><IosStarOutline /></Icon>-->
+      <Icon class="star" size="36" color="#FFFFFF"><IosStarOutline /></Icon>
+      <Icon id="close" size="40" color="#FFFFFF"><Close /></Icon>
     </div>
   </div>
   <div class="member-add ">
@@ -22,7 +22,8 @@
 
 <script setup lang="ts">
 import {PlusOutlined} from "@vicons/antd";
-import {IosStarOutline} from "@vicons/ionicons4"
+import {IosStarOutline, IosStar} from "@vicons/ionicons4"
+import {Close} from "@vicons/ionicons5"
 import {Icon} from "@vicons/utils";
 
 const members = [
@@ -97,10 +98,17 @@ const members = [
   position: relative;
   flex: 2;
 }
-#star {
+.star {
   position: absolute;
   top: calc(50% - 36px / 2);
   left: 300px;
+  cursor: pointer;
+}
+#close {
+  position: absolute;
+  top: calc(50% - 36px / 2);
+  left: 400px;
+  cursor: pointer;
 }
 #add {
   position: absolute;
