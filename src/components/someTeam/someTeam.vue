@@ -57,7 +57,11 @@ import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import utils from "@/Utils";
 
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -148,7 +152,6 @@ export default defineComponent({
       theme: darkTheme,
       menuOptions,
 
-
       // 横态框
       showModal: showModalRef,
       onNegativeClick() {
@@ -157,6 +160,7 @@ export default defineComponent({
       onPositiveClick() {
         showModalRef.value = false
         axios.post('/team', {
+          headers: headers,
           'name': modelRef.value.name,
           'src': profile.src,
           'introduction': modelRef.value.description
@@ -177,9 +181,8 @@ export default defineComponent({
   },
   methods: {
     load() {
-      axios.get('user/info').then(res => {
+      axios.get('user/info', {headers: headers}).then(res => {
         profile = res.data.data
-        console.log(profile)
       })
     },
   },
