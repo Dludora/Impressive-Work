@@ -4,7 +4,7 @@
       {{programname}}
     </div>
     <div class="pro-des">
-      <h2>由 {{teamname}} 创建于 {{programtime}}</h2>
+      由 {{teamname}} 创建于 {{programtime}}
     </div>
   </div>
 </template>
@@ -22,7 +22,7 @@ import {ref } from "vue"
 <style scoped>
 .up{
   position: relative;
-  height: 100%;
+  /*height: 100%;*/
   top: 0px;
 
   background: #16181D;
@@ -30,7 +30,7 @@ import {ref } from "vue"
 
 .pro-name{
   position: relative;
-  height: 40px;
+  height: 22px;
   top: 0px;
 
   display: inline-block;
@@ -40,8 +40,8 @@ import {ref } from "vue"
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
-  font-size: 36px;
-  line-height: 44px;
+  font-size: 24px;
+  /*line-height: 44px;*/
 
   color: #FFFFFF;
 
@@ -50,14 +50,14 @@ import {ref } from "vue"
 
 .pro-des{
   position: relative;
-  height: 40px;
-  top: 10px;
+  height: 24px;
+  top: 6px;
 
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 14px;
+  /*line-height: 24px;*/
   display: flex;
   align-items: flex-end;
 

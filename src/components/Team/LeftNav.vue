@@ -1,5 +1,6 @@
 <template>
   <n-config-provider :theme="theme">
+    <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
   <div class="nav">
     <div class="logo">This is a logo</div>
     <div class="user-info">
@@ -30,6 +31,7 @@
       </div>
     </div>
   </div>
+    </n-scrollbar>
   </n-config-provider>
 </template>
 <style scoped>
@@ -37,6 +39,8 @@
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
+  width:220px;
+  height:100%;
 }
 
 .logo {

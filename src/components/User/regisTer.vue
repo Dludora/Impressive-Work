@@ -15,43 +15,43 @@
         <n-tab-pane name="signin" tab="登录">
           <div class="form">
           <n-form content-style="color:white;width:50%">
-            <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input style="width:50%;" v-model:value="email"
+            <n-form-item-row label-style="color:#C4C9D4" label="电子邮箱">
+              <n-input v-model:value="email"
               placeholder="请输入您的邮箱..."
               />
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="密码">
+            <n-form-item-row label-style="color:#C4C9D4" label="密码">
               <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
             </n-form-item-row>
           </n-form>
-          <n-button class="success" @click="login" type="primary" block  strong>
-            登录
+          <n-button class="logbutton" @click="login" type="error" block  strong>
+            登 录
           </n-button>
           </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
           <div class="form">
           <n-form >
-            <n-form-item-row label-style="color:white" label="电子邮箱" >
+            <n-form-item-row label-style="color:#C4C9D4" label="电子邮箱" >
               <n-input placeholder="请输入正确邮箱" v-model:value="email" />
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="昵称">
+            <n-form-item-row label-style="color:#C4C9D4" label="昵称">
               <n-input placeholder="请输入您的昵称"  v-model:value="nick" />
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="真实姓名">
+            <n-form-item-row label-style="color:#C4C9D4" label="真实姓名">
               <n-input placeholder="请输入姓名"  v-model:value="name" />
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="密码" >
+            <n-form-item-row label-style="color:#C4C9D4" label="密码" >
               <n-input placeholder="设置密码"  type="password" v-model:value="password1" />
             </n-form-item-row>
-            <n-form-item-row label-style="color:white" label="确认密码" >
+            <n-form-item-row label-style="color:#C4C9D4" label="确认密码" >
               <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
             </n-form-item-row>
             <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
             
           </n-form>
-          <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
-          <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+          <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注 册 </n-button>
+          <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注 册 </n-button>
           </div>
         </n-tab-pane>
       </n-tabs>
@@ -203,6 +203,7 @@ span{
   color: white;
   background: rgba(43, 48, 59, 1);
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  border:none;
 }
 
 logon-button {
@@ -214,6 +215,13 @@ logon-button {
   background: rgba(66, 189, 178, 1);
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
   border-radius: 2px;
+}
+.n-tabs-tab__label{
+  font-weight: 700;
+  font-size: 20px;
+}
+.logbutton{
+  font-size: 16px;
 }
 </style>
 
