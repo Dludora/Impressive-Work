@@ -16,7 +16,7 @@
           <div class="form">
           <n-form content-style="color:white;width:50%">
             <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input style="width:50%;" v-model:value="email"
+              <n-input  v-model:value="email"
               placeholder="请输入您的邮箱..."
               />
             </n-form-item-row>
@@ -107,15 +107,17 @@ const login = () =>{
     alert("用户邮箱或密码不能为空！")
     return;
   }
-
+  console.log( "head:"+axios.defaults.headers.common['Authorization'])
+  console.log("cookie:"+utils.getCookie("Authorization"))
   let a=0;
-    axios.get('/user/info').then(res=>{
+    axios.get('/user/info',{headers:headers}).then(res=>{
       console.log(res.data)
       if(res.data.msg==="成功")
       {
-         alert("用户"+res.data.data.nick+"已登录")
+         alert("用户"+res.data.data.nickname+"已登录")
          a=1;
-         return;}
+         return;
+      }
          else{
             axios.post('/auth/token',{
     'email': email.value,
@@ -126,16 +128,18 @@ const login = () =>{
     console.log(res.data)
     if(res.data.msg==="成功")
     {
+      console.log("登录成功->")
       axios.defaults.headers.common['Authorization'] = res.data.data;
-      axios.get('/user/info').then(res=>{
-        console.log(res.data.data)
-        if(res.data.msg==="成功")
-         alert("欢迎 "+res.data.data.nick)
+      axios.get('/user/info').then(res2=>{
+        console.log(res2.data.data)
+        console.log("登录成功=>")
+        if(res2.data.msg==="成功")
+         alert("欢迎 "+res2.data.data.nickname)
       })
       axios.defaults.headers.common['Authorization'] = res.data.data;
       utils.setCookie('Authorization',res.data.data)
-    console.log(utils.getCookie('Authorization'))
-    router.push('/')
+      console.log(utils.getCookie('Authorization'))
+     router.push('/')
     }
     else{
       alert(res.data.msg)

@@ -11,7 +11,7 @@
     <n-button @click="programView">项目大页面</n-button>
 
     <n-button @click="docuEdit">文档编辑页面</n-button>
-
+    <img src="https://soft2-1251130379.cos.ap-beijing.myqcloud.com/exampleobject.jpg"/>
   </n-space>
 </template>
 
@@ -36,6 +36,8 @@ const logout = () => {
       alert("注销成功")
     }
     else{
+      utils.clearCookie('Authorization')
+      axios.defaults.headers.common['Authorization'] = '';
       alert("用户未登录")
     }
   })
