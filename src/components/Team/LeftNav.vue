@@ -171,8 +171,8 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
-const sideMenuOptions = ref([] as MenuOption[])
-
+const sideMenuOptions = ref([{ID:0}] as MenuOption[])
+let dataList = ref([{ID:0,name:"loading..."}])
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -209,6 +209,7 @@ export default defineComponent({
           .then(res => {
             let array = ref(res.data.data.items)
             console.log(res.data.data.items)
+            dataList.value = res.data.data.items
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
               sideMenuOptions.value.push(
@@ -243,7 +244,10 @@ export default defineComponent({
       getAllTeams,
       sideMenuOptions,
        handleUpdateValue (key: string, item: MenuOption) {
-        alert('[onUpdate:value]: ' + JSON.stringify(key))
+          let index=parseInt(JSON.stringify(key))
+          let out=dataList.value[index].ID
+          emit("ID",out)
+          console.log("send"+out)
        },
       // 个人信息
       profile,
