@@ -1,51 +1,52 @@
 <template>
   <div class="back-g">
-    <n-card id="regis-card">
+    <n-card id="regis-card"
+    >
       <n-tabs
         class="card-tabs"
         default-value="signin"
-        :size="size"
         type="bar"
         animated
         justify-content="space-around"
-        bar-width="200"
-        style=""
-        pane-style="padding-left: 4px; padding-right: 4px; box-sizing: border-box;"
+        tab-style="color:white"
+        pane-style="padding-left: 4px; color:white; padding-right: 4px; box-sizing: border-box;"
         :on-update:value="SwitchState"
       >
         <n-tab-pane name="signin" tab="登录">
-          <n-form>
-            <n-form-item-row label="电子邮箱">
-              <n-input />
+          <n-form content-style="color:white">
+            <n-form-item-row label-style="color:white" label="电子邮箱">
+              <n-input style="width=50%;" v-model:value="email" 
+              placeholder="请输入您的邮箱..."
+              />
             </n-form-item-row>
-            <n-form-item-row label="密码">
-              <n-input />
+            <n-form-item-row label-style="color:white" label="密码">
+              <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
             </n-form-item-row>
           </n-form>
-          <n-button class="logon-button" @click="login" type="primary" block secondary strong>
+          <n-button class="success" @click="login" type="primary" block secondary strong>
             登录
           </n-button>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
-          <n-form>
-            <n-form-item-row label="电子邮箱" >
-              <n-input v-model:value="email" />
+          <n-form >
+            <n-form-item-row label-style="color:white" label="电子邮箱" >
+              <n-input placeholder="请输入正确邮箱" v-model:value="email" />
             </n-form-item-row>
-            <n-form-item-row label="昵称">
-              <n-input v-model:value="nick" />
+            <n-form-item-row label-style="color:white" label="昵称">
+              <n-input placeholder="请输入您的昵称"  v-model:value="nick" />
             </n-form-item-row>
-            <n-form-item-row label="真实姓名">
-              <n-input v-model:value="name" />
+            <n-form-item-row label-style="color:white" label="真实姓名">
+              <n-input placeholder="请输入姓名"  v-model:value="name" />
             </n-form-item-row>
-            <n-form-item-row label="密码" >
-              <n-input v-model:value="password1" />
+            <n-form-item-row label-style="color:white" label="密码" >
+              <n-input placeholder="设置密码"  type="password" v-model:value="password1" />
             </n-form-item-row>
-            <n-form-item-row label="确认密码" >
-              <n-input v-model:value="password2" />
+            <n-form-item-row label-style="color:white" label="确认密码" >
+              <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
             </n-form-item-row>
             
           </n-form>
-          <n-button type="primary" @click="register" block secondary strong> 注册 </n-button>
+          <n-button type="success" text-color="white" @click="register" block secondary strong> 注册 </n-button>
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -62,6 +63,7 @@ let name = ref('');
 let password1 = ref('');
 let password2 = ref('');
 let nick = ref('');
+import utils from '../../Utils'
 
 const register = () =>{
   axios.post('/auth/register',
@@ -69,20 +71,27 @@ const register = () =>{
     'email': email.value,
     'nick': nick.value,
     'name': name.value,
-    'passwd1': password1.value,
-    'passwd2': password2.value,
+    'passwd': password1.value,
     
   }
   ).then(res=>{
     alert(res.data.msg);
+
   })
+}
+const headers = {
+  Authorization: utils.getCookie('Authorization')
 }
 const login = () =>{
   axios.post('/auth/token',{
     'email': email.value,
     'passwd':password1.value
-  }).then(res=>{
+  },{headers:headers}
+  ).then(res=>{
+    console.log(headers)
     console.log(res.data)
+    utils.setCookie('Authorization',res.data.data)
+    console.log(utils.getCookie('Authorization'))
   })
 }
 const SwitchState = (value: string | number) => {

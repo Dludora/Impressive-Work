@@ -1,174 +1,190 @@
 <template>
-    <div class="nav">
-        <div class="logo">This is a logo</div>
-        <div class="UserCard">
-            <div class="pic">
-                {{nickname[0]}}
-            </div>
-            <div class="user">
-                {{nickname}} <br/>
-                <span style="color:rgba(167, 175, 190, 1);font-size:small;">{{email}}</span>
-            </div>
-            <div class="teams">
-                <div class="teamsHead">
-                团队和项目</div>
-                <ul>
-                    
-                    <li  :key="item.id" v-for="(item) in teams">
-                        <div class="li">
-                         <a href="">
-                        <div class="pack">
-                           
-                        <div class="src">
-                        </div>
-                        <div class="TeamName">
-                            {{item.name}}
-                        </div>
-                            
-                        </div>
-                        </a>
-                        </div>
-                    </li>
-                   
-                </ul>
-                <div class="NewTeam">
-                    <a href="">
-                    <div class="plus">
-                        <img src="@/assets/plus.png"/>
-                    </div>
-                    <div class="word">
-                     新建团队
-                    </div>
-                    </a>
-                </div>
-            </div>
-        </div>
+  <div class="nav">
+    <div class="logo">This is a logo</div>
+    <div class="user-info">
+      <div class="avatar">
+        <n-avatar class="pic">
+          {{ nickname[0] }}
+        </n-avatar>
+      </div>
+      <div class="user">
+        <p>{{ nickname }}</p>
+        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ email }}</p>
+      </div>
     </div>
+    <div class="teams">
+      <div class="teamsHead">
+          团队和项目
+        </div>
+      <div class="team">
+        <n-config-provider :theme="theme">
+          <n-menu  :options="menuOptions"/>
+        </n-config-provider>
+      </div>
+      <div class="addTeam">
+        <div class="addImg">
+          <img src="@/assets/plus.png"/>
+        </div>
+        <div class="word">
+          新建团队
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <style scoped>
-.plus {
-    vertical-align: middle;
-    display: inline-block;
-}
-.word{
-    margin-left: 20px;
-    font-size: smaller;
-    display: inline-block;
-}
-.NewTeam a{
-    color: rgba(167, 175, 190, 1);
+.nav {
+  background-color: rgba(43, 48, 59, 1);
+  padding-top: 20px;
+  padding-left: 20px;
 }
 
-.plus img{
-    width: 20px;
-    height: 20px;
-}
-.nav{
-    background-color: rgba(43, 48, 59, 1);
-    height: calc(100%);
-    padding-top: 20px;
-    padding-left: 20px;
-}
-.logo{
-    width: 200px;
-    height: 56px;
-    background-color: rgba(217, 217, 217, 1);
-    text-align: center;
-    line-height: 56px;
-}
-.pic{
-    width: 36px;
-    height: 36px;
-    text-align: center;
-    line-height: 36px;
-    border-radius: 50%;
-    background: skyblue;
-    display: inline-block;
-    vertical-align: top;
-}
-.UserCard{
-    margin-top: 20px;
-
-}
-.card{
-    width: 100%;
-    height: 60px;
-}
-.user{
-    margin-left: 20px;
-    display: inline-block;
-    color: rgba(255, 255, 255, 1);
-    font-size: larger;
-}
-.teams{
-    margin-top: 40px;
-    font-size: large;
-    font-weight: 500;
-    color: white;
-    
+.logo {
+  width: 200px;
+  height: 56px;
+  background-color: rgba(217, 217, 217, 1);
+  text-align: center;
+  line-height: 56px;
 }
 
-.teamsHead{
-font-family: 黑体;
+.user-info {
+  display: flex;
+  width: 100%;
+  height: 70px;
+  margin-top: 30px;
 }
-.src{
-    width: 20px;
-    height: 20px;
-    margin-left: 20px;
-    background-color: bisque;
-    vertical-align: middle;
-    display: inline-block;
-    margin-top: 12px;
-    margin-bottom: 12px;
+
+.avatar {
+  width: 70px;
+  height: 70px;
 }
-.TeamName{
-    margin-left: 24px;
-    display: inline-block;
-    line-height: 20px;
-    vertical-align: middle;
+
+.pic {
+  width: 56px;
+  height: 56px;
+  text-align: center;
+  line-height: 56px;
+  border-radius: 50%;
+  background: skyblue;
+  margin: 7px;
 }
-ul{
-    list-style-type: none;
-    padding-inline-start: 0px;
+
+.user {
+  margin-top: 5px;
+  margin-left: 8px;
+  height: 65px;
+  color: rgba(255, 255, 255, 1);
+  font-size: larger;
 }
-li{
-    
-    margin-left: -20px;
-    
+
+.user p {
+  margin-top: 5px;
 }
-li a{
-    color: white;
+
+.teams {
+  margin-top: 30px;
+  font-size: large;
+  font-weight: 500;
+  color: #E2E4E9;
 }
-a:hover{
-    color: pink;
+
+.teamsHead {
+  font-family: 黑体;
 }
-.NewTeam{
-    color: rgba(167, 175, 190, 1);
+
+.src {
+  width: 20px;
+  height: 20px;
+  margin-left: 20px;
+  background-color: bisque;
+  vertical-align: middle;
+  display: inline-block;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
-.pack:hover{
-    border: 1px rgba(190, 169, 255, 1) solid;
+
+.team {
+  margin-left: -20px;
+}
+
+.TeamName {
+  margin-left: 24px;
+  display: inline-block;
+  line-height: 20px;
+  vertical-align: middle;
+  color: #E2E4E9;
+}
+
+.team:hover .TeamName{
+  color: pink;
+}
+
+.pack:hover {
+  background: #414958;
+}
+
+.addTeam {
+  height: 45px;
+  line-height: 45px;
+  display: flex;
+  margin-right: 10px;
+  margin-left: -10px;
+  color: #E2E4E9;
+}
+
+.addImg {
+  height: 100%;
+  width: 40px;
+  line-height: 45px;
+  text-align: center;
+  margin-right: 15px;
+}
+.addImg img {
+  margin-top: 12px;
+  width: 20px;
+  height: 20px;
+}
+
+.addTeam:hover {
+  color: pink;
+  background: #414958;
+  cursor: pointer;
 }
 </style>
-<script setup lang="ts">
-import {ref } from 'vue'
+<script lang="ts">
+import {ref} from 'vue'
+import { defineComponent, h, Component } from 'vue'
+import {darkTheme, NIcon, useMessage} from 'naive-ui'
+import type { MenuOption } from 'naive-ui'
+import {
+  BookOutline as BookIcon,
+  PersonOutline as PersonIcon,
+  WineOutline as WineIcon
+} from '@vicons/ionicons5'
+import {RouterLink} from "vue-router";
+import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
-let nickname = ref<String>('Loading...')
-let email = ref<String>('email@163.com')
-const teams = ref([
-    {
-        id:1,
-        src:'T',
-        name:'Team'
-    },
-    {
-        id:1,
-        src:'T',
-        name:'Team'
-    },
-    {
-        id:1,
-        src:'T',
-        name:'Team'
+function renderIcon (icon: Component) {
+  return () => h(NIcon, null, { default: () => h(icon) })
+}
+
+export default defineComponent({
+  props: {
+    menuOptions: Array
+  },
+  data() {
+    return { 
+      nickname: ref<String>('Loading...'),
+      email: ref<String>('email@163.com')
     }
-])
+  },
+  setup () {
+    return {
+      theme: darkTheme,
+      // menuOptions,
+    }
+  }
+})
+
+
 </script>

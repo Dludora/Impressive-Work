@@ -10,12 +10,14 @@ import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
-import testVditor from "../views/Document/testVditor.vue";
+import testVditor from "../views/Document/testVditor.vue"
 
 import upBar from "../components/Document/upBar.vue";
-
 import programView from "../views/Document/programView.vue";
 
+import docuList from "../components/Document/docuList.vue";
+
+import docuEdit from "../views/Document/docuEdit.vue";
 
 const routerHistory = createWebHistory()
 // @ts-ignore
@@ -40,7 +42,7 @@ const router = createRouter({
         {
             name: 'team',
             path: '/team',
-            component: () => import("../views/Team/TeamMain.vue"),
+            component: someTeam,
             children: [
                 {
                     name: 'teamProjects',
@@ -58,12 +60,6 @@ const router = createRouter({
                     component: teamSettings
                 },
             ]
-            
-        },
-        {
-            name: 'someTeam',
-            path: '/someTeam',
-            component: someTeam,
         },
         {
             name:'vDitor',
@@ -84,7 +80,41 @@ const router = createRouter({
             name:'programView',
             path:'/programView',
             component: programView
-        }
+        },
+        {
+            name:'docuList',
+            path:'/docuList',
+            component: docuList
+        },
+        {
+            name:'docuEdit',
+            path:'/docuEdit',
+            component: docuEdit,
+        },
+        {
+            name: 'programBig',
+            path: '/programBig',
+            component:  programView,
+            children: [
+            /*
+                {
+                    name: 'layoutPage',
+                    path: '',
+                    component: layoutPage
+                },
+                {
+                    name: 'drawUML',
+                    path: 'drawUML',
+                    component: drawUML
+                },
+             */
+                {
+                    name: 'docuList',
+                    path: '',
+                    component: docuList
+                },
+            ]
+        },
     ]
 })
 export default router

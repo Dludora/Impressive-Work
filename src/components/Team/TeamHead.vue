@@ -19,31 +19,32 @@ let teamData = ref({
 })
 </script>
 <style scoped>
+.Team {
+  height: 70px;
+  position: relative;
+  /*line-height: 70px;*/
+}
 .avator{
-    width: 66px;
-    height: 64px;
-    background: rgba(228, 27, 77, 1);
-    border-radius: 5px;
-    font-size: 48px;
-    color: whitesmoke;
-    text-align: center;
-    line-height: 64px;
-    margin-left: 10%;
-    margin-top: 36px;
-    display: inline-block;
-
+  width: 66px;
+  height: 64px;
+  background: rgba(228, 27, 77, 1);
+  border-radius: 5px;
+  font-size: 48px;
+  color: whitesmoke;
+  text-align: center;
+  line-height: 64px;
+  display: inline-block;
 }
 .name span{
     color:  rgba(65, 73, 88, 1);
-
-
 }
-.name{
-    display: inline-block;
-    color: white;
-    vertical-align: top;
-    margin-left: 20px;
-    margin-top: 15px;
+.name {
+  height: 100%;
+  display: inline-block;
+  color: white;
+  vertical-align: top;
+  margin-left: 20px;
+  margin-top: 5px;
 }
 .name h2{
     vertical-align: top;
