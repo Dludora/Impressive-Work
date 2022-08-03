@@ -18,7 +18,7 @@
           团队和项目
         </div>
         <div class="team">
-          <n-menu :options="sideMenuOptions"/>
+          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
         <div class="addTeam" @click="addTeam">
           <div class="addImg">
@@ -54,7 +54,7 @@ const headers = {
 }
 
 const sideMenuOptions = ref([] as MenuOption[])
-
+let dataList = ref([{ID:0}])
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -87,6 +87,7 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             let array = ref(res.data.data.items)
+            dataList = res.data.data.items
             console.log(res.data.data)
             // console.log(res.data.data.items)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -121,7 +122,9 @@ export default defineComponent({
       addTeam,
       load,
       getAllTeams,
-
+      handleUpdateValue (key: string, item: MenuOption) {
+            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+        },
       // 个人信息
       profile,
       sideMenuOptions,
