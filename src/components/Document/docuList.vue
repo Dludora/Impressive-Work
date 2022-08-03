@@ -29,6 +29,14 @@
             </div>
           </n-grid-item>
         </n-grid>
+
+        <n-pagination
+            v-model:page="page"
+            :page-count="100"
+            size="small"
+            show-quick-jumper
+            show-size-picker
+        />
       </div>
     </div>
 
@@ -98,6 +106,8 @@ import {darkTheme, NIcon, useMessage} from "naive-ui";
 
 import {ref} from "vue";
 import utils from "@/Utils";
+
+let page = ref(2);
 
 let index = 0;
 let proID = ref(0);
