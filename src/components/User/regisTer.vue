@@ -16,17 +16,17 @@
           <div class="form">
             <n-config-provider :theme="theme">
               <n-form content-style="width:50%">
-                <n-form-item-row label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
+                <n-form-item-row label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
                   <n-input v-model:value="email"
                            placeholder="请输入您的邮箱..."
                   />
                 </n-form-item-row>
-                <n-form-item-row label="密码">
+                <n-form-item-row label-style="color:#C4C9D4" label="密码">
                   <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
                 </n-form-item-row>
               </n-form>
-              <n-button class="success" @click="login" type="primary" block strong>
-                登录
+              <n-button type="error" class="logbutton" @click="login" block strong>
+                登 录
               </n-button>
             </n-config-provider>
           </div>
@@ -35,28 +35,28 @@
           <div class="form">
             <n-config-provider :theme="theme">
               <n-form>
-                <n-form-item label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
+                <n-form-item label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
                   <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
                 </n-form-item>
-                <n-form-item label="昵称">
+                <n-form-item label-style="color:#C4C9D4" label="昵称">
                   <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
                 </n-form-item>
-                <n-form-item label="真实姓名">
+                <n-form-item label-style="color:#C4C9D4" label="真实姓名">
                   <n-input placeholder="请输入姓名" v-model:value="name"/>
                 </n-form-item>
-                <n-form-item label="密码" :rule="rulePass" :render-feedback="formatFeedback">
+                <n-form-item label-style="color:#C4C9D4" label="密码" :rule="rulePass" :render-feedback="formatFeedback">
                   <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
                 </n-form-item>
-                <n-form-item-row label="确认密码" :rule="rulePass2" :render-feedback="formatFeedback">
+                <n-form-item-row label-style="color:#C4C9D4" label="确认密码" :rule="rulePass2" :render-feedback="formatFeedback">
                   <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
                 </n-form-item-row>
 
               </n-form>
-              <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block strong>
-                注册
+              <n-button class="logbutton" v-if="password1===password2 " type="success" text-color="white" @click="register" block strong>
+                注 册
               </n-button>
-              <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register"
-                        block strong> 注册
+              <n-button class="logbutton" v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register"
+                        block strong> 注 册
               </n-button>
             </n-config-provider>
           </div>
@@ -258,6 +258,7 @@ span {
   /*color: white;*/
   background: rgba(43, 48, 59, 1);
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  border:none;
 }
 
 logon-button {
@@ -269,6 +270,13 @@ logon-button {
   background: rgba(66, 189, 178, 1);
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
   border-radius: 2px;
+}
+.n-tabs-tab__label{
+  font-weight: 700;
+  font-size: 20px;
+}
+.logbutton{
+  font-size: 16px;
 }
 </style>
 

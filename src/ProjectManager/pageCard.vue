@@ -4,7 +4,7 @@
         </div>
         <div class="bottom">
             <div class="name">{{name}}</div>
-            <Icon size="28" class="del">
+            <Icon size="20" class="del">
                 <CloseRound/>
             </Icon>
         </div>
@@ -34,8 +34,8 @@ export default {
   transition: 0.2s;
 }
 .card{
-    width: 256px;
-    height: 192px;
+    width: 192px;
+    height: 140px;
     background-color: #2B303B;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 3px;
@@ -49,7 +49,7 @@ export default {
 }
 .img{
     width:100%;
-    height: 144px;
+    height: 105px;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 3px 3px 0px 0px;
@@ -59,9 +59,9 @@ export default {
     justify-content: space-between;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding: 0 25px;
-    width:206px;
-    height: 48px;
+    padding: 0 21px;
+    width:150px;
+    height: 35px;
     align-items: center;
 }
 .name{
@@ -69,8 +69,8 @@ export default {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
-    font-size: 24px;
-    line-height: 48px;
+    font-size: 16px;
+    line-height: 35px;
     text-overflow:ellipsis;
 
     overflow:hidden;

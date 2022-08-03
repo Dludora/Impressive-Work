@@ -48,7 +48,7 @@ const router = createRouter({
             children: [
                 {
                     name: 'teamProjects',
-                    path: '',
+                    path: 'teamProjects',
                     component: teamProjects
                 },
                 {
