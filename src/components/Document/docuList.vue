@@ -100,17 +100,41 @@ import {ref} from "vue";
 import utils from "@/Utils";
 
 let index = 0;
-let programID = ref(0);
+let proID = ref(0);
 
 
 //获取项目id
-programID.value=parseInt(utils.getCookie('proID')) ;
+proID.value=parseInt(utils.getCookie('proID')) ;
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
-// 添加文档
+//获取文档列表
+
+const getDocuAbl = (page:number, size:number) =>{
+
+  axios.get('/document/list',{headers:headers,
+      params:
+      {
+        programID: proID,
+        page: page,
+        size: size,
+      }}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(addModelRef.value.addName);
+      console.log("获取文档列表成功");
+
+
+
+      //刷新 渲染
+
+    }
+  })
+}
+
+// 添加文档功能
 
 const addDocuAbl = () =>{
   if(addModelRef.value.addName === '')
@@ -124,12 +148,57 @@ const addDocuAbl = () =>{
         'content': "",
         'title': addModelRef.value.addName,
         'src': null,
-        'programID': programID,
+        'programID': proID,
       }
   ).then(res=>{
     if(res.data.msg==='成功'){
       console.log(addModelRef.value.addName);
       console.log("创建文档成功");
+
+      //刷新 获取文档列表
+
+    }
+  })
+}
+
+// 重命名文档功能
+
+const ediDocuAbl = () =>{
+  if(ediModelRef.value.ediName === '')
+  {
+    alert("文档名不可为空！")
+    return;
+  }
+
+  axios.post('/document/title',
+      {
+        'ID': utils.getCookie('docIndex'),
+        'title': ediModelRef.value.ediName,
+      }
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(ediModelRef.value.ediName);
+      console.log("重命名文档成功");
+
+      //刷新 获取文档列表
+
+    }
+  })
+}
+
+// 删除文档功能
+
+const delDocuAbl = () =>{
+
+  let ID = utils.getCookie('docIndex');
+  let urlll = "/document/" + ID ;
+  console.log("/document/" + ID);
+
+  axios.delete('/document/' + {ID},{headers:headers}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(urlll);
+      console.log("删除文档成功");
 
       //刷新 获取文档列表
 
@@ -151,7 +220,7 @@ const posAdd = () => {
 
   //成功添加文档
 
-  addDocuAbl
+  addDocuAbl();
 
   console.log("成功添加文档");
 
@@ -179,29 +248,6 @@ const addRule = {
   trigger: ['input', 'blur']
 }
 
-// 删除文档
-
-let docIndex: string;
-
-const showDel= ref (false);
-
-function viewDelDocu(ind: number) {
-  utils.setCookie(docIndex,ind);
-  showDel.value = true;
-}
-
-const posDel = () => {
-
-  //成功删除文档 序号: ind
-
-  console.log(utils.getCookie(docIndex));
-
-  showDel.value = false
-}
-
-const negDel = () => {
-  showDel.value = false;
-};
 
 // 重命名文档
 
@@ -210,13 +256,15 @@ const ediFormRef = ref<FormData | null>(null)
 const ediModelRef = ref({ ediName: ""})
 
 function viewEdiDocu(ind: number) {
-  utils.setCookie(docIndex,ind);
+  utils.setCookie('docIndex',documents[ind].ID);
   showEdi.value = true;
 }
 
 const posEdi = () => {
 
   //成功重命名文档
+
+  ediDocuAbl();
 
   console.log(utils.getCookie(docIndex));
   ediModelRef.value.ediName = "";
@@ -243,6 +291,36 @@ const ediRule = {
   trigger: ['input', 'blur']
 }
 
+// 删除文档
+
+let docIndex: string;
+
+const showDel= ref (false);
+
+function viewDelDocu(ind: number) {
+  utils.setCookie('docIndex',documents[ind].ID);
+  showDel.value = true;
+}
+
+const posDel = () => {
+
+  //成功删除文档 序号: ind
+
+  delDocuAbl();
+
+  let ID = utils.getCookie('docIndex');
+
+  console.log("/document/" + ID);
+
+  console.log(utils.getCookie(docIndex));
+
+  showDel.value = false
+}
+
+const negDel = () => {
+  showDel.value = false;
+};
+
 // 打开文档
 
 function openDocu(index: any){
@@ -251,52 +329,13 @@ function openDocu(index: any){
 
 let documents=[
   {
+    ID: 1,
     title: '文档1',
     creatTime: '2022/8/2',
-  },
-  {
-    title: '文档2',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档3',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档4',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档5',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档6',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档7',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档8',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档9',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档10',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档11',
-    creatTime: '2022/8/2',
-  },
-  {
-    title: '文档12',
-    creatTime: '2022/8/2',
+    content: '内容',
+    src: null,
+    mdTime: '2022/8/3',
+    programID:1,
   },
 ]
 
