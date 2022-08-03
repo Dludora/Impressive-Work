@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
-
-import layoutPage from "../components/DesignPage/layoutPage.vue"
+import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";

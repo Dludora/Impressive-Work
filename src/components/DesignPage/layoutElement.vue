@@ -81,6 +81,8 @@ type Props = {
     height: number;
     width: number;
     typeOrSrc: string;
+    locked: boolean;
+    update:boolean;
   };
 };
 
@@ -93,6 +95,8 @@ const props = withDefaults(defineProps<Props>(), {
       width: 0,
       height: 0,
       typeOrSrc: "Rect",
+      locked: false,
+      update:false
     };
   },
 });
@@ -108,15 +112,18 @@ const snapGrid = interact.snappers.grid({
   y: 10,
 });
 
-const position = { x: 0, y: 0 };
+const transform = {id:0, x: 0, y: 0, width:0,height:0 };
 
 interact(`#content${props.elementParams.id}`).draggable({
   listeners: {
     move(event) {
-      position.x += event.dx;
-      position.y += event.dy;
+      if (!props.elementParams.locked) {
+        transform.x += event.dx;
+        transform.y += event.dy;
 
-      event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+        event.target.style.transform = `translate(${transform.x}px, ${transform.y}px)`;
+        updateParams();
+      }
     },
   },
   modifiers: [
@@ -145,28 +152,44 @@ interact(`#content${props.elementParams.id}`).resizable({
   ],
   listeners: {
     move: function (event) {
-      let { x, y } = position;
+      if (!props.elementParams.locked) {
+        let x = transform.x;
+        let y = transform.y;
+        let width = event.rect.width;
+        let height = event.rect.height;
 
-      x = (x || 0) + event.deltaRect.left;
-      y = (y || 0) + event.deltaRect.top;
+        x = (x || 0) + event.deltaRect.left;
+        y = (y || 0) + event.deltaRect.top;
 
-      Object.assign(event.target.style, {
-        width: `${event.rect.width}px`,
-        height: `${event.rect.height}px`,
-        transform: `translate(${x}px, ${y}px)`,
-      });
+        Object.assign(event.target.style, {
+          width: `${width}px`,
+          height: `${height}px`,
+          transform: `translate(${x}px, ${y}px)`,
+        });
 
-      Object.assign(position, { x, y });
+        Object.assign(transform, { x, y });
+        transform.width = event.target.clientWidth;
+        transform.height = event.target.clientHeight;
+        updateParams();
+      }
     },
   },
 });
 
+const emits = defineEmits(["select", "destroy","updateParams"]);
+
+const updateParams = ()=>{
+  emits("updateParams",transform);
+}
+
 const Highlight = () => {
-  if (!selected.value && props.elementParams.typeOrSrc != "text") {
-    gsap.to(`#content${props.elementParams.id}`, {
-      duration: 0.15,
-      borderWidth: "4px",
-    });
+  if (!props.elementParams.locked) {
+    if (!selected.value && props.elementParams.typeOrSrc != "text") {
+      gsap.to(`#content${props.elementParams.id}`, {
+        duration: 0.15,
+        borderWidth: "4px",
+      });
+    }
   }
 };
 
@@ -179,31 +202,33 @@ const UnHighlight = () => {
   }
 };
 
-const emits = defineEmits(["select", "destroy"]);
 let selectEns = false;
 const select = () => {
-  console.log(props.elementParams.id);
-  selected.value = true;
-  if (props.elementParams.typeOrSrc != "text") {
-    gsap.to(`#content${props.elementParams.id}`, {
-      duration: 0.15,
-      borderWidth: "6px",
-    });
-  }
+  if (!props.elementParams.locked) {
+    selected.value = true;
+    if (props.elementParams.typeOrSrc != "text") {
+      gsap.to(`#content${props.elementParams.id}`, {
+        duration: 0.15,
+        borderWidth: "6px",
+      });
+    }
 
-  selectEns = true;
-  emits("select", props.elementParams.id);
-  setTimeout(() => {
-    selectEns = false;
-  }, 500);
+    selectEns = true;
+    emits("select", props.elementParams.id);
+    setTimeout(() => {
+      selectEns = false;
+    }, 500);
+  }
 };
 
 const selectContent = () => {
-  if (selectEns) {
-    switch (props.elementParams.typeOrSrc) {
-      case "text": {
-        textModifying.value = true;
-        break;
+  if (!props.elementParams.locked) {
+    if (selectEns) {
+      switch (props.elementParams.typeOrSrc) {
+        case "text": {
+          textModifying.value = true;
+          break;
+        }
       }
     }
   }
@@ -236,13 +261,12 @@ defineExpose({
 });
 
 onMounted(() => {
-  console.log("mounted");
-  console.log(inputer.value);
   document.getElementById(
     `content${props.elementParams.id}`
   )!.style.transform = `translate(${props.elementParams.x}px, ${props.elementParams.y}px)`;
-  position.x = props.elementParams.x;
-  position.y = props.elementParams.y;
+  transform.x = props.elementParams.x;
+  transform.y = props.elementParams.y;
+  transform.id = props.elementParams.id;
   document.getElementById(
     `content${props.elementParams.id}`
   )!.style.width = `${props.elementParams.width}px`;
@@ -282,14 +306,20 @@ watch(
       exist.value = false;
       return;
     }
+    if(!newVal.update){
+      return;
+    }
     if (document.getElementById(`content${newVal.id}`) == null) {
       return;
     }
     document.getElementById(
       `content${newVal.id}`
     )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
-    position.x = newVal.x;
-    position.y = newVal.y;
+    transform.x = newVal.x;
+    transform.y = newVal.y;
+    transform.width = newVal.width;
+    transform.height = newVal.height;
+    transform.id = newVal.id;
     document.getElementById(
       `content${newVal.id}`
     )!.style.width = `${newVal.width}px`;
