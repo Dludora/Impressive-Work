@@ -30,6 +30,7 @@
           </n-grid-item>
         </n-grid>
 
+        <n-config-provider  :theme="darkTheme">
         <n-pagination
             v-model:page="page"
             :page-count="100"
@@ -37,6 +38,7 @@
             show-quick-jumper
             show-size-picker
         />
+        </n-config-provider>
       </div>
     </div>
 
