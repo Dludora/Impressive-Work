@@ -57,7 +57,9 @@
 import { gsap } from "gsap";
 import axios from 'axios';
 import {ref} from 'vue'
-import { colorPickerLight } from "naive-ui/es/color-picker/styles";
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
 let email = ref('')
 let name = ref('');
 let password1 = ref('');
@@ -79,20 +81,57 @@ const register = () =>{
 
   })
 }
+
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 const login = () =>{
-  axios.post('/auth/token',{
+  
+  if(email.value.length===0||password1.value.length===0){
+    alert("用户邮箱或密码不能为空！")
+    return;
+  }
+
+  let a=0;
+    axios.get('/user/info').then(res=>{
+      console.log(res.data)
+      if(res.data.msg==="成功")
+      {
+         alert("用户"+res.data.data.nick+"已登录")
+         a=1;
+         return;}
+         else{
+            axios.post('/auth/token',{
     'email': email.value,
     'passwd':password1.value
-  },{headers:headers}
+  }
   ).then(res=>{
     console.log(headers)
     console.log(res.data)
-    utils.setCookie('Authorization',res.data.data)
+    if(res.data.msg==="成功")
+    {
+      axios.defaults.headers.common['Authorization'] = res.data.data;
+      axios.get('/user/info').then(res=>{
+        console.log(res.data.data)
+        if(res.data.msg==="成功")
+         alert("欢迎 "+res.data.data.nick)
+      })
+      axios.defaults.headers.common['Authorization'] = res.data.data;
+      utils.setCookie('Authorization',res.data.data)
     console.log(utils.getCookie('Authorization'))
+    router.push('/')
+    }
+    else{
+      alert(res.data.msg)
+    }
+  
+    
   })
+         }
+      })
+    
+  
+
 }
 const SwitchState = (value: string | number) => {
   switch (value) {
