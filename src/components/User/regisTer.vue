@@ -15,7 +15,7 @@
         <n-tab-pane name="signin" tab="登录">
           <n-form content-style="color:white">
             <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input style="width=50%;" v-model:value="email" 
+              <n-input style="width:50%;" v-model:value="email"
               placeholder="请输入您的邮箱..."
               />
             </n-form-item-row>
