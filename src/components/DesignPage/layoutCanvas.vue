@@ -19,12 +19,14 @@
       >
       </layout-element>
     </div>
+    <n-button @click="download"></n-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
+import html2canvas from "html2canvas";
 
 const selected: any = ref(null);
 const selectedId = ref<number>(-1);
@@ -50,28 +52,36 @@ type elementParams = {
   y: number;
   width: number;
   height: number;
-  typeOrSrc: string;
-  update: boolean;
+  type: string;
+  color: string;
+  borderColor: string;
+  src: string;
+  fontSize: number;
   locked: boolean;
 };
 
-type transParam = {
-  id: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+type Prop = {
+  elementProps: elementParams;
 };
+
+const props = defineProps<Prop>();
+
+const emits = defineEmits(["updateProps"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
 
-const updateParams = (data: transParam) => {
-  layoutElementParams[data.id]!.update = false;
+const updateParams = (data: elementParams) => {
+  //layoutElementParams[data.id]!.update = false;
   layoutElementParams[data.id]!.x = data.x;
   layoutElementParams[data.id]!.y = data.y;
   layoutElementParams[data.id]!.width = data.width;
   layoutElementParams[data.id]!.height = data.height;
+  updateProps();
+};
+
+const updateProps = () => {
+  emits("updateProps", layoutElementParams[selectedId.value]);
 };
 
 const select = (id: number) => {
@@ -84,6 +94,7 @@ const select = (id: number) => {
   setTimeout(() => {
     selectEns = false;
   }, 100);
+  updateProps();
 };
 
 const cancelSelect = () => {
@@ -119,8 +130,12 @@ const ProduceElement = (e: MouseEvent) => {
       y: e.clientY - canvasTrans.y,
       width: 200,
       height: 200,
-      typeOrSrc: preparedType,
-      update: true,
+      type: preparedType,
+      color: "red",
+      borderColor: "blue",
+      src: "",
+      fontSize: 20,
+      //update: true,
       locked: false,
     });
     preparedType = "";
@@ -209,7 +224,7 @@ const wheelScale = () => {
       if (layoutElementParams[i] == null) {
         continue;
       }
-      layoutElementParams[i]!.update = true;
+      //layoutElementParams[i]!.update = true;
       layoutElementParams[i]!.x *= scope;
       // (layoutElementParams[i]!.x - e.clientX + canvasTrans.x) * scope +
       // e.clientX -
@@ -231,6 +246,52 @@ const wheelScale = () => {
     document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
     document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   };
+};
+
+watch(
+  () => props.elementProps,
+  (newVal) => {
+    if (selectedId.value < 0) {
+      return;
+    }
+    layoutElementParams[selectedId.value]!.x = newVal.x;
+    layoutElementParams[selectedId.value]!.y = newVal.y;
+    layoutElementParams[selectedId.value]!.width = newVal.width;
+    layoutElementParams[selectedId.value]!.height = newVal.height;
+    layoutElementParams[selectedId.value]!.color = newVal.color;
+    layoutElementParams[selectedId.value]!.borderColor = newVal.borderColor;
+    layoutElementParams[selectedId.value]!.type = newVal.type;
+    layoutElementParams[selectedId.value]!.src = newVal.src;
+    layoutElementParams[selectedId.value]!.fontSize = newVal.fontSize;
+    layoutElementParams[selectedId.value]!.locked = newVal.locked;
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
+
+// let canvas2: any;
+let imgUri:string;
+const download = () => {
+  // canvas2 = document.createElement("canvas");
+
+  // var w = canvasTrans.width;
+  // var h = canvasTrans.height;
+
+  // canvas2.width = w * 4;
+  // canvas2.height = h * 4;
+  // canvas2.style.width = w + "px";
+  // canvas2.style.height = h + "px";
+
+  // var context = canvas2.getContext("2d");
+  // context.scale(4, 4);
+  html2canvas(document.getElementById("canvas")!).then(
+    function (canvas) {
+      imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
+      window.location.href = imgUri;
+    }
+  );
 };
 </script>
 

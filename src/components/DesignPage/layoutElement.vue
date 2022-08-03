@@ -73,17 +73,22 @@ import interact from "interactjs";
 import { gsap } from "gsap";
 import { InputInst } from "naive-ui";
 
+type Params = {
+  id: number;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  type: string;
+  locked: boolean;
+  color: string;
+  borderColor: string;
+  src: string;
+  fontSize: number;
+};
+
 type Props = {
-  elementParams?: {
-    id: number;
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    typeOrSrc: string;
-    locked: boolean;
-    update:boolean;
-  };
+  elementParams?: Params;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -94,9 +99,12 @@ const props = withDefaults(defineProps<Props>(), {
       y: 0,
       width: 0,
       height: 0,
-      typeOrSrc: "Rect",
+      type: "Rect",
       locked: false,
-      update:false
+      fontSize: 0,
+      src: "",
+      color: "red",
+      borderColor: "blue",
     };
   },
 });
@@ -112,7 +120,19 @@ const snapGrid = interact.snappers.grid({
   y: 10,
 });
 
-const transform = {id:0, x: 0, y: 0, width:0,height:0 };
+const transform = {
+  id: -1,
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  type: "Rect",
+  locked: false,
+  fontSize: 0,
+  src: "",
+  color: "red",
+  borderColor: "blue",
+};
 
 interact(`#content${props.elementParams.id}`).draggable({
   listeners: {
@@ -176,15 +196,16 @@ interact(`#content${props.elementParams.id}`).resizable({
   },
 });
 
-const emits = defineEmits(["select", "destroy","updateParams"]);
+const emits = defineEmits(["select", "destroy", "updateParams"]);
 
-const updateParams = ()=>{
-  emits("updateParams",transform);
-}
+const updateParams = () => {
+  console.log(transform);
+  emits("updateParams", transform);
+};
 
 const Highlight = () => {
   if (!props.elementParams.locked) {
-    if (!selected.value && props.elementParams.typeOrSrc != "text") {
+    if (!selected.value && props.elementParams.type != "text") {
       gsap.to(`#content${props.elementParams.id}`, {
         duration: 0.15,
         borderWidth: "4px",
@@ -194,7 +215,7 @@ const Highlight = () => {
 };
 
 const UnHighlight = () => {
-  if (!selected.value && props.elementParams.typeOrSrc != "text") {
+  if (!selected.value && props.elementParams.type != "text") {
     gsap.to(`#content${props.elementParams.id}`, {
       duration: 0.15,
       borderWidth: "0px",
@@ -206,7 +227,7 @@ let selectEns = false;
 const select = () => {
   if (!props.elementParams.locked) {
     selected.value = true;
-    if (props.elementParams.typeOrSrc != "text") {
+    if (props.elementParams.type != "text") {
       gsap.to(`#content${props.elementParams.id}`, {
         duration: 0.15,
         borderWidth: "6px",
@@ -224,7 +245,7 @@ const select = () => {
 const selectContent = () => {
   if (!props.elementParams.locked) {
     if (selectEns) {
-      switch (props.elementParams.typeOrSrc) {
+      switch (props.elementParams.type) {
         case "text": {
           textModifying.value = true;
           break;
@@ -237,7 +258,7 @@ const selectContent = () => {
 const UnSelect = () => {
   selected.value = false;
 
-  switch (props.elementParams.typeOrSrc) {
+  switch (props.elementParams.type) {
     case "text": {
       console.log(text.value == "");
       if (text.value == "") {
@@ -261,19 +282,8 @@ defineExpose({
 });
 
 onMounted(() => {
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.transform = `translate(${props.elementParams.x}px, ${props.elementParams.y}px)`;
-  transform.x = props.elementParams.x;
-  transform.y = props.elementParams.y;
-  transform.id = props.elementParams.id;
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.width = `${props.elementParams.width}px`;
-  document.getElementById(
-    `content${props.elementParams.id}`
-  )!.style.height = `${props.elementParams.height}px`;
-  switch (props.elementParams.typeOrSrc) {
+  ResetTrans(props.elementParams)
+  switch (props.elementParams.type) {
     case "circle": {
       document.getElementById(
         `content${props.elementParams.id}`
@@ -306,32 +316,53 @@ watch(
       exist.value = false;
       return;
     }
-    if(!newVal.update){
-      return;
-    }
     if (document.getElementById(`content${newVal.id}`) == null) {
       return;
     }
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
-    transform.x = newVal.x;
-    transform.y = newVal.y;
-    transform.width = newVal.width;
-    transform.height = newVal.height;
-    transform.id = newVal.id;
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.width = `${newVal.width}px`;
-    document.getElementById(
-      `content${newVal.id}`
-    )!.style.height = `${newVal.height}px`;
+    ResetTrans(newVal);
   },
   {
     deep: true,
     immediate: true,
   }
 );
+
+const ResetTrans = (newVal:Params) => {
+  document.getElementById(
+      `content${newVal.id}`
+    )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
+    transform.x = newVal.x;
+    transform.y = newVal.y;
+    transform.width = newVal.width;
+    transform.height = newVal.height;
+    document.getElementById(
+      `content${newVal.id}`
+    )!.style.width = `${newVal.width}px`;
+    document.getElementById(
+      `content${newVal.id}`
+    )!.style.height = `${newVal.height}px`;
+    transform.id = newVal.id;
+    transform.type = newVal.type;
+    transform.color = newVal.color;
+    document.getElementById(`content${newVal.id}`)!.style.backgroundColor = newVal.color;
+    transform.borderColor = newVal.borderColor;
+    document.getElementById(`content${newVal.id}`)!.style.borderColor =
+      newVal.borderColor;
+    transform.src = newVal.src;
+    if (newVal.src == "" || newVal.src == "none") {
+      document.getElementById(`content${newVal.id}`)!.style.backgroundColor =
+        "none";
+    } else {
+      document.getElementById(
+        `content${newVal.id}`
+      )!.style.backgroundColor = `url(\"${newVal.src}\")`;
+    }
+    transform.fontSize = newVal.fontSize;
+    document.getElementById(
+      `content${newVal.id}`
+    )!.style.fontSize = `${newVal.fontSize}px`;
+    transform.locked = newVal.locked;
+};
 </script>
 
 <style scoped>
