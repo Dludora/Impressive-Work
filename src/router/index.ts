@@ -100,7 +100,7 @@ const router = createRouter({
             children: [
                 {
                     name: 'prototypes',
-                    path: 'prototypes',
+                    path: '',
                     component: prototypes
                 },
                 // {
@@ -110,7 +110,7 @@ const router = createRouter({
                 // },
                 {
                     name: 'docuList',
-                    path: '',
+                    path: 'docuList',
                     component: docuList
                 },
             ]

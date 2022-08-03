@@ -29,8 +29,8 @@ export default {
   mounted() {
 
     this.contentEditor = new Vditor('vditor', { //4.刚刚声明的变量contentEditor被赋值为一个Vditor实例,
-      height: 500,
-      width: 800,
+      height: 700,
+      width: 1168,
       placeholder: '此处为话题内容……',
       theme: 'light',
 

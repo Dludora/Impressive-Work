@@ -88,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios';
 import {Add} from "@vicons/ionicons5";
 import {Edit} from "@vicons/tabler";
 import {Delete48Regular} from "@vicons/fluent";
@@ -267,10 +268,10 @@ let documents=[
 
 .big-contain{
   position: relative;
-  top: 10px;
+  top: 3%;
   width: fit-content;
-  min-height: 100%;
-  left: 2%;
+  min-height: min-content;
+  left: 0%;
 }
 
 .docu-all{
