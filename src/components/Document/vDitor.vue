@@ -119,8 +119,8 @@ export default {
       console.log(window.getSelection().getRangeAt(0));
     },
 
-    setContent(){
-      this.contentEditor.setValue("测试内容");
+    setContent(a){
+      this.contentEditor.setValue(a);
     },
 
     // 我的提交表单代码大致如下,这段代码核心是this.ruleForm.content = this.contentEditor.getValue()

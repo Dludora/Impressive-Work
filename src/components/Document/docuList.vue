@@ -14,7 +14,7 @@
         </n-button>
       </div>
       </n-config-provider>
-      <div class="items">
+      <div id="docuITEMS" class="items"  :key="docuitemKey">
         <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
           <n-grid-item v-for="(document,ind) in documents" :key="document">
             <div class="docu-item">
@@ -106,13 +106,33 @@ import {Icon} from "@vicons/utils";
 
 import {darkTheme, NIcon, useMessage} from "naive-ui";
 
+import VueRouter from 'vue-router';
+
 import {ref} from "vue";
 import utils from "@/Utils";
+import router from "@/router";
 
 let page = ref(2);
 
+//强制刷新页面
+let docuitemKey = 0;
+
 let index = 0;
 let proID = ref(0);
+
+//文档项目
+
+let documents=[
+  {
+    ID: 9,
+    title: '文档1',
+    creatTime: '2022/8/2',
+    content: '内容',
+    src: null,
+    mdTime: '2022/8/3',
+    programID:1,
+  },
+]
 
 
 //获取项目id
@@ -129,7 +149,7 @@ const getDocuAbl = (page:number, size:number) =>{
   axios.get('/document/list',{headers:headers,
       params:
       {
-        programID: proID,
+        programID: 1, // proID.value,
         page: page,
         size: size,
       }}
@@ -138,10 +158,9 @@ const getDocuAbl = (page:number, size:number) =>{
       console.log(addModelRef.value.addName);
       console.log("获取文档列表成功");
 
+      documents = res.data.data.items;
 
-
-      //刷新 渲染
-
+      //强制渲染
     }
   })
 }
@@ -160,7 +179,7 @@ const addDocuAbl = () =>{
         'content': "",
         'title': addModelRef.value.addName,
         'src': null,
-        'programID': proID,
+        'programID': 1,//proID.value
       }
   ).then(res=>{
     if(res.data.msg==='成功'){
@@ -206,7 +225,7 @@ const delDocuAbl = () =>{
   let urlll = "/document/" + ID ;
   console.log("/document/" + ID);
 
-  axios.delete('/document/' + {ID},{headers:headers}
+  axios.delete('/document/' + ID,{headers:headers}
   ).then(res=>{
     if(res.data.msg==='成功'){
       console.log(urlll);
@@ -336,20 +355,19 @@ const negDel = () => {
 // 打开文档
 
 function openDocu(index: any){
+
+  //获取文档内容
+
+  utils.setCookie('editDocID',documents[index].ID);
+  utils.setCookie('DocTitle',"测试标题！");
+  utils.setCookie('DocContent',"测试你！");
+
+  router.push("/docuEdit");
+  console.log(documents[index].ID);
   console.log(index);
 }
 
-let documents=[
-  {
-    ID: 1,
-    title: '文档1',
-    creatTime: '2022/8/2',
-    content: '内容',
-    src: null,
-    mdTime: '2022/8/3',
-    programID:1,
-  },
-]
+
 
 </script>
 
