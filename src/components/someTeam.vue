@@ -25,20 +25,22 @@ import LeftNav from "./Team/LeftNav.vue"
 import TeamHead from "./Team/TeamHead.vue"
 
 import {ref, h, Component, defineComponent} from 'vue'
-import {NIcon, useMessage} from "naive-ui";
+import {NIcon, useMessage, useDialog} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
+
 import {RouterLink} from "vue-router";
 
-import {  PersonOutline as PersonIcon} from "@vicons/ionicons5"
+import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 
-function renderIcon (icon: Component) {
+function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
+
 const menuOptions: MenuOption[] = [
   {
     label: () =>
@@ -49,7 +51,7 @@ const menuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '项目' }
+            {default: () => '项目'}
         ),
     key: 'go-to-projects',
     icon: renderIcon(Project)
@@ -64,10 +66,10 @@ const menuOptions: MenuOption[] = [
                 path: 'teamMembers'
               },
             },
-            { default: () => '成员' }
+            {default: () => '成员'}
         ),
-      key: 'go-to-members',
-      icon: renderIcon(PersonIcon)
+    key: 'go-to-members',
+    icon: renderIcon(PersonIcon)
   },
   {
     label: () =>
@@ -78,7 +80,7 @@ const menuOptions: MenuOption[] = [
                 name: 'teamSettings',
               }
             },
-            { default: () => '设置' }
+            {default: () => '设置'}
         ),
     key: 'go-to-settings',
     icon: renderIcon(Settings)
@@ -94,7 +96,7 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '团队一' }
+            {default: () => '团队一'}
         ),
     key: '1',
     icon: renderIcon(Team)
@@ -108,7 +110,7 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '团队二' }
+            {default: () => '团队二'}
         ),
     key: '2',
     icon: renderIcon(Team)
@@ -122,7 +124,7 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '团队三' }
+            {default: () => '团队三'}
         ),
     key: '3',
     icon: renderIcon(Team)
@@ -136,7 +138,7 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '团队四' }
+            {default: () => '团队四'}
         ),
     key: '4',
     icon: renderIcon(Team)
@@ -150,7 +152,7 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => '团队五' }
+            {default: () => '团队五'}
         ),
     key: '5',
     icon: renderIcon(Team)
@@ -164,9 +166,9 @@ const sideMenuOptions: MenuOption[] = [
                 path: '/team'
               }
             },
-            { default: () => ['团队六', {
-
-              } ]}
+            {
+              default: () => ['团队六', {}]
+            }
         ),
     key: '6',
     icon: renderIcon(Team)
@@ -177,7 +179,8 @@ export default defineComponent({
     LeftNav,
     TeamHead
   },
-  setup () {
+  setup() {
+    const showModalRef = ref(false)
     return {
       theme: darkTheme,
       menuOptions,
@@ -207,6 +210,7 @@ export default defineComponent({
 .n-layout-content {
   background: #16181D;
 }
+
 .menu {
   margin-left: 30px;
 }
