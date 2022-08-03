@@ -1,5 +1,5 @@
 <template>
-  <n-layout has-sider native-scrollbar="false">
+  <n-layout has-sider native-scrollbar="false" style="overflow: hidden">
 
     <n-layout-sider content-style="padding: 0;">
       <LeftNav :menu-options="sideMenuOptions"/>
@@ -70,7 +70,6 @@ const menuOptions: MentionOption[] = [
         ),
     key: 'toLayout',
     icon: renderIcon(Brush),
-    disabled: true,
   },
   {
     label: () =>
@@ -212,6 +211,7 @@ const sideMenuOptions: MenuOption[] = [
 
 .n-layout-content {
   background: #16181D;
+  height: calc(100%);
 }
 .big-bg{
   position: absolute;
