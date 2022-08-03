@@ -13,9 +13,10 @@
         :on-update:value="SwitchState"
       >
         <n-tab-pane name="signin" tab="登录">
-          <n-form content-style="color:white">
+          <div class="form">
+          <n-form content-style="color:white;width:50%">
             <n-form-item-row label-style="color:white" label="电子邮箱">
-              <n-input style="width=50%;" v-model:value="email" 
+              <n-input style="width:50%;" v-model:value="email"
               placeholder="请输入您的邮箱..."
               />
             </n-form-item-row>
@@ -23,11 +24,13 @@
               <n-input type="password" placeholder="请输入密码" v-model:value="password1" />
             </n-form-item-row>
           </n-form>
-          <n-button class="success" @click="login" type="primary" block secondary strong>
+          <n-button class="success" @click="login" type="primary" block  strong>
             登录
           </n-button>
+          </div>
         </n-tab-pane>
         <n-tab-pane name="signup" tab="注册">
+          <div class="form">
           <n-form >
             <n-form-item-row label-style="color:white" label="电子邮箱" >
               <n-input placeholder="请输入正确邮箱" v-model:value="email" />
@@ -44,9 +47,12 @@
             <n-form-item-row label-style="color:white" label="确认密码" >
               <n-input placeholder="再次输入密码" type="password" v-model:value="password2" />
             </n-form-item-row>
+            <span v-if="password1!=password2 && password1!=''&&password2!=''">两次输入密码不一致！</span>
             
           </n-form>
-          <n-button type="success" text-color="white" @click="register" block secondary strong> 注册 </n-button>
+          <n-button v-if="password1===password2 " type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+          <n-button v-if="password1!=password2 " disabled="true" type="success" text-color="white" @click="register" block  strong> 注册 </n-button>
+          </div>
         </n-tab-pane>
       </n-tabs>
     </n-card>
@@ -57,7 +63,9 @@
 import { gsap } from "gsap";
 import axios from 'axios';
 import {ref} from 'vue'
-import { colorPickerLight } from "naive-ui/es/color-picker/styles";
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
 let email = ref('')
 let name = ref('');
 let password1 = ref('');
@@ -66,6 +74,16 @@ let nick = ref('');
 import utils from '../../Utils'
 
 const register = () =>{
+  if(email.value===''||nick.value===''||name.value==='')
+  {
+    alert("信息不可为空！")
+    return;
+  }
+  if(password1.value===''||password2.value==='')
+  {
+    alert("密码不可为空！")
+    return;
+  }
   axios.post('/auth/register',
   {
     'email': email.value,
@@ -76,23 +94,60 @@ const register = () =>{
   }
   ).then(res=>{
     alert(res.data.msg);
-
+    router.go(0)
   })
 }
+
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 const login = () =>{
-  axios.post('/auth/token',{
+  
+  if(email.value.length===0||password1.value.length===0){
+    alert("用户邮箱或密码不能为空！")
+    return;
+  }
+
+  let a=0;
+    axios.get('/user/info').then(res=>{
+      console.log(res.data)
+      if(res.data.msg==="成功")
+      {
+         alert("用户"+res.data.data.nick+"已登录")
+         a=1;
+         return;}
+         else{
+            axios.post('/auth/token',{
     'email': email.value,
     'passwd':password1.value
-  },{headers:headers}
+  }
   ).then(res=>{
     console.log(headers)
     console.log(res.data)
-    utils.setCookie('Authorization',res.data.data)
+    if(res.data.msg==="成功")
+    {
+      axios.defaults.headers.common['Authorization'] = res.data.data;
+      axios.get('/user/info').then(res=>{
+        console.log(res.data.data)
+        if(res.data.msg==="成功")
+         alert("欢迎 "+res.data.data.nick)
+      })
+      axios.defaults.headers.common['Authorization'] = res.data.data;
+      utils.setCookie('Authorization',res.data.data)
     console.log(utils.getCookie('Authorization'))
+    router.push('/')
+    }
+    else{
+      alert(res.data.msg)
+    }
+  
+    
   })
+         }
+      })
+    
+  
+
 }
 const SwitchState = (value: string | number) => {
   switch (value) {
@@ -115,9 +170,15 @@ const SwitchState = (value: string | number) => {
 </script>
 
 <style scoped>
+.form{
+  width: 80%;
+  padding-left: 10%;
+  padding-right: 10%;
+  text-align: center;
 
+}
 .card-tabs .n-tabs-nav--bar-type {
-  padding-left: 4px;
+  padding-left: 4px; 
   color: aliceblue;
 }
 .card-tabs{
