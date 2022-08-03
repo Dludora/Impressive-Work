@@ -18,7 +18,7 @@
           团队和项目
         </div>
         <div class="team">
-          <n-menu :options="sideMenuOptions"/>
+          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
         <div class="addTeam" @click="addTeam">
           <div class="addImg">
@@ -28,10 +28,128 @@
             新建团队
           </div>
         </div>
+        {{ pageNum }}
+        <n-pagination v-model:page="currentPage"
+                      :page-count="pageNum"
+                      show-quick-jumper
+                      :page-slot="3" size="small"
+                      :on-update:page="changePage"
+                      id="pagination">
+          <template #goto>
+            请回答
+          </template>
+        </n-pagination>
       </div>
     </div>
   </n-config-provider>
 </template>
+
+<script lang="ts">
+import {onMounted, reactive, ref} from 'vue'
+import {defineComponent, h, Component} from 'vue'
+import {darkTheme, NIcon, useMessage} from 'naive-ui'
+import type {MenuOption} from 'naive-ui'
+import {RouterLink} from "vue-router";
+import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import axios from "axios";
+import utils from "@/Utils";
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+const sideMenuOptions = ref([] as MenuOption[])
+let dataList = ref([{ID:0}])
+function renderIcon(icon: Component) {
+  return () => h(NIcon, null, {default: () => h(icon)})
+}
+
+export default defineComponent({
+  data() {
+    return {}
+  },
+  setup(props, {emit}) {
+    const profile = ref({
+      ID: null,
+      email: "",
+      id: null,
+      name: "",
+      nickname: "",
+      src: ""
+    })
+    const total = ref(0)
+    const currentPage = ref(0)
+    const pageNum = ref(0)
+    const addTeam = () => {
+      emit('addTeam');
+    }
+    const load = () => {
+      axios.get('user/info', {headers: headers}).then(res => {
+        profile.value = res.data.data
+      })
+    }
+    const getAllTeams = (page: number, size: number) => {
+      axios.get('/team/list',
+          {headers: headers, params: {page: page, size: size}})
+          .then(res => {
+            let array = ref(res.data.data.items)
+            dataList = res.data.data.items
+            console.log(res.data.data)
+            // console.log(res.data.data.items)
+            total.value = res.data.data.total
+            pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
+            sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
+            for (let i = 0; i < array.value.length; i++) {
+              sideMenuOptions.value.push(
+                  {
+                    label: () =>
+                        h(
+                            RouterLink,
+                            {
+                              to: {
+                                path: '/team'
+                              }
+                            },
+                            {default: () => array.value[i].name}
+                        ),
+                    key: i,
+                    icon: renderIcon(Team)
+                  }
+              )
+            }
+          })
+    }
+    const changePage = (page: number) => {
+      getAllTeams(page-1, 8)
+    }
+    onMounted(async () => {
+      load()
+      getAllTeams(0, 8)
+    })
+
+    return {
+      theme: darkTheme,
+      addTeam,
+      load,
+      getAllTeams,
+      handleUpdateValue (key: string, item: MenuOption) {
+            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+        },
+      changePage,
+      // 个人信息
+      profile,
+      sideMenuOptions,
+
+      // 分页
+      currentPage,
+      total,
+      pageNum,
+    }
+  },
+})
+
+</script>
+
 <style scoped>
 .nav {
   background-color: rgba(43, 48, 59, 1);
@@ -151,93 +269,9 @@
   background: #414958;
   cursor: pointer;
 }
-</style>
-<script lang="ts">
-import {ref} from 'vue'
-import {defineComponent, h, Component} from 'vue'
-import {darkTheme, NIcon, useMessage} from 'naive-ui'
-import type {MenuOption} from 'naive-ui'
-import {
-  BookOutline as BookIcon,
-  PersonOutline as PersonIcon,
-  WineOutline as WineIcon
-} from '@vicons/ionicons5'
-import {RouterLink} from "vue-router";
-import {PeopleTeam16Filled as Team} from "@vicons/fluent"
-import axios from "axios";
 
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, {default: () => h(icon)})
+#pagination {
+  position: absolute;
+  top: calc(100% - 80px);
 }
-
-let sideMenuOptions: MenuOption[] = []
-
-
-export default defineComponent({
-  data() {
-    return {
-      profile: {
-        ID: null,
-        email: "",
-        id: null,
-        name: "",
-        nickname: "",
-        src: ""
-      },
-      total: 0,
-    }
-  },
-  methods: {
-    load() {
-      axios.get('user/info').then(res => {
-        this.profile = res.data.data
-        console.log(this.profile)
-      })
-    },
-    getAllTeams() {
-      axios.get('/team/list',
-          {params: {page: 0, size: 5}})
-          .then(res => {
-            let array = ref(res.data.data.items)
-            console.log(array)
-            for (let i = 0; i < array.value.length; i++) {
-              sideMenuOptions.push(
-                  {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                              to: {
-                                path: '/team'
-                              }
-                            },
-                            {default: () => '傻子'}
-                        ),
-                    key: i,
-                    icon: renderIcon(Team)
-                  }
-              )
-            }
-          })
-    }
-  },
-  setup(props, {emit}) {
-    function addTeam() {
-      emit('addTeam');
-    }
-
-    return {
-      theme: darkTheme,
-      addTeam,
-      sideMenuOptions,
-    }
-  },
-  mounted() {
-    this.load();
-    this.getAllTeams();
-
-  }
-})
-
-
-</script>
+</style>

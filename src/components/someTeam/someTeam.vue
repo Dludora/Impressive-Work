@@ -1,7 +1,7 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
@@ -57,7 +57,11 @@ import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import utils from "@/Utils";
 
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -71,6 +75,7 @@ let profile = {
   nickname: "",
   src: ""
 }
+
 let menuOptions: MenuOption[] = [
   {
     label: () =>
@@ -128,6 +133,10 @@ export default defineComponent({
       name: "",
       description: "",
     })
+    const getID = (msg:any) =>{
+        alert("father get:"+msg)
+      
+    }
     const ruleName = {
       required: true,
       validator() {
@@ -144,27 +153,32 @@ export default defineComponent({
     const ruleDescription = {
       required: false,
     }
+    const getChildList = ref()
+    const onNegativeClick = () => {
+      showModalRef.value = false
+    }
+    const onPositiveClick = () => {
+      showModalRef.value = false
+      axios.post('/team', {
+        'name': modelRef.value.name,
+        'src': profile.src,
+        'introduction': modelRef.value.description
+      }, {headers: headers}).then(res => {
+        console.log(res)
+        getChildList.value.getAllTeams(0, 8)
+        modelRef.value.name = ""
+        modelRef.value.description = ""
+      })
+    }
     return {
       theme: darkTheme,
       menuOptions,
-
-
+      getChildList,
       // 横态框
       showModal: showModalRef,
-      onNegativeClick() {
-        showModalRef.value = false
-      },
-      onPositiveClick() {
-        showModalRef.value = false
-        axios.post('/team', {
-          'name': modelRef.value.name,
-          'src': profile.src,
-          'introduction': modelRef.value.description
-        }).then(res => {
-          console.log(res)
-        })
-      },
-
+      onNegativeClick,
+      onPositiveClick,
+      getID,
       // 表单验证
       ruleDescription,
       ruleName,
@@ -177,9 +191,8 @@ export default defineComponent({
   },
   methods: {
     load() {
-      axios.get('user/info').then(res => {
+      axios.get('user/info', {headers: headers}).then(res => {
         profile = res.data.data
-        console.log(profile)
       })
     },
   },
