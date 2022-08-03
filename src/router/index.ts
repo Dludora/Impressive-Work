@@ -2,8 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
-
-import layoutPage from "../components/DesignPage/layoutPage.vue"
+import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import someTeam from "../components/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
@@ -18,7 +17,7 @@ import programView from "../views/Document/programView.vue";
 
 import docuList from "../components/Document/docuList.vue";
 
-
+import docuEdit from "../views/Document/docuEdit.vue";
 
 const routerHistory = createWebHistory()
 // @ts-ignore
@@ -88,6 +87,11 @@ const router = createRouter({
             component: docuList
         },
         {
+            name:'docuEdit',
+            path:'/docuEdit',
+            component: docuEdit,
+        },
+        {
             name: 'programBig',
             path: '/programBig',
             component:  programView,
@@ -110,7 +114,6 @@ const router = createRouter({
                     component: docuList
                 },
             ]
-
         },
     ]
 })

@@ -1,34 +1,39 @@
 <template>
-  <div class="big-contain">
-    <div>
-      <p class="docu-all">
-        管理你的 {{ documents.length }} 个文档
-      </p>
-      <n-button icon-placement="right" class="docu-add">
-        新建文档
-        <template #icon>
-          <n-icon ><Add /></n-icon>
-        </template>
-      </n-button>
-    </div>
-    <div class="items">
-      <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
-        <n-grid-item v-for="document in documents" :key="document">
-          <div class="docu-item">
-            <div class="docu-cover">
-              <div class="docu-cover-word">文档简介</div>
-              <Icon id="edi" size="24"><Edit /></Icon>
-              <Icon id="del" size="24"><Delete48Regular /></Icon>
+
+    <div class="big-contain">
+      <n-config-provider  :theme="darkTheme">
+      <div>
+        <p class="docu-all">
+          管理你的 {{ documents.length }} 个文档
+        </p>
+        <n-button icon-placement="right" class="docu-add">
+          新建文档
+          <template #icon>
+            <n-icon ><Add /></n-icon>
+          </template>
+        </n-button>
+      </div>
+      </n-config-provider>
+      <div class="items">
+        <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
+          <n-grid-item v-for="(document,ind) in documents" :key="document">
+            <div class="docu-item">
+              <div class="docu-cover">
+                <div class="docu-cover-word">文档简介</div>
+                <Icon id="edi" size="24"><Edit /></Icon>
+                <Icon id="del" size="24"><Delete48Regular /></Icon>
+              </div>
+              <div class="docu-title" @click="openDocu(ind)">
+                {{document.title}}
+              </div>
             </div>
-            <div class="docu-title">
-              {{document.title}}
-            </div>
-          </div>
-        </n-grid-item>
-      </n-grid>
+          </n-grid-item>
+        </n-grid>
+      </div>
     </div>
 
-  </div>
+
+
 </template>
 
 <script setup lang="ts">
@@ -36,6 +41,12 @@ import {Add} from "@vicons/ionicons5";
 import {Edit} from "@vicons/tabler";
 import {Delete48Regular} from "@vicons/fluent";
 import {Icon} from "@vicons/utils";
+
+import {darkTheme, NIcon} from "naive-ui";
+
+function openDocu(index: any){
+  console.log(index);
+}
 
 let documents=[
   {
@@ -109,12 +120,14 @@ let documents=[
   left: 50px;
   top: 10px;
 
+  display: inline-block;
+
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-size: 24px;
   line-height: 29px;
-  display: flex;
+
   align-items: center;
 
   color: #414958;
@@ -127,7 +140,7 @@ let documents=[
   width: 150px;
   height: 32px;
   left: 925px;
-  top: 16px;
+  top: 5px;
 
   border: 1px solid #A7AFBE;
   border-radius: 2px;
@@ -152,7 +165,7 @@ let documents=[
   display: flex;
 
   background: #E2E4E9;
-  border-right: 8px solid #414958;
+  border-right: 16px solid #414958;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
