@@ -232,7 +232,7 @@ export default defineComponent({
       sideMenuOptions,
     }
   },
-  created() {
+  mounted() {
     this.load();
     this.getAllTeams();
 
