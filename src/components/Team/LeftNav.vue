@@ -2,7 +2,7 @@
   <n-config-provider :theme="theme">
     <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
   <div class="nav">
-    <div class="logo">This is a logo</div>
+    <div class="logo" @click="toMain">墨书</div>
     <div class="user-info">
       <div class="avatar">
         <n-avatar class="pic">
@@ -55,6 +55,7 @@ import {RouterLink} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import axios from "axios";
 import utils from "@/Utils";
+import router from '@/router';
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -71,6 +72,9 @@ export default defineComponent({
     return {}
   },
   setup(props, {emit}) {
+    const toMain=()=>{
+      router.push("/")
+    }
     const profile = ref({
       ID: null,
       email: "",
@@ -132,6 +136,7 @@ export default defineComponent({
     return {
       theme: darkTheme,
       addTeam,
+      toMain,
       load,
       getAllTeams,
       handleUpdateValue (key: string, item: MenuOption) {

@@ -8,10 +8,10 @@
             <p id="team">
               {{ project.name }}
               <Icon id="edit" size="20">
-                <Edit @click="displayMedal"/>
+                <Edit @click="displayMedal(project.ID)"/>
               </Icon>
               <Icon id="del" size="25">
-                <Close @click="displayDel"/>
+                <Close @click="displayDel(project.ID)"/>
               </Icon>
             </p>
             <p id="time">创建于 {{ project.createTime }}</p>
@@ -134,10 +134,10 @@ onMounted(()=>{
 const ruleAdd = {
   required: true,
   validator() {
-    if (modelRef.value.name.length === 0) {
+    if (modelAddRef.value.name.length === 0) {
       return new Error("新项目名不能为空!")
     } else {
-      if (modelRef.value.name.length >= 8) {
+      if (modelAddRef.value.name.length >= 8) {
         return new Error("新项目名长度不能大于8!")
       }
     }
@@ -147,7 +147,8 @@ const ruleAdd = {
 
 // 操作dialog
 // 重命名
-const displayMedal = () => {
+const displayMedal = (ID) => {
+  opID.value=ID
   showModalRef.value = true
 }
 
@@ -157,12 +158,40 @@ const onNegativeClick = () => {
 };
 
 const onPositiveClick = () => {
+  console.log("修改："+opID.value)
+  if(modelRef.value.name.length===0){
+    alert("项目名称不能为空～")
+    return;
+  }
+  axios.put("/program",{
+    "ID":opID.value,
+    "src": "src",
+    "name":modelRef.value.name
+  },{headers:headers}).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功"){
+      alert("修改成功")
+      for(let i=0 ;i<projects.value.length;i++){
+        if(projects.value[i].ID===opID.value)
+        {
+          projects.value[i].name=modelRef.value.name
+          break;
+        }
+      }
+    }
+    else{
+      alert("修改失败")
+    }
+  })
   showModalRef.value = false
 }
 
 // 删除项目
 let delRef = ref(false)
-const displayDel = () => {
+let opID = ref()
+const displayDel = (ID)=> {
+  console.log(ID)
+  opID.value  =ID
   delRef.value = true
 }
 
@@ -171,6 +200,17 @@ const onNegativeClickDel = () => {
 };
 
 const onPositiveClickDel = () => {
+  let deleUrl = '/program/'+opID.value
+  console.log(deleUrl)
+  axios.delete(deleUrl,{headers:headers}).then(res=>{
+    console.log(res.data)
+    for(let i=0;i<projects.value.length;i++){
+      if(projects.value[i].ID===opID.value){
+        projects.value.splice(i,1)
+      }
+    }
+    alert("删除成功！")
+  })
   delRef.value = false
 }
 
@@ -210,6 +250,11 @@ const onNegativeAddClick = () => {
 };
 
 const onPositiveAddClick = () => {
+  if(modelAddRef.value.name.length===0)
+  {
+    alert("项目名称不能为空！")
+    return
+  }
   axios.post('/program',{
     'teamID':teamID.value,
     "src":"what the fuck photos",

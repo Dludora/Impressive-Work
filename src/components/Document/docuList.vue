@@ -15,16 +15,20 @@
       </div>
       </n-config-provider>
       <div id="docuITEMS" class="items"  :key="docuitemKey">
-        <n-grid :x-gap="35" :y-gap="0" cols="6" responsive="screen" >
-          <n-grid-item v-for="(document,ind) in documents" :key="document">
+        <n-grid :x-gap="70" :y-gap="12" cols="5" responsive="screen" >
+          <n-grid-item v-for="document in documents" :key="document">
             <div class="docu-item">
               <div class="docu-cover">
-                <div class="docu-cover-word">文档简介</div>
-                <Icon id="edi" size="24" @click="viewEdiDocu(ind)"><Edit /></Icon>
-                <Icon id="del" size="24" @click="viewDelDocu(ind)"><Delete48Regular /></Icon>
+
               </div>
-              <div class="docu-title" @click="openDocu(ind)" style="cursor: pointer">
-                {{document.title}}
+              <div class="docu-title" >
+
+
+                <p @click="openDocu(document.ID)" style="cursor: pointer;width: 80px;position: relative;display: flex">{{document.title}}</p>
+                <n-space justify="end">
+                  <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)"><Edit /></Icon>
+                  <Icon id="del" size="24" @click="viewDelDocu(document.ID)"><Delete48Regular /></Icon>
+                </n-space>
               </div>
             </div>
           </n-grid-item>
@@ -79,7 +83,7 @@
           @negative-click="negDel"
       >
         <p style="font-size: 15px">
-          确定删除文档 {{utils.getCookie(docIndex)}}
+          确定删除文档
         </p>
 
       </n-modal>
@@ -100,59 +104,63 @@ import {darkTheme, NIcon, useMessage} from "naive-ui";
 
 import VueRouter from 'vue-router';
 
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import utils from "@/Utils";
 import router from "@/router";
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+let proID = ref(0);
 
 let page = ref(2);
 
 //强制刷新页面
 let docuitemKey = 0;
 
-let index = 0;
-let proID = ref(0);
-
 //文档项目
 
-let documents=[
-  {
-    ID: 9,
-    title: '文档1',
-    creatTime: '2022/8/2',
-    content: '内容',
-    src: null,
-    mdTime: '2022/8/3',
-    programID:1,
-  },
-]
+let documents =ref( [
 
+])
+
+//自己设置项目id
+
+utils.setCookie('proID',13);
 
 //获取项目id
 proID.value=parseInt(utils.getCookie('proID')) ;
-
-const headers = {
-  Authorization: utils.getCookie('Authorization')
+/*
+const load = () => {
+  proID.value=parseInt(utils.getCookie('proID')) ;
+  console.log("成功获取项目ID:"+proID.value);
 }
+*/
+onMounted(()=>{
+  proID.value=parseInt(utils.getCookie('proID')) ;
+  console.log("成功获取项目ID:"+proID.value);
+  getDocuAbl();
+})
+
 
 //获取文档列表
 
-const getDocuAbl = (page:number, size:number) =>{
+const getDocuAbl = () =>{
 
   axios.get('/document/list',{headers:headers,
       params:
       {
-        programID: 1, // proID.value,
-        page: page,
-        size: size,
+        programID: proID.value, // proID.value,
       }}
   ).then(res=>{
     if(res.data.msg==='成功'){
       console.log(addModelRef.value.addName);
       console.log("获取文档列表成功");
 
-      documents = res.data.data.items;
+      documents.value = res.data.data.items;
 
-      //强制渲染
+      console.log(documents.value);
     }
   })
 }
@@ -171,7 +179,7 @@ const addDocuAbl = () =>{
         'content': "",
         'title': addModelRef.value.addName,
         'src': null,
-        'programID': 1,//proID.value
+        'programID': proID.value,//proID.value
       }
   ).then(res=>{
     if(res.data.msg==='成功'){
@@ -241,13 +249,34 @@ const viewAddDocu = () => {
 
 const posAdd = () => {
 
+  console.log("确定添加文档");
+
   //成功添加文档
 
-  addDocuAbl();
+  if(addModelRef.value.addName === '')
+  {
+    alert("文档名不可为空！")
+    return;
+  }
 
-  console.log("成功添加文档");
+  axios.post('/document',
+      {
+        'content': "",
+        'title': addModelRef.value.addName,
+        'src': null,
+        'programID': proID.value,//proID.value
+      },{headers:headers}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(addModelRef.value.addName);
+      console.log("创建文档成功");
 
-  addModelRef.value.addName = "";
+      //刷新 获取文档列表
+      getDocuAbl();
+      //documents.value.push(newdoc);
+      console.log("添加文档成功");
+    }
+  })
 
   showAdd.value = false
 }
@@ -277,9 +306,10 @@ const addRule = {
 const showEdi= ref (false);
 const ediFormRef = ref<FormData | null>(null)
 const ediModelRef = ref({ ediName: ""})
+let editID =ref();
 
-function viewEdiDocu(ind: number) {
-  utils.setCookie('docIndex',documents[ind].ID);
+function viewEdiDocu(ind) {
+  editID.value=ind;
   showEdi.value = true;
 }
 
@@ -287,9 +317,31 @@ const posEdi = () => {
 
   //成功重命名文档
 
-  ediDocuAbl();
+  console.log(editID.value);
 
-  console.log(utils.getCookie(docIndex));
+  if(ediModelRef.value.ediName === '')
+  {
+    alert("文档名不可为空！")
+    return;
+  }
+
+  axios.put('/document/title',
+      {
+        'ID': editID.value,
+        'title': ediModelRef.value.ediName,
+      },{headers:headers}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(ediModelRef.value.ediName);
+      console.log("重命名文档成功");
+
+      //刷新 获取文档列表
+      getDocuAbl();
+    }
+  })
+
+
+
   ediModelRef.value.ediName = "";
 
   showEdi.value = false
@@ -320,8 +372,10 @@ let docIndex: string;
 
 const showDel= ref (false);
 
-function viewDelDocu(ind: number) {
-  utils.setCookie('docIndex',documents[ind].ID);
+let delID = ref();
+
+function viewDelDocu(ind) {
+  delID.value = ind;
   showDel.value = true;
 }
 
@@ -329,15 +383,24 @@ const posDel = () => {
 
   //成功删除文档 序号: ind
 
-  delDocuAbl();
+  let urldel = "/document/" + delID.value ;
+  console.log("/document/" + delID.value);
 
-  let ID = utils.getCookie('docIndex');
+  axios.delete(urldel,{headers:headers}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+      console.log(urldel);
+      console.log("删除文档成功");
 
-  console.log("/document/" + ID);
+      //刷新 获取文档列表
+
+      getDocuAbl();
+    }
+  })
 
   console.log(utils.getCookie(docIndex));
 
-  showDel.value = false
+  showDel.value = false;
 }
 
 const negDel = () => {
@@ -346,17 +409,17 @@ const negDel = () => {
 
 // 打开文档
 
-function openDocu(index: any){
+function openDocu(index){
 
   //获取文档内容
 
-  utils.setCookie('editDocID',documents[index].ID);
+  utils.setCookie('editDocID',index);
   utils.setCookie('DocTitle',"测试标题！");
   utils.setCookie('DocContent',"测试你！");
 
   router.push("/docuEdit");
-  console.log(documents[index].ID);
   console.log(index);
+
 }
 
 
@@ -393,7 +456,9 @@ function openDocu(index: any){
 }
 
 .docu-add{
+
   box-sizing: border-box;
+
 
   position: relative;
   width: 150px;
@@ -418,7 +483,7 @@ function openDocu(index: any){
 
 .docu-cover{
 
-  width: 100%;
+  width: 150px;
   height: 192px;
 
   display: flex;
@@ -449,8 +514,9 @@ function openDocu(index: any){
 }
 
 .docu-title{
+  min-width: border-box;
 
-  width: 100%;
+  width: 150px;
   height: 30px;
 
   font-family: 'Inter';
@@ -474,12 +540,14 @@ function openDocu(index: any){
   cursor: pointer;
 }
 #edi {
-  position: absolute;
+  position: relative;
   margin-top: 160px;
+  margin-right: 37%;
 }
 #del {
   position: relative;
   margin-top: 160px;
+  margin-left: 37%;
   alignment: right;
 }
 
