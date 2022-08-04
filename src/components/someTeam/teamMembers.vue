@@ -12,8 +12,8 @@
       </div>
     </div>
     <div class="member-operate">
-      <Icon style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
-      <Icon id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
+      <Icon @click="admin(member.ID,member.identity)" style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
+      <Icon @click="remove(member.ID)" id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
     </div>
   </div>
   <div class="member-add ">
@@ -79,7 +79,8 @@ const invite = () =>{
     alert(res.data.msg)
   })
 }
-const remove = () =>{
+const remove = (ID) =>{
+  opUserID.value=ID
   let url='/team/'+teamID.value+'/remove?userID='+opUserID.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)
@@ -99,7 +100,11 @@ const remove = () =>{
 }
 const admin = (id,op) => {
   opUserID.value=id;
-  isAdmin.value=op;
+  if(op===0)
+  isAdmin.value=1;
+  else{
+    isAdmin.value=0;
+  }
   let url='/team/'+teamID.value+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)

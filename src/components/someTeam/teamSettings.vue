@@ -29,7 +29,7 @@
           <n-switch v-model:value="model.switchValue"/>
         </n-form-item>
       </n-form>
-      <n-button style="margin-left:200px" size="large" type="primary">
+      <n-button @click="change" style="margin-left:200px" size="large" type="primary">
         保存修改
       </n-button>
       <n-button style="margin-left:50px" size="large" type="tertiary">
@@ -67,10 +67,13 @@ const ruleName = {
   },
   trigger: ['input', 'blur']
 }
+const change=()=>{
+
+}
 const getTeamInfo = () => {
   const teamID = route.params.teamID
   axios.get('/team/' + {teamID} + '/info').then(res => {
-    model.value.inputValue = res.data.ID
+    model.value.inputValue = res.data.name
     model.value.textareaValue = res.data.introduction
   })
 }

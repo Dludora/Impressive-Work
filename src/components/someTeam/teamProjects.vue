@@ -125,10 +125,10 @@ const getList = () =>{
     })
 }
 onMounted(()=>{
-  console.log("project get :"+router.query.teamID1)
-  console.log(router.query.teamID1)
-  teamID.value=parseInt(router.query.teamID1.toString())
-  console.log("teamID:"+teamID.value)
+  // console.log("project get :"+router.query.teamID1)
+  // console.log(router.query.teamID1)
+  // teamID.value=parseInt(router.query.teamID1.toString())
+  // console.log("teamID:"+teamID.value)
   getList()
 })
 const ruleAdd = {
