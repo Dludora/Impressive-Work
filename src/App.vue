@@ -11,7 +11,7 @@ const themeOverrides: GlobalThemeOverrides = {
   // common: {
   //   primaryColor: '#FF0000'
   // },
-  
+
   "common": {
     "fontSize": "12px",
     "bodyColor": "#16181DFF",

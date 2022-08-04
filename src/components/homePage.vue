@@ -43,7 +43,7 @@ const logout = () => {
   })
 }
 const teamMain= () =>{
-  router.push('/team');
+  router.push('/profile');
 }
 
 const vDitor = () => {

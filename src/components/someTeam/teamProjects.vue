@@ -20,7 +20,9 @@
       </n-grid-item>
       <n-grid-item>
         <div class="addProject" @click="displayAdd">
-          <Icon><PlusOutlined id="add"/></Icon>
+          <Icon>
+            <PlusOutlined id="add"/>
+          </Icon>
         </div>
       </n-grid-item>
     </n-grid>
@@ -97,15 +99,14 @@ import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
 import utils from '../../Utils'
 import axios from "axios";
+
 const router = useRoute();
 let teamID = ref();
-const headers ={
-   Authorization: utils.getCookie('Authorization')
+const headers = {
+  Authorization: utils.getCookie('Authorization')
 }
 const theme = darkTheme
-let projects =ref( [
-
-])
+const projects = ref([] as Array<any>)
 
 //const headers = 
 // 重命名表单
@@ -114,21 +115,20 @@ const formRef = ref<FormData | null>(null)
 const modelRef = ref({
   name: ""
 })
-const getList = () =>{
-  console.log('head'+utils.getCookie('Authorization'))
-    const url = '/program/list?'+'teamID='+teamID.value+'&page=0&size=10'
-    axios.get(url,{headers:headers}).then(res=>{
-      console.log(res.data)
-      console.log(projects)
-      projects.value=res.data.data.items
-      
-    })
+const getList = () => {
+  console.log('head' + utils.getCookie('Authorization'))
+  const url = '/program/list?' + 'teamID=' + teamID.value + '&page=0&size=10'
+  axios.get(url, {headers: headers}).then(res => {
+    console.log(res.data)
+    console.log(projects)
+    projects.value = res.data.data.items
+  })
 }
-onMounted(()=>{
-  console.log("project get :"+router.query.teamID1)
+onMounted(() => {
+  console.log("project get :" + router.query.teamID1)
   console.log(router.query.teamID1)
-  teamID.value=parseInt(router.query.teamID1.toString())
-  console.log("teamID:"+teamID.value)
+  teamID.value = parseInt(router.query.teamID1.toString())
+  console.log("teamID:" + teamID.value)
   getList()
 })
 const ruleAdd = {
@@ -148,7 +148,7 @@ const ruleAdd = {
 // 操作dialog
 // 重命名
 const displayMedal = (ID) => {
-  opID.value=ID
+  opID.value = ID
   showModalRef.value = true
 }
 
@@ -158,28 +158,26 @@ const onNegativeClick = () => {
 };
 
 const onPositiveClick = () => {
-  console.log("修改："+opID.value)
-  if(modelRef.value.name.length===0){
+  console.log("修改：" + opID.value)
+  if (modelRef.value.name.length === 0) {
     alert("项目名称不能为空～")
     return;
   }
-  axios.put("/program",{
-    "ID":opID.value,
+  axios.put("/program", {
+    "ID": opID.value,
     "src": "src",
-    "name":modelRef.value.name
-  },{headers:headers}).then(res=>{
+    "name": modelRef.value.name
+  }, {headers: headers}).then(res => {
     console.log(res.data)
-    if(res.data.msg==="成功"){
+    if (res.data.msg === "成功") {
       alert("修改成功")
-      for(let i=0 ;i<projects.value.length;i++){
-        if(projects.value[i].ID===opID.value)
-        {
-          projects.value[i].name=modelRef.value.name
+      for (let i = 0; i < projects.value.length; i++) {
+        if (projects.value[i].ID === opID.value) {
+          projects.value[i].name = modelRef.value.name
           break;
         }
       }
-    }
-    else{
+    } else {
       alert("修改失败")
     }
   })
@@ -189,9 +187,9 @@ const onPositiveClick = () => {
 // 删除项目
 let delRef = ref(false)
 let opID = ref()
-const displayDel = (ID)=> {
+const displayDel = (ID) => {
   console.log(ID)
-  opID.value  =ID
+  opID.value = ID
   delRef.value = true
 }
 
@@ -200,13 +198,13 @@ const onNegativeClickDel = () => {
 };
 
 const onPositiveClickDel = () => {
-  let deleUrl = '/program/'+opID.value
+  let deleUrl = '/program/' + opID.value
   console.log(deleUrl)
-  axios.delete(deleUrl,{headers:headers}).then(res=>{
+  axios.delete(deleUrl, {headers: headers}).then(res => {
     console.log(res.data)
-    for(let i=0;i<projects.value.length;i++){
-      if(projects.value[i].ID===opID.value){
-        projects.value.splice(i,1)
+    for (let i = 0; i < projects.value.length; i++) {
+      if (projects.value[i].ID === opID.value) {
+        projects.value.splice(i, 1)
       }
     }
     alert("删除成功！")
@@ -250,29 +248,27 @@ const onNegativeAddClick = () => {
 };
 
 const onPositiveAddClick = () => {
-  if(modelAddRef.value.name.length===0)
-  {
+  if (modelAddRef.value.name.length === 0) {
     alert("项目名称不能为空！")
     return
   }
-  axios.post('/program',{
-    'teamID':teamID.value,
-    "src":"what the fuck photos",
-    "name":modelAddRef.value.name
-  },{headers:headers}).then(res=>{
-    if(res.data.msg==="成功"){
+  axios.post('/program', {
+    'teamID': teamID.value,
+    "src": "what the fuck photos",
+    "name": modelAddRef.value.name
+  }, {headers: headers}).then(res => {
+    if (res.data.msg === "成功") {
       console.log("添加项目成功！")
-      let t= new Date();
+      let t = new Date();
       let item = {
         "name": modelAddRef.value.name,
         "src": "nope",
-        "createTime":t,
-        "ID":res.data
+        "createTime": t,
+        "ID": res.data
       }
       projects.value.push(item)
       alert("添加成功！")
-    }
-    else{
+    } else {
       alert("添加失败！")
     }
   })

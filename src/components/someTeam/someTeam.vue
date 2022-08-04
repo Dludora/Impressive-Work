@@ -3,19 +3,7 @@
     <n-layout-sider content-style="padding: 0;">
       <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
-    <n-layout>
-      <n-layout-header>
-        <TeamHead ref="com" style="margin-left: 30px"/>
-      </n-layout-header>
-      <n-layout-content content-style="padding: 24px 0px;">
-        <div class="menu">
-          <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions"/>
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
+    <router-view/>
   </n-layout>
   <n-config-provider :theme="theme">
     <n-modal
@@ -43,28 +31,15 @@
 <script lang="ts">
 import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
-import TeamHead from "../Team/TeamHead.vue"
-
-import {useRoute} from "vue-router";
-import {ref, h, Component, defineComponent, onMounted} from 'vue'
-import {NIcon} from "naive-ui";
-import type {MenuOption} from "naive-ui";
+import teamPage from "./teamPage.vue"
+import {ref, h, defineComponent, onMounted} from 'vue'
 import {darkTheme} from "naive-ui";
 
-import {RouterLink,useRouter} from "vue-router";
-
-import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
-import {ProjectOutlined as Project} from "@vicons/antd"
-import {IosSettings as Settings} from "@vicons/ionicons4"
-import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import {useRouter} from "vue-router";
 import utils from "@/Utils";
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
-}
-
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, {default: () => h(icon)})
 }
 
 let profile = {
@@ -76,55 +51,9 @@ let profile = {
   src: ""
 }
 
-let menuOptions: MenuOption[] = [
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: 'teamProjects'
-              }
-            },
-            {default: () => '项目'}
-        ),
-    key: 'go-to-projects',
-    icon: renderIcon(Project)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                name: 'teamMembers',
-                path: 'teamMembers'
-              },
-            },
-            {default: () => '成员'}
-        ),
-    key: 'go-to-members',
-    icon: renderIcon(PersonIcon)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                name: 'teamSettings',
-              }
-            },
-            {default: () => '设置'}
-        ),
-    key: 'go-to-settings',
-    icon: renderIcon(Settings)
-  },
-]
 export default defineComponent({
   components: {
     LeftNav,
-    TeamHead
   },
   setup() {
     const router = useRouter()
@@ -136,16 +65,17 @@ export default defineComponent({
       name: "",
       description: "",
     })
-    const getID = (msg:any) =>{
-        console.log("father get:"+msg)
-        teamID.value = parseInt(msg)
-        com.value.teamData.ID=teamID.value
-        console.log(com.value.teamData)
-        console.log("father push"+teamID.value)
-        let tID=(teamID.value)
-        router.push({path:'/team/teamProjects',
-          query:{teamID1:tID}
-        })
+    const getID = (msg: any) => {
+      // console.log("father get:" + msg)
+      // teamID.value = parseInt(msg)
+      // com.value.teamData.ID = teamID.value
+      // console.log(com.value.teamData)
+      // console.log("father push" + teamID.value)
+      // let tID = (teamID.value)
+      // router.push({
+      //   path: '/team/teamProjects',
+      //   query: {teamID1: tID}
+      // })
     }
     const ruleName = {
       required: true,
@@ -179,15 +109,15 @@ export default defineComponent({
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(()=>{
-        router.push({path:'/team/teamProjects',
-          query:{teamID:teamID.value}
+      onMounted(() => {
+        router.push({
+          path: '/team/teamProjects',
+          query: {teamID: teamID.value}
         })
       })
     }
     return {
       theme: darkTheme,
-      menuOptions,
       getChildList,
       com,
       router,

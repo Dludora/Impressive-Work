@@ -1,46 +1,46 @@
 <template>
   <n-config-provider :theme="theme">
     <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
-  <div class="nav">
-    <div class="logo" @click="toMain">墨书</div>
-    <div class="user-info">
-      <div class="avatar">
-        <n-avatar class="pic">
-          {{ profile.nickname }}
-        </n-avatar>
-      </div>
-      <div class="user">
-        <p>{{ profile.nickname }}</p>
-        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
-      </div>
-      <div class="teams">
-        <div class="teamsHead">
-          团队和项目
-        </div>
-        <div class="team">
-          <n-menu :options="sideMenuOptions"/>
-        </div>
-        <div class="addTeam" @click="addTeam">
-          <div class="addImg">
-            <img src="@/assets/plus.png"/>
+      <div class="nav">
+        <div class="logo" @click="toMain">墨书</div>
+        <div class="user-info">
+          <div class="avatar">
+            <n-avatar class="pic">
+              {{ profile.nickname }}
+            </n-avatar>
           </div>
-          <div class="word">
-            新建团队
+          <div class="user">
+            <p>{{ profile.nickname }}</p>
+            <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
+          </div>
+          <div class="teams">
+            <div class="teamsHead">
+              团队和项目
+            </div>
+            <div class="team">
+              <n-menu :options="sideMenuOptions"/>
+            </div>
+            <div class="addTeam" @click="addTeam">
+              <div class="addImg">
+                <img src="@/assets/plus.png"/>
+              </div>
+              <div class="word">
+                新建团队
+              </div>
+            </div>
+            <n-pagination v-model:page="currentPage"
+                          :page-count="pageNum"
+                          show-quick-jumper
+                          :page-slot="3" size="small"
+                          :on-update:page="changePage"
+                          id="pagination">
+              <template #goto>
+                请回答
+              </template>
+            </n-pagination>
           </div>
         </div>
-        <n-pagination v-model:page="currentPage"
-                      :page-count="pageNum"
-                      show-quick-jumper
-                      :page-slot="3" size="small"
-                      :on-update:page="changePage"
-                      id="pagination">
-          <template #goto>
-            请回答
-          </template>
-        </n-pagination>
       </div>
-    </div>
-  </div>
     </n-scrollbar>
   </n-config-provider>
 </template>
@@ -61,7 +61,8 @@ const headers = {
 }
 
 const sideMenuOptions = ref([] as MenuOption[])
-let dataList = ref([{ID:0}])
+let dataList = ref([{ID: 0}])
+
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -71,7 +72,7 @@ export default defineComponent({
     return {}
   },
   setup(props, {emit}) {
-    const toMain=()=>{
+    const toMain = () => {
       router.push("/")
     }
     const profile = ref({
@@ -113,7 +114,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team'+array.value[i].ID,
+                                path: '/profile/team/teamProjects',
                               }
                             },
                             {default: () => array.value[i].name}
@@ -126,7 +127,7 @@ export default defineComponent({
           })
     }
     const changePage = (page: number) => {
-      getAllTeams(page-1, 8)
+      getAllTeams(page - 1, 8)
     }
     onMounted(async () => {
       load()
@@ -139,9 +140,9 @@ export default defineComponent({
       toMain,
       load,
       getAllTeams,
-      handleUpdateValue (key: string, item: MenuOption) {
-            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
-        },
+      handleUpdateValue(key: string, item: MenuOption) {
+        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
+      },
       changePage,
       // 个人信息
       profile,
@@ -162,8 +163,8 @@ export default defineComponent({
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
-  width:220px;
-  height:100%;
+  width: 220px;
+  height: 100%;
 }
 
 .logo {
