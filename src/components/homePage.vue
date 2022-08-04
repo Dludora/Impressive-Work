@@ -24,12 +24,15 @@ import axios from 'axios';
 import utils from "@/Utils";
 const router = useRouter();
 
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 const regisRouter = () => {
   router.push('/regisTer');
 }
 const logout = () => {
   console.log()
-  axios.delete('/auth/token',
+  axios.delete('/auth/token',{headers:headers}
   ).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功")
