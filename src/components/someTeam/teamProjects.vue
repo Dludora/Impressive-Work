@@ -91,7 +91,7 @@
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
 import {darkTheme} from "naive-ui";
-import {defineComponent, h, onMounted, reactive, ref} from "vue";
+import {defineComponent, computed,watch,h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
@@ -102,11 +102,17 @@ const router = useRoute();
 const headers ={
    Authorization: utils.getCookie('Authorization')
 }
+const teamID = ref(0)
 const theme = darkTheme
 let projects =ref( [
 
 ])
-
+const getGlobal = computed(()=>{
+  return utils.getCookie("teamID")
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+},{immediate:true,deep:true})
 
 // 重命名表单
 let showModalRef = ref(false)
@@ -127,7 +133,7 @@ const getList = () =>{
 onMounted(()=>{
   console.log("project get :"+router.query.teamID)
   console.log(router.query.teamID)
-  //teamID.value=parseInt(router.query.teamID.toString())
+  teamID.value=parseInt(router.query.teamID.toString())
 
   getList()
 })
