@@ -188,6 +188,7 @@ const destroy = (index: number) => {
     selected.value = null;
     selectedId.value = -1;
   }
+  axios.delete(`/layout/${layoutId.value}/element/${layoutElementParams[index].id}`)
 };
 
 const PrepareElement = (elementType: string) => {
