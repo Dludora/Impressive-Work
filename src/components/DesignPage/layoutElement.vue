@@ -401,7 +401,7 @@ const ResetTrans = (newVal: Params) => {
       )!.style.borderWidth = `${newVal.borderWidth}px`;
       document.getElementById(`content${newVal.index}`)!.style.backgroundColor =
         newVal.color;
-      if (newVal.src == "" || newVal.src == "none") {
+      if (newVal.src == "" || newVal.src == "none" || newVal.src == null) {
         document.getElementById(`content${newVal.index}`)!.style.backgroundImage =
           "none";
       } else {
