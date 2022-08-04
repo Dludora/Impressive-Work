@@ -76,6 +76,7 @@ type elementParams = {
   color: string;
   borderColor: string;
   src: string;
+  text: string,
   fontSize: number;
   locked: boolean;
 };
@@ -139,6 +140,7 @@ const updateParams = (data: elementParams) => {
   layoutElementParams[data.index]!.color = data.color;
   layoutElementParams[data.index]!.borderColor = data.borderColor;
   layoutElementParams[data.index]!.src = data.src;
+  layoutElementParams[data.index]!.text = data.text;
   layoutElementParams[data.index]!.fontSize = data.fontSize;
   layoutElementParams[data.index]!.locked = data.locked;
   update.value = false;
@@ -211,6 +213,7 @@ const ProduceElement = (e: MouseEvent) => {
       color: "#D42B39",
       borderColor: "transparent",
       src: "",
+      text:"",
       fontSize: 20 * scale,
       //update: true,
       locked: false,
@@ -396,6 +399,7 @@ watch(
     layoutElementParams[selectedId.value]!.borderColor = newVal.elementProps.borderColor;
     layoutElementParams[selectedId.value]!.type = newVal.elementProps.type;
     layoutElementParams[selectedId.value]!.src = newVal.elementProps.src;
+    layoutElementParams[selectedId.value]!.text = newVal.elementProps.text;
     layoutElementParams[selectedId.value]!.fontSize = newVal.elementProps.fontSize;
     layoutElementParams[selectedId.value]!.locked = newVal.elementProps.locked;
     updateUpdates(newVal.elementProps.index)

@@ -4,7 +4,7 @@
       <n-icon size="18" color="#A7AFBE" class="backArrow">
         <arrow-back-ios-round />
       </n-icon>
-      {{layoutName}}
+      {{ layoutName }}
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
         <file-download-filled />
       </n-icon>
@@ -114,8 +114,13 @@
               "
             ></n-input>
           </div>
-          <div class="porpertyBarIconUnit">
-            <n-icon size="30" color="#E2E4E9" class="porpertyIcon" style="marginRight:9px">
+          <div class="porpertyBarIconUnit" v-show="property.type != 'text'">
+            <n-icon
+              size="30"
+              color="#E2E4E9"
+              class="porpertyIcon"
+              style="marginright: 9px"
+            >
               <image24-regular />
             </n-icon>
             <input
@@ -210,14 +215,18 @@
 
 <script lang="ts" setup>
 import layoutCanvas from "../../components/DesignPage/layoutCanvas.vue";
-import { Cursor24Regular, TextAddT24Regular,Image24Regular } from "@vicons/fluent";
+import {
+  Cursor24Regular,
+  TextAddT24Regular,
+  Image24Regular,
+} from "@vicons/fluent";
 import {
   FrontHandOutlined,
   KeyboardArrowUpRound,
   ArrowBackIosRound,
   FileDownloadFilled,
 } from "@vicons/material";
-import {useMessage} from "naive-ui"
+import { useMessage } from "naive-ui";
 
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
@@ -240,7 +249,7 @@ const download = () => {
 };
 
 const layoutId = ref<number>(2);
-const layoutName = ref<string>("Home")
+const layoutName = ref<string>("Home");
 const canvasWidth = ref<number>(0);
 const canvasHeight = ref<number>(0);
 
@@ -309,6 +318,7 @@ type Property = {
   color: string;
   borderColor: string;
   src: string;
+  text:string;
   fontSize: number;
   locked: boolean;
 };
@@ -324,25 +334,33 @@ const property = reactive<Property>({
   borderRadius: 0,
   type: "none",
   locked: false,
+  text:"",
   fontSize: 0,
   src: "",
   color: "#D42B39",
   borderColor: "transparent",
 });
 
-const initPage = ()=>{
-
-}
+const initPage = () => {};
 
 const updateProps = (data: Property) => {
   if (data == null) {
     property.type = "none";
     return;
   }
+  console.log(data.type);
   update.value = false;
   // setTimeout(() => {
   //   update.value = true;
   // }, 100);
+  if (property.color != data.color) {
+    colorCircles.value[selectedColor].style.borderWidth = "0px";
+    colorCircles.value[selectedColor].style.margin = "4.5px";
+  }
+  if (property.borderColor != data.borderColor) {
+    borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
+    borderCircles.value[selectedBorderColor].style.margin = "4.5px";
+  }
   property.index = data.index;
   property.x = data.x;
   property.y = data.y;
@@ -357,10 +375,6 @@ const updateProps = (data: Property) => {
   property.fontSize = data.fontSize;
   property.locked = data.locked;
 
-  colorCircles.value[selectedColor].style.borderWidth = "0px";
-  borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
-  colorCircles.value[selectedColor].style.margin = "3px";
-  borderCircles.value[selectedBorderColor].style.margin = "3px";
   for (var i = 0; i < palette.length; ++i) {
     if (property.color == palette[i]) {
       selectedColor = i;
@@ -375,22 +389,21 @@ const updateColor = (colorId: number) => {
   update.value = true;
   property.color = palette[colorId];
   colorCircles.value[selectedColor].style.borderWidth = "0px";
-  colorCircles.value[selectedColor].style.margin = "3px";
+  colorCircles.value[selectedColor].style.margin = "4.5px";
   selectedColor = colorId;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
-  colorCircles.value[selectedColor].style.margin = "1px";
+  colorCircles.value[selectedColor].style.margin = "2.5px";
 };
 
 const updateBorder = (colorId: number) => {
   update.value = true;
   property.borderColor = palette[colorId];
   borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
-  borderCircles.value[selectedBorderColor].style.margin = "3px";
+  borderCircles.value[selectedBorderColor].style.margin = "4.5px";
   selectedBorderColor = colorId;
   borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
-  borderCircles.value[selectedBorderColor].style.margin = "1px";
-  if(palette[colorId]!="transparent")
-  {
+  borderCircles.value[selectedBorderColor].style.margin = "2.5px";
+  if (palette[colorId] != "transparent") {
     message.info("注意：边框宽度为0");
   }
 };
@@ -398,7 +411,7 @@ const updateBorder = (colorId: number) => {
 const displayPalette = () => {
   showPalette.value = true;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
-  colorCircles.value[selectedColor].style.margin = "1px";
+  colorCircles.value[selectedColor].style.margin = "2.5px";
   document.getElementById("fillColor")!.style.backgroundColor = "#464b56";
 };
 
@@ -515,9 +528,11 @@ onMounted(() => {
   font-size: 7.5px;
 }
 .porpertyFileUploader {
-  position:absolute;
-  left:0;
+  position: absolute;
+  left: 0;
   opacity: 0;
+  width:40px;
+  height:45px;
 }
 .porpertyBarIconUnit {
   height: 36px;
