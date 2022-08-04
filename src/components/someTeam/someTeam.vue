@@ -141,7 +141,7 @@ export default defineComponent({
             RouterLink,
             {
               to:
-                 '/team/teamsetting?teamID='+teamID.value
+                 '/team/teamsettings?teamID='+teamID.value
             
             },
             {default: () => '设置'}

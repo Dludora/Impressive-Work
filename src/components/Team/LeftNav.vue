@@ -17,7 +17,7 @@
           团队和项目
         </div>
     <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
-      <div class="teams">
+      <div class="teams"> 
         <div class="team">
           <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>

@@ -52,29 +52,29 @@ const router = createRouter({
             path: '/',
             component: mainView,
             children: [
-                {
-                    name: 'team',
-                    path:'/team',
-                    redirect: '/team/projects',
-                    component: teamMain,
-                    children:[
-                        {
-                            name:'projects',
-                            path: 'projects',
-                            component: teamProjects,
-                        },
-                        {
-                            name:'members',
-                            path: 'members',
-                            component: teamMembers,
-                        },
-                        {
-                            name:'setting',
-                            path: 'setting',
-                            component: teamSettings,
-                        },
-                    ]
-                },
+                // {
+                //     name: 'team',
+                //     path:'/team',
+                //     redirect: '/team/projects',
+                //     component: teamMain,
+                //     children:[
+                //         {
+                //             name:'projects',
+                //             path: 'projects',
+                //             component: teamProjects,
+                //         },
+                //         {
+                //             name:'members',
+                //             path: 'members',
+                //             component: teamMembers,
+                //         },
+                //         {
+                //             name:'setting',
+                //             path: 'setting',
+                //             component: teamSettings,
+                //         },
+                //     ]
+                // },
                 {
                     name: 'project',
                     path:'/project',
@@ -100,28 +100,28 @@ const router = createRouter({
                 },
             ]
         },
-        // {
-        //     name: 'team',
-        //     path: '/team',
-        //     component: someTeam,
-        //     children: [
-        //         {
-        //             name: 'teamProjects',
-        //             path: 'teamProjects',
-        //             component: teamProjects
-        //         },
-        //         {
-        //             name: 'teamMembers',
-        //             path: 'teamMembers',
-        //             component: teamMembers
-        //         },
-        //         {
-        //             name: 'teamSettings',
-        //             path: 'teamSettings',
-        //             component: teamSettings
-        //         },
-        //     ]
-        // },
+        {
+            name: 'team',
+            path: '/team',
+            component: someTeam,
+            children: [
+                {
+                    name: 'teamProjects',
+                    path: 'teamProjects',
+                    component: teamProjects
+                },
+                {
+                    name: 'teamMembers',
+                    path: 'teamMembers',
+                    component: teamMembers
+                },
+                {
+                    name: 'teamSettings',
+                    path: 'teamSettings',
+                    component: teamSettings
+                },
+            ]
+        },
         {
             name:'vDitor',
             path: '/vDitor',
