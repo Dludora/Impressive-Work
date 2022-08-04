@@ -3,7 +3,7 @@
         <div class="discribe">
             管理你的{{shortcuts.length}}个页面
             <div class="buttons">
-                <n-button class="newpage" size="tiny" @click="viewAddDocu">
+                <n-button class="newpage" size="tiny"  @click="viewAddDocu">
                     新 建 页 面&nbsp;
                     <Icon size="14">
                         <Add28Regular/>

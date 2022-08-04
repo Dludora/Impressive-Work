@@ -23,7 +23,7 @@
     <a href="#" id="invite">邀请成员</a>
   </div>
   </div>
-  <n-config-provider :theme="theme">
+  <!-- <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"

@@ -3,7 +3,7 @@
     <div class="img">
     </div>
     <div class="bottom">
-      <div class="name" @click="openCard">{{ name }}</div>
+      <div class="name" style="cursor: pointer" @click="openCard">{{ name }}</div>
       <Icon size="20" class="del" @click="delCard">
         <CloseRound/>
       </Icon>
