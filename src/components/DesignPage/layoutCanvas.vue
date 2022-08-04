@@ -316,8 +316,6 @@ onMounted(() => {
   canvasTrans.y = 148;
   document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
   document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
-  document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
-  document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
 });
 

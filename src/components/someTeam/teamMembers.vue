@@ -39,6 +39,7 @@
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
+    </n-modal>
 </n-config-provider>
 </template>
 
