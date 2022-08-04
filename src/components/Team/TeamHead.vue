@@ -4,7 +4,7 @@
             {{teamData.name[0]}}
         </div>
         <div class="name">
-            <h2>{{teamData.name}}{{teamData.ID}} {{utils.getCookie("teamID")}}</h2>
+            <h2>{{teamData.name}}</h2>
             <!-- <span>{{teamData.introduction}}</span> -->
             <div>{{teamData.introduction}}</div>
         </div>
@@ -13,12 +13,14 @@
 <script setup lang="ts">
 import {onMounted, ref,watch,computed} from 'vue'
 import axios from 'axios'
+import {useRoute} from 'vue-router'
 import utils from '../../Utils'
+const route = useRoute();
 let teamData = ref({
     ID:null,
-    name:'Team',
+    name:'选择您的团队',
     src:'',
-    introduction:'Brief introduction~'
+    introduction:'通过选择您的团队，然后来进行管理项目，成员等操作'
 })
 const headers = {
    Authorization: utils.getCookie('Authorization')
@@ -29,20 +31,26 @@ const headers = {
 //       console.log("全局监听收到"+newProps)
 //       temp.value=parseInt(newProps.toString())
 //  });
-const getGlobal = computed(()=>{
-  return utils.getCookie("teamID")
-})
-watch(getGlobal, (newVal,oldVal)=>{
-  console.log("value change"+newVal)
-},{immediate:true,deep:true})
-
 const getMessage = () =>{
-  axios.get('/team/'+teamData.value+'/info',{headers:headers}).then(res=>{
+  axios.get('/team/'+route.query.teamID+'/info',{headers:headers}).then(res=>{
     if(res.data.msg==="成功"){
       teamData.value=res.data.data
+      if(res.data.data.introduction.length===0)
+      {
+          teamData.value.introduction="队长很懒，什么都没写喔～"
+      }
     }
   })
 }
+const getGlobal = computed(()=>{
+  return route.query.teamID
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+  getMessage();
+},{immediate:true,deep:true})
+
+
 onMounted(()=>{
   getMessage()
 })

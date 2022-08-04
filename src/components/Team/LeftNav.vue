@@ -17,7 +17,7 @@
           团队和项目
         </div>
     <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
-      <div class="teams">
+      <div class="teams"> 
         <div class="team">
           <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
@@ -98,7 +98,7 @@ export default defineComponent({
       emit('addTeam');
     }
     const load = () => {
-      axios.get('user/info', {headers: headers}).then(res => {
+      axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
       })
     }
@@ -115,18 +115,17 @@ export default defineComponent({
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
+              let idd=array.value[i].ID
+              console.log(idd)
               sideMenuOptions.value.push(
                   {
                     label: () =>
                         h(
                             RouterLink,
                             {
-                              to: {
-                                path: '/team/projects',
-                                query:{
-                                  teamID:array.value[i].ID,
-                                }
-                              }
+                              to: 
+                                '/team/teamprojects?teamID='+idd, 
+
                             },
                             {default: () => array.value[i].name}
                         ),
@@ -156,6 +155,9 @@ export default defineComponent({
             emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
             utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
             console.log("全局修改"+utils.getCookie('teamID'))
+        //     router.push({path:'/team/teamProjects',
+        //   query:{teamID:utils.getCookie("teamID")}
+        // })
         },
       changePage,
       // 个人信息

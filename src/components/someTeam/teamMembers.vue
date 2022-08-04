@@ -32,9 +32,10 @@ import {IosStarOutline, IosStar} from "@vicons/ionicons4"
 import {CloseOutline} from "@vicons/ionicons5"
 import {Icon} from "@vicons/utils";
 import axios from 'axios'
-import {onMounted, ref} from 'vue'
+import {onMounted, ref,computed,watch} from 'vue'
+import {useRoute} from 'vue-router'
 import utils from '../../Utils'
-
+const route = useRoute();
 let teamID  = ref()
 let email = ref('')
 let opUserID = ref()
@@ -42,38 +43,25 @@ let isAdmin = ref(0)
 const members = ref([
     {
       ID:0,
-      nickname: 'Dludora',
-      name: '寇书瑞',
-      email: 'koushurui@outlook.com',
+      nickname: '获取成员列表中...',
+      name: '',
+      email: '宝贝,正在加载中 请稍后~',
       identity:0
     },
-    {
-      ID:0,
-      nickname: 'Dludora',
-      name: '寇书瑞',
-      email: 'koushurui@outlook.com',
-      identity:0
-    },
-    {
-      ID:0,
-      nickname: 'Dludora',
-      name: '寇书瑞',
-      email: 'koushurui@outlook.com',
-      identity:0
-    },
+
 ])
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 const getList = () => {
-  let url='/team/'+teamID.value+'/members?page=0&size=20'
+  let url='/team/'+route.query.teamID+'/members?page=0&size=20'
   axios.get(url,{headers:headers}).then(res=>{
     console.log(res.data)
     members.value=res.data.data.items
   })
 }
 const invite = () =>{
-  let url='/team/'+teamID.value+'/invite?email='+email.value
+  let url='/team/'+route.query.teamID+'/invite?email='+email.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)
     alert(res.data.msg)
@@ -81,7 +69,7 @@ const invite = () =>{
 }
 const remove = (ID) =>{
   opUserID.value=ID
-  let url='/team/'+teamID.value+'/remove?userID='+opUserID.value
+  let url='/team/'+route.query.teamID+'/remove?userID='+opUserID.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功")
@@ -105,7 +93,7 @@ const admin = (id,op) => {
   else{
     isAdmin.value=0;
   }
-  let url='/team/'+teamID.value+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
+  let url='/team/'+route.query.teamID+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功"){
@@ -121,6 +109,13 @@ const admin = (id,op) => {
     }
   })
 }
+const getGlobal = computed(()=>{
+  return route.query.teamID
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+  getList()
+},{immediate:true,deep:true})
 onMounted(()=>{
   getList()
 

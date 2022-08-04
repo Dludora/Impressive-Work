@@ -141,7 +141,7 @@ export default defineComponent({
             RouterLink,
             {
               to:
-                 '/team/teamsetting?teamID='+teamID.value
+                 '/team/teamsettings?teamID='+teamID.value
             
             },
             {default: () => '设置'}
@@ -166,9 +166,9 @@ export default defineComponent({
         console.log(com.value.teamData)
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
-        router.push({path:'/team/teamProjects',
-          query:{teamID:tID}
-        })
+        // router.push({path:'/team/teamProjects',
+        //   query:{teamID:tID}
+        // })
     }
     const ruleName = {
       required: true,
@@ -191,6 +191,7 @@ export default defineComponent({
       showModalRef.value = false
     }
     const onPositiveClick = () => {
+      console.log(modelRef.value)
       showModalRef.value = false
       axios.post('/team', {
         'name': modelRef.value.name,
@@ -203,9 +204,7 @@ export default defineComponent({
         modelRef.value.description = ""
       })
       onMounted(()=>{
-        router.push({path:'/team/teamProjects',
-          query:{teamID:teamID.value}
-        })
+        
       })
     }
     return {

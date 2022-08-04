@@ -122,12 +122,6 @@ const theme = darkTheme
 let projects =ref( [
 
 ])
-const getGlobal = computed(()=>{
-  return utils.getCookie("teamID")
-})
-watch(getGlobal, (newVal,oldVal)=>{
-  console.log("value change"+newVal)
-},{immediate:true,deep:true})
 
 
 // 重命名表单
@@ -146,6 +140,13 @@ const getList = () =>{
       
     })
 }
+const getGlobal = computed(()=>{
+  return router.query.teamID
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+  getList()
+},{immediate:true,deep:true})
 onMounted(()=>{
   console.log("project get :"+router.query.teamID)
   console.log(router.query.teamID)
@@ -289,7 +290,7 @@ const onPositiveAddClick = () => {
         "name": modelAddRef.value.name,
         "src": "nope",
         "createTime":t,
-        "ID":res.data
+        "ID":res.data.data
       }
       projects.value.push(item)
       alert("添加成功！")
