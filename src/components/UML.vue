@@ -5,11 +5,12 @@
 
 
         <n-gradient-text type="danger">
-          想做UML？
+          少年想做UML？
         </n-gradient-text>
 
         <n-checkbox
             @update:checked="handleUpdateChecked"
+            style="color: #FFFFFF;"
         >
           抉择时刻
         </n-checkbox>
@@ -21,6 +22,7 @@
 
 <script lang="ts">
 import { ref, defineComponent } from 'vue'
+import {darkTheme} from "naive-ui";
 
 export default defineComponent({
   components: {

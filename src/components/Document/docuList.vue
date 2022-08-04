@@ -155,7 +155,7 @@ const getDocuAbl = () =>{
       }}
   ).then(res=>{
     if(res.data.msg==='成功'){
-      console.log(addModelRef.value.addName);
+
       console.log("获取文档列表成功");
 
       documents.value = res.data.data.items;
