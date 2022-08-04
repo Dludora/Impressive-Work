@@ -83,7 +83,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: '/team'
+                path: 'teamProjects'
               }
             },
             {default: () => '项目'}
@@ -142,8 +142,9 @@ export default defineComponent({
         com.value.teamData.ID=teamID.value
         console.log(com.value.teamData)
         console.log("father push"+teamID.value)
+        let tID=(teamID.value)
         router.push({path:'/team/teamProjects',
-          query:{teamID:teamID.value}
+          query:{teamID1:tID}
         })
     }
     const ruleName = {

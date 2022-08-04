@@ -6,7 +6,7 @@
           <div class="pic"></div>
           <div class="info">
             <p id="team">
-              {{ project.team }}的项目
+              {{ project.name }}
               <Icon id="edit" size="20">
                 <Edit @click="displayMedal"/>
               </Icon>
@@ -14,7 +14,7 @@
                 <Close @click="displayDel"/>
               </Icon>
             </p>
-            <p id="time">创建于 {{ project.time }}</p>
+            <p id="time">创建于 {{ project.createTime }}</p>
           </div>
         </div>
       </n-grid-item>
@@ -60,7 +60,7 @@
         v-model:show="showModalAddRef"
         :mask-closable="false"
         preset="dialog"
-        title="重命名"
+        title="创建项目"
         positive-text="确认"
         negative-text="取消"
         @positive-click="onPositiveAddClick"
@@ -95,55 +95,41 @@ import {defineComponent, h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
+import utils from '../../Utils'
+import axios from "axios";
 const router = useRoute();
-let teamID = ref(0);
+let teamID = ref();
+const headers ={
+   Authorization: utils.getCookie('Authorization')
+}
 const theme = darkTheme
-let projects = [
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-  {
-    team: '团队一',
-    time: '2022/8/1'
-  },
-]
+let projects =ref( [
 
+])
 
+//const headers = 
 // 重命名表单
 let showModalRef = ref(false)
 const formRef = ref<FormData | null>(null)
 const modelRef = ref({
   name: ""
 })
+const getList = () =>{
+  console.log('head'+utils.getCookie('Authorization'))
+    const url = '/program/list?'+'teamID='+teamID.value+'&page=0&size=10'
+    axios.get(url,{headers:headers}).then(res=>{
+      console.log(res.data)
+      console.log(projects)
+      projects.value=res.data.data.items
+      
+    })
+}
 onMounted(()=>{
-  console.log("project get :"+router.query.teamID)
-  teamID.value=parseInt(JSON.stringify(router.query.teamID))
-
+  console.log("project get :"+router.query.teamID1)
+  console.log(router.query.teamID1)
+  teamID.value=parseInt(router.query.teamID1.toString())
+  console.log("teamID:"+teamID.value)
+  getList()
 })
 const ruleAdd = {
   required: true,
@@ -215,7 +201,7 @@ const rule = {
 // 操作dialog
 // 重命名
 const displayAdd = () => {
-  showModalRef.value = true
+  showModalAddRef.value = true
 }
 
 const onNegativeAddClick = () => {
@@ -224,6 +210,27 @@ const onNegativeAddClick = () => {
 };
 
 const onPositiveAddClick = () => {
+  axios.post('/program',{
+    'teamID':teamID.value,
+    "src":"what the fuck photos",
+    "name":modelAddRef.value.name
+  },{headers:headers}).then(res=>{
+    if(res.data.msg==="成功"){
+      console.log("添加项目成功！")
+      let t= new Date();
+      let item = {
+        "name": modelAddRef.value.name,
+        "src": "nope",
+        "createTime":t,
+        "ID":res.data
+      }
+      projects.value.push(item)
+      alert("添加成功！")
+    }
+    else{
+      alert("添加失败！")
+    }
+  })
   showModalRef.value = false
 }
 </script>
