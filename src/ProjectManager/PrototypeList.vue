@@ -180,7 +180,7 @@ const posAdd = () => {
         'src': null,
         'width': addModelRef.value.addWidth,
         'height': addModelRef.value.addHeight,
-        'programID': 13,//proID.value
+        'programID': proID.value,
       },{headers:headers}
   ).then(res=>{
     if(res.data.msg==='成功'){
