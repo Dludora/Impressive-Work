@@ -1,7 +1,7 @@
 <template>
   <div class="board" @mousedown="ShutBoard">
     <div class="layoutHeader home">
-      <n-icon size="18" color="#A7AFBE" class="backArrow">
+      <n-icon size="18" color="#A7AFBE" class="backArrow" @click="exit">
         <arrow-back-ios-round />
       </n-icon>
       {{ layoutName }}
@@ -17,6 +17,8 @@
         @updateProps="updateProps"
         :elementProps="property"
         :layoutId="layoutId"
+        :canvasWidth="canvasWidth"
+        :canvasHeight="canvasHeight"
       ></layout-canvas>
       <div>
         <div class="ui porpertyBar" v-show="property.type != 'none'">
@@ -230,10 +232,13 @@ import { useMessage } from "naive-ui";
 
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
+import {useRoute,useRouter} from "vue-router"
 
 import utils from "@/Utils";
 
 const message = useMessage();
+const route = useRoute();
+const router = useRouter();
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -431,6 +436,11 @@ const ShutBoard = () => {
 
 onMounted(() => {
   var imgInputer = document.getElementById("fileUploader");
+  layoutId.value = parseInt(route.query.layoutId as string);
+  layoutName.value = route.query.layoutName as string;
+  canvasWidth.value = parseInt(route.query.canvasWidth as string)
+  canvasHeight.value = parseInt(route.query.canvasHeight as string)
+
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -448,6 +458,10 @@ onMounted(() => {
     });
   };
 });
+
+const exit = ()=>{
+  router.push("/project/prototypes");
+}
 </script>
 
 <style scoped>

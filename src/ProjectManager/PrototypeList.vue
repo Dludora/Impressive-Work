@@ -80,12 +80,14 @@ import PageCard from "@/ProjectManager/pageCard.vue"
 import axios from "axios";
 import utils from "@/Utils";
 import {onMounted, ref} from "vue";
+import {useRouter} from "vue-router"
 
 import {darkTheme, NIcon, useMessage} from "naive-ui";
 
 let proID = ref(0);
 
 let page = ref(2);
+const router = useRouter()
 
 //原型项目
 
@@ -244,15 +246,20 @@ const heightRule = {
   trigger: ['input', 'blur']
 }
 
-//to do for zf  打开布局
-
 let openID= ref(0); //要打开的布局ID
 
 const openCard =(indx) => {
   console.log(shortcuts.value[indx].ID)
   openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
 
-  // todo for zf
+  router.push({path:"/layout",
+  query:{
+    layoutId: openID.value,
+    layoutName: addModelRef.value.addName,
+    CanvasWidth: addModelRef.value.addWidth,
+    canvasHeight: addModelRef.value.addHeight
+  }
+})
 
 }
 
