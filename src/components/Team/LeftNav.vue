@@ -1,17 +1,17 @@
 <template>
   <n-config-provider :theme="theme">
-    <div class="nav">
-      <div class="logo">This is a logo</div>
-      <div class="user-info">
-        <div class="avatar">
-          <n-avatar class="pic">
-            {{ profile.nickname }}
-          </n-avatar>
-        </div>
-        <div class="user">
-          <p>{{ profile.nickname }}</p>
-          <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
-        </div>
+    <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
+  <div class="nav">
+    <div class="logo">This is a logo</div>
+    <div class="user-info">
+      <div class="avatar">
+        <n-avatar class="pic">
+          {{ profile.nickname }}
+        </n-avatar>
+      </div>
+      <div class="user">
+        <p>{{ profile.nickname }}</p>
+        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
       <div class="teams">
         <div class="teamsHead">
@@ -41,6 +41,8 @@
         </n-pagination>
       </div>
     </div>
+  </div>
+    </n-scrollbar>
   </n-config-provider>
 </template>
 
@@ -155,6 +157,8 @@ export default defineComponent({
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
+  width:220px;
+  height:100%;
 }
 
 .logo {
@@ -170,6 +174,7 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   margin-top: 30px;
+  flex-direction: column;
 }
 
 .avatar {

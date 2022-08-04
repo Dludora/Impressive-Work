@@ -1,15 +1,15 @@
 <template>
-  <n-layout has-sider native-scrollbar="false" style="overflow: hidden">
+  <!-- <n-layout has-sider style="height:100%;overflow: hidden">
 
-    <n-layout-sider content-style="padding: 0;">
+    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;">
       <LeftNav :menu-options="sideMenuOptions"/>
     </n-layout-sider>
 
     <n-layout>
       <n-layout-header>
-        <UpBar style="margin-left: 30px"/>
+        <UpBar style="padding:25px 60px 22px"/>
       </n-layout-header>
-      <n-layout-content content-style="padding: 24px 0px;">
+      <n-layout-content :native-scrollbar="false" content-style="height:100%;padding-top: 42px;">
         <div class="three-cls">
           <n-config-provider :theme="theme">
             <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
@@ -18,8 +18,74 @@
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout>
+  </n-layout> -->
+  <!-- <n-layout has-sider content-style="height:100%;">
 
+    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;">
+      <LeftNav :menu-options="sideMenuOptions"/>
+    </n-layout-sider>
+
+    <n-layout>
+      <n-layout-header>
+        <UpBar style="z-index:1;padding:25px 60px 22px"/>
+        <div class="three-cls">
+          <n-config-provider :theme="theme">
+            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+          </n-config-provider>
+        </div>
+      </n-layout-header>
+      <n-layout position="absolute" content-style="top:148px;bottom:0">
+        <n-layout :native-scrollbar="false" content-style="height:100%;">
+          <router-view/>
+        </n-layout>
+      </n-layout>
+    </n-layout>
+  </n-layout> -->
+  <!-- <n-layout has-sider>
+
+    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;" style="min-width:0;width:240;">
+      <LeftNav :menu-options="sideMenuOptions"/>
+    </n-layout-sider>
+
+    <n-layout style="height:100%">
+      <n-layout-header style="height:148px">
+        <UpBar style="padding:25px 60px 22px;"/>
+        <UpBar style="padding:25px 60px 22px;z-index:1;"/>
+      </n-layout-header>
+      <n-layout-content style="padding-top=42px">
+        <div class="three-cls">
+          <n-config-provider :theme="theme">
+            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+          </n-config-provider>
+        </div>
+        <n-layout :native-scrollbar="false">
+            <router-view/>
+        </n-layout>
+      </n-layout-content>
+    </n-layout>
+
+  </n-layout> -->
+  <div class="frame">
+    <div class="side">
+        <LeftNav :menu-options="sideMenuOptions"/>
+    </div>
+    <div class="main">
+      
+      <UpBar style="z-index:1;padding:25px 60px 22px"/>
+      <div class="three-cls">
+        <n-config-provider :theme="theme">
+          <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+        </n-config-provider>
+      </div>
+
+      <div class="view">
+        <!-- <router-view/> -->
+        <n-scrollbar style="max-height:100%">
+            <router-view/>
+        </n-scrollbar>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -201,7 +267,7 @@ const sideMenuOptions: MenuOption[] = [
 .n-layout-header,
 .n-layout-footer {
   background: #16181D;
-  padding: 36px;
+  /*padding: 36px;*/
 }
 
 .n-layout-sider {
@@ -238,9 +304,45 @@ const sideMenuOptions: MenuOption[] = [
   margin-top: 36px;
 }
 .three-cls{
-  position: absolute;
+  background: #16181D;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  /*position: absolute;*/
   min-width: 100%;
-  top:0%;
+  /*top:0%;*/
   padding: 0px 50px;
+  z-index:1;
+}
+.solid{
+  overflow: hidden;
+}
+.scroll{
+  overflow: display;
+}
+.frame{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height:100%;
+}
+.side{
+  height:100%;
+  z-index:2;
+}
+::-webkit-scrollbar
+{
+    width:8px;
+    height:16px;
+    background-color:#F5F5F5;
+}
+.main{
+    height: 100%;
+    /* max-height: 100%; */
+    /* overflow: auto; */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+.view{
+    overflow: auto;
 }
 </style>
