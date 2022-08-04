@@ -97,7 +97,7 @@ export default defineComponent({
     },
 
     exitEdit() {
-      router.push("/programBig/docuList");
+      router.push("/project/document");
     },
 
     saveContent() {

@@ -19,7 +19,7 @@
     <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
       <div class="teams">
         <div class="team">
-          <n-menu :options="sideMenuOptions"/>
+          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
         <div class="addTeam" @click="addTeam">
           <!-- <div class="addImg">
@@ -122,7 +122,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team'+array.value[i].ID,
+                                path: '/team/teamprojects',
                               }
                             },
                             {default: () => array.value[i].name}
@@ -149,6 +149,7 @@ export default defineComponent({
       load,
       getAllTeams,
       handleUpdateValue (key: string, item: MenuOption) {
+        console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
             emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
         },
       changePage,
@@ -249,10 +250,6 @@ export default defineComponent({
   display: inline-block;
   margin-top: 12px;
   margin-bottom: 12px;
-}
-
-.team {
-  /*margin-left: -20px;*/
 }
 
 .TeamName {

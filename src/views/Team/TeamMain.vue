@@ -46,8 +46,8 @@ const menuOptions: MentionOption[] = [
             RouterLink,
             {
               to: {
-                name: 'teamMembers',
-                path: 'teamMembers'
+                name: 'members',
+                path: 'members'
               }
             },
             { default: () => '成员' }
@@ -60,7 +60,7 @@ const menuOptions: MentionOption[] = [
             RouterLink,
             {
               to: {
-                name: 'teamSettings',
+                name: 'setting',
               }
             },
             { default: () => '设置' }
