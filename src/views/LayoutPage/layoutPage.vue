@@ -13,6 +13,7 @@
       <layout-canvas
         class="canvas"
         ref="canvas"
+        :update="update"
         @updateProps="updateProps"
         :elementProps="property"
         :layoutId="layoutId"
@@ -96,7 +97,6 @@
               "
             ></n-input>
           </div>
-          <input type = "file" class="porpertyFileUploader" id="fileUploader" accept="image/*"/>
           <div
             id="yPorperty"
             class="porpertyBarInpUnit"
@@ -113,6 +113,17 @@
                 --n-height: 12px;
               "
             ></n-input>
+          </div>
+          <div class="porpertyBarIconUnit">
+            <n-icon size="20" color="#E2E4E9" class="porpertyIcon" style="marginRight:6px">
+              <image24-regular />
+            </n-icon>
+            <input
+              type="file"
+              class="porpertyFileUploader"
+              id="fileUploader"
+              accept="image/*"
+            />
           </div>
           <div
             id="fillColor"
@@ -199,27 +210,39 @@
 
 <script lang="ts" setup>
 import layoutCanvas from "../../components/DesignPage/layoutCanvas.vue";
-import { Cursor24Regular, TextAddT24Regular } from "@vicons/fluent";
+import { Cursor24Regular, TextAddT24Regular,Image24Regular } from "@vicons/fluent";
 import {
   FrontHandOutlined,
   KeyboardArrowUpRound,
   ArrowBackIosRound,
-  FileDownloadFilled
+  FileDownloadFilled,
 } from "@vicons/material";
+import {useMessage} from "naive-ui"
 
-import { ref, reactive,onMounted } from "vue";
-import axios from "axios"
+import { ref, reactive, onMounted } from "vue";
+import axios from "axios";
+
+import utils from "@/Utils";
+
+const message = useMessage();
+
+const headers = {
+  Authorization: utils.getCookie("Authorization"),
+};
 
 const canvas = ref<layoutCanvas>(null);
 const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
 
-const download = ()=>{
+const download = () => {
   canvas.value?.download();
-}
+};
 
 const layoutId = ref<number>(0);
+const layoutName = ref<string>("")
+const canvasWidth = ref<number>(0);
+const canvasHeight = ref<number>(0);
 
 const palette = reactive<string[]>([
   "#F2F2F2",
@@ -266,6 +289,7 @@ const showBorderPalette = ref<boolean>(false);
 
 const colorCircles = ref<any>([]);
 const borderCircles = ref<any>([]);
+const update = ref<boolean>(true);
 
 let selectedColor: number = 27;
 let selectedBorderColor: number = 30;
@@ -273,7 +297,7 @@ let selectedBorderColor: number = 30;
 let elementType: string = "";
 
 type Property = {
-  id:number,
+  id: number;
   index: number;
   x: number;
   y: number;
@@ -290,7 +314,7 @@ type Property = {
 };
 
 const property = reactive<Property>({
-  id:0,
+  id: 0,
   index: -1,
   x: 0,
   y: 0,
@@ -306,11 +330,19 @@ const property = reactive<Property>({
   borderColor: "transparent",
 });
 
+const initPage = ()=>{
+
+}
+
 const updateProps = (data: Property) => {
   if (data == null) {
     property.type = "none";
     return;
   }
+  update.value = false;
+  // setTimeout(() => {
+  //   update.value = true;
+  // }, 100);
   property.index = data.index;
   property.x = data.x;
   property.y = data.y;
@@ -340,6 +372,7 @@ const updateProps = (data: Property) => {
 };
 
 const updateColor = (colorId: number) => {
+  update.value = true;
   property.color = palette[colorId];
   colorCircles.value[selectedColor].style.borderWidth = "0px";
   colorCircles.value[selectedColor].style.margin = "3px";
@@ -349,12 +382,17 @@ const updateColor = (colorId: number) => {
 };
 
 const updateBorder = (colorId: number) => {
+  update.value = true;
   property.borderColor = palette[colorId];
   borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
   borderCircles.value[selectedBorderColor].style.margin = "3px";
   selectedBorderColor = colorId;
   borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
   borderCircles.value[selectedBorderColor].style.margin = "1px";
+  if(palette[colorId]!="transparent")
+  {
+    message.info("注意：边框宽度为0");
+  }
 };
 
 const displayPalette = () => {
@@ -378,21 +416,25 @@ const ShutBoard = () => {
   document.getElementById("borderColor")!.style.backgroundColor = "";
 };
 
-onMounted(()=>{
+onMounted(() => {
   var imgInputer = document.getElementById("fileUploader");
-  imgInputer!.onchange = ()=>{
-    console.log(imgInputer.files);
-    axios.post("/resource/img",{
-      'file':imgInputer.files[0],
-    }).then(res=>{
+  imgInputer!.onchange = () => {
+    var form = new FormData();
+    form.append("file", imgInputer.files[0]);
+    axios({
+      url: "/resource/img",
+      method: "post",
+      headers: headers,
+      data: form,
+    }).then((res) => {
       console.log(res.data);
-      if(res.data.msg=="success")
-      {
+      if (res.data.msg == "成功") {
+        update.value = true;
         property.src = res.data.data;
       }
-    })
-  }
-})
+    });
+  };
+});
 </script>
 
 <style scoped>
@@ -420,15 +462,15 @@ onMounted(()=>{
   height: 24px;
   background-color: #2b303b;
 }
-.backArrow{
-  float:left;
-  margin-top:6px;
-  margin-left:12px;
+.backArrow {
+  float: left;
+  margin-top: 6px;
+  margin-left: 12px;
 }
-.downloadIcon{
-  float:right;
-  margin-top:6px;
-  margin-right:10px;
+.downloadIcon {
+  float: right;
+  margin-top: 6px;
+  margin-right: 10px;
 }
 .home {
   text-align: center;
@@ -436,7 +478,7 @@ onMounted(()=>{
   font-weight: 700;
   font-size: 12px;
   line-height: 24px;
-  color:#e2e4e9;
+  color: #e2e4e9;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -472,8 +514,10 @@ onMounted(()=>{
   padding-right: 1px;
   font-size: 5px;
 }
-.porpertyFileUploader{
-  float:left;
+.porpertyFileUploader {
+  position:absolute;
+  left:0;
+  opacity: 0;
 }
 .porpertyBarIconUnit {
   height: 24px;
