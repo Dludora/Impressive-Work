@@ -12,8 +12,8 @@
       </div>
     </div>
     <div class="member-operate">
-      <Icon class="star" size="36" color="#FFFFFF"><IosStarOutline /></Icon>
-      <Icon id="close" size="40" color="#FFFFFF"><Close /></Icon>
+      <Icon style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
+      <Icon id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
     </div>
   </div>
   <div class="member-add ">
@@ -27,8 +27,9 @@
 
 <script setup lang="ts">
 import {PlusOutlined} from "@vicons/antd";
+import {UserCertification} from "@vicons/carbon";
 import {IosStarOutline, IosStar} from "@vicons/ionicons4"
-import {Close} from "@vicons/ionicons5"
+import {CloseOutline} from "@vicons/ionicons5"
 import {Icon} from "@vicons/utils";
 
 const members = [

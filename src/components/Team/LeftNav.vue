@@ -22,9 +22,12 @@
           <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
         </div>
         <div class="addTeam" @click="addTeam">
-          <div class="addImg">
+          <!-- <div class="addImg">
             <img src="@/assets/plus.png"/>
-          </div>
+          </div> -->
+          <Icon style="margin-right:8px;" size="24">
+            <Add12Filled/>
+          </Icon>
           <div class="word">
             新建团队
           </div>
@@ -53,6 +56,8 @@ import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
 import {RouterLink} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import { Icon } from '@vicons/utils'
+import { Add12Filled } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
@@ -70,6 +75,10 @@ function renderIcon(icon: Component) {
 export default defineComponent({
   data() {
     return {}
+  },
+  components: {
+    Icon,
+    Add12Filled,
   },
   setup(props, {emit}) {
     const toMain=()=>{
@@ -158,6 +167,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+*{
+  transition: 0.1s;
+  transition-delay: 0s;
+}
 .nav {
   display:flex;
   flex-direction: column;
@@ -254,14 +267,21 @@ export default defineComponent({
 .pack:hover {
   background: #414958;
 }
-
+.n-menu{
+  padding:0;
+}
 .addTeam {
-  height: 45px;
-  line-height: 45px;
+  height: 42px;
+  line-height: 42px;
   display: flex;
-  margin-right: 10px;
-  margin-left: -10px;
-  color: #E2E4E9;
+  font-size:12px;
+  /*margin-right: 10px;
+  margin-left: -10px;*/
+  margin:6px 8px 0 -12px;
+  padding-left: 24px;
+  color: #A7AFBE;
+  border-radius:2px;
+  align-items: center;
 }
 
 .addImg {
@@ -279,9 +299,10 @@ export default defineComponent({
 }
 
 .addTeam:hover {
-  color: pink;
-  background: #414958;
+  color: #E2E4E9;
+  background: #414958aa;
   cursor: pointer;
+  /*box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);*/
 }
 
 #pagination {
