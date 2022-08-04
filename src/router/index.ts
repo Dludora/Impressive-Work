@@ -6,6 +6,9 @@ import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import prototypes from "../ProjectManager/PrototypeList.vue"
 
+import mainView from "../TeamManager/MainView.vue"
+import teamMain from "../TeamManager/TeamMain.vue"
+import projectMain from "../ProjectManager/ProjectMain.vue"
 
 import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
@@ -43,27 +46,78 @@ const router = createRouter({
             component: layoutPage
         },
         {
-            name: 'team',
-            path: '/team',
-            component: someTeam,
+            name:'main',
+            path: '/',
+            component: mainView,
             children: [
                 {
-                    name: 'teamProjects',
-                    path: 'teamProjects',
-                    component: teamProjects
+                    name: 'team',
+                    path:'team',
+                    component: teamMain,
+                    children:[
+                        {
+                            name:'projects',
+                            path: 'projects',
+                            component: teamProjects,
+                        },
+                        {
+                            name:'members',
+                            path: 'members',
+                            component: teamMembers,
+                        },
+                        {
+                            name:'setting',
+                            path: 'setting',
+                            component: teamSettings,
+                        },
+                    ]
                 },
                 {
-                    name: 'teamMembers',
-                    path: 'teamMembers',
-                    component: teamMembers
-                },
-                {
-                    name: 'teamSettings',
-                    path: 'teamSettings',
-                    component: teamSettings
+                    name: 'project',
+                    path:'project',
+                    component: projectMain,
+                    children:[
+                        {
+                            name:'prototypes',
+                            path: 'prototypes',
+                            component: prototypes,
+                        },
+                        // {
+                        //     name:'members',
+                        //     path: 'members',
+                        //     component: teamMembers,
+                        // },
+                        {
+                            name:'documents',
+                            path: 'documents',
+                            component: docuList,
+                        },
+                    ]
                 },
             ]
         },
+        // {
+        //     name: 'team',
+        //     path: '/team',
+        //     component: someTeam,
+        //     children: [
+        //         {
+        //             name: 'teamProjects',
+        //             path: 'teamProjects',
+        //             component: teamProjects
+        //         },
+        //         {
+        //             name: 'teamMembers',
+        //             path: 'teamMembers',
+        //             component: teamMembers
+        //         },
+        //         {
+        //             name: 'teamSettings',
+        //             path: 'teamSettings',
+        //             component: teamSettings
+        //         },
+        //     ]
+        // },
         {
             name:'vDitor',
             path: '/vDitor',
@@ -94,28 +148,28 @@ const router = createRouter({
             path:'/docuEdit',
             component: docuEdit,
         },
-        {
-            name: 'programBig',
-            path: '/programBig',
-            component:  programView,
-            children: [
-                {
-                    name: 'prototypes',
-                    path: '',
-                    component: prototypes
-                },
-                // {
-                //     name: 'drawUML',
-                //     path: 'drawUML',
-                //     component: drawUML
-                // },
-                {
-                    name: 'docuList',
-                    path: 'docuList',
-                    component: docuList
-                },
-            ]
-        },
+        // {
+        //     name: 'programBig',
+        //     path: '/programBig',
+        //     component:  programView,
+        //     children: [
+        //         {
+        //             name: 'prototypes',
+        //             path: '',
+        //             component: prototypes
+        //         },
+        //         // {
+        //         //     name: 'drawUML',
+        //         //     path: 'drawUML',
+        //         //     component: drawUML
+        //         // },
+        //         {
+        //             name: 'docuList',
+        //             path: 'docuList',
+        //             component: docuList
+        //         },
+        //     ]
+        // },
     ]
 })
 export default router

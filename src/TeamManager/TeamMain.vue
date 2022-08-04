@@ -17,10 +17,10 @@
       </n-layout-content>
     </n-layout>
   </n-layout> -->
-  <div class="frame">
+  <!-- <div class="frame">
     <div class="side">
         <LeftNav @ID="getID" @addTeam="showModal=true"/>
-    </div>
+    </div> -->
     <div class="main">
       <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
       <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
@@ -36,8 +36,8 @@
         </n-scrollbar>
       </div>
     </div>
-  </div>
-  <n-config-provider :theme="theme">
+  <!-- </div> -->
+  <!-- <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModal"
         :mask-closable="false"
@@ -57,13 +57,13 @@
         </n-form-item>
       </n-form>
     </n-modal>
-  </n-config-provider>
+  </n-config-provider> -->
 </template>
 
 <script lang="ts">
 import axios from 'axios';
-import LeftNav from "../Team/LeftNav.vue"
-import TeamHead from "../Team/TeamHead.vue"
+// import LeftNav from "../Team/LeftNav.vue"
+import TeamHead from "../components/Team/TeamHead.vue"
 
 import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
@@ -103,7 +103,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: 'projects'
+                name: 'projects'
               }
             },
             {default: () => '项目'}
@@ -117,7 +117,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                // name: 'teamMembers',
+                name: 'members',
                 path: 'members'
               },
             },
@@ -143,7 +143,7 @@ let menuOptions: MenuOption[] = [
 ]
 export default defineComponent({
   components: {
-    LeftNav,
+    // LeftNav,
     TeamHead
   },
   setup() {

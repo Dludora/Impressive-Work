@@ -1,40 +1,10 @@
 <template>
-  <!-- <n-layout has-sider native-scrollbar="false">
-    <n-layout-sider content-style="padding: 0;">
-      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
-    </n-layout-sider>
-    <n-layout>
-      <n-layout-header>
-        <TeamHead ref="com" style="margin-left: 30px"/>
-      </n-layout-header>
-      <n-layout-content content-style="padding: 24px 0px;">
-        <div class="menu">
-          <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions"/>
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout> -->
   <div class="frame">
     <div class="side">
         <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </div>
     <div class="main">
-      <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
-      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
-      <div class="three-cls">
-        <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions"/>
-        </n-config-provider>
-      </div>
-
-      <div class="view">
-        <n-scrollbar style="max-height:100%">
-            <router-view/>
-        </n-scrollbar>
-      </div>
+      <router-view/>
     </div>
   </div>
   <n-config-provider :theme="theme">
@@ -62,8 +32,8 @@
 
 <script lang="ts">
 import axios from 'axios';
-import LeftNav from "../Team/LeftNav.vue"
-import TeamHead from "../Team/TeamHead.vue"
+import LeftNav from "../components/Team/LeftNav.vue"
+// import TeamHead from "../Team/TeamHead.vue"
 
 import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
@@ -96,55 +66,9 @@ let profile = {
   src: ""
 }
 
-let menuOptions: MenuOption[] = [
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                path: 'projects'
-              }
-            },
-            {default: () => '项目'}
-        ),
-    key: 'go-to-projects',
-    icon: renderIcon(Project)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                // name: 'teamMembers',
-                path: 'members'
-              },
-            },
-            {default: () => '成员'}
-        ),
-    key: 'go-to-members',
-    icon: renderIcon(PersonIcon)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: {
-                name: 'setting',
-              }
-            },
-            {default: () => '设置'}
-        ),
-    key: 'go-to-settings',
-    icon: renderIcon(Settings)
-  },
-]
 export default defineComponent({
   components: {
     LeftNav,
-    TeamHead
   },
   setup() {
     const router = useRouter()
@@ -207,7 +131,7 @@ export default defineComponent({
     }
     return {
       theme: darkTheme,
-      menuOptions,
+    //   menuOptions,
       getChildList,
       com,
       router,
