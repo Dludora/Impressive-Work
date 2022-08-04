@@ -1,6 +1,14 @@
 <template>
   <div class="board" @mousedown="ShutBoard">
-    <div class="layoutHeader"></div>
+    <div class="layoutHeader home">
+      <n-icon size="12" color="#A7AFBE" class="backArrow">
+        <arrow-back-ios-round />
+      </n-icon>
+      Home
+      <n-icon size="14" color="#A7AFBE" class="downloadIcon" @click="download">
+        <file-download-filled />
+      </n-icon>
+    </div>
     <div class="canvasBoard">
       <layout-canvas
         class="canvas"
@@ -159,7 +167,10 @@
           </div>
         </div>
         <div class="ui toolBar">
-          <div class="ui toolBarUnit toolLeftUnit" @mousedown="PrepareElement('rect')">
+          <div
+            class="ui toolBarUnit toolLeftUnit"
+            @mousedown="PrepareElement('rect')"
+          >
             <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
               <cursor24-regular />
             </n-icon>
@@ -170,7 +181,10 @@
           <div class="ui toolBarUnit" @mousedown="PrepareElement('circle')">
             <div class="ui toolUnit toolCircle"></div>
           </div>
-          <div class="ui toolBarUnit toolRightUnit" @mousedown="PrepareElement('text')">
+          <div
+            class="ui toolBarUnit toolRightUnit"
+            @mousedown="PrepareElement('text')"
+          >
             <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
               <text-add-t24-regular />
             </n-icon>
@@ -184,7 +198,12 @@
 <script lang="ts" setup>
 import layoutCanvas from "../../components/DesignPage/layoutCanvas.vue";
 import { Cursor24Regular, TextAddT24Regular } from "@vicons/fluent";
-import { FrontHandOutlined, KeyboardArrowUpRound } from "@vicons/material";
+import {
+  FrontHandOutlined,
+  KeyboardArrowUpRound,
+  ArrowBackIosRound,
+  FileDownloadFilled
+} from "@vicons/material";
 
 import { ref, reactive } from "vue";
 
@@ -192,6 +211,10 @@ const canvas = ref<layoutCanvas>(null);
 const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
+
+const download = ()=>{
+  canvas.value?.download();
+}
 
 const palette = reactive<string[]>([
   "#F2F2F2",
@@ -331,21 +354,21 @@ const displayPalette = () => {
   showPalette.value = true;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
   colorCircles.value[selectedColor].style.margin = "1px";
-  document.getElementById("fillColor")!.style.backgroundColor="#464b56";
+  document.getElementById("fillColor")!.style.backgroundColor = "#464b56";
 };
 
 const displayBorderPalette = () => {
   showBorderPalette.value = true;
   borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
   borderCircles.value[selectedBorderColor].style.margin = "1px";
-  document.getElementById("borderColor")!.style.backgroundColor="#464b56";
+  document.getElementById("borderColor")!.style.backgroundColor = "#464b56";
 };
 
 const ShutBoard = () => {
   showPalette.value = false;
   showBorderPalette.value = false;
-  document.getElementById("fillColor")!.style.backgroundColor="";
-  document.getElementById("borderColor")!.style.backgroundColor="";
+  document.getElementById("fillColor")!.style.backgroundColor = "";
+  document.getElementById("borderColor")!.style.backgroundColor = "";
 };
 </script>
 
@@ -362,7 +385,7 @@ const ShutBoard = () => {
 .canvasBoard {
   text-align: center;
   position: absolute;
-  top: 48px;
+  top: 24px;
   bottom: 0px;
   width: 100%;
 }
@@ -371,14 +394,26 @@ const ShutBoard = () => {
   user-select: none;
 }
 .layoutHeader {
-  height: 48px;
+  height: 24px;
   background-color: #2b303b;
 }
-.Home {
+.backArrow{
+  float:left;
+  margin-top:6px;
+  margin-left:12px;
+}
+.downloadIcon{
+  float:right;
+  margin-top:6px;
+  margin-right:10px;
+}
+.home {
+  text-align: center;
   font-family: Inter;
   font-weight: 700;
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 12px;
+  line-height: 24px;
+  color:#e2e4e9;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -389,7 +424,7 @@ const ShutBoard = () => {
   bottom: 75px;
   border-radius: 6px;
 }
-.porpertyRightUnit{
+.porpertyRightUnit {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
 }
@@ -419,7 +454,7 @@ const ShutBoard = () => {
   float: left;
   position: relative;
 }
-.porpertyBarIconUnit:hover{
+.porpertyBarIconUnit:hover {
   background-color: #3a404f;
 }
 .porpertyIcon {
@@ -478,11 +513,11 @@ const ShutBoard = () => {
   bottom: 20px;
   border-radius: 12px;
 }
-.toolLeftUnit{
+.toolLeftUnit {
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
 }
-.toolRightUnit{
+.toolRightUnit {
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
@@ -492,7 +527,7 @@ const ShutBoard = () => {
   float: left;
   position: relative;
 }
-.toolBarUnit:hover{
+.toolBarUnit:hover {
   background-color: #3a404f;
 }
 .toolUnit {
