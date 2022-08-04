@@ -5,7 +5,7 @@
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
-        <TeamHead style="margin-left: 30px"/>
+        <TeamHead ref="com" style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content content-style="padding: 24px 0px;">
         <div class="menu">
@@ -46,12 +46,12 @@ import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
 
 import {useRoute} from "vue-router";
-import {ref, h, Component, defineComponent} from 'vue'
-import {NIcon, useMessage, useDialog} from "naive-ui";
+import {ref, h, Component, defineComponent, onMounted} from 'vue'
+import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink} from "vue-router";
+import {RouterLink,useRouter} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
@@ -59,7 +59,6 @@ import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import utils from "@/Utils";
 
-const route = useRoute()
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -84,7 +83,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: '/team'
+                path: 'teamProjects'
               }
             },
             {default: () => '项目'}
@@ -128,15 +127,25 @@ export default defineComponent({
     TeamHead
   },
   setup() {
+    const router = useRouter()
+    let teamID = ref(-1)
+    const com = ref(null)
     const showModalRef = ref(false)
     const formRef = ref<FormData | null>(null)
     const modelRef = ref({
       name: "",
       description: "",
     })
-    const getID = (msg: any) => {
-      alert("father get:" + msg)
-
+    const getID = (msg:any) =>{
+        console.log("father get:"+msg)
+        teamID.value = parseInt(msg)
+        com.value.teamData.ID=teamID.value
+        console.log(com.value.teamData)
+        console.log("father push"+teamID.value)
+        let tID=(teamID.value)
+        router.push({path:'/team/teamProjects',
+          query:{teamID1:tID}
+        })
     }
     const ruleName = {
       required: true,
@@ -170,11 +179,18 @@ export default defineComponent({
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
+      onMounted(()=>{
+        router.push({path:'/team/teamProjects',
+          query:{teamID:teamID.value}
+        })
+      })
     }
     return {
       theme: darkTheme,
       menuOptions,
       getChildList,
+      com,
+      router,
       // 横态框
       showModal: showModalRef,
       onNegativeClick,
@@ -185,6 +201,7 @@ export default defineComponent({
       ruleName,
       modelRef,
       formRef,
+      teamID,
       formatFeedback(raw: string | undefined) {
         h('div', {style: 'color: green'}, [raw + '而且是绿的'])
       },

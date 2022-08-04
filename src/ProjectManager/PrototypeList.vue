@@ -3,15 +3,15 @@
         <div class="discribe">
             管理你的{{length}}个页面
             <div class="buttons">
-                <n-button class="newpage">
+                <n-button class="newpage" size="tiny">
                     新 建 页 面&nbsp;
-                    <Icon size="20">
+                    <Icon size="14">
                         <Add28Regular/>
                     </Icon>
                 </n-button>
-                <n-button>
+                <n-button size="tiny">
                     导 出 页 面&nbsp;
-                    <Icon size="20">
+                    <Icon size="14">
                         <Export/>
                     </Icon>
                 </n-button>
@@ -38,7 +38,12 @@ import {
 } from '@vicons/fluent'
 import { Icon } from '@vicons/utils'
 import PageCard from "@/ProjectManager/pageCard.vue"
-let shortcuts=[]
+let shortcuts=[
+    {
+        name: '',
+        img: null,
+    },
+]
 let length=0
 function getList(){ //TODO 前后端对接：获取页面列表
 
@@ -92,7 +97,7 @@ getList()
     margin:39px 43px 0 61px;
 }
 .card {
-    margin:0 18px 26px 0;
+    margin:0 10px 20px 0;
 }
 .pagelist{
     display: flex;
@@ -103,10 +108,10 @@ getList()
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
-    font-size: 24px;
+    font-size: 16px;
     line-height: 29px;
     align-items: center;
-    margin-bottom: 26px;
+    margin-bottom: 12px;
 
     display:flex;
     flex-wrap: nowrap;
@@ -116,9 +121,9 @@ getList()
     color: #414958;
 }
 .buttons{
-    margin-right: 18px;
+    margin-right: 10px;
 }
 .newpage{
-    margin-right: 18px;
+    margin-right: 10px;
 }
 </style>

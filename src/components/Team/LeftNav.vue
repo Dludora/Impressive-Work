@@ -1,17 +1,17 @@
 <template>
   <n-config-provider :theme="theme">
-    <div class="nav">
-      <div class="logo">This is a logo</div>
-      <div class="user-info">
-        <div class="avatar">
-          <n-avatar class="pic">
-            {{ profile.nickname }}
-          </n-avatar>
-        </div>
-        <div class="user">
-          <p>{{ profile.nickname }}</p>
-          <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
-        </div>
+    <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
+  <div class="nav">
+    <div class="logo" @click="toMain">墨书</div>
+    <div class="user-info">
+      <div class="avatar">
+        <n-avatar class="pic">
+          {{ profile.nickname }}
+        </n-avatar>
+      </div>
+      <div class="user">
+        <p>{{ profile.nickname }}</p>
+        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
       <div class="teams">
         <div class="teamsHead">
@@ -40,6 +40,8 @@
         </n-pagination>
       </div>
     </div>
+  </div>
+    </n-scrollbar>
   </n-config-provider>
 </template>
 
@@ -52,14 +54,14 @@ import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import axios from "axios";
 import utils from "@/Utils";
+import router from '@/router';
 
-const router = useRouter();
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
 const sideMenuOptions = ref([] as MenuOption[])
-
+let dataList = ref([{ID:0}])
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -69,6 +71,9 @@ export default defineComponent({
     return {}
   },
   setup(props, {emit}) {
+    const toMain=()=>{
+      router.push("/")
+    }
     const profile = ref({
       ID: null,
       email: "",
@@ -93,6 +98,9 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             let array = ref(res.data.data.items)
+            dataList = res.data.data.items
+            console.log(res.data.data)
+            // console.log(res.data.data.items)
             console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
@@ -128,8 +136,12 @@ export default defineComponent({
     return {
       theme: darkTheme,
       addTeam,
+      toMain,
       load,
       getAllTeams,
+      handleUpdateValue (key: string, item: MenuOption) {
+            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+        },
       changePage,
       // 个人信息
       profile,
@@ -150,6 +162,8 @@ export default defineComponent({
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
+  width:220px;
+  height:100%;
 }
 
 .logo {
@@ -165,6 +179,7 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   margin-top: 30px;
+  flex-direction: column;
 }
 
 .avatar {

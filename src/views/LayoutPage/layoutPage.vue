@@ -1,6 +1,14 @@
 <template>
   <div class="board" @mousedown="ShutBoard">
-    <div class="layoutHeader"></div>
+    <div class="layoutHeader home">
+      <n-icon size="12" color="#A7AFBE" class="backArrow">
+        <arrow-back-ios-round />
+      </n-icon>
+      Home
+      <n-icon size="14" color="#A7AFBE" class="downloadIcon" @click="download">
+        <file-download-filled />
+      </n-icon>
+    </div>
     <div class="canvasBoard">
       <layout-canvas
         class="canvas"
@@ -9,13 +17,18 @@
         :elementProps="property"
       ></layout-canvas>
       <div>
-        <div class="ui porpertyBar">
+        <div class="ui porpertyBar" v-show="property.type != 'none'">
           <div id="xPorperty" class="porpertyBarInpUnit">
             <span class="porpertyText">X</span>
             <n-input
               class="porpertyInput"
               v-model:value="property.x"
               :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
             ></n-input>
           </div>
           <div id="yPorperty" class="porpertyBarInpUnit">
@@ -24,53 +37,141 @@
               class="porpertyInput"
               v-model:value="property.y"
               :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
             ></n-input>
           </div>
-          <div id="wPorperty" class="porpertyBarInpUnit">
+          <div
+            id="wPorperty"
+            class="porpertyBarInpUnit"
+            v-show="property.type != 'text'"
+          >
             <span class="porpertyText">宽</span>
             <n-input
               class="porpertyInput"
               v-model:value="property.width"
               :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
             ></n-input>
           </div>
-          <div id="hPorperty" class="porpertyBarInpUnit">
+          <div
+            id="hPorperty"
+            class="porpertyBarInpUnit"
+            v-show="property.type != 'text'"
+          >
             <span class="porpertyText">高</span>
             <n-input
               class="porpertyInput"
               v-model:value="property.height"
               :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
             ></n-input>
           </div>
-          <div id="fillColor" class="porpertyBarIconUnit" @click="showPalette = true">
+          <div
+            id="hPorperty"
+            class="porpertyBarInpUnit"
+            v-show="property.type != 'text'"
+          >
+            <span class="porpertyText">边框宽度</span>
+            <n-input
+              class="porpertyInput"
+              v-model:value="property.borderWidth"
+              :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
+            ></n-input>
+          </div>
+          <div
+            id="yPorperty"
+            class="porpertyBarInpUnit"
+            v-show="property.type == 'text'"
+          >
+            <span class="porpertyText">字号</span>
+            <n-input
+              class="porpertyInput"
+              v-model:value="property.fontSize"
+              :allow-input="onlyAllowNumber"
+              style="
+                --n-padding-left: 0px;
+                --n-padding-right: 0px;
+                --n-height: 12px;
+              "
+            ></n-input>
+          </div>
+          <div
+            id="fillColor"
+            class="porpertyBarIconUnit"
+            @click="displayPalette"
+          >
             <div class="porpertyIcon fillIcon"></div>
             <div class="porpertyExtension">
-              <n-icon size="16" color="#E2E4E9">
+              <n-icon size="12" color="#E2E4E9">
                 <keyboard-arrow-up-round />
               </n-icon>
             </div>
-            <div class="porpertyExtensionBoard paletteBoard" v-show="showPalette" @mousedown.stop>
+            <div
+              class="porpertyExtensionBoard paletteBoard"
+              v-show="showPalette"
+              @mousedown.stop
+            >
               <div
                 v-for="(color, index) in palette"
                 :key="index"
                 :style="'background-color:' + palette[index]"
                 @click="updateColor(index)"
                 class="paletteColor"
+                ref="colorCircles"
               ></div>
             </div>
           </div>
-          <div id="fillColor" class="porpertyBarIconUnit">
+          <div
+            id="borderColor"
+            class="porpertyBarIconUnit porpertyRightUnit"
+            @click="displayBorderPalette"
+            v-show="property.type != 'text'"
+          >
             <div class="porpertyIcon borderIcon"></div>
             <div class="porpertyExtension">
-              <n-icon size="16" color="#E2E4E9">
+              <n-icon size="12" color="#E2E4E9">
                 <keyboard-arrow-up-round />
               </n-icon>
+            </div>
+            <div
+              class="porpertyExtensionBoard paletteBoard"
+              v-show="showBorderPalette"
+              @mousedown.stop
+            >
+              <div
+                v-for="(color, index) in palette"
+                :key="index"
+                :style="'background-color:' + palette[index]"
+                @click="updateBorder(index)"
+                class="paletteColor"
+                ref="borderCircles"
+              ></div>
             </div>
           </div>
         </div>
         <div class="ui toolBar">
-          <div class="ui toolBarUnit" @mousedown="PrepareElement('rect')">
-            <n-icon size="56" class="ui toolUnit toolPointer" color="#ffffff">
+          <div
+            class="ui toolBarUnit toolLeftUnit"
+            @mousedown="PrepareElement('rect')"
+          >
+            <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
               <cursor24-regular />
             </n-icon>
           </div>
@@ -80,8 +181,11 @@
           <div class="ui toolBarUnit" @mousedown="PrepareElement('circle')">
             <div class="ui toolUnit toolCircle"></div>
           </div>
-          <div class="ui toolBarUnit" @mousedown="PrepareElement('text')">
-            <n-icon size="56" class="ui toolUnit toolPointer" color="#ffffff">
+          <div
+            class="ui toolBarUnit toolRightUnit"
+            @mousedown="PrepareElement('text')"
+          >
+            <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
               <text-add-t24-regular />
             </n-icon>
           </div>
@@ -94,7 +198,12 @@
 <script lang="ts" setup>
 import layoutCanvas from "../../components/DesignPage/layoutCanvas.vue";
 import { Cursor24Regular, TextAddT24Regular } from "@vicons/fluent";
-import { FrontHandOutlined, KeyboardArrowUpRound } from "@vicons/material";
+import {
+  FrontHandOutlined,
+  KeyboardArrowUpRound,
+  ArrowBackIosRound,
+  FileDownloadFilled
+} from "@vicons/material";
 
 import { ref, reactive } from "vue";
 
@@ -102,6 +211,10 @@ const canvas = ref<layoutCanvas>(null);
 const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
+
+const download = ()=>{
+  canvas.value?.download();
+}
 
 const palette = reactive<string[]>([
   "#F2F2F2",
@@ -143,16 +256,25 @@ const palette = reactive<string[]>([
 ]);
 const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value);
 
-const showPalette = ref<boolean>();
+const showPalette = ref<boolean>(false);
+const showBorderPalette = ref<boolean>(false);
+
+const colorCircles = ref<any>([]);
+const borderCircles = ref<any>([]);
+
+let selectedColor: number = 27;
+let selectedBorderColor: number = 30;
 
 let elementType: string = "";
 
 type Property = {
-  id: number;
+  index: number;
   x: number;
   y: number;
   width: number;
   height: number;
+  borderWidth: number;
+  borderRadius: number;
   type: string;
   color: string;
   borderColor: string;
@@ -162,41 +284,92 @@ type Property = {
 };
 
 const property = reactive<Property>({
-  id: -1,
+  index: -1,
   x: 0,
   y: 0,
   width: 0,
   height: 0,
-  type: "Rect",
+  borderWidth: 0,
+  borderRadius: 0,
+  type: "none",
   locked: false,
   fontSize: 0,
   src: "",
-  color: "red",
-  borderColor: "blue",
+  color: "#D42B39",
+  borderColor: "transparent",
 });
 
 const updateProps = (data: Property) => {
-  property.id = data.id;
+  if (data == null) {
+    property.type = "none";
+    return;
+  }
+  property.index = data.index;
   property.x = data.x;
   property.y = data.y;
   property.width = data.width;
   property.height = data.height;
+  property.borderWidth = data.borderWidth;
+  property.borderRadius = data.borderRadius;
   property.type = data.type;
   property.color = data.color;
   property.borderColor = data.borderColor;
   property.src = data.src;
   property.fontSize = data.fontSize;
   property.locked = data.locked;
+
+  colorCircles.value[selectedColor].style.borderWidth = "0px";
+  borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
+  colorCircles.value[selectedColor].style.margin = "3px";
+  borderCircles.value[selectedBorderColor].style.margin = "3px";
+  for (var i = 0; i < palette.length; ++i) {
+    if (property.color == palette[i]) {
+      selectedColor = i;
+    }
+    if (property.borderColor == palette[i]) {
+      selectedBorderColor = i;
+    }
+  }
 };
 
 const updateColor = (colorId: number) => {
-  console.log(colorId);
   property.color = palette[colorId];
+  colorCircles.value[selectedColor].style.borderWidth = "0px";
+  colorCircles.value[selectedColor].style.margin = "3px";
+  selectedColor = colorId;
+  colorCircles.value[selectedColor].style.borderWidth = "2px";
+  colorCircles.value[selectedColor].style.margin = "1px";
 };
 
-const ShutBoard = ()=>{
+const updateBorder = (colorId: number) => {
+  property.borderColor = palette[colorId];
+  borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
+  borderCircles.value[selectedBorderColor].style.margin = "3px";
+  selectedBorderColor = colorId;
+  borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
+  borderCircles.value[selectedBorderColor].style.margin = "1px";
+};
+
+const displayPalette = () => {
+  showPalette.value = true;
+  colorCircles.value[selectedColor].style.borderWidth = "2px";
+  colorCircles.value[selectedColor].style.margin = "1px";
+  document.getElementById("fillColor")!.style.backgroundColor = "#464b56";
+};
+
+const displayBorderPalette = () => {
+  showBorderPalette.value = true;
+  borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
+  borderCircles.value[selectedBorderColor].style.margin = "1px";
+  document.getElementById("borderColor")!.style.backgroundColor = "#464b56";
+};
+
+const ShutBoard = () => {
   showPalette.value = false;
-}
+  showBorderPalette.value = false;
+  document.getElementById("fillColor")!.style.backgroundColor = "";
+  document.getElementById("borderColor")!.style.backgroundColor = "";
+};
 </script>
 
 <style scoped>
@@ -212,7 +385,7 @@ const ShutBoard = ()=>{
 .canvasBoard {
   text-align: center;
   position: absolute;
-  top: 48px;
+  top: 24px;
   bottom: 0px;
   width: 100%;
 }
@@ -221,14 +394,26 @@ const ShutBoard = ()=>{
   user-select: none;
 }
 .layoutHeader {
-  height: 48px;
+  height: 24px;
   background-color: #2b303b;
 }
-.Home {
+.backArrow{
+  float:left;
+  margin-top:6px;
+  margin-left:12px;
+}
+.downloadIcon{
+  float:right;
+  margin-top:6px;
+  margin-right:10px;
+}
+.home {
+  text-align: center;
   font-family: Inter;
   font-weight: 700;
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 12px;
+  line-height: 24px;
+  color:#e2e4e9;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -236,14 +421,18 @@ const ShutBoard = ()=>{
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
-  bottom: 150px;
-  border-radius: 12px;
+  bottom: 75px;
+  border-radius: 6px;
+}
+.porpertyRightUnit {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 .porpertyBarInpUnit {
-  height: 48px;
-  line-height: 48px;
-  padding-left: 16px;
-  padding-right: 16px;
+  height: 24px;
+  line-height: 24px;
+  padding-left: 8px;
+  padding-right: 8px;
   color: #e2e4e9;
   float: left;
 }
@@ -251,59 +440,68 @@ const ShutBoard = ()=>{
   float: left;
 }
 .porpertyInput {
-  width: 56px;
-  height: 28px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 16px;
+  width: 28px;
+  height: 14px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 8px;
+  padding-left: 1px;
+  padding-right: 1px;
+  font-size: 5px;
 }
 .porpertyBarIconUnit {
-  height: 48px;
+  height: 24px;
   float: left;
   position: relative;
 }
+.porpertyBarIconUnit:hover {
+  background-color: #3a404f;
+}
 .porpertyIcon {
-  width: 36px;
-  height: 36px;
-  margin: 6px;
-  margin-right: 3px;
+  width: 18px;
+  height: 18px;
+  margin: 3px;
+  margin-right: 1.5px;
   float: left;
 }
 .porpertyExtension {
   float: left;
-  margin-top: 16px;
-  margin-bottom: 16px;
-  margin-right: 2px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-right: 1px;
 }
 .porpertyExtensionBoard {
   position: absolute;
-  bottom: 65px;
-  left: 30px;
+  bottom: 32.5px;
+  left: 15px;
   transform: translate(-50%, 0);
   background-color: #2b303b;
-  border-radius: 12px;
+  border-radius: 6px;
 }
 .paletteBoard {
-  width: 288px;
-  padding: 16px;
+  width: 144px;
+  padding: 8px;
 }
 .paletteColor {
-  margin: 6px;
+  margin: 3px;
   float: left;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.25);
+  width: 18px;
+  height: 18px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+  border-color: white;
+  border-width: 0px;
+  border-style: solid;
 }
 .fillIcon {
   border-radius: 50%;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
   background-color: #ddb055;
 }
 .borderIcon {
   border-radius: 50%;
-  border: 5px solid #8ed42b;
-  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.25);
+  border: 2.5px solid #8ed42b;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
 }
 .toolBar {
@@ -312,14 +510,25 @@ const ShutBoard = ()=>{
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
-  bottom: 40px;
-  border-radius: 24px;
+  bottom: 20px;
+  border-radius: 12px;
+}
+.toolLeftUnit {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+.toolRightUnit {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 .toolBarUnit {
-  width: 96px;
-  height: 96px;
+  width: 48px;
+  height: 48px;
   float: left;
   position: relative;
+}
+.toolBarUnit:hover {
+  background-color: #3a404f;
 }
 .toolUnit {
   position: absolute;
@@ -330,23 +539,23 @@ const ShutBoard = ()=>{
   margin: auto;
 }
 .toolPointer {
-  width: 52.4px;
-  height: 56px;
+  width: 26px;
+  height: 28px;
 }
 .toolRectangle {
   background-color: #ddb055;
-  width: 72px;
-  height: 56px;
+  width: 36px;
+  height: 28px;
 }
 .toolCircle {
   background-color: #ddb055;
-  width: 56px;
-  height: 56px;
+  width: 28px;
+  height: 28px;
   border-radius: 50% 50%;
 }
 .toolText {
-  width: 56px;
-  height: 56px;
+  width: 28px;
+  height: 28px;
 }
 .sider {
   width: 240px;

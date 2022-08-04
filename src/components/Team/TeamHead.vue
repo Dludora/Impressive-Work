@@ -4,7 +4,7 @@
             {{teamData.name[0]}}
         </div>
         <div class="name">
-            <h2>{{teamData.name}}</h2>
+            <h2>{{teamData.name}}{{teamData.ID}}</h2>
             <span>{{teamData.introduction}}</span>
         </div>
     </div>
@@ -17,6 +17,9 @@ let teamData = ref({
     src:'',
     introduction:'Brief introduction~'
 })
+     defineExpose({
+        teamData
+  });
 </script>
 <style scoped>
 .Team {

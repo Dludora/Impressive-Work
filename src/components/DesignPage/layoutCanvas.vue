@@ -19,7 +19,6 @@
       >
       </layout-element>
     </div>
-    <n-button @click="download"></n-button>
   </div>
 </template>
 
@@ -47,11 +46,13 @@ const canvasTrans = {
 };
 
 type elementParams = {
-  id: number;
+  index: number;
   x: number;
   y: number;
   width: number;
   height: number;
+  borderWidth:number,
+  borderRadius:number,
   type: string;
   color: string;
   borderColor: string;
@@ -72,24 +73,28 @@ const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
 
 const updateParams = (data: elementParams) => {
-  //layoutElementParams[data.id]!.update = false;
-  layoutElementParams[data.id]!.x = data.x;
-  layoutElementParams[data.id]!.y = data.y;
-  layoutElementParams[data.id]!.width = data.width;
-  layoutElementParams[data.id]!.height = data.height;
+  //layoutElementParams[data.index]!.update = false;
+  layoutElementParams[data.index]!.x = data.x;
+  layoutElementParams[data.index]!.y = data.y;
+  layoutElementParams[data.index]!.width = data.width;
+  layoutElementParams[data.index]!.height = data.height;
   updateProps();
 };
 
 const updateProps = () => {
+  if(selectedId.value<0)
+  {
+    emits("updateProps",null);
+  }
   emits("updateProps", layoutElementParams[selectedId.value]);
 };
 
-const select = (id: number) => {
-  if (selected.value != null && selected.value != layoutElements.value[id]) {
+const select = (index: number) => {
+  if (selected.value != null && selected.value != layoutElements.value[index]) {
     cancelSelect();
   }
-  selected.value = layoutElements.value[id];
-  selectedId.value = id;
+  selected.value = layoutElements.value[index];
+  selectedId.value = index;
   selectEns = true;
   setTimeout(() => {
     selectEns = false;
@@ -104,12 +109,13 @@ const cancelSelect = () => {
     }
     selected.value = null;
     selectedId.value = -1;
+    updateProps();
   }
 };
 
-const destroy = (id: number) => {
-  layoutElementParams[id] = null;
-  if (selectedId.value == id) {
+const destroy = (index: number) => {
+  layoutElementParams[index] = null;
+  if (selectedId.value == index) {
     selected.value = null;
     selectedId.value = -1;
   }
@@ -125,16 +131,18 @@ const ProduceElement = (e: MouseEvent) => {
   }
   if (preparedType != "") {
     layoutElementParams.push({
-      id: layoutElementParams.length,
+      index: layoutElementParams.length,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
-      width: 200,
-      height: 200,
+      width: 200 * scale,
+      height: 200 * scale,
+      borderWidth: 0,
+      borderRadius :0,
       type: preparedType,
-      color: "red",
-      borderColor: "blue",
+      color: "#D42B39",
+      borderColor: "transparent",
       src: "",
-      fontSize: 20,
+      fontSize: 20 * scale,
       //update: true,
       locked: false,
     });
@@ -142,8 +150,33 @@ const ProduceElement = (e: MouseEvent) => {
   }
 };
 
+
+// let canvas2: any;
+let imgUri:string;
+const download = () => {
+  // canvas2 = document.createElement("canvas");
+
+  // var w = canvasTrans.width;
+  // var h = canvasTrans.height;
+
+  // canvas2.width = w * 4;
+  // canvas2.height = h * 4;
+  // canvas2.style.width = w + "px";
+  // canvas2.style.height = h + "px";
+
+  // var context = canvas2.getContext("2d");
+  // context.scale(4, 4);
+  html2canvas(document.getElementById("canvas")!).then(
+    function (canvas) {
+      imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+      window.location.href = imgUri;
+    }
+  );
+};
+
 defineExpose({
   PrepareElement,
+  download
 });
 
 const startDrag = (e: MouseEvent) => {
@@ -164,7 +197,7 @@ const dragCanvas = (e: MouseEvent) => {
     canvasTrans.y = transDragFromY + e.clientY - dragFromY;
 
     document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 48}px`;
+    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
   }
 };
 
@@ -200,25 +233,29 @@ onMounted(() => {
   canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
   canvasTrans.y = 148;
   document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 48}px`;
+  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
   document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
   document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
 });
 
 let scale = 1;
-const maxScale = 3;
+const maxScale = 5;
 const minScale = 0.5;
 const wheelScale = () => {
-  console.log(canvasTrans);
   document.getElementById("board")!.onwheel = (e) => {
     let scope: number;
-    console.log(e.clientX);
     if (e.deltaY > 0) {
       scope = 1 / 1.25;
     } else {
       scope = 1.25;
     }
+    
+    if(scale*scope>maxScale||scale*scope<minScale)
+    {
+      return;
+    }
+    scale*=scope;
 
     for (var i = 0; i < layoutElementParams.length; ++i) {
       if (layoutElementParams[i] == null) {
@@ -235,16 +272,17 @@ const wheelScale = () => {
       // canvasTrans.y;
       layoutElementParams[i]!.width *= scope;
       layoutElementParams[i]!.height *= scope;
+      layoutElementParams[i]!.fontSize *= scope;
     }
     canvasTrans.x = (canvasTrans.x - e.clientX) * scope + e.clientX;
     canvasTrans.y = (canvasTrans.y - e.clientY) * scope + e.clientY;
     canvasTrans.width *= scope;
     canvasTrans.height *= scope;
-    console.log(canvasTrans);
     document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
     document.getElementById("canvas")!.style.top = `${canvasTrans.y - 48}px`;
     document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
     document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
+    updateProps();
   };
 };
 
@@ -258,6 +296,8 @@ watch(
     layoutElementParams[selectedId.value]!.y = newVal.y;
     layoutElementParams[selectedId.value]!.width = newVal.width;
     layoutElementParams[selectedId.value]!.height = newVal.height;
+    layoutElementParams[selectedId.value]!.borderWidth = newVal.borderWidth;
+    layoutElementParams[selectedId.value]!.borderRadius = newVal.borderRadius;
     layoutElementParams[selectedId.value]!.color = newVal.color;
     layoutElementParams[selectedId.value]!.borderColor = newVal.borderColor;
     layoutElementParams[selectedId.value]!.type = newVal.type;
@@ -270,29 +310,6 @@ watch(
     immediate: true,
   }
 );
-
-// let canvas2: any;
-let imgUri:string;
-const download = () => {
-  // canvas2 = document.createElement("canvas");
-
-  // var w = canvasTrans.width;
-  // var h = canvasTrans.height;
-
-  // canvas2.width = w * 4;
-  // canvas2.height = h * 4;
-  // canvas2.style.width = w + "px";
-  // canvas2.style.height = h + "px";
-
-  // var context = canvas2.getContext("2d");
-  // context.scale(4, 4);
-  html2canvas(document.getElementById("canvas")!).then(
-    function (canvas) {
-      imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
-      window.location.href = imgUri;
-    }
-  );
-};
 </script>
 
 <style scoped>
