@@ -51,6 +51,11 @@ let transDragFromY: number = 0;
 let version: number = 0;
 let update = ref<boolean>(true);
 
+const layoutId = ref<number>(0);
+const layoutName = ref<string>("")
+const canvasWidth = ref<number>(1920);
+const canvasHeight = ref<number>(1080);
+
 const canvasTrans = {
   x: 0,
   y: 0,
@@ -90,7 +95,11 @@ const layoutElements = ref<any>([]);
 
 const updateServer = (index:number)=>{
   let data:elementParams[]=[];
-  data.push(layoutElementParams[index]);
+  if(index>=0&&index<layoutElementParams.length)
+  {
+    data.push(layoutElementParams[index]);
+  }
+  
   axios.put(`/layout/${props.layoutId}/element`,{
     'version':version,
     'elements':data
@@ -260,6 +269,7 @@ const dragCanvas = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+  //setInterval(updateServer,200,-1)
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       destroy(selectedId.value);
@@ -286,6 +296,7 @@ onMounted(() => {
       }
     }
   };
+  initScale();
   canvasTrans.width = document.getElementById("canvas")!.clientWidth;
   canvasTrans.height = document.getElementById("canvas")!.clientHeight;
   canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
@@ -296,6 +307,11 @@ onMounted(() => {
   document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
 });
+
+const initScale = ()=>{
+  document.getElementById("canvas")!.style.width = canvasWidth.value/2.4+"px";
+  document.getElementById("canvas")!.style.height = canvasHeight.value/2.4+"px";
+}
 
 let scale = 1;
 const maxScale = 5;
