@@ -19,7 +19,6 @@
       >
       </layout-element>
     </div>
-    <n-button @click="download"></n-button>
   </div>
 </template>
 
@@ -151,8 +150,33 @@ const ProduceElement = (e: MouseEvent) => {
   }
 };
 
+
+// let canvas2: any;
+let imgUri:string;
+const download = () => {
+  // canvas2 = document.createElement("canvas");
+
+  // var w = canvasTrans.width;
+  // var h = canvasTrans.height;
+
+  // canvas2.width = w * 4;
+  // canvas2.height = h * 4;
+  // canvas2.style.width = w + "px";
+  // canvas2.style.height = h + "px";
+
+  // var context = canvas2.getContext("2d");
+  // context.scale(4, 4);
+  html2canvas(document.getElementById("canvas")!).then(
+    function (canvas) {
+      imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+      window.location.href = imgUri;
+    }
+  );
+};
+
 defineExpose({
   PrepareElement,
+  download
 });
 
 const startDrag = (e: MouseEvent) => {
@@ -173,7 +197,7 @@ const dragCanvas = (e: MouseEvent) => {
     canvasTrans.y = transDragFromY + e.clientY - dragFromY;
 
     document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 48}px`;
+    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
   }
 };
 
@@ -209,7 +233,7 @@ onMounted(() => {
   canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
   canvasTrans.y = 148;
   document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 48}px`;
+  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
   document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
   document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
@@ -286,29 +310,6 @@ watch(
     immediate: true,
   }
 );
-
-// let canvas2: any;
-let imgUri:string;
-const download = () => {
-  // canvas2 = document.createElement("canvas");
-
-  // var w = canvasTrans.width;
-  // var h = canvasTrans.height;
-
-  // canvas2.width = w * 4;
-  // canvas2.height = h * 4;
-  // canvas2.style.width = w + "px";
-  // canvas2.style.height = h + "px";
-
-  // var context = canvas2.getContext("2d");
-  // context.scale(4, 4);
-  html2canvas(document.getElementById("canvas")!).then(
-    function (canvas) {
-      imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-      window.location.href = imgUri;
-    }
-  );
-};
 </script>
 
 <style scoped>
