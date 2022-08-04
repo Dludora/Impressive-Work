@@ -1,19 +1,19 @@
 <template>
   <n-config-provider :theme="tttheme">
-    <div>
+    <div class="bigbg">
       <n-space class="head-bg" justify="space-between">
 
-          <n-button text style="position: relative; font-size: 30px;display: inline;top: 4px" @click="exitEdit">
+          <n-button text style="position: relative; font-size: 30px;display: inline;top: 4px;left: 8px" @click="exitEdit">
             <n-icon>
               <exitIcon />
             </n-icon>
           </n-button>
 
-        <h style="position: inherit; top: 0; left: 0; bottom: 0; right: 0;color: #FFFFFF; display: inline">
+        <h style="position: relative; top: 0; left: 0; bottom: 0; right: 0;color: #FFFFFF; display: inline">
           {{title}}
         </h>
         <n-space justify="end">
-          <n-button text style="position: relative;font-size: 25px;display: inline;top:4px" @click="saveContent">
+          <n-button text style="position: relative;font-size: 25px;display: inline;top:4px;right: 8px" @click="saveContent">
             <n-icon>
               <saveIcon />
             </n-icon>
@@ -25,24 +25,9 @@
       <n-space style="background-color: #16181D;min-width: 100%;display: inline-block;">  </n-space>
 
       <n-space style="min-height: 100%;min-width: 100%;display: inline-block;">
-        <n-layout has-sider sider-placement="right" native-scrollbar="false">
-          <n-layout-sider native-scrollbar="false">
-            <p style="position: fixed;font-size: 30px">同时在线成员：</p>
-            <p style="position: absolute;top:calc(35px + 12.5px);left:250px;right: 0"> > </p>
-            <p style="position: absolute;top:calc(35px + 52.5px);left:250px;right: 0"> > </p>
-            <p style="position: absolute;top:calc(35px + 92.5px);left:250px;right: 0"> > </p>
-          </n-layout-sider>
-          <n-layout-content>
-            <n-space style="alignment: center;" >
+            <n-space style="alignment: center;" class="maineditor">
               <div id="vditor" name="description"></div>
-
-              <n-button @click="showContent">显示内容</n-button><br>
-              <n-button @click="showPosition">显示光标位置</n-button><br>
-              <n-button @click="showSelection">显示selection位置</n-button><br>
-              <n-button @click="setContent">更新内容</n-button><br>
             </n-space>
-          </n-layout-content>
-        </n-layout>
 
       </n-space>
 
@@ -54,16 +39,17 @@
 
 import { ArrowBack as exitIcon } from '@vicons/ionicons5';
 import {SaveOutline as saveIcon} from '@vicons/ionicons5';
-import {defineComponent} from "vue";
-import {darkTheme} from "naive-ui";
+import { defineComponent } from 'vue';
+import {darkTheme, useMessage} from "naive-ui";
 import utils from "@/Utils";
 import Vditor from "vditor";  //1.import一下vditor组件
 import 'vditor/dist/index.css'
 import axios from "axios"; //1.import一下vditor组件样式
 import router from "@/router";
 
+const message = useMessage();
 
-export default({
+export default defineComponent({
   components: {
     exitIcon,
     saveIcon,
@@ -136,6 +122,7 @@ export default({
       ).then(res=>{
         if(res.data.msg==='成功'){
           console.log("保存文档成功");
+          window.$message.success("保存成功");
         }
       })
     }
@@ -150,9 +137,10 @@ export default({
     },
 
     setup() {
-      return {
-        tttheme: darkTheme,
-      }
+      window.$message = useMessage()
+        return {
+          tttheme: darkTheme,
+        }
     },
 
     mounted() {
@@ -160,12 +148,17 @@ export default({
       this.content = utils.getCookie('DocContent');
 
       this.contentEditor = new Vditor('vditor', { //4.刚刚声明的变量contentEditor被赋值为一个Vditor实例,
-        height: 700,
-        width: 1168,
+        height: 600,
+        width: 1050, //1438
         // placeholder: '此处为话题内容……',
         theme: 'classic',
         value: this.content,
 
+/*
+        fullscreen:{
+          index:100,
+        },
+*/
         counter: {
           enable: true,
           type: 'markdown',
@@ -220,6 +213,7 @@ export default({
           'code-theme',
           'preview',
           'export',
+          'outline',
           // 'fullscreen',
           /*
         {
@@ -240,14 +234,27 @@ export default({
 </script>
 
 <style scoped>
+.bigbg{
+  background-color: #414958;
+  width: 100%;
+  height: 100%;
+}
+
+
 .head-bg{
   background-color: #2B303B;
   min-width: 100%;
-  height: 40px;
+  height: 60px;
   display: inline-block;
   vertical-align: center;
   font-size: 25px;
-  line-height: 40px;
+  line-height: 60px;
+}
+
+.maineditor{
+  position: relative;
+  top:50px;
+  left:194px;
 }
 
 .n-layout {
