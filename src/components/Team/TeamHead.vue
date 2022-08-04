@@ -23,6 +23,7 @@ let teamData = ref({
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
+// 获取teamID对应的团队的信息
 const getMessage = () => {
   axios.get('/team/' + teamData.value + '/info', {headers: headers}).then(res => {
     if (res.data.msg === "成功") {

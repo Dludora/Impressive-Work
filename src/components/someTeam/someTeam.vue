@@ -163,17 +163,18 @@ export default defineComponent({
       name: "",
       description: "",
     })
+
     const getID = (msg: any) => {
-      console.log("father get:" + msg)
-      teamID.value = parseInt(msg)
-      com.value.teamData.ID = teamID.value
-      console.log(com.value.teamData)
-      console.log("father push" + teamID.value)
-      let tID = (teamID.value)
-      router.push({
-        path: '/team/teamProjects',
-        query: {teamID: tID}
-      })
+      // console.log("father get:" + msg)
+      // teamID.value = parseInt(msg)
+      // com.value.teamData.ID = teamID.value
+      // console.log(com.value.teamData)
+      // console.log("father push" + teamID.value)
+      // let tID = (teamID.value)
+      // router.push({
+      //   path: '/team/teamProjects',
+      //   query: {teamID: tID}
+      // })
     }
     const ruleName = {
       required: true,
@@ -195,6 +196,8 @@ export default defineComponent({
     const onNegativeClick = () => {
       showModalRef.value = false
     }
+
+    // 点击确定后刷新团队列表
     const onPositiveClick = () => {
       showModalRef.value = false
       axios.post('/team', {
@@ -207,12 +210,12 @@ export default defineComponent({
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(() => {
-        router.push({
-          path: '/team/teamProjects',
-          query: {teamID: teamID.value}
-        })
-      })
+      // onMounted(() => {
+      //   router.push({
+      //     path: '/team/teamProjects',
+      //     query: {teamID: teamID.value}
+      //   })
+      // })
     }
     return {
       theme: darkTheme,

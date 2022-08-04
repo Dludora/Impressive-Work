@@ -95,14 +95,17 @@ export default defineComponent({
     const total = ref(0)
     const currentPage = ref(0)
     const pageNum = ref(0)
+    // 调用someTeam中的添加团队Dialog
     const addTeam = () => {
       emit('addTeam');
     }
+    // 获取个人信息
     const load = () => {
       axios.get('user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
       })
     }
+    // 获取某一页码处的所有团队
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
           {headers: headers, params: {page: page, size: size}})
@@ -135,15 +138,21 @@ export default defineComponent({
             console.log("你好呀！")
           })
     }
+    // 改变页面
     const changePage = (page: number) => {
       getAllTeams(page-1, 8)
     }
+    // 获取当前要查询的团队的teamID
     const handleUpdateValue = (key: string, item: MenuOption) => {
       console.log(key)
+
+
       // console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
       //     emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
     }
-    onMounted(async () => {
+
+    // 页面创建时调用的函数
+    onMounted(() => {
       load()
       getAllTeams(0, 8)
     })
