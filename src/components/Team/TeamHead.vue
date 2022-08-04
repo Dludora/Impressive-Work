@@ -4,14 +4,14 @@
             {{teamData.name[0]}}
         </div>
         <div class="name">
-            <h2>{{teamData.name}}{{teamData.ID}} {{temp}}</h2>
+            <h2>{{teamData.name}}{{teamData.ID}} {{utils.getCookie("teamID")}}</h2>
             <!-- <span>{{teamData.introduction}}</span> -->
             <div>{{teamData.introduction}}</div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {onMounted, ref,watch} from 'vue'
+import {onMounted, ref,watch,computed} from 'vue'
 import axios from 'axios'
 import utils from '../../Utils'
 let teamData = ref({
@@ -23,18 +23,18 @@ let teamData = ref({
 const headers = {
    Authorization: utils.getCookie('Authorization')
 }
-let temp = ref(utils.getCookie("teamID"))
+
 /*监听props*/
 // watch(utils.getCookie("teamID"),(newProps, oldProps) => {
 //       console.log("全局监听收到"+newProps)
 //       temp.value=parseInt(newProps.toString())
 //  });
-// watch(()=>{
-//   utils.getCookie("teamID")
-// },(newProps, oldProps)=>{
-//   console.log("全局监听收到"+newProps)
-//       temp.value=parseInt(newProps)
-// })
+const getGlobal = computed(()=>{
+  return utils.getCookie("teamID")
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+},{immediate:true,deep:true})
 
 const getMessage = () =>{
   axios.get('/team/'+teamData.value+'/info',{headers:headers}).then(res=>{

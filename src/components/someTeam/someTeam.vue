@@ -98,14 +98,21 @@ let profile = {
 }
 
 
-let menuOptions: MenuOption[] = [
+
+export default defineComponent({
+  components: {
+    LeftNav,
+    TeamHead
+  },
+  setup() {
+    let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
               to: 
-                '/team/teamprojects'           
+                '/team/teamprojects?teamID='+teamID.value           
             },
             {default: () => '项目'}
         ),
@@ -119,7 +126,7 @@ let menuOptions: MenuOption[] = [
             {
               to: 
                 // name: 'teamMembers',
-              '/team/teammembers'
+              '/team/teammembers?teamID='+teamID.value
                
               
             },
@@ -134,7 +141,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to:
-                 '/team/teamsetting'
+                 '/team/teamsetting?teamID='+teamID.value
             
             },
             {default: () => '设置'}
@@ -143,12 +150,6 @@ let menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
-export default defineComponent({
-  components: {
-    LeftNav,
-    TeamHead
-  },
-  setup() {
     const router = useRouter()
     let teamID = ref(-1)
     const com = ref(null)
