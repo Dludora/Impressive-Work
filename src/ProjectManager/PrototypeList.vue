@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="discribe">
-            管理你的{{length}}个页面
+            管理你的{{shortcuts.length}}个页面
             <div class="buttons">
                 <n-button class="newpage" size="tiny" @click="viewAddDocu">
                     新 建 页 面&nbsp;
@@ -9,7 +9,7 @@
                         <Add28Regular/>
                     </Icon>
                 </n-button>
-                <n-button size="tiny">
+                <n-button size="tiny" @click="exportLayout">
                     导 出 页 面&nbsp;
                     <Icon size="14">
                         <Export/>
@@ -18,8 +18,8 @@
             </div>
         </div>
         <div class="pagelist">
-          <PageCard v-for="item in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
-                    @delCard="showDelModal=true;delID=item.ID"/>
+          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
+                    @delCard="delCard(ind)" @openCard="openCard(ind)"/>
         </div>
     </div>
 
@@ -133,16 +133,29 @@ const theme = darkTheme
 // 删除区域
 const showDelModal = ref(false)
 
+const delCard =(item) => {
+  console.log(shortcuts.value[item].ID)
+  delID.value = shortcuts.value[item].ID
+  showDelModal.value = true
+}
+
 const onNegativeClick = () => {
   showDelModal.value = false
 }
 
 // 点击确定后刷新列表
 const onPositiveClick = () => {
-  showDelModal.value = false
-  axios.delete('/layout/' + delID.value).then(res => {
-    getList()
+  let urldel = "/layout/" + delID.value ;
+  console.log("/layout/" + delID.value);
+  axios.delete(urldel,{headers:headers}
+  ).then(res => {
+    if(res.data.msg==='成功'){
+      console.log("删除布局成功");
+      getList()
+    }
   })
+  showDelModal.value = false
+
 }
 
 // 添加布局
@@ -173,7 +186,7 @@ const posAdd = () => {
         'src': null,
         'width': addModelRef.value.addWidth,
         'height': addModelRef.value.addHeight,
-        'programID': proID.value,//proID.value
+        'programID': 13,//proID.value
       },{headers:headers}
   ).then(res=>{
     if(res.data.msg==='成功'){
@@ -229,6 +242,23 @@ const heightRule = {
     }
   },
   trigger: ['input', 'blur']
+}
+
+//to do for zf  打开布局
+
+let openID= ref(0); //要打开的布局ID
+
+const openCard =(indx) => {
+  console.log(shortcuts.value[indx].ID)
+  openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
+
+  // todo for zf
+
+}
+
+//to do for zf 导出布局
+const exportLayout =() => {
+
 }
 
 </script>
