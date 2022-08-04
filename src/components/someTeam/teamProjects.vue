@@ -100,7 +100,7 @@ import axios from "axios";
 const router = useRoute();
 let teamID = ref();
 const headers ={
-   Authorization: utils.getCookie('Authorization')
+  Authorization: utils.getCookie('Authorization')
 }
 const theme = darkTheme
 let projects =ref( [
@@ -116,13 +116,13 @@ const modelRef = ref({
 })
 const getList = () =>{
   console.log('head'+utils.getCookie('Authorization'))
-    const url = '/program/list?'+'teamID='+teamID.value+'&page=0&size=10'
-    axios.get(url,{headers:headers}).then(res=>{
-      console.log(res.data)
-      console.log(projects)
-      projects.value=res.data.data.items
-      
-    })
+  const url = '/program/list?'+'teamID='+teamID.value+'&page=0&size=10'
+  axios.get(url,{headers:headers}).then(res=>{
+    console.log(res.data)
+    console.log(projects)
+    projects.value=res.data.data.items
+
+  })
 }
 onMounted(()=>{
   // console.log("project get :"+router.query.teamID1)
@@ -174,7 +174,7 @@ const onPositiveClick = () => {
       for(let i=0 ;i<projects.value.length;i++){
         if(projects.value[i].ID===opID.value)
         {
-          projects.value[i].name=modelRef.value.name
+          // projects.value[i].name=modelRef.value.name
           break;
         }
       }

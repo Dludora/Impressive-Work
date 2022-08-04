@@ -19,7 +19,7 @@
   </n-layout> -->
   <div class="frame">
     <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </div>
     <div class="main">
       <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
@@ -32,7 +32,7 @@
 
       <div class="view">
         <n-scrollbar style="max-height:100%">
-            <router-view/>
+          <router-view/>
         </n-scrollbar>
       </div>
     </div>
@@ -103,7 +103,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: 'teamProjects'
+                path: 'projects'
               }
             },
             {default: () => '项目'}
@@ -117,8 +117,8 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                name: 'teamMembers',
-                path: 'teamMembers'
+                // name: 'teamMembers',
+                path: 'members'
               },
             },
             {default: () => '成员'}
@@ -132,7 +132,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                name: 'teamSettings',
+                name: 'setting',
               }
             },
             {default: () => '设置'}
@@ -157,15 +157,15 @@ export default defineComponent({
       description: "",
     })
     const getID = (msg:any) =>{
-        console.log("father get:"+msg)
-        teamID.value = parseInt(msg)
-        com.value.teamData.ID=teamID.value
-        console.log(com.value.teamData)
-        console.log("father push"+teamID.value)
-        let tID=(teamID.value)
-        router.push({path:'/team/teamProjects',
-          query:{teamID1:tID}
-        })
+      console.log("father get:"+msg)
+      teamID.value = parseInt(msg)
+      com.value.teamData.ID=teamID.value
+      console.log(com.value.teamData)
+      console.log("father push"+teamID.value)
+      let tID=(teamID.value)
+      router.push({path:'/team/teamProjects',
+        query:{teamID1:tID}
+      })
     }
     const ruleName = {
       required: true,
@@ -265,16 +265,16 @@ export default defineComponent({
   margin-left: 30px;
 }
 .main{
-    height: 100%;
-    /* max-height: 100%; */
-    /* overflow: auto; */
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    width: 100%;
+  height: 100%;
+  /* max-height: 100%; */
+  /* overflow: auto; */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 .view{
-    overflow: auto;
+  overflow: auto;
 }
 .frame{
   display: flex;
