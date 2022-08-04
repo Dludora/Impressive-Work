@@ -95,7 +95,7 @@ import ProCard from "@/TeamManager/projectCard.vue"
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
 import {darkTheme} from "naive-ui";
-import {defineComponent, h, onMounted, reactive, ref} from "vue";
+import {defineComponent, computed,watch,h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
@@ -111,78 +111,23 @@ let shortcuts=[
     },
 ]
 let length=0
-// function getList(){ //TODO 前后端对接：获取页面列表
-
-//     shortcuts=[
-//         {
-//             id: 1,
-//             name: 'home1',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//         {
-//             id: 2,
-//             name: '名字很长很长很长很长2',
-//             img: null,
-//             date: '2022/8/3',
-//         },
-//         {
-//             id: 3,
-//             name: 'home3',
-//             img: null,
-//             date: '2022/8/4',
-//         },
-//         {
-//             id: 4,
-//             name: 'home1',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//         {
-//             id: 5,
-//             name: '名字很长很长很长很长2',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//         {
-//             id: 5,
-//             name: 'home3',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//         {
-//             id: 6,
-//             name: 'home1',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//         {
-//             id: 7,
-//             name: '名字很长很长很长很长2',
-//             img: null,
-//             date: '2022/8/4',
-//         },
-//         {
-//             id: 8,
-//             name: 'home3',
-//             img: null,
-//             date: '2022/8/2',
-//         },
-//     ]
-
-//     length=shortcuts.length
-// }
-// getList()
 
 const router = useRoute();
 
 const headers ={
    Authorization: utils.getCookie('Authorization')
 }
+const teamID = ref(0)
 const theme = darkTheme
 let projects =ref( [
 
 ])
+const getGlobal = computed(()=>{
+  return utils.getCookie("teamID")
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+},{immediate:true,deep:true})
 
 
 // 重命名表单
@@ -204,7 +149,7 @@ const getList = () =>{
 onMounted(()=>{
   console.log("project get :"+router.query.teamID)
   console.log(router.query.teamID)
-  //teamID.value=parseInt(router.query.teamID.toString())
+  teamID.value=parseInt(router.query.teamID.toString())
 
   getList()
 })

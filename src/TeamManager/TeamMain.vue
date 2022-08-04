@@ -1,26 +1,4 @@
 <template>
-  <!-- <n-layout has-sider native-scrollbar="false">
-    <n-layout-sider content-style="padding: 0;">
-      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
-    </n-layout-sider>
-    <n-layout>
-      <n-layout-header>
-        <TeamHead ref="com" style="margin-left: 30px"/>
-      </n-layout-header>
-      <n-layout-content content-style="padding: 24px 0px;">
-        <div class="menu">
-          <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions"/>
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout> -->
-  <!-- <div class="frame">
-    <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true"/>
-    </div> -->
     <div class="main">
       <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
       <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
@@ -96,15 +74,21 @@ let profile = {
   src: ""
 }
 
-let menuOptions: MenuOption[] = [
+
+export default defineComponent({
+  components: {
+    // LeftNav,
+    TeamHead
+  },
+  setup() {
+    let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
-              to: {
-                name: 'projects'
-              }
+              to: 
+                '/team/projects?teamID='+teamID.value           
             },
             {default: () => '项目'}
         ),
@@ -116,10 +100,11 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
-                name: 'members',
-                path: 'members'
-              },
+              to: 
+                // name: 'teamMembers',
+              '/team/members?teamID='+teamID.value
+               
+              
             },
             {default: () => '成员'}
         ),
@@ -131,9 +116,9 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
-                name: 'setting',
-              }
+              to:
+                 '/team/setting?teamID='+teamID.value
+            
             },
             {default: () => '设置'}
         ),
@@ -141,12 +126,6 @@ let menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
-export default defineComponent({
-  components: {
-    // LeftNav,
-    TeamHead
-  },
-  setup() {
     const router = useRouter()
     let teamID = ref(-1)
     const com = ref(null)
