@@ -45,7 +45,7 @@ import {onMounted, ref} from 'vue'
 import {darkTheme} from 'naive-ui'
 import axios from "axios";
 import {useRouter, useRoute} from "vue-router";
-
+import utils from '../../Utils'
 const theme = darkTheme
 const router = useRouter()
 const route = useRoute()
@@ -54,6 +54,9 @@ const model = ref({
   textareaValue: '',
   switchValue: false
 })
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 const ruleName = {
   required: true,
   validator() {
@@ -72,7 +75,7 @@ const change=()=>{
 }
 const getTeamInfo = () => {
   const teamID = route.params.teamID
-  axios.get('/team/' + {teamID} + '/info').then(res => {
+  axios.get('/team/' + {teamID} + '/info',{headers:headers}).then(res => {
     model.value.inputValue = res.data.name
     model.value.textareaValue = res.data.introduction
   })
