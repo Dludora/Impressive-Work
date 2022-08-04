@@ -216,6 +216,8 @@ const download = ()=>{
   canvas.value?.download();
 }
 
+const layoutId = ref<number>();
+
 const palette = reactive<string[]>([
   "#F2F2F2",
   "#AAC1EE",
@@ -268,6 +270,7 @@ let selectedBorderColor: number = 30;
 let elementType: string = "";
 
 type Property = {
+  id:number,
   index: number;
   x: number;
   y: number;
@@ -284,6 +287,7 @@ type Property = {
 };
 
 const property = reactive<Property>({
+  id:0,
   index: -1,
   x: 0,
   y: 0,

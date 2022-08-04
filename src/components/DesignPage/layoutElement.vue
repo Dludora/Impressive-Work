@@ -81,6 +81,7 @@ import { InputInst } from "naive-ui";
 import { borderTopLeftRadius } from "html2canvas/dist/types/css/property-descriptors/border-radius";
 
 type Params = {
+  id:0,
   index: number;
   x: number;
   y: number;
@@ -103,6 +104,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   elementParams: () => {
     return {
+      id:0,
       index: -1,
       x: 0,
       y: 0,
@@ -134,6 +136,7 @@ const snapGrid = interact.snappers.grid({
 });
 
 const transform = {
+  id:0,
   index: -1,
   x: 0,
   y: 0,
@@ -328,7 +331,7 @@ onMounted(() => {
 watch(
   () => props.elementParams,
   (newVal) => {
-    if (newVal == null) {
+    if (newVal == null||newVal.type == "none") {
       exist.value = false;
       return;
     }
