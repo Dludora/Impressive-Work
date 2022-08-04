@@ -70,6 +70,7 @@ export default({
   },
 
 
+
   data() {
     const headers = {
       Authorization: utils.getCookie('Authorization')
@@ -82,8 +83,6 @@ export default({
       title: "测试：文档标题",
       src:null,
       programID: 0,
-
-
     }
   },
 
@@ -116,17 +115,27 @@ export default({
     },
 
     saveContent() {
-      axios.post('/document' + this.documentID,
+
+      const headers = {
+        Authorization: utils.getCookie('Authorization')
+      };
+
+      console.log(this.documentID);
+
+      let urlSave = "/document/" + this.documentID;
+
+      this.content=this.contentEditor.getValue();
+
+      axios.put(urlSave,
           {
             'content': this.content,
             'title': this.title,
             'src': null,
             'programID': this.programID,//proID.value
-          }
+          },{headers:headers}
       ).then(res=>{
         if(res.data.msg==='成功'){
           console.log("保存文档成功");
-
         }
       })
     }
@@ -147,6 +156,8 @@ export default({
     },
 
     mounted() {
+
+      this.content = utils.getCookie('DocContent');
 
       this.contentEditor = new Vditor('vditor', { //4.刚刚声明的变量contentEditor被赋值为一个Vditor实例,
         height: 700,

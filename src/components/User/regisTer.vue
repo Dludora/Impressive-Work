@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import {darkTheme} from "naive-ui"
+import {darkTheme,useMessage} from "naive-ui"
 import {gsap} from "gsap";
 import axios from 'axios';
 import {h, ref} from 'vue'
@@ -80,6 +80,7 @@ let name = ref('');
 let password1 = ref('');
 let password2 = ref('');
 let nick = ref('');
+const message = useMessage();
 import utils from '../../Utils'
 
 const headers = {
@@ -133,7 +134,7 @@ const rulePass2 = {
 };
 const register = () => {
   if (email.value === '' || nick.value === '' || name.value === '') {
-    alert("信息不可为空！")
+    message.error("用户名不可为空")
     return;
   }
   if (password1.value === '' || password2.value === '') {
