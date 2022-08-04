@@ -115,6 +115,9 @@ export default defineComponent({
                             {
                               to: {
                                 path: '/profile/team/teamProjects',
+                                query: {
+                                  teamID: array.value[i].ID
+                                }
                               }
                             },
                             {default: () => array.value[i].name}

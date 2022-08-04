@@ -119,16 +119,17 @@ const getList = () => {
   console.log('head' + utils.getCookie('Authorization'))
   const url = '/program/list?' + 'teamID=' + teamID.value + '&page=0&size=10'
   axios.get(url, {headers: headers}).then(res => {
-    console.log(res.data)
+    // console.log(res.data)
+    console.log("显示数据")
     console.log(projects)
     projects.value = res.data.data.items
   })
 }
 onMounted(() => {
-  console.log("project get :" + router.query.teamID1)
-  console.log(router.query.teamID1)
-  teamID.value = parseInt(router.query.teamID1.toString())
-  console.log("teamID:" + teamID.value)
+  // console.log("project get :" + router.query.teamID1)
+  // console.log(router.query.teamID1)
+  // teamID.value = parseInt(router.query.teamID1.toString())
+  // console.log("teamID:" + teamID.value)
   getList()
 })
 const ruleAdd = {
@@ -173,7 +174,7 @@ const onPositiveClick = () => {
       alert("修改成功")
       for (let i = 0; i < projects.value.length; i++) {
         if (projects.value[i].ID === opID.value) {
-          projects.value[i].name = modelRef.value.name
+          // projects.value[i].name = modelRef.value.name
           break;
         }
       }

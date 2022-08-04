@@ -33,6 +33,9 @@ let menuOptions: MenuOption[] = [
             {
               to: {
                 path: 'teamProjects',
+                query: {
+                  teamID: route.query.teamID
+                }
               }
             },
             {default: () => '项目'}
@@ -47,6 +50,9 @@ let menuOptions: MenuOption[] = [
             {
               to: {
                 path: 'teamMembers',
+                query: {
+                  teamID: route.query.teamID
+                }
               },
             },
             {default: () => '成员'}
@@ -61,6 +67,9 @@ let menuOptions: MenuOption[] = [
             {
               to: {
                 path: 'teamSettings',
+                query: {
+                  teamID: route.query.teamID
+                }
               }
             },
             {default: () => '设置'}

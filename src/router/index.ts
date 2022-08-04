@@ -11,7 +11,7 @@ import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../components/someTeam/teamProjects.vue";
 import teamPage from "../components/someTeam/teamPage.vue"
-
+import personalPrifile from "../components/User/personalProfile.vue"
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
 
@@ -48,23 +48,28 @@ const router = createRouter({
             component: someTeam,
             children: [
                 {
+                    name: 'info',
+                    path: '',
+                    component: personalPrifile,
+                },
+                {
                     name: 'team',
                     path: 'team',
                     component: teamPage,
                     children: [
                         {
                             name: 'teamProjects',
-                            path: 'teamProjects',
+                            path: 'teamProjects?teamID',
                             component: teamProjects
                         },
                         {
                             name: 'teamMembers',
-                            path: 'teamMembers',
+                            path: 'teamMembers?teamID',
                             component: teamMembers
                         },
                         {
                             name: 'teamSettings',
-                            path: 'teamSettings',
+                            path: 'teamSettings?teamID',
                             component: teamSettings
                         },
                     ]
