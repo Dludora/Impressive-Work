@@ -53,6 +53,7 @@ const router = createRouter({
                 {
                     name: 'team',
                     path:'team',
+                    redirect: 'team/projects',
                     component: teamMain,
                     children:[
                         {
@@ -75,6 +76,7 @@ const router = createRouter({
                 {
                     name: 'project',
                     path:'project',
+                    redirect: 'project/prototypes',
                     component: projectMain,
                     children:[
                         {
