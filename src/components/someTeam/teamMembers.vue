@@ -23,6 +23,23 @@
     <a href="#" id="invite">邀请成员</a>
   </div>
   </div>
+  <n-config-provider :theme="theme">
+    <n-modal
+        v-model:show="showModalRef"
+        :mask-closable="false"
+        preset="dialog"
+        title="重命名"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="onPositiveClick"
+        @negative-click="onNegativeClick"
+    >
+      <n-form  :model="modelRef">
+        <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
+          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+        </n-form-item>
+      </n-form>
+</n-config-provider>
 </template>
 
 <script setup lang="ts">
@@ -36,10 +53,20 @@ import {onMounted, ref,computed,watch} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
 const route = useRoute();
+let showModalRef = ref(false)
 let teamID  = ref()
 let email = ref('')
 let opUserID = ref()
 let isAdmin = ref(0)
+const onPositiveClick = () => {
+    showModalRef.value = false
+}
+const onNegativeClick = () => {
+  showModalRef.value = false
+};
+const displayMedal = () => {
+  showModalRef.value = true
+}
 const members = ref([
     {
       ID:0,
