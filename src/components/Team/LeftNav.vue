@@ -19,7 +19,7 @@
           团队和项目
         </div>
         <div class="team">
-          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
+          <n-menu :options="sideMenuOptions"/>
         </div>
         <div class="addTeam" @click="addTeam">
           <!-- <div class="addImg">
@@ -32,7 +32,6 @@
             新建团队
           </div>
         </div>
-        {{ pageNum }}
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -54,7 +53,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink} from "vue-router";
+import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import { Icon } from '@vicons/utils'
 import { Add12Filled } from '@vicons/fluent'
@@ -111,6 +110,7 @@ export default defineComponent({
             dataList = res.data.data.items
             console.log(res.data.data)
             // console.log(res.data.data.items)
+            console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -122,7 +122,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team'
+                                path: '/team'+array.value[i].ID,
                               }
                             },
                             {default: () => array.value[i].name}
