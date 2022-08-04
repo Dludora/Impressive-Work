@@ -12,8 +12,8 @@
       </div>
     </div>
     <div class="member-operate">
-      <Icon style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
-      <Icon id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
+      <Icon @click="admin(member.ID,member.identity)" style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
+      <Icon @click="remove(member.ID)" id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
     </div>
   </div>
   <div class="member-add ">
@@ -31,24 +31,101 @@ import {UserCertification} from "@vicons/carbon";
 import {IosStarOutline, IosStar} from "@vicons/ionicons4"
 import {CloseOutline} from "@vicons/ionicons5"
 import {Icon} from "@vicons/utils";
+import axios from 'axios'
+import {onMounted, ref} from 'vue'
+import utils from '../../Utils'
 
-const members = [
+let teamID  = ref()
+let email = ref('')
+let opUserID = ref()
+let isAdmin = ref(0)
+const members = ref([
     {
+      ID:0,
       nickname: 'Dludora',
       name: '寇书瑞',
       email: 'koushurui@outlook.com',
+      identity:0
     },
     {
+      ID:0,
       nickname: 'Dludora',
       name: '寇书瑞',
       email: 'koushurui@outlook.com',
+      identity:0
     },
     {
+      ID:0,
       nickname: 'Dludora',
       name: '寇书瑞',
       email: 'koushurui@outlook.com',
+      identity:0
     },
-]
+])
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+const getList = () => {
+  let url='/team/'+teamID.value+'/members?page=0&size=20'
+  axios.get(url,{headers:headers}).then(res=>{
+    console.log(res.data)
+    members.value=res.data.data.items
+  })
+}
+const invite = () =>{
+  let url='/team/'+teamID.value+'/invite?email='+email.value
+  axios.put(url,{headers:headers}).then(res=>{
+    console.log(res.data)
+    alert(res.data.msg)
+  })
+}
+const remove = (ID) =>{
+  opUserID.value=ID
+  let url='/team/'+teamID.value+'/remove?userID='+opUserID.value
+  axios.put(url,{headers:headers}).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功")
+    {
+      for (let i=0;i<members.value.length;i++)
+      {
+        if(members.value[i].ID)
+        {
+          members.value.splice(i,1)
+          break
+        }
+      }
+    }
+    alert(res.data.msg)
+  })
+}
+const admin = (id,op) => {
+  opUserID.value=id;
+  if(op===0)
+  isAdmin.value=1;
+  else{
+    isAdmin.value=0;
+  }
+  let url='/team/'+teamID.value+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
+  axios.put(url,{headers:headers}).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功"){
+      for(let i=0;i<members.value.length;i++){
+        if(members.value[i].ID===opUserID.value){
+          members.value[i].identity=isAdmin.value
+          break
+        }
+      }
+    }
+    else{
+      console.log("设置失败")
+    }
+  })
+}
+onMounted(()=>{
+  getList()
+
+})
+
 </script>
 
 <style scoped>
@@ -102,9 +179,9 @@ a{
   width: 50px;
   margin-right: 10px;
 }
-.member-message {
+/* .member-message {
   /*flex: 2;*/
-}
+
 #name {
   font-family: 'Inter';
   font-style: normal;
@@ -163,11 +240,5 @@ a{
   margin-left: 10px;
 
 }
-#invite:hover {
-  
-  /*color: pink;*/
-}
-.list{
 
-}
 </style>

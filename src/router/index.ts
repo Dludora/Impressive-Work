@@ -6,10 +6,14 @@ import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import prototypes from "../ProjectManager/PrototypeList.vue"
 
+import mainView from "../TeamManager/MainView.vue"
+import teamMain from "../TeamManager/TeamMain.vue"
+import projectMain from "../ProjectManager/ProjectMain.vue"
 
 import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
+import teamProjectsOld from "../components/someTeam/teamProjects.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
@@ -44,26 +48,71 @@ const router = createRouter({
         },
         {
             name: 'team',
-            path: '/team',
+            path:'/team',
             component: someTeam,
-            children: [
+            children:[
                 {
-                    name: 'teamProjects',
-                    path: 'teamProjects',
-                    component: teamProjects
+                    name:'projects',
+                    path: 'teamprojects',
+                    component: teamProjectsOld,
                 },
                 {
-                    name: 'teamMembers',
-                    path: 'teamMembers',
-                    component: teamMembers
+                    name:'members',
+                    path: 'teammembers',
+                    component: teamMembers,
                 },
                 {
-                    name: 'teamSettings',
-                    path: 'teamSettings',
-                    component: teamSettings
+                    name:'setting',
+                    path: 'teamsetting',
+                    component: teamSettings,
                 },
             ]
         },
+                {
+                    name: 'project',
+                    path:'/project',
+                    redirect: '/project/prototypes',
+                    component: projectMain,
+                    children:[
+                        {
+                            name:'prototypes',
+                            path: 'prototypes',
+                            component: prototypes,
+                        },
+                        // {
+                        //     name:'members',
+                        //     path: 'members',
+                        //     component: teamMembers,
+                        // },
+                        {
+                            name:'documents',
+                            path: 'documents',
+                            component: docuList,
+                        },
+                    ]
+                },
+        // {
+        //     name: 'team',
+        //     path: '/team',
+        //     component: someTeam,
+        //     children: [
+        //         {
+        //             name: 'teamProjects',
+        //             path: 'teamProjects',
+        //             component: teamProjects
+        //         },
+        //         {
+        //             name: 'teamMembers',
+        //             path: 'teamMembers',
+        //             component: teamMembers
+        //         },
+        //         {
+        //             name: 'teamSettings',
+        //             path: 'teamSettings',
+        //             component: teamSettings
+        //         },
+        //     ]
+        // },
         {
             name:'vDitor',
             path: '/vDitor',
@@ -94,28 +143,28 @@ const router = createRouter({
             path:'/docuEdit',
             component: docuEdit,
         },
-        {
-            name: 'programBig',
-            path: '/programBig',
-            component:  programView,
-            children: [
-                {
-                    name: 'prototypes',
-                    path: '',
-                    component: prototypes
-                },
-                // {
-                //     name: 'drawUML',
-                //     path: 'drawUML',
-                //     component: drawUML
-                // },
-                {
-                    name: 'docuList',
-                    path: 'docuList',
-                    component: docuList
-                },
-            ]
-        },
+        // {
+        //     name: 'programBig',
+        //     path: '/programBig',
+        //     component:  programView,
+        //     children: [
+        //         {
+        //             name: 'prototypes',
+        //             path: '',
+        //             component: prototypes
+        //         },
+        //         // {
+        //         //     name: 'drawUML',
+        //         //     path: 'drawUML',
+        //         //     component: drawUML
+        //         // },
+        //         {
+        //             name: 'docuList',
+        //             path: 'docuList',
+        //             component: docuList
+        //         },
+        //     ]
+        // },
     ]
 })
 export default router

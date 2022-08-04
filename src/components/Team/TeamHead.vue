@@ -11,12 +11,27 @@
     </div>
 </template>
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
+import axios from 'axios'
+import utils from '../../Utils'
 let teamData = ref({
     ID:null,
     name:'Team',
     src:'',
     introduction:'Brief introduction~'
+})
+const headers = {
+   Authorization: utils.getCookie('Authorization')
+}
+const getMessage = () =>{
+  axios.get('/team/'+teamData.value+'/info',{headers:headers}).then(res=>{
+    if(res.data.msg==="成功"){
+      teamData.value=res.data.data
+    }
+  })
+}
+onMounted(()=>{
+  getMessage()
 })
      defineExpose({
         teamData

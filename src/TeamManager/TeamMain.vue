@@ -1,6 +1,6 @@
 <template>
-  <n-layout has-sider native-scrollbar="false">
-    <n-layout-sider>
+  <!-- <n-layout has-sider native-scrollbar="false">
+    <n-layout-sider content-style="padding: 0;">
       <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout>
@@ -16,14 +16,14 @@
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout>
+  </n-layout> -->
   <!-- <div class="frame">
     <div class="side">
         <LeftNav @ID="getID" @addTeam="showModal=true"/>
-    </div>
+    </div> -->
     <div class="main">
       <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
-
+      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
       <div class="three-cls">
         <n-config-provider :theme="theme">
           <n-menu mode="horizontal" :options="menuOptions"/>
@@ -36,8 +36,8 @@
         </n-scrollbar>
       </div>
     </div>
-  </div> -->
-  <n-config-provider :theme="theme">
+  <!-- </div> -->
+  <!-- <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModal"
         :mask-closable="false"
@@ -57,29 +57,28 @@
         </n-form-item>
       </n-form>
     </n-modal>
-  </n-config-provider>
+  </n-config-provider> -->
 </template>
 
 <script lang="ts">
 import axios from 'axios';
-import LeftNav from "../Team/LeftNav.vue"
-import TeamHead from "../Team/TeamHead.vue"
+// import LeftNav from "../Team/LeftNav.vue"
+import TeamHead from "../components/Team/TeamHead.vue"
 
-
+import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink,useRouter,useRoute} from "vue-router";
+import {RouterLink,useRouter} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
-
 import utils from "@/Utils";
-const route = useRoute()
+
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -97,15 +96,15 @@ let profile = {
   src: ""
 }
 
-
 let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
-              to: 
-                '/team/teamprojects?teamID='+18              
+              to: {
+                name: 'projects'
+              }
             },
             {default: () => '项目'}
         ),
@@ -117,11 +116,10 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: 
-                // name: 'teamMembers',
-              '/team/teammembers?teamID='+18
-               
-              
+              to: {
+                name: 'members',
+                path: 'members'
+              },
             },
             {default: () => '成员'}
         ),
@@ -133,9 +131,9 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to:
-                 '/team/teamsetting?teamID='+18
-            
+              to: {
+                name: 'setting',
+              }
             },
             {default: () => '设置'}
         ),
@@ -145,7 +143,7 @@ let menuOptions: MenuOption[] = [
 ]
 export default defineComponent({
   components: {
-    LeftNav,
+    // LeftNav,
     TeamHead
   },
   setup() {
@@ -166,7 +164,7 @@ export default defineComponent({
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
         router.push({path:'/team/teamProjects',
-          query:{teamID:tID}
+          query:{teamID1:tID}
         })
     }
     const ruleName = {
