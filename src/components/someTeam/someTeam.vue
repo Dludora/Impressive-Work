@@ -1,14 +1,13 @@
 <template>
   <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav @ID="getID" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
         <TeamHead style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content content-style="padding: 24px 0px;">
-
         <div class="menu">
           <n-config-provider :theme="theme">
             <n-menu mode="horizontal" :options="menuOptions"/>
@@ -46,6 +45,7 @@ import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
 
+import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent} from 'vue'
 import {NIcon, useMessage, useDialog} from "naive-ui";
 import type {MenuOption} from "naive-ui";
@@ -59,6 +59,7 @@ import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import utils from "@/Utils";
 
+const route = useRoute()
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -133,9 +134,9 @@ export default defineComponent({
       name: "",
       description: "",
     })
-    const getID = (msg:any) =>{
-        alert("father get:"+msg)
-      
+    const getID = (msg: any) => {
+      alert("father get:" + msg)
+
     }
     const ruleName = {
       required: true,

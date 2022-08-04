@@ -28,7 +28,6 @@
             新建团队
           </div>
         </div>
-        {{ pageNum }}
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -49,11 +48,12 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink} from "vue-router";
+import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import axios from "axios";
 import utils from "@/Utils";
 
+const router = useRouter();
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -93,6 +93,7 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             let array = ref(res.data.data.items)
+            console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -104,7 +105,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team'
+                                path: '/team'+array.value[i].ID,
                               }
                             },
                             {default: () => array.value[i].name}
