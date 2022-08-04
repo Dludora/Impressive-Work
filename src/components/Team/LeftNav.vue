@@ -1,6 +1,5 @@
 <template>
   <n-config-provider :theme="theme">
-    <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
   <div class="nav">
     <div class="logo" @click="toMain">墨书</div>
     <div class="user-info">
@@ -14,10 +13,11 @@
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
     </div>
-      <div class="teams">
         <div class="teamsHead">
           团队和项目
         </div>
+    <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
+      <div class="teams">
         <div class="team">
           <n-menu :options="sideMenuOptions"/>
         </div>
@@ -32,6 +32,8 @@
             新建团队
           </div>
         </div>
+      </div>
+    </n-scrollbar>
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -43,8 +45,6 @@
           </template>
         </n-pagination>
       </div>
-  </div>
-    </n-scrollbar>
   </n-config-provider>
 </template>
 
@@ -174,9 +174,9 @@ export default defineComponent({
 .nav {
   display:flex;
   flex-direction: column;
-
+  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
   background-color: rgba(43, 48, 59, 1);
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   padding-left: 20px;
   width:220px;
   height:100%;
@@ -188,6 +188,7 @@ export default defineComponent({
   background-color: rgba(217, 217, 217, 1);
   text-align: center;
   line-height: 56px;
+  margin-top:20px;
 }
 
 .user-info {
@@ -227,14 +228,16 @@ export default defineComponent({
 }
 
 .teams {
-  margin-top: 30px;
   font-size: large;
   font-weight: 500;
   color: #E2E4E9;
 }
 
 .teamsHead {
-  font-family: 黑体;
+  margin-top: 30px;
+  color:#FFFFFF;
+  font-size:16px;
+  font-weight: 700;
 }
 
 .src {
@@ -249,7 +252,7 @@ export default defineComponent({
 }
 
 .team {
-  margin-left: -20px;
+  /*margin-left: -20px;*/
 }
 
 .TeamName {
@@ -277,7 +280,7 @@ export default defineComponent({
   font-size:12px;
   /*margin-right: 10px;
   margin-left: -10px;*/
-  margin:6px 8px 0 -12px;
+  margin:6px 8px 0 8px;
   padding-left: 24px;
   color: #A7AFBE;
   border-radius:2px;
@@ -306,7 +309,8 @@ export default defineComponent({
 }
 
 #pagination {
-  position: absolute;
-  top: calc(100% - 80px);
+  /*position: absolute;
+  top: calc(100% - 80px);*/
+  padding:5px 0 20px;
 }
 </style>

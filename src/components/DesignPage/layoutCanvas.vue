@@ -26,6 +26,7 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
+import axios from "axios"
 
 const selected: any = ref(null);
 const selectedId = ref<number>(-1);
@@ -37,6 +38,7 @@ let dragFromX: number = 0;
 let dragFromY: number = 0;
 let transDragFromX: number = 0;
 let transDragFromY: number = 0;
+let version: number = 0;
 
 const canvasTrans = {
   x: 0,
@@ -46,6 +48,7 @@ const canvasTrans = {
 };
 
 type elementParams = {
+  id:number,
   index: number;
   x: number;
   y: number;
@@ -63,6 +66,7 @@ type elementParams = {
 
 type Prop = {
   elementProps: elementParams;
+  layoutId:number;
 };
 
 const props = defineProps<Prop>();
@@ -72,12 +76,43 @@ const emits = defineEmits(["updateProps"]);
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
 
+const updateServer = (data:elementParams[])=>{
+  axios.put(`/layout/${props.layoutId}/element`,{
+    'version':version,
+    'elements':data
+  }).then(res=>{
+    if(res.data.msg=="success")
+    {
+      version = res.data.data.version;
+      for(var i=0;i<res.data.data.elements.length;++i)
+      {
+        updateParams(res.data.data.elements[i]);
+      }
+    }
+  })
+}
+
 const updateParams = (data: elementParams) => {
   //layoutElementParams[data.index]!.update = false;
+  if(data.index>=layoutElementParams.length)
+  {
+    layoutElementParams.push(data);
+    return;
+  }
+  layoutElementParams[data.index]!.id = data.id;
+  layoutElementParams[data.index]!.index = data.index;
   layoutElementParams[data.index]!.x = data.x;
   layoutElementParams[data.index]!.y = data.y;
   layoutElementParams[data.index]!.width = data.width;
   layoutElementParams[data.index]!.height = data.height;
+  layoutElementParams[data.index]!.borderWidth = data.borderWidth;
+  layoutElementParams[data.index]!.borderRadius = data.borderRadius;
+  layoutElementParams[data.index]!.type = data.type;
+  layoutElementParams[data.index]!.color = data.color;
+  layoutElementParams[data.index]!.borderColor = data.borderColor;
+  layoutElementParams[data.index]!.src = data.src;
+  layoutElementParams[data.index]!.fontSize = data.fontSize;
+  layoutElementParams[data.index]!.locked = data.locked;
   updateProps();
 };
 
@@ -114,7 +149,7 @@ const cancelSelect = () => {
 };
 
 const destroy = (index: number) => {
-  layoutElementParams[index] = null;
+  layoutElementParams[index].type = "none";
   if (selectedId.value == index) {
     selected.value = null;
     selectedId.value = -1;
@@ -131,6 +166,7 @@ const ProduceElement = (e: MouseEvent) => {
   }
   if (preparedType != "") {
     layoutElementParams.push({
+      id:0,
       index: layoutElementParams.length,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
