@@ -3,14 +3,9 @@
     <n-button @click="regisRouter">登录/注册</n-button>
     <n-button @click="logout">登出</n-button>
 
-    <n-button @click="vDitor">文档编辑</n-button>
-    <n-button @click="testVditor">测试文档组件</n-button>
-
     <n-button @click="teamMain">团队主页</n-button>
 
     <n-button @click="programView">项目大页面</n-button>
-
-    <n-button @click="docuEdit">文档编辑页面</n-button>
 
     <n-button @click="UML">UML</n-button>
 
@@ -52,20 +47,8 @@ const teamMain= () =>{
   router.push('/team');
 }
 
-const vDitor = () => {
-  router.push('/vDitor');
-}
-
-const testVditor = () => {
-  router.push('/testVditor');
-}
-
 const programView = () => {
   router.push('/project');
-}
-
-const docuEdit = () => {
-  router.push('/docuEdit');
 }
 
 const UML = () => {
