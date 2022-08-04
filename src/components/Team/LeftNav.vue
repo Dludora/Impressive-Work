@@ -155,6 +155,7 @@ export default defineComponent({
       load,
       getAllTeams,
       handleUpdateValue,
+
       changePage,
       // 个人信息
       profile,

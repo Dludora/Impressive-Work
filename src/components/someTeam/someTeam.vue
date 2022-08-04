@@ -85,6 +85,11 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
+const teamID = utils.getCookie('teamID')
+
+
+console.log(teamID)
+
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
