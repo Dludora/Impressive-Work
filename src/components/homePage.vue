@@ -55,7 +55,7 @@ const testVditor = () => {
 }
 
 const programView = () => {
-  router.push('/programView');
+  router.push('/project');
 }
 
 const docuEdit = () => {
