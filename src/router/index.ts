@@ -54,22 +54,22 @@ const router = createRouter({
                 },
                 {
                     name: 'team',
-                    path: 'team',
+                    path: 'team:teamID?',
                     component: teamPage,
                     children: [
                         {
                             name: 'teamProjects',
-                            path: 'teamProjects?teamID',
+                            path: 'teamProjects',
                             component: teamProjects
                         },
                         {
                             name: 'teamMembers',
-                            path: 'teamMembers?teamID',
+                            path: 'teamMembers',
                             component: teamMembers
                         },
                         {
                             name: 'teamSettings',
-                            path: 'teamSettings?teamID',
+                            path: 'teamSettings',
                             component: teamSettings
                         },
                     ]
