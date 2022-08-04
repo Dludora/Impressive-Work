@@ -97,12 +97,6 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
-//自己设置项目id
-
-utils.setCookie('proID',13);
-
-//获取项目id
-proID.value=parseInt(utils.getCookie('proID')) ;
 
 onMounted(()=>{
   proID.value=parseInt(utils.getCookie('proID')) ;
@@ -188,7 +182,7 @@ const posAdd = () => {
         'src': null,
         'width': addModelRef.value.addWidth,
         'height': addModelRef.value.addHeight,
-        'programID': 13,//proID.value
+        'programID': proID.value,
       },{headers:headers}
   ).then(res=>{
     if(res.data.msg==='成功'){
