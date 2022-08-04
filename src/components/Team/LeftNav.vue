@@ -1,47 +1,50 @@
 <template>
   <n-config-provider :theme="theme">
-    <n-scrollbar style="box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);background:rgba(43, 48, 59, 1);">
-      <div class="nav">
-        <div class="logo" @click="toMain">墨书</div>
-        <div class="user-info">
-          <div class="avatar">
-            <n-avatar class="pic">
-              {{ profile.nickname }}
-            </n-avatar>
-          </div>
-          <div class="user">
-            <p>{{ profile.nickname }}</p>
-            <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
-          </div>
-          <div class="teams">
-            <div class="teamsHead">
-              团队和项目
-            </div>
-            <div class="team">
-              <n-menu :options="sideMenuOptions"/>
-            </div>
-            <div class="addTeam" @click="addTeam">
-              <div class="addImg">
-                <img src="@/assets/plus.png"/>
-              </div>
-              <div class="word">
-                新建团队
-              </div>
-            </div>
-            <n-pagination v-model:page="currentPage"
-                          :page-count="pageNum"
-                          show-quick-jumper
-                          :page-slot="3" size="small"
-                          :on-update:page="changePage"
-                          id="pagination">
-              <template #goto>
-                请回答
-              </template>
-            </n-pagination>
+  <div class="nav">
+    <div class="logo" @click="toMain">墨书</div>
+    <div class="user-info">
+      <div class="avatar">
+        <n-avatar class="pic">
+          {{ profile.nickname }}
+        </n-avatar>
+      </div>
+      <div class="user">
+        <p>{{ profile.nickname }}</p>
+        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
+      </div>
+    </div>
+        <div class="teamsHead">
+          团队和项目
+        </div>
+    <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
+      <div class="teams">
+        <div class="team">
+          <n-menu :options="sideMenuOptions"/>
+        </div>
+        <div class="addTeam" @click="addTeam">
+          <!-- <div class="addImg">
+            <img src="@/assets/plus.png"/>
+          </div> -->
+          <Icon style="margin-right:8px;" size="24">
+            <Add12Filled/>
+          </Icon>
+          <div class="word">
+            新建团队
           </div>
         </div>
       </div>
     </n-scrollbar>
+        <n-pagination v-model:page="currentPage"
+                      :page-count="pageNum"
+                      show-quick-jumper
+                      :page-slot="3" size="small"
+                      :on-update:page="changePage"
+                      id="pagination">
+          <template #goto>
+            请回答
+          </template>
+        </n-pagination>
+      </div>
   </n-config-provider>
 </template>
 
@@ -52,6 +55,8 @@ import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
 import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import { Icon } from '@vicons/utils'
+import { Add12Filled } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
@@ -61,8 +66,7 @@ const headers = {
 }
 
 const sideMenuOptions = ref([] as MenuOption[])
-let dataList = ref([{ID: 0}])
-
+let dataList = ref([{ID:0}])
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -71,8 +75,12 @@ export default defineComponent({
   data() {
     return {}
   },
+  components: {
+    Icon,
+    Add12Filled,
+  },
   setup(props, {emit}) {
-    const toMain = () => {
+    const toMain=()=>{
       router.push("/")
     }
     const profile = ref({
@@ -114,7 +122,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/profile/team/teamProjects',
+                                path: '/team'+array.value[i].ID,
                               }
                             },
                             {default: () => array.value[i].name}
@@ -127,7 +135,7 @@ export default defineComponent({
           })
     }
     const changePage = (page: number) => {
-      getAllTeams(page - 1, 8)
+      getAllTeams(page-1, 8)
     }
     onMounted(async () => {
       load()
@@ -140,9 +148,9 @@ export default defineComponent({
       toMain,
       load,
       getAllTeams,
-      handleUpdateValue(key: string, item: MenuOption) {
-        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
-      },
+      handleUpdateValue (key: string, item: MenuOption) {
+            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+        },
       changePage,
       // 个人信息
       profile,
@@ -159,12 +167,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+*{
+  transition: 0.1s;
+  transition-delay: 0s;
+}
 .nav {
+  display:flex;
+  flex-direction: column;
+  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
   background-color: rgba(43, 48, 59, 1);
-  padding-top: 20px;
+  /*padding-top: 20px;*/
   padding-left: 20px;
-  width: 220px;
-  height: 100%;
+  width:220px;
+  height:100%;
 }
 
 .logo {
@@ -173,6 +188,7 @@ export default defineComponent({
   background-color: rgba(217, 217, 217, 1);
   text-align: center;
   line-height: 56px;
+  margin-top:20px;
 }
 
 .user-info {
@@ -180,7 +196,8 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   margin-top: 30px;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .avatar {
@@ -211,14 +228,16 @@ export default defineComponent({
 }
 
 .teams {
-  margin-top: 30px;
   font-size: large;
   font-weight: 500;
   color: #E2E4E9;
 }
 
 .teamsHead {
-  font-family: 黑体;
+  margin-top: 30px;
+  color:#FFFFFF;
+  font-size:16px;
+  font-weight: 700;
 }
 
 .src {
@@ -233,7 +252,7 @@ export default defineComponent({
 }
 
 .team {
-  margin-left: -20px;
+  /*margin-left: -20px;*/
 }
 
 .TeamName {
@@ -251,14 +270,21 @@ export default defineComponent({
 .pack:hover {
   background: #414958;
 }
-
+.n-menu{
+  padding:0;
+}
 .addTeam {
-  height: 45px;
-  line-height: 45px;
+  height: 42px;
+  line-height: 42px;
   display: flex;
-  margin-right: 10px;
-  margin-left: -10px;
-  color: #E2E4E9;
+  font-size:12px;
+  /*margin-right: 10px;
+  margin-left: -10px;*/
+  margin:6px 8px 0 8px;
+  padding-left: 24px;
+  color: #A7AFBE;
+  border-radius:2px;
+  align-items: center;
 }
 
 .addImg {
@@ -276,13 +302,15 @@ export default defineComponent({
 }
 
 .addTeam:hover {
-  color: pink;
-  background: #414958;
+  color: #E2E4E9;
+  background: #414958aa;
   cursor: pointer;
+  /*box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);*/
 }
 
 #pagination {
-  position: absolute;
-  top: calc(100% - 80px);
+  /*position: absolute;
+  top: calc(100% - 80px);*/
+  padding:5px 0 20px;
 }
 </style>

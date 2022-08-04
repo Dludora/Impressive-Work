@@ -409,16 +409,35 @@ const negDel = () => {
 
 // 打开文档
 
+let opdocuID = ref();
+
 function openDocu(index){
 
   //获取文档内容
 
-  utils.setCookie('editDocID',index);
-  utils.setCookie('DocTitle',"测试标题！");
-  utils.setCookie('DocContent',"测试你！");
+  opdocuID.value=index;
 
-  router.push("/docuEdit");
-  console.log(index);
+  let urlOP="/document/" + opdocuID.value;
+  console.log(urlOP);
+
+  axios.get(urlOP,{headers:headers}
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+
+      console.log("获取文档内容成功");
+
+      let opContent = res.data.data.content;
+      let opTitle = res.data.data.title;
+
+      utils.setCookie('editDocID',index);
+      utils.setCookie('DocTitle',opTitle);
+      utils.setCookie('DocContent',opContent);
+
+      console.log(opContent);
+
+      router.push("/docuEdit");
+    }
+  })
 
 }
 

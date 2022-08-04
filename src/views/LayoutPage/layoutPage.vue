@@ -15,6 +15,7 @@
         ref="canvas"
         @updateProps="updateProps"
         :elementProps="property"
+        :layoutId="layoutId"
       ></layout-canvas>
       <div>
         <div class="ui porpertyBar" v-show="property.type != 'none'">
@@ -95,6 +96,7 @@
               "
             ></n-input>
           </div>
+          <input type = "file" class="porpertyFileUploader" id="fileUploader" accept="image/*"/>
           <div
             id="yPorperty"
             class="porpertyBarInpUnit"
@@ -205,7 +207,8 @@ import {
   FileDownloadFilled
 } from "@vicons/material";
 
-import { ref, reactive } from "vue";
+import { ref, reactive,onMounted } from "vue";
+import axios from "axios"
 
 const canvas = ref<layoutCanvas>(null);
 const PrepareElement = (elementType: string) => {
@@ -215,6 +218,8 @@ const PrepareElement = (elementType: string) => {
 const download = ()=>{
   canvas.value?.download();
 }
+
+const layoutId = ref<number>(0);
 
 const palette = reactive<string[]>([
   "#F2F2F2",
@@ -268,6 +273,7 @@ let selectedBorderColor: number = 30;
 let elementType: string = "";
 
 type Property = {
+  id:number,
   index: number;
   x: number;
   y: number;
@@ -284,6 +290,7 @@ type Property = {
 };
 
 const property = reactive<Property>({
+  id:0,
   index: -1,
   x: 0,
   y: 0,
@@ -370,6 +377,22 @@ const ShutBoard = () => {
   document.getElementById("fillColor")!.style.backgroundColor = "";
   document.getElementById("borderColor")!.style.backgroundColor = "";
 };
+
+onMounted(()=>{
+  var imgInputer = document.getElementById("fileUploader");
+  imgInputer!.onchange = ()=>{
+    console.log(imgInputer.files);
+    axios.post("/resource/img",{
+      'file':imgInputer.files[0],
+    }).then(res=>{
+      console.log(res.data);
+      if(res.data.msg=="success")
+      {
+        property.src = res.data.data;
+      }
+    })
+  }
+})
 </script>
 
 <style scoped>
@@ -448,6 +471,9 @@ const ShutBoard = () => {
   padding-left: 1px;
   padding-right: 1px;
   font-size: 5px;
+}
+.porpertyFileUploader{
+  float:left;
 }
 .porpertyBarIconUnit {
   height: 24px;
