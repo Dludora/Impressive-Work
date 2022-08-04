@@ -37,7 +37,7 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
-      <n-form ref="formRef" :model="modelRef">
+      <n-form  :model="modelRef">
         <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
@@ -98,7 +98,7 @@ import {PlusOutlined} from "@vicons/antd";
 import utils from '../../Utils'
 import axios from "axios";
 const router = useRoute();
-let teamID = ref();
+
 const headers ={
    Authorization: utils.getCookie('Authorization')
 }
@@ -107,7 +107,7 @@ let projects =ref( [
 
 ])
 
-//const headers = 
+
 // 重命名表单
 let showModalRef = ref(false)
 const formRef = ref<FormData | null>(null)
@@ -116,7 +116,7 @@ const modelRef = ref({
 })
 const getList = () =>{
   console.log('head'+utils.getCookie('Authorization'))
-    const url = '/program/list?'+'teamID='+teamID.value+'&page=0&size=10'
+    const url = '/program/list?'+'teamID='+router.query.teamID+'&page=0&size=10'
     axios.get(url,{headers:headers}).then(res=>{
       console.log(res.data)
       console.log(projects)
@@ -125,10 +125,10 @@ const getList = () =>{
     })
 }
 onMounted(()=>{
-  // console.log("project get :"+router.query.teamID1)
-  // console.log(router.query.teamID1)
-  // teamID.value=parseInt(router.query.teamID1.toString())
-  // console.log("teamID:"+teamID.value)
+  console.log("project get :"+router.query.teamID)
+  console.log(router.query.teamID)
+  //teamID.value=parseInt(router.query.teamID.toString())
+
   getList()
 })
 const ruleAdd = {
@@ -256,7 +256,7 @@ const onPositiveAddClick = () => {
     return
   }
   axios.post('/program',{
-    'teamID':teamID.value,
+    'teamID':router.query.teamID,
     "src":"what the fuck photos",
     "name":modelAddRef.value.name
   },{headers:headers}).then(res=>{

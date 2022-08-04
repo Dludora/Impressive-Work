@@ -1,6 +1,6 @@
 <template>
-  <!-- <n-layout has-sider native-scrollbar="false">
-    <n-layout-sider content-style="padding: 0;">
+  <n-layout has-sider native-scrollbar="false">
+    <n-layout-sider>
       <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout>
@@ -16,14 +16,14 @@
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout> -->
-  <div class="frame">
+  </n-layout>
+  <!-- <div class="frame">
     <div class="side">
         <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </div>
     <div class="main">
       <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
-      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
+
       <div class="three-cls">
         <n-config-provider :theme="theme">
           <n-menu mode="horizontal" :options="menuOptions"/>
@@ -36,7 +36,7 @@
         </n-scrollbar>
       </div>
     </div>
-  </div>
+  </div> -->
   <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModal"
@@ -65,20 +65,21 @@ import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
 
-import {useRoute} from "vue-router";
+
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink,useRouter} from "vue-router";
+import {RouterLink,useRouter,useRoute} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
-import utils from "@/Utils";
 
+import utils from "@/Utils";
+const route = useRoute()
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -96,15 +97,15 @@ let profile = {
   src: ""
 }
 
+
 let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
-              to: {
-                path: 'projects'
-              }
+              to: 
+                '/team/teamprojects?teamID='+18              
             },
             {default: () => '项目'}
         ),
@@ -116,10 +117,11 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
+              to: 
                 // name: 'teamMembers',
-                path: 'members'
-              },
+              '/team/teammembers?teamID='+18
+               
+              
             },
             {default: () => '成员'}
         ),
@@ -131,9 +133,9 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
-                name: 'setting',
-              }
+              to:
+                 '/team/teamsetting?teamID='+18
+            
             },
             {default: () => '设置'}
         ),
@@ -164,7 +166,7 @@ export default defineComponent({
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
         router.push({path:'/team/teamProjects',
-          query:{teamID1:tID}
+          query:{teamID:tID}
         })
     }
     const ruleName = {
