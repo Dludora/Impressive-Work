@@ -45,7 +45,7 @@ let shortcuts=[
     },
 ]
 let length=0
-function getList(){ //TODO 前后端对接：获取页面列表
+const getList=()=>{ //TODO 前后端对接：获取页面列表
 
     shortcuts=[
         {

@@ -122,7 +122,10 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team/teamprojects',
+                                path: '/team/projects',
+                                query:{
+                                  teamID:array.value[i].ID,
+                                }
                               }
                             },
                             {default: () => array.value[i].name}

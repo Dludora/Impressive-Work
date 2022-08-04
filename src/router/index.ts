@@ -13,7 +13,6 @@ import projectMain from "../ProjectManager/ProjectMain.vue"
 import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
-import teamProjectsOld from "../components/someTeam/teamProjects.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
@@ -47,31 +46,37 @@ const router = createRouter({
             component: layoutPage
         },
         {
-            name: 'team',
-            path:'/team',
-            component: someTeam,
-            children:[
+            name:'main',
+            path: '/',
+            component: mainView,
+            children: [
                 {
-                    name:'projects',
-                    path: 'teamprojects',
-                    component: teamProjectsOld,
+                    name: 'team',
+                    path:'team',
+                    redirect: 'team/projects',
+                    component: teamMain,
+                    children:[
+                        {
+                            name:'projects',
+                            path: 'projects',
+                            component: teamProjects,
+                        },
+                        {
+                            name:'members',
+                            path: 'members',
+                            component: teamMembers,
+                        },
+                        {
+                            name:'setting',
+                            path: 'setting',
+                            component: teamSettings,
+                        },
+                    ]
                 },
-                {
-                    name:'members',
-                    path: 'teammembers',
-                    component: teamMembers,
-                },
-                {
-                    name:'setting',
-                    path: 'teamsetting',
-                    component: teamSettings,
-                },
-            ]
-        },
                 {
                     name: 'project',
-                    path:'/project',
-                    redirect: '/project/prototypes',
+                    path:'project',
+                    redirect: 'project/prototypes',
                     component: projectMain,
                     children:[
                         {
@@ -91,6 +96,8 @@ const router = createRouter({
                         },
                     ]
                 },
+            ]
+        },
         // {
         //     name: 'team',
         //     path: '/team',
