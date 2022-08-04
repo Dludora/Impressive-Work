@@ -12,9 +12,11 @@
         v-for="(params, index) in layoutElementParams"
         :key="index"
         :elementParams="params"
+        :update="update"
         @select="select"
         @destroy="destroy"
         @updateParams="updateParams"
+        @updateServer="updateServer"
         ref="layoutElements"
       >
       </layout-element>
@@ -27,6 +29,14 @@ import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
 import axios from "axios"
+import utils from "@/Utils";
+import {useMessage} from "naive-ui"
+
+const headers ={
+   Authorization: utils.getCookie('Authorization')
+}
+
+const message = useMessage();
 
 const selected: any = ref(null);
 const selectedId = ref<number>(-1);
@@ -39,6 +49,12 @@ let dragFromY: number = 0;
 let transDragFromX: number = 0;
 let transDragFromY: number = 0;
 let version: number = 0;
+let update = ref<boolean>(true);
+
+const layoutId = ref<number>(0);
+const layoutName = ref<string>("")
+const canvasWidth = ref<number>(1920);
+const canvasHeight = ref<number>(1080);
 
 const canvasTrans = {
   x: 0,
@@ -65,8 +81,9 @@ type elementParams = {
 };
 
 type Prop = {
-  elementProps: elementParams;
   layoutId:number;
+  update:boolean,
+  elementProps: elementParams;
 };
 
 const props = defineProps<Prop>();
@@ -76,17 +93,25 @@ const emits = defineEmits(["updateProps"]);
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
 
-const updateServer = (data:elementParams[])=>{
+const updateServer = (index:number)=>{
+  let data:elementParams[]=[];
+  if(index>=0&&index<layoutElementParams.length)
+  {
+    data.push(layoutElementParams[index]);
+  }
+  
   axios.put(`/layout/${props.layoutId}/element`,{
     'version':version,
     'elements':data
-  }).then(res=>{
-    if(res.data.msg=="success")
+  },{headers:headers}).then(res=>{
+    console.log(res.data);
+    if(res.data.msg=="成功")
     {
       version = res.data.data.version;
       for(var i=0;i<res.data.data.elements.length;++i)
       {
         updateParams(res.data.data.elements[i]);
+        update.value = true;
       }
     }
   })
@@ -113,6 +138,10 @@ const updateParams = (data: elementParams) => {
   layoutElementParams[data.index]!.src = data.src;
   layoutElementParams[data.index]!.fontSize = data.fontSize;
   layoutElementParams[data.index]!.locked = data.locked;
+  update.value = false;
+  // setTimeout(() => {
+  //   update.value = true;
+  // }, 100);
   updateProps();
 };
 
@@ -130,10 +159,10 @@ const select = (index: number) => {
   }
   selected.value = layoutElements.value[index];
   selectedId.value = index;
-  selectEns = true;
-  setTimeout(() => {
-    selectEns = false;
-  }, 100);
+  //selectEns = true;
+  // setTimeout(() => {
+  //   selectEns = false;
+  // }, 100);
   updateProps();
 };
 
@@ -165,6 +194,7 @@ const ProduceElement = (e: MouseEvent) => {
     dragging = false;
   }
   if (preparedType != "") {
+    update.value = true;
     layoutElementParams.push({
       id:0,
       index: layoutElementParams.length,
@@ -184,6 +214,7 @@ const ProduceElement = (e: MouseEvent) => {
     });
     preparedType = "";
   }
+  //updateServer(layoutElementParams.length-1);
 };
 
 
@@ -238,6 +269,7 @@ const dragCanvas = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+  //setInterval(updateServer,200,-1)
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       destroy(selectedId.value);
@@ -264,6 +296,7 @@ onMounted(() => {
       }
     }
   };
+  initScale();
   canvasTrans.width = document.getElementById("canvas")!.clientWidth;
   canvasTrans.height = document.getElementById("canvas")!.clientHeight;
   canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
@@ -274,6 +307,11 @@ onMounted(() => {
   document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
 });
+
+const initScale = ()=>{
+  document.getElementById("canvas")!.style.width = canvasWidth.value/2.4+"px";
+  document.getElementById("canvas")!.style.height = canvasHeight.value/2.4+"px";
+}
 
 let scale = 1;
 const maxScale = 5;
@@ -323,23 +361,31 @@ const wheelScale = () => {
 };
 
 watch(
-  () => props.elementProps,
+  () => props,
   (newVal) => {
-    if (selectedId.value < 0) {
+    if (selectedId.value < 0||props.update==false) {
       return;
     }
-    layoutElementParams[selectedId.value]!.x = newVal.x;
-    layoutElementParams[selectedId.value]!.y = newVal.y;
-    layoutElementParams[selectedId.value]!.width = newVal.width;
-    layoutElementParams[selectedId.value]!.height = newVal.height;
-    layoutElementParams[selectedId.value]!.borderWidth = newVal.borderWidth;
-    layoutElementParams[selectedId.value]!.borderRadius = newVal.borderRadius;
-    layoutElementParams[selectedId.value]!.color = newVal.color;
-    layoutElementParams[selectedId.value]!.borderColor = newVal.borderColor;
-    layoutElementParams[selectedId.value]!.type = newVal.type;
-    layoutElementParams[selectedId.value]!.src = newVal.src;
-    layoutElementParams[selectedId.value]!.fontSize = newVal.fontSize;
-    layoutElementParams[selectedId.value]!.locked = newVal.locked;
+    update.value = true;
+    if(newVal.elementProps.borderWidth<=0 && layoutElementParams[selectedId.value]!.borderColor != newVal.elementProps.borderColor)
+    {
+      message.info("注意：边框颜色为透明")
+    }
+    layoutElementParams[selectedId.value]!.id = newVal.elementProps.id;
+    layoutElementParams[selectedId.value]!.index = newVal.elementProps.index;
+    layoutElementParams[selectedId.value]!.x = newVal.elementProps.x;
+    layoutElementParams[selectedId.value]!.y = newVal.elementProps.y;
+    layoutElementParams[selectedId.value]!.width = newVal.elementProps.width;
+    layoutElementParams[selectedId.value]!.height = newVal.elementProps.height;
+    layoutElementParams[selectedId.value]!.borderWidth = newVal.elementProps.borderWidth;
+    layoutElementParams[selectedId.value]!.borderRadius = newVal.elementProps.borderRadius;
+    layoutElementParams[selectedId.value]!.color = newVal.elementProps.color;
+    layoutElementParams[selectedId.value]!.borderColor = newVal.elementProps.borderColor;
+    layoutElementParams[selectedId.value]!.type = newVal.elementProps.type;
+    layoutElementParams[selectedId.value]!.src = newVal.elementProps.src;
+    layoutElementParams[selectedId.value]!.fontSize = newVal.elementProps.fontSize;
+    layoutElementParams[selectedId.value]!.locked = newVal.elementProps.locked;
+    updateServer(newVal.elementProps.index)
   },
   {
     deep: true,
