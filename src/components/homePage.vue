@@ -11,6 +11,9 @@
     <n-button @click="programView">项目大页面</n-button>
 
     <n-button @click="docuEdit">文档编辑页面</n-button>
+
+    <n-button @click="UML">UML</n-button>
+
     <img src="https://soft2-1251130379.cos.ap-beijing.myqcloud.com/exampleobject.jpg"/>
   </n-space>
 </template>
@@ -60,6 +63,10 @@ const programView = () => {
 
 const docuEdit = () => {
   router.push('/docuEdit');
+}
+
+const UML = () => {
+  router.push('/UML');
 }
 
 </script>

@@ -98,6 +98,7 @@ type Params = {
 };
 
 type Props = {
+  update:boolean;
   elementParams?: Params;
 };
 
@@ -152,6 +153,10 @@ const transform = {
   borderColor: "blue",
 };
 
+const updateServer = ()=>{
+  emits("updateServer",transform.index)
+}
+
 interact(`#contentBox${props.elementParams.index}`).draggable({
   listeners: {
     move(event) {
@@ -171,7 +176,8 @@ interact(`#contentBox${props.elementParams.index}`).draggable({
       relativePoints: [{ x: 0, y: 0 }],
     }),
   ],
-});
+})
+.on('dragend',updateServer);
 
 interact(`#content${props.elementParams.index}`).resizable({
   edges: { top: true, left: true, bottom: true, right: true },
@@ -208,12 +214,12 @@ interact(`#content${props.elementParams.index}`).resizable({
       }
     },
   },
-});
+})
+.on('resizeend',updateServer);
 
-const emits = defineEmits(["select", "destroy", "updateParams"]);
+const emits = defineEmits(["select", "destroy", "updateParams","updateServer"]);
 
 const updateParams = () => {
-  console.log(transform);
   emits("updateParams", transform);
 };
 
@@ -329,16 +335,20 @@ onMounted(() => {
 });
 
 watch(
-  () => props.elementParams,
+  ()=>props,
   (newVal) => {
-    if (newVal == null||newVal.type == "none") {
+    if(!newVal.update)
+    {
+      return;
+    }
+    if (newVal.elementParams == null||newVal.elementParams.type == "none") {
       exist.value = false;
       return;
     }
-    if (document.getElementById(`contentBox${newVal.index}`) == null) {
+    if (document.getElementById(`contentBox${newVal.elementParams.index}`) == null) {
       return;
     }
-    ResetTrans(newVal);
+    ResetTrans(newVal.elementParams);
   },
   {
     deep: true,
@@ -363,7 +373,6 @@ const ResetTrans = (newVal: Params) => {
   transform.src = newVal.src;
   transform.locked = newVal.locked;
   transform.fontSize = newVal.fontSize;
-  console.log("outer" + newVal.fontSize);
   switch (newVal.type) {
     case "text": {
       document.getElementById(
@@ -374,18 +383,18 @@ const ResetTrans = (newVal: Params) => {
       break;
     }
     case "rect": {
-      var maxR = Math.max(
-        document.getElementById(`content${newVal.index}`)!.clientHeight,
-        document.getElementById(`content${newVal.index}`)!.clientWidth
-      );
-      if (newVal.borderRadius > maxR) {
-        transform.borderRadius = maxR;
-        updateParams();
-      } else {
-        document.getElementById(
-          `content${newVal.index}`
-        )!.style.borderRadius = `${newVal.borderRadius}px`;
-      }
+      // var maxR = Math.max(
+      //   document.getElementById(`content${newVal.index}`)!.clientHeight,
+      //   document.getElementById(`content${newVal.index}`)!.clientWidth
+      // );
+      // if (newVal.borderRadius > maxR) {
+      //   transform.borderRadius = maxR;
+      //   updateParams();
+      // } else {
+      //   document.getElementById(
+      //     `content${newVal.index}`
+      //   )!.style.borderRadius = `${newVal.borderRadius}px`;
+      // }
     }
     default: {
       document.getElementById(
@@ -401,6 +410,7 @@ const ResetTrans = (newVal: Params) => {
       )!.style.borderWidth = `${newVal.borderWidth}px`;
       document.getElementById(`content${newVal.index}`)!.style.backgroundColor =
         newVal.color;
+        console.log(newVal.src);
       if (newVal.src == "" || newVal.src == "none" || newVal.src == null) {
         document.getElementById(`content${newVal.index}`)!.style.backgroundImage =
           "none";
@@ -429,6 +439,7 @@ const ResetTrans = (newVal: Params) => {
   box-sizing: border-box;
   border-style: solid;
   border-width: 0px;
+  background-size: 100% 100%;
   width: 200px;
   height: 200px;
 }
