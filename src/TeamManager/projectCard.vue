@@ -23,7 +23,7 @@ import {Edit16Regular} from '@vicons/fluent'
 import { Icon } from '@vicons/utils'
 import { defineComponent } from 'vue'
 import router from '@/router';
-
+import utils from '../Utils'
 export default defineComponent({
     name: 'PageCard',
     props: {
@@ -42,6 +42,8 @@ export default defineComponent({
     setup(props, {emit}) {
         const gotoProject=()=>{
             console.log("go")
+            utils.setCookie('proID',props.id)
+            console.log("proID:"+utils.getCookie("proID"))
             router.replace({name:'project'})
         }
         const renameThis=()=>{
