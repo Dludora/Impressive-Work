@@ -61,7 +61,6 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 
-
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -95,25 +94,23 @@ export default defineComponent({
     const total = ref(0)
     const currentPage = ref(0)
     const pageNum = ref(0)
-    // 调用someTeam中的添加团队Dialog
     const addTeam = () => {
       emit('addTeam');
     }
-    // 获取个人信息
     const load = () => {
       axios.get('user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
       })
     }
-    // 获取某一页码处的所有团队
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             let array = ref(res.data.data.items)
             dataList = res.data.data.items
-            // console.log(res.data.data)
-            // console.log(array.value)
+            console.log(res.data.data)
+            // console.log(res.data.data.items)
+            console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -125,34 +122,22 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team/teamProjects',
+                                path: '/team/teamprojects',
                               }
                             },
                             {default: () => array.value[i].name}
                         ),
-                    key: array.value[i].ID,
+                    key: i,
                     icon: renderIcon(Team)
                   }
               )
             }
-            console.log("你好呀！")
           })
     }
-    // 改变页面
     const changePage = (page: number) => {
       getAllTeams(page-1, 8)
     }
-    // 获取当前要查询的团队的teamID
-    const handleUpdateValue = (key: string, item: MenuOption) => {
-      console.log(key)
-
-
-      // console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
-      //     emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
-    }
-
-    // 页面创建时调用的函数
-    onMounted(() => {
+    onMounted(async () => {
       load()
       getAllTeams(0, 8)
     })
@@ -163,8 +148,12 @@ export default defineComponent({
       toMain,
       load,
       getAllTeams,
-      handleUpdateValue,
-
+      handleUpdateValue (key: string, item: MenuOption) {
+        console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
+            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+            utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
+            console.log("全局修改"+utils.getCookie('teamID'))
+        },
       changePage,
       // 个人信息
       profile,

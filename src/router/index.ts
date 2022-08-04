@@ -81,11 +81,11 @@ const router = createRouter({
                             path: 'prototypes',
                             component: prototypes,
                         },
-                        // {
-                        //     name:'members',
-                        //     path: 'members',
-                        //     component: teamMembers,
-                        // },
+                        {
+                             name:'UML',
+                             path: 'UML',
+                             component: UML,
+                        },
                         {
                             name:'documents',
                             path: 'documents',

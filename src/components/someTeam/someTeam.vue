@@ -71,7 +71,7 @@ import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink, useRouter, useRoute} from "vue-router";
+import {RouterLink,useRouter,useRoute} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
@@ -79,16 +79,10 @@ import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 import utils from "@/Utils";
-
 const route = useRoute()
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-
-const teamID = utils.getCookie('teamID')
-
-
-console.log(teamID)
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -104,15 +98,21 @@ let profile = {
 }
 
 
-let menuOptions: MenuOption[] = [
+
+export default defineComponent({
+  components: {
+    LeftNav,
+    TeamHead
+  },
+  setup() {
+    let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
-              to: {
-                path: '/team/teamprojects'
-              }
+              to: 
+                '/team/teamprojects?teamID='+teamID.value           
             },
             {default: () => '项目'}
         ),
@@ -124,9 +124,11 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
-                path: '/team/teammembers'
-              }
+              to: 
+                // name: 'teamMembers',
+              '/team/teammembers?teamID='+teamID.value
+               
+              
             },
             {default: () => '成员'}
         ),
@@ -138,9 +140,9 @@ let menuOptions: MenuOption[] = [
         h(
             RouterLink,
             {
-              to: {
-                path: '/team/teamsetting'
-              }
+              to:
+                 '/team/teamsetting?teamID='+teamID.value
+            
             },
             {default: () => '设置'}
         ),
@@ -148,12 +150,6 @@ let menuOptions: MenuOption[] = [
     icon: renderIcon(Settings)
   },
 ]
-export default defineComponent({
-  components: {
-    LeftNav,
-    TeamHead
-  },
-  setup() {
     const router = useRouter()
     let teamID = ref(-1)
     const com = ref(null)
@@ -163,18 +159,16 @@ export default defineComponent({
       name: "",
       description: "",
     })
-
-    const getID = (msg: any) => {
-      // console.log("father get:" + msg)
-      // teamID.value = parseInt(msg)
-      // com.value.teamData.ID = teamID.value
-      // console.log(com.value.teamData)
-      // console.log("father push" + teamID.value)
-      // let tID = (teamID.value)
-      // router.push({
-      //   path: '/team/teamProjects',
-      //   query: {teamID: tID}
-      // })
+    const getID = (msg:any) =>{
+        console.log("father get:"+msg)
+        teamID.value = parseInt(msg)
+        com.value.teamData.ID=teamID.value
+        console.log(com.value.teamData)
+        console.log("father push"+teamID.value)
+        let tID=(teamID.value)
+        router.push({path:'/team/teamProjects',
+          query:{teamID:tID}
+        })
     }
     const ruleName = {
       required: true,
@@ -196,8 +190,6 @@ export default defineComponent({
     const onNegativeClick = () => {
       showModalRef.value = false
     }
-
-    // 点击确定后刷新团队列表
     const onPositiveClick = () => {
       showModalRef.value = false
       axios.post('/team', {
@@ -205,17 +197,16 @@ export default defineComponent({
         'src': profile.src,
         'introduction': modelRef.value.description
       }, {headers: headers}).then(res => {
-        // console.log(res)
+        console.log(res)
         getChildList.value.getAllTeams(0, 8)
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      // onMounted(() => {
-      //   router.push({
-      //     path: '/team/teamProjects',
-      //     query: {teamID: teamID.value}
-      //   })
-      // })
+      onMounted(()=>{
+        router.push({path:'/team/teamProjects',
+          query:{teamID:teamID.value}
+        })
+      })
     }
     return {
       theme: darkTheme,
@@ -276,40 +267,35 @@ export default defineComponent({
 .menu {
   margin-left: 30px;
 }
-
-.main {
-  height: 100%;
-  /* max-height: 100%; */
-  /* overflow: auto; */
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 100%;
+.main{
+    height: 100%;
+    /* max-height: 100%; */
+    /* overflow: auto; */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
 }
-
-.view {
-  overflow: auto;
+.view{
+    overflow: auto;
 }
-
-.frame {
+.frame{
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  height: 100%;
+  height:100%;
 }
-
-.side {
-  height: 100%;
-  z-index: 2;
+.side{
+  height:100%;
+  z-index:2;
 }
-
-.three-cls {
+.three-cls{
   background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   /*position: absolute;*/
   min-width: 100%;
   /*top:0%;*/
   padding: 0px 50px;
-  z-index: 1;
+  z-index:1;
 }
 </style>
