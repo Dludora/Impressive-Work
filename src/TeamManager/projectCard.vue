@@ -1,40 +1,66 @@
 <template>
-    <div class="card">
+    <div class="card" @click="gotoProject">
         <div class="img">
         </div>
         <div class="bottom">
             <div class="name">{{name}}</div>
             <Icon size="20" class="rename">
-                <Edit16Regular/>
+                <Edit16Regular @click="renameThis"/>
             </Icon>
         </div>
         <div class="desc">
             创建于&nbsp;{{date}}
             <Icon size="20" class="del">
-                <CloseRound/>
+                <CloseRound @click="delThis"/>
             </Icon>
         </div>
     </div>
 </template>
-
-<script>
+<script lang="ts">
 import {CloseRound} from '@vicons/material'
 import {EditTwotone,EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
 import { Icon } from '@vicons/utils'
-export default {
+import { defineComponent } from 'vue'
+import router from '@/router';
+
+export default defineComponent({
     name: 'PageCard',
     props: {
         name: String,
         img: Image,
         date: String,
+        id: {
+            default:0
+        },
     },
     components: {
         CloseRound,
         Icon,
         Edit16Regular,
-    }
-}
+    },
+    setup(props, {emit}) {
+        const gotoProject=()=>{
+            console.log("go")
+            router.replace({name:'project'})
+        }
+        const renameThis=()=>{
+            event.stopPropagation();
+            console.log("rename"+props.id)
+            emit("rename")
+        }
+        const delThis=()=>{
+            event.stopPropagation();
+            console.log("del"+props.id)
+            emit("del")
+        }
+        return{
+            gotoProject,
+            renameThis,
+            delThis,
+        }
+    },
+})
 </script>
 
 <style scoped>
