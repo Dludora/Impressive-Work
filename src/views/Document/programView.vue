@@ -83,7 +83,6 @@ const menuOptions: MentionOption[] = [
         ),
     key: 'toUML',
     icon: renderIcon(Analytics),
-    disabled: true,
   },
   {
     label: () =>

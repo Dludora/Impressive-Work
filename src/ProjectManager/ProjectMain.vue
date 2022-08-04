@@ -71,14 +71,13 @@ const menuOptions: MentionOption[] = [
             RouterLink,
             {
               to: {
-
+                name: 'UML'
               }
             },
             { default: () => '图' }
         ),
     key: 'toUML',
     icon: renderIcon(Analytics),
-    disabled: true,
   },
   {
     label: () =>
