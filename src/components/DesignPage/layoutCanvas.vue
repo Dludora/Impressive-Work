@@ -16,7 +16,7 @@
         @select="select"
         @destroy="destroy"
         @updateParams="updateParams"
-        @updateServer="updateServer"
+        @updateServer="updateUpdates"
         ref="layoutElements"
       >
       </layout-element>
@@ -51,7 +51,7 @@ let transDragFromY: number = 0;
 let version: number = 0;
 let update = ref<boolean>(true);
 
-const layoutId = ref<number>(0);
+const layoutId = ref<number>(2);
 const layoutName = ref<string>("")
 const canvasWidth = ref<number>(1920);
 const canvasHeight = ref<number>(1080);
@@ -92,17 +92,19 @@ const emits = defineEmits(["updateProps"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
+let updates:elementParams[]=[]
 
-const updateServer = (index:number)=>{
-  let data:elementParams[]=[];
+const updateUpdates = (index:number)=>{
   if(index>=0&&index<layoutElementParams.length)
   {
-    data.push(layoutElementParams[index]);
+    updates.push(layoutElementParams[index]);
   }
-  
+}
+
+const updateServer = ()=>{
   axios.put(`/layout/${props.layoutId}/element`,{
     'version':version,
-    'elements':data
+    'elements':updates
   },{headers:headers}).then(res=>{
     console.log(res.data);
     if(res.data.msg=="成功")
@@ -115,6 +117,7 @@ const updateServer = (index:number)=>{
       }
     }
   })
+  updates = []
 }
 
 const updateParams = (data: elementParams) => {
@@ -220,7 +223,7 @@ const ProduceElement = (e: MouseEvent) => {
 
 // let canvas2: any;
 let imgUri:string;
-const download = () => {
+const download = (isDownload:boolean) => {
   // canvas2 = document.createElement("canvas");
 
   // var w = canvasTrans.width;
@@ -236,7 +239,15 @@ const download = () => {
   html2canvas(document.getElementById("canvas")!).then(
     function (canvas) {
       imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-      window.location.href = imgUri;
+      if(isDownload)
+      {
+        window.location.href = imgUri;
+      }
+      axios.put(`/layout/${layoutId.value}/img`,{
+        src:imgUri,
+      },{headers:headers}).then(res=>{
+        console.log(res.data);
+      })
     }
   );
 };
@@ -264,12 +275,13 @@ const dragCanvas = (e: MouseEvent) => {
     canvasTrans.y = transDragFromY + e.clientY - dragFromY;
 
     document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
+    document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
   }
 };
 
 onMounted(() => {
-  //setInterval(updateServer,200,-1)
+  updateServer();
+  setInterval(updateServer,5000)
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       destroy(selectedId.value);
@@ -302,7 +314,7 @@ onMounted(() => {
   canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
   canvasTrans.y = 148;
   document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 24}px`;
+  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
   document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
   document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
   wheelScale();
@@ -330,6 +342,7 @@ const wheelScale = () => {
       return;
     }
     scale*=scope;
+    update.value = true;
 
     for (var i = 0; i < layoutElementParams.length; ++i) {
       if (layoutElementParams[i] == null) {
@@ -385,7 +398,7 @@ watch(
     layoutElementParams[selectedId.value]!.src = newVal.elementProps.src;
     layoutElementParams[selectedId.value]!.fontSize = newVal.elementProps.fontSize;
     layoutElementParams[selectedId.value]!.locked = newVal.elementProps.locked;
-    updateServer(newVal.elementProps.index)
+    updateUpdates(newVal.elementProps.index)
   },
   {
     deep: true,

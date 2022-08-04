@@ -1,11 +1,11 @@
 <template>
   <div class="board" @mousedown="ShutBoard">
     <div class="layoutHeader home">
-      <n-icon size="12" color="#A7AFBE" class="backArrow">
+      <n-icon size="18" color="#A7AFBE" class="backArrow">
         <arrow-back-ios-round />
       </n-icon>
-      Home
-      <n-icon size="14" color="#A7AFBE" class="downloadIcon" @click="download">
+      {{layoutName}}
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
         <file-download-filled />
       </n-icon>
     </div>
@@ -115,7 +115,7 @@
             ></n-input>
           </div>
           <div class="porpertyBarIconUnit">
-            <n-icon size="20" color="#E2E4E9" class="porpertyIcon" style="marginRight:6px">
+            <n-icon size="30" color="#E2E4E9" class="porpertyIcon" style="marginRight:9px">
               <image24-regular />
             </n-icon>
             <input
@@ -132,7 +132,7 @@
           >
             <div class="porpertyIcon fillIcon"></div>
             <div class="porpertyExtension">
-              <n-icon size="12" color="#E2E4E9">
+              <n-icon size="18" color="#E2E4E9">
                 <keyboard-arrow-up-round />
               </n-icon>
             </div>
@@ -159,7 +159,7 @@
           >
             <div class="porpertyIcon borderIcon"></div>
             <div class="porpertyExtension">
-              <n-icon size="12" color="#E2E4E9">
+              <n-icon size="18" color="#E2E4E9">
                 <keyboard-arrow-up-round />
               </n-icon>
             </div>
@@ -184,7 +184,7 @@
             class="ui toolBarUnit toolLeftUnit"
             @mousedown="PrepareElement('rect')"
           >
-            <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
+            <n-icon size="42" class="ui toolUnit toolPointer" color="#ffffff">
               <cursor24-regular />
             </n-icon>
           </div>
@@ -198,7 +198,7 @@
             class="ui toolBarUnit toolRightUnit"
             @mousedown="PrepareElement('text')"
           >
-            <n-icon size="28" class="ui toolUnit toolPointer" color="#ffffff">
+            <n-icon size="42" class="ui toolUnit toolPointer" color="#ffffff">
               <text-add-t24-regular />
             </n-icon>
           </div>
@@ -236,11 +236,11 @@ const PrepareElement = (elementType: string) => {
 };
 
 const download = () => {
-  canvas.value?.download();
+  canvas.value?.download(true);
 };
 
-const layoutId = ref<number>(0);
-const layoutName = ref<string>("")
+const layoutId = ref<number>(2);
+const layoutName = ref<string>("Home")
 const canvasWidth = ref<number>(0);
 const canvasHeight = ref<number>(0);
 
@@ -450,7 +450,7 @@ onMounted(() => {
 .canvasBoard {
   text-align: center;
   position: absolute;
-  top: 24px;
+  top: 36px;
   bottom: 0px;
   width: 100%;
 }
@@ -459,25 +459,25 @@ onMounted(() => {
   user-select: none;
 }
 .layoutHeader {
-  height: 24px;
+  height: 36px;
   background-color: #2b303b;
 }
 .backArrow {
   float: left;
-  margin-top: 6px;
+  margin-top: 9px;
   margin-left: 12px;
 }
 .downloadIcon {
   float: right;
-  margin-top: 6px;
+  margin-top: 9px;
   margin-right: 10px;
 }
 .home {
   text-align: center;
   font-family: Inter;
   font-weight: 700;
-  font-size: 12px;
-  line-height: 24px;
+  font-size: 18px;
+  line-height: 36px;
   color: #e2e4e9;
 }
 .porpertyBar {
@@ -486,18 +486,18 @@ onMounted(() => {
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
-  bottom: 75px;
-  border-radius: 6px;
+  bottom: 125px;
+  border-radius: 9px;
 }
 .porpertyRightUnit {
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-top-right-radius: 9px;
+  border-bottom-right-radius: 9px;
 }
 .porpertyBarInpUnit {
-  height: 24px;
-  line-height: 24px;
-  padding-left: 8px;
-  padding-right: 8px;
+  height: 36px;
+  line-height: 36px;
+  padding-left: 12px;
+  padding-right: 12px;
   color: #e2e4e9;
   float: left;
 }
@@ -505,14 +505,14 @@ onMounted(() => {
   float: left;
 }
 .porpertyInput {
-  width: 28px;
-  height: 14px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  margin-left: 8px;
-  padding-left: 1px;
-  padding-right: 1px;
-  font-size: 5px;
+  width: 52px;
+  height: 21px;
+  margin-top: 7.5px;
+  margin-bottom: 7.5px;
+  margin-left: 12px;
+  padding-left: 1.5px;
+  padding-right: 1.5px;
+  font-size: 7.5px;
 }
 .porpertyFileUploader {
   position:absolute;
@@ -520,7 +520,7 @@ onMounted(() => {
   opacity: 0;
 }
 .porpertyBarIconUnit {
-  height: 24px;
+  height: 36px;
   float: left;
   position: relative;
 }
@@ -528,50 +528,50 @@ onMounted(() => {
   background-color: #3a404f;
 }
 .porpertyIcon {
-  width: 18px;
-  height: 18px;
-  margin: 3px;
-  margin-right: 1.5px;
+  width: 27px;
+  height: 27px;
+  margin: 4.5px;
+  margin-right: 3px;
   float: left;
 }
 .porpertyExtension {
   float: left;
-  margin-top: 3px;
-  margin-bottom: 3px;
-  margin-right: 1px;
+  margin-top: 4.5px;
+  margin-bottom: 4.5px;
+  margin-right: 1.5px;
 }
 .porpertyExtensionBoard {
   position: absolute;
-  bottom: 32.5px;
-  left: 15px;
+  bottom: 49px;
+  left: 22.5px;
   transform: translate(-50%, 0);
   background-color: #2b303b;
-  border-radius: 6px;
+  border-radius: 9px;
 }
 .paletteBoard {
-  width: 144px;
-  padding: 8px;
+  width: 216px;
+  padding: 12px;
 }
 .paletteColor {
-  margin: 3px;
+  margin: 4.5px;
   float: left;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+  width: 27px;
+  height: 27px;
+  box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.25);
   border-color: white;
   border-width: 0px;
   border-style: solid;
 }
 .fillIcon {
   border-radius: 50%;
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.25);
   background-color: #ddb055;
 }
 .borderIcon {
   border-radius: 50%;
-  border: 2.5px solid #8ed42b;
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.25);
+  border: 3.75px solid #8ed42b;
+  box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
 }
 .toolBar {
@@ -580,20 +580,20 @@ onMounted(() => {
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
-  bottom: 20px;
-  border-radius: 12px;
+  bottom: 30px;
+  border-radius: 18px;
 }
 .toolLeftUnit {
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
 }
 .toolRightUnit {
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
 }
 .toolBarUnit {
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   float: left;
   position: relative;
 }
@@ -609,23 +609,23 @@ onMounted(() => {
   margin: auto;
 }
 .toolPointer {
-  width: 26px;
-  height: 28px;
+  width: 39px;
+  height: 42px;
 }
 .toolRectangle {
   background-color: #ddb055;
-  width: 36px;
-  height: 28px;
+  width: 54px;
+  height: 42px;
 }
 .toolCircle {
   background-color: #ddb055;
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
   border-radius: 50% 50%;
 }
 .toolText {
-  width: 28px;
-  height: 28px;
+  width: 42px;
+  height: 42px;
 }
 .sider {
   width: 240px;

@@ -362,6 +362,8 @@ const ResetTrans = (newVal: Params) => {
   )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
   transform.x = newVal.x;
   transform.y = newVal.y;
+  transform.id = newVal.id;
+  transform.index = newVal.index;
   transform.width = newVal.width;
   transform.height = newVal.height;
   transform.borderWidth = newVal.borderWidth;
