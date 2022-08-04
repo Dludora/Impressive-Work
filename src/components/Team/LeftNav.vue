@@ -154,6 +154,8 @@ export default defineComponent({
       handleUpdateValue (key: string, item: MenuOption) {
         console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
             emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
+            utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
+            console.log("全局修改"+utils.getCookie('teamID'))
         },
       changePage,
       // 个人信息

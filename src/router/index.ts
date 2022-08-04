@@ -25,6 +25,8 @@ import docuList from "../components/Document/docuList.vue";
 
 import docuEdit from "../views/Document/docuEdit.vue";
 
+import UML from "../components/UML.vue";
+
 const routerHistory = createWebHistory()
 // @ts-ignore
 const router = createRouter({
@@ -150,6 +152,11 @@ const router = createRouter({
             path:'/docuEdit',
             component: docuEdit,
         },
+        {
+            name:'UML',
+            path:'/UML',
+            component: UML,
+        }
         // {
         //     name: 'programBig',
         //     path: '/programBig',
