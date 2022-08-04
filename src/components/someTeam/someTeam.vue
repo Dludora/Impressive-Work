@@ -105,7 +105,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: 
-                '/team/teamprojects?teamID='+18              
+                '/team/teamprojects'           
             },
             {default: () => '项目'}
         ),
@@ -119,7 +119,7 @@ let menuOptions: MenuOption[] = [
             {
               to: 
                 // name: 'teamMembers',
-              '/team/teammembers?teamID='+18
+              '/team/teammembers'
                
               
             },
@@ -134,7 +134,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to:
-                 '/team/teamsetting?teamID='+18
+                 '/team/teamsetting'
             
             },
             {default: () => '设置'}
