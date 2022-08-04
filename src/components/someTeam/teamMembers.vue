@@ -23,7 +23,7 @@
     <a href="#" id="invite">邀请成员</a>
   </div>
   </div>
-  <n-config-provider :theme="theme">
+  <!-- <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"
@@ -39,7 +39,7 @@
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
-</n-config-provider>
+</n-config-provider> -->
 </template>
 
 <script setup lang="ts">
