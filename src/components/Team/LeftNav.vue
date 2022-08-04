@@ -13,22 +13,25 @@
         <p>{{ profile.nickname }}</p>
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
+    </div>
       <div class="teams">
         <div class="teamsHead">
           团队和项目
         </div>
         <div class="team">
-          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
+          <n-menu :options="sideMenuOptions"/>
         </div>
         <div class="addTeam" @click="addTeam">
-          <div class="addImg">
+          <!-- <div class="addImg">
             <img src="@/assets/plus.png"/>
-          </div>
+          </div> -->
+          <Icon style="margin-right:8px;" size="24">
+            <Add12Filled/>
+          </Icon>
           <div class="word">
             新建团队
           </div>
         </div>
-        {{ pageNum }}
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -40,7 +43,6 @@
           </template>
         </n-pagination>
       </div>
-    </div>
   </div>
     </n-scrollbar>
   </n-config-provider>
@@ -51,8 +53,10 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink} from "vue-router";
+import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
+import { Icon } from '@vicons/utils'
+import { Add12Filled } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
@@ -70,6 +74,10 @@ function renderIcon(icon: Component) {
 export default defineComponent({
   data() {
     return {}
+  },
+  components: {
+    Icon,
+    Add12Filled,
   },
   setup(props, {emit}) {
     const toMain=()=>{
@@ -102,6 +110,7 @@ export default defineComponent({
             dataList = res.data.data.items
             console.log(res.data.data)
             // console.log(res.data.data.items)
+            console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -113,7 +122,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team'
+                                path: '/team'+array.value[i].ID,
                               }
                             },
                             {default: () => array.value[i].name}
@@ -158,7 +167,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+*{
+  transition: 0.1s;
+  transition-delay: 0s;
+}
 .nav {
+  display:flex;
+  flex-direction: column;
+
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
@@ -179,7 +195,8 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   margin-top: 30px;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .avatar {
@@ -250,14 +267,21 @@ export default defineComponent({
 .pack:hover {
   background: #414958;
 }
-
+.n-menu{
+  padding:0;
+}
 .addTeam {
-  height: 45px;
-  line-height: 45px;
+  height: 42px;
+  line-height: 42px;
   display: flex;
-  margin-right: 10px;
-  margin-left: -10px;
-  color: #E2E4E9;
+  font-size:12px;
+  /*margin-right: 10px;
+  margin-left: -10px;*/
+  margin:6px 8px 0 -12px;
+  padding-left: 24px;
+  color: #A7AFBE;
+  border-radius:2px;
+  align-items: center;
 }
 
 .addImg {
@@ -275,9 +299,10 @@ export default defineComponent({
 }
 
 .addTeam:hover {
-  color: pink;
-  background: #414958;
+  color: #E2E4E9;
+  background: #414958aa;
   cursor: pointer;
+  /*box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);*/
 }
 
 #pagination {

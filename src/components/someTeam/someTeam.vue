@@ -1,14 +1,13 @@
 <template>
-  <n-layout has-sider native-scrollbar="false">
+  <!-- <n-layout has-sider native-scrollbar="false">
     <n-layout-sider content-style="padding: 0;">
-      <LeftNav @ID="getID" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout>
       <n-layout-header>
         <TeamHead ref="com" style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content content-style="padding: 24px 0px;">
-
         <div class="menu">
           <n-config-provider :theme="theme">
             <n-menu mode="horizontal" :options="menuOptions"/>
@@ -17,7 +16,27 @@
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout>
+  </n-layout> -->
+  <div class="frame">
+    <div class="side">
+        <LeftNav @ID="getID" @addTeam="showModal=true"/>
+    </div>
+    <div class="main">
+      <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
+      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
+      <div class="three-cls">
+        <n-config-provider :theme="theme">
+          <n-menu mode="horizontal" :options="menuOptions"/>
+        </n-config-provider>
+      </div>
+
+      <div class="view">
+        <n-scrollbar style="max-height:100%">
+            <router-view/>
+        </n-scrollbar>
+      </div>
+    </div>
+  </div>
   <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModal"
@@ -46,8 +65,9 @@ import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
 
+import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
-import {NIcon, useMessage, useDialog} from "naive-ui";
+import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
@@ -244,5 +264,35 @@ export default defineComponent({
 .menu {
   margin-left: 30px;
 }
-
+.main{
+    height: 100%;
+    /* max-height: 100%; */
+    /* overflow: auto; */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+.view{
+    overflow: auto;
+}
+.frame{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height:100%;
+}
+.side{
+  height:100%;
+  z-index:2;
+}
+.three-cls{
+  background: #16181D;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  /*position: absolute;*/
+  min-width: 100%;
+  /*top:0%;*/
+  padding: 0px 50px;
+  z-index:1;
+}
 </style>
