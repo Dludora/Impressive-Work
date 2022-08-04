@@ -6,10 +6,11 @@ import layoutPage from "../views/LayoutPage/layoutPage.vue"
 
 import prototypes from "../ProjectManager/PrototypeList.vue"
 
+
 import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
-import teamProjects from "../components/someTeam/teamProjects.vue";
+import teamProjects from "../TeamManager/ProjectList.vue";
 
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"

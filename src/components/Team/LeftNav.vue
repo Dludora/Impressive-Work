@@ -13,6 +13,7 @@
         <p>{{ profile.nickname }}</p>
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
+    </div>
       <div class="teams">
         <div class="teamsHead">
           团队和项目
@@ -40,7 +41,6 @@
           </template>
         </n-pagination>
       </div>
-    </div>
   </div>
     </n-scrollbar>
   </n-config-provider>
@@ -154,6 +154,9 @@ export default defineComponent({
 
 <style scoped>
 .nav {
+  display:flex;
+  flex-direction: column;
+
   background-color: rgba(43, 48, 59, 1);
   padding-top: 20px;
   padding-left: 20px;
@@ -174,7 +177,8 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   margin-top: 30px;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .avatar {

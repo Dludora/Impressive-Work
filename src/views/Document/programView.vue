@@ -1,75 +1,9 @@
 <template>
-  <!-- <n-layout has-sider style="height:100%;overflow: hidden">
-
-    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions"/>
-    </n-layout-sider>
-
-    <n-layout>
-      <n-layout-header>
-        <UpBar style="padding:25px 60px 22px"/>
-      </n-layout-header>
-      <n-layout-content :native-scrollbar="false" content-style="height:100%;padding-top: 42px;">
-        <div class="three-cls">
-          <n-config-provider :theme="theme">
-            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout> -->
-  <!-- <n-layout has-sider content-style="height:100%;">
-
-    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;">
-      <LeftNav :menu-options="sideMenuOptions"/>
-    </n-layout-sider>
-
-    <n-layout>
-      <n-layout-header>
-        <UpBar style="z-index:1;padding:25px 60px 22px"/>
-        <div class="three-cls">
-          <n-config-provider :theme="theme">
-            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
-          </n-config-provider>
-        </div>
-      </n-layout-header>
-      <n-layout position="absolute" content-style="top:148px;bottom:0">
-        <n-layout :native-scrollbar="false" content-style="height:100%;">
-          <router-view/>
-        </n-layout>
-      </n-layout>
-    </n-layout>
-  </n-layout> -->
-  <!-- <n-layout has-sider>
-
-    <n-layout-sider :native-scrollbar="false" content-style="padding: 0;" style="min-width:0;width:240;">
-      <LeftNav :menu-options="sideMenuOptions"/>
-    </n-layout-sider>
-
-    <n-layout style="height:100%">
-      <n-layout-header style="height:148px">
-        <UpBar style="padding:25px 60px 22px;"/>
-        <UpBar style="padding:25px 60px 22px;z-index:1;"/>
-      </n-layout-header>
-      <n-layout-content style="padding-top=42px">
-        <div class="three-cls">
-          <n-config-provider :theme="theme">
-            <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
-          </n-config-provider>
-        </div>
-        <n-layout :native-scrollbar="false">
-            <router-view/>
-        </n-layout>
-      </n-layout-content>
-    </n-layout>
-
-  </n-layout> -->
   <div class="frame">
     <div class="side">
         <LeftNav :menu-options="sideMenuOptions"/>
     </div>
-    <div class="main">
+    <div class="mainframe">
       
       <UpBar style="z-index:1;padding:25px 60px 22px"/>
       <div class="three-cls">
@@ -79,7 +13,6 @@
       </div>
 
       <div class="view">
-        <!-- <router-view/> -->
         <n-scrollbar style="max-height:100%">
             <router-view/>
         </n-scrollbar>
@@ -334,13 +267,14 @@ const sideMenuOptions: MenuOption[] = [
     height:16px;
     background-color:#F5F5F5;
 }
-.main{
+.mainframe{
     height: 100%;
     /* max-height: 100%; */
     /* overflow: auto; */
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
+    width: 100%;
 }
 .view{
     overflow: auto;
