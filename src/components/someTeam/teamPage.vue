@@ -8,6 +8,8 @@
         <n-config-provider :theme="theme">
           <n-menu mode="horizontal" :options="menuOptions"/>
         </n-config-provider>
+<!--        <router-link :to="{path: '/profile/team/teamMembers', query : {teamID: 46}}">煞笔</router-link>-->
+
       </div>
       <router-view/>
     </n-layout-content>
@@ -16,7 +18,8 @@
 
 <script lang="ts">
 import TeamHead from "../Team/TeamHead.vue"
-import {darkTheme, MenuOption, NIcon} from "naive-ui";
+import {darkTheme, NIcon} from "naive-ui";
+import type {MenuOption} from "naive-ui"
 import {Component, h, defineComponent, onMounted, ref} from "vue";
 import {RouterLink, useRouter, useRoute} from "vue-router";
 import {ProjectOutlined as Project} from "@vicons/antd";
@@ -24,19 +27,20 @@ import {PersonOutline as PersonIcon} from "@vicons/ionicons5";
 import {IosSettings as Settings} from "@vicons/ionicons4";
 import utils from "@/Utils";
 
+
 const route = useRoute()
+
+function renderIcon(icon: Component) {
+  return () => h(NIcon, null, {default: () => h(icon)})
+}
+
 let menuOptions: MenuOption[] = [
   {
     label: () =>
         h(
             RouterLink,
             {
-              to: {
-                path: 'teamProjects',
-                query: {
-                  teamID: route.query.teamID
-                }
-              }
+              to: {path: '/profile/team'}
             },
             {default: () => '项目'}
         ),
@@ -49,10 +53,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: 'teamMembers',
-                query: {
-                  teamID: route.query.teamID
-                }
+                path: '/profile/team/teamMembers',
               },
             },
             {default: () => '成员'}
@@ -66,10 +67,7 @@ let menuOptions: MenuOption[] = [
             RouterLink,
             {
               to: {
-                path: 'teamSettings',
-                query: {
-                  teamID: route.query.teamID
-                }
+                path: '/profile/team/teamSettings',
               }
             },
             {default: () => '设置'}
@@ -80,10 +78,6 @@ let menuOptions: MenuOption[] = [
 ]
 const headers = {
   Authorization: utils.getCookie('Authorization')
-}
-
-function renderIcon(icon: Component) {
-  return () => h(NIcon, null, {default: () => h(icon)})
 }
 
 export default defineComponent({

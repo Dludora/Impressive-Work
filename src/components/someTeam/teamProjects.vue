@@ -119,10 +119,8 @@ const getList = () => {
   console.log('head' + utils.getCookie('Authorization'))
   const url = '/program/list?' + 'teamID=' + teamID.value + '&page=0&size=10'
   axios.get(url, {headers: headers}).then(res => {
-    // console.log(res.data)
-    console.log("显示数据")
-    console.log(projects)
-    projects.value = res.data.data.items
+    console.log(res.data)
+    projects.value = res.data.items
   })
 }
 onMounted(() => {

@@ -109,12 +109,12 @@ export default defineComponent({
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(() => {
-        router.push({
-          path: '/team/teamProjects',
-          query: {teamID: teamID.value}
-        })
-      })
+      // onMounted(() => {
+      //   router.push({
+      //     path: '/team/teamProjects',
+      //     query: {teamID: teamID.value}
+      //   })
+      // })
     }
     return {
       theme: darkTheme,

@@ -59,17 +59,17 @@ const router = createRouter({
                     children: [
                         {
                             name: 'teamProjects',
-                            path: 'teamProjects:teamID?',
+                            path: '',
                             component: teamProjects
                         },
                         {
                             name: 'teamMembers',
-                            path: 'teamMembers:teamID?',
+                            path: 'teamMembers',
                             component: teamMembers
                         },
                         {
-                            name: 'teamSettings:teamID?',
-                            path: 'teamSettings:teamID?',
+                            name: 'teamSettings',
+                            path: 'teamSettings',
                             component: teamSettings
                         },
                     ]
