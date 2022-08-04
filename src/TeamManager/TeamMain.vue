@@ -14,28 +14,6 @@
         </n-scrollbar>
       </div>
     </div>
-  <!-- </div> -->
-  <!-- <n-config-provider :theme="theme">
-    <n-modal
-        v-model:show="showModal"
-        :mask-closable="false"
-        preset="dialog"
-        title="创建团队"
-        positive-text="确认"
-        negative-text="取消"
-        @positive-click="onPositiveClick"
-        @negative-click="onNegativeClick"
-    >
-      <n-form :ref="formRef" :model="modelRef">
-        <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
-        </n-form-item>
-        <n-form-item label="团队描述" :rule="ruleDescription" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.description" @keydown.enter.prevent type="textarea"/>
-        </n-form-item>
-      </n-form>
-    </n-modal>
-  </n-config-provider> -->
 </template>
 
 <script lang="ts">
@@ -56,6 +34,7 @@ import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import utils from "@/Utils";
+const route = useRoute()
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -142,7 +121,7 @@ export default defineComponent({
         console.log(com.value.teamData)
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
-        router.push({path:'/team/teamProjects',
+        router.push({path:'/team/projects',
           query:{teamID1:tID}
         })
     }
