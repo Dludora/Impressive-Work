@@ -1,41 +1,41 @@
 <template>
-    <div class="Team">
-        <div class="avator">
-            {{teamData.name[0]}}
-        </div>
-        <div class="name">
-            <h2>{{teamData.name}}{{teamData.ID}}</h2>
-            <!-- <span>{{teamData.introduction}}</span> -->
-            <div>{{teamData.introduction}}</div>
-        </div>
+  <div class="Team">
+    <div class="avator">
+      {{ teamData.name[0] }}
     </div>
+    <div class="name">
+      <h2>{{ teamData.name }}{{ teamData.ID }}</h2>
+      <div>{{ teamData.introduction }}</div>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import axios from 'axios'
 import utils from '../../Utils'
+
 let teamData = ref({
-    ID:null,
-    name:'Team',
-    src:'',
-    introduction:'Brief introduction~'
+  ID: null,
+  name: 'Team',
+  src: '',
+  introduction: 'Brief introduction~'
 })
 const headers = {
-   Authorization: utils.getCookie('Authorization')
+  Authorization: utils.getCookie('Authorization')
 }
-const getMessage = () =>{
-  axios.get('/team/'+teamData.value+'/info',{headers:headers}).then(res=>{
-    if(res.data.msg==="成功"){
-      teamData.value=res.data.data
+const getMessage = () => {
+  axios.get('/team/' + teamData.value + '/info', {headers: headers}).then(res => {
+    if (res.data.msg === "成功") {
+      teamData.value = res.data.data
     }
   })
 }
-onMounted(()=>{
+onMounted(() => {
   getMessage()
 })
-     defineExpose({
-        teamData
-  });
+defineExpose({
+  teamData
+});
 </script>
 <style scoped>
 .Team {
@@ -46,7 +46,8 @@ onMounted(()=>{
   flex-wrap: nowrap;
   /*line-height: 70px;*/
 }
-.avator{
+
+.avator {
   width: 50px;
   height: 50px;
   background: rgba(228, 27, 77, 1);
@@ -57,20 +58,23 @@ onMounted(()=>{
   line-height: 50px;
   display: inline-block;
 }
-.name span{
+
+.name span {
   position: relative;
-  top:6px;
-    color:  rgba(65, 73, 88, 1);
-    height: 24px;
+  top: 6px;
+  color: rgba(65, 73, 88, 1);
+  height: 24px;
   line-height: 24px;
 }
-.name div{
+
+.name div {
   position: relative;
-  top:6px;
-    color:  rgba(65, 73, 88, 1);
-    height: 24px;
+  top: 6px;
+  color: rgba(65, 73, 88, 1);
+  height: 24px;
   line-height: 24px;
 }
+
 .name {
   height: 100%;
   /*display: inline-block;*/
@@ -80,9 +84,10 @@ onMounted(()=>{
   /*margin-top: 5px;*/
   font-size: 14px;
 }
-.name h2{
-    vertical-align: top;
-    font-size: 20px;
-    line-height: 22px;
+
+.name h2 {
+  vertical-align: top;
+  font-size: 20px;
+  line-height: 22px;
 }
 </style>

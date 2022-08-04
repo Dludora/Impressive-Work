@@ -61,6 +61,7 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 
+
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -108,9 +109,8 @@ export default defineComponent({
           .then(res => {
             let array = ref(res.data.data.items)
             dataList = res.data.data.items
-            console.log(res.data.data)
-            // console.log(res.data.data.items)
-            console.log(array.value)
+            // console.log(res.data.data)
+            // console.log(array.value)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
@@ -122,20 +122,26 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: {
-                                path: '/team/teamprojects',
+                                path: '/team/teamProjects',
                               }
                             },
                             {default: () => array.value[i].name}
                         ),
-                    key: i,
+                    key: array.value[i].ID,
                     icon: renderIcon(Team)
                   }
               )
             }
+            console.log("你好呀！")
           })
     }
     const changePage = (page: number) => {
       getAllTeams(page-1, 8)
+    }
+    const handleUpdateValue = (key: string, item: MenuOption) => {
+      console.log(key)
+      // console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
+      //     emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
     }
     onMounted(async () => {
       load()
@@ -148,10 +154,7 @@ export default defineComponent({
       toMain,
       load,
       getAllTeams,
-      handleUpdateValue (key: string, item: MenuOption) {
-        console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
-            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
-        },
+      handleUpdateValue,
       changePage,
       // 个人信息
       profile,
