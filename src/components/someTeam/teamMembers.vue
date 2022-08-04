@@ -20,26 +20,27 @@
     <div class="add-icon">
       <Icon size="36" id="add"> <PlusOutlined/></Icon>
     </div>
-    <a href="#" id="invite">邀请成员</a>
+    <a href="#" @click="displayMedal" id="invite">邀请成员</a>
   </div>
   </div>
-  <!-- <n-config-provider :theme="theme">
+  <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"
         preset="dialog"
-        title="重命名"
+        title="邀请成员"
         positive-text="确认"
         negative-text="取消"
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
       <n-form  :model="modelRef">
-        <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+        <n-form-item label="邀请用户的邮箱" :rule="rule" :render-feedback="formatFeedback">
+          <n-input v-model:value="Email" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
-</n-config-provider> -->
+    </n-modal>
+</n-config-provider>
 </template>
 
 <script setup lang="ts">
@@ -55,18 +56,24 @@ import utils from '../../Utils'
 const route = useRoute();
 let showModalRef = ref(false)
 let teamID  = ref()
+let Email = ref('')
 let email = ref('')
 let opUserID = ref()
 let isAdmin = ref(0)
+const displayMedal = () => {
+  showModalRef.value = true
+}
 const onPositiveClick = () => {
+  let url='/team/'+route.query.teamID+'/invite?email'+Email.value
+    axios.put(url,{headers:headers}).then(res=>{
+
+    })
     showModalRef.value = false
 }
 const onNegativeClick = () => {
   showModalRef.value = false
 };
-const displayMedal = () => {
-  showModalRef.value = true
-}
+
 const members = ref([
     {
       ID:0,
