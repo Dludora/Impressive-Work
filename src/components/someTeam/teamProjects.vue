@@ -148,7 +148,7 @@ const ruleAdd = {
 // 操作dialog
 // 重命名
 const displayMedal = (ID) => {
-  opID=ID
+  opID.value=ID
   showModalRef.value = true
 }
 
@@ -158,6 +158,31 @@ const onNegativeClick = () => {
 };
 
 const onPositiveClick = () => {
+  console.log("修改："+opID.value)
+  if(modelRef.value.name.length===0){
+    alert("项目名称不能为空～")
+    return;
+  }
+  axios.put("/program",{
+    "ID":opID.value,
+    "src": "src",
+    "name":modelRef.value.name
+  },{headers:headers}).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功"){
+      alert("修改成功")
+      for(let i=0 ;i<projects.value.length;i++){
+        if(projects.value[i].ID===opID.value)
+        {
+          projects.value[i].name=modelRef.value.name
+          break;
+        }
+      }
+    }
+    else{
+      alert("修改失败")
+    }
+  })
   showModalRef.value = false
 }
 
@@ -179,6 +204,12 @@ const onPositiveClickDel = () => {
   console.log(deleUrl)
   axios.delete(deleUrl,{headers:headers}).then(res=>{
     console.log(res.data)
+    for(let i=0;i<projects.value.length;i++){
+      if(projects.value[i].ID===opID.value){
+        projects.value.splice(i,1)
+      }
+    }
+    alert("删除成功！")
   })
   delRef.value = false
 }
