@@ -95,12 +95,6 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
-//自己设置项目id
-
-utils.setCookie('proID',13);
-
-//获取项目id
-proID.value=parseInt(utils.getCookie('proID')) ;
 
 onMounted(()=>{
   proID.value=parseInt(utils.getCookie('proID')) ;
