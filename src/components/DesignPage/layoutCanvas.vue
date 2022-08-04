@@ -51,11 +51,6 @@ let transDragFromY: number = 0;
 let version: number = 0;
 let update = ref<boolean>(true);
 
-const layoutId = ref<number>(2);
-const layoutName = ref<string>("")
-const canvasWidth = ref<number>(1920);
-const canvasHeight = ref<number>(1080);
-
 const canvasTrans = {
   x: 0,
   y: 0,
@@ -85,6 +80,8 @@ type Prop = {
   layoutId:number;
   update:boolean,
   elementProps: elementParams;
+  canvasWidth:number;
+  canvasHeight:number
 };
 
 const props = defineProps<Prop>();
@@ -188,6 +185,7 @@ const destroy = (index: number) => {
     selected.value = null;
     selectedId.value = -1;
   }
+  axios.delete(`/layout/${props.layoutId}/element/${layoutElementParams[index].id}`)
 };
 
 const PrepareElement = (elementType: string) => {
@@ -246,7 +244,7 @@ const download = (isDownload:boolean) => {
       {
         window.location.href = imgUri;
       }
-      axios.put(`/layout/${layoutId.value}/img`,{
+      axios.put(`/layout/${props.layoutId}/img`,{
         src:imgUri,
       },{headers:headers}).then(res=>{
         console.log(res.data);
@@ -324,8 +322,8 @@ onMounted(() => {
 });
 
 const initScale = ()=>{
-  document.getElementById("canvas")!.style.width = canvasWidth.value/2.4+"px";
-  document.getElementById("canvas")!.style.height = canvasHeight.value/2.4+"px";
+  document.getElementById("canvas")!.style.width = props.canvasWidth/2.4+"px";
+  document.getElementById("canvas")!.style.height = props.canvasHeight/2.4+"px";
 }
 
 let scale = 1;
