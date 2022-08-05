@@ -1,7 +1,7 @@
 <template>
   <div class="list">
   <div v-for="member in members" :key="member" class="member-card">
-    <div style="display:flex;align-items: center;">
+    <div style="display:flex;align-items: center;flex: 1;">
       <!-- <div class="member-avatar">
         <n-avatar round class="avatar"/>
       </div> -->
@@ -11,19 +11,39 @@
         <p id="email">{{member.email}}</p>
       </div>
     </div>
-    <div class="member-operate">
-      <Icon @click="admin(member.ID,member.identity)" style="margin-right:4px" class="star" size="24" color="#FFFFFF"><UserCertification /></Icon>
-      <Icon @click="remove(member.ID)" id="close" size="32" color="#FFFFFF"><CloseOutline /></Icon>
-    </div>
+    <div class="tag" style="flex: 2; line-height: 50px; text-align: center;">
+        <n-config-provider :theme="theme">
+          <n-tag type="success" size="large" round v-if="member.identify===2">
+            群主
+          </n-tag>
+          <n-tag type="warning" round v-else-if="member.identify===1">
+            管理员
+          </n-tag>
+          <n-tag type="error" round v-else>
+            成员
+          </n-tag>
+        </n-config-provider>
+      </div>
+      <div class="member-operate" style="flex: 3">
+        <Icon style="margin-right:4px" class="star"
+              size="24" color="#FFFFFF" v-if="showAdmin(member.identify)">
+          <UserCertification @click="admin(member.ID, member.identify)"/>
+        </Icon>
+        <Icon v-if="showRemove(member.identify)" @click="remove(member.ID)" id="close" size="32" color="#FFFFFF">
+          <CloseOutline/>
+        </Icon>
+      </div>
   </div>
   <div class="member-add ">
     <div class="add-icon">
-      <Icon size="36" id="add"> <PlusOutlined/></Icon>
+      <Icon size="36" id="add">
+        <PlusOutlined/>
+      </Icon>
     </div>
     <a href="#" @click="displayMedal" id="invite">邀请成员</a>
   </div>
   </div>
-  <n-config-provider>
+  <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"
@@ -53,9 +73,16 @@ import axios from 'axios'
 import {onMounted, ref,computed,watch} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
+import {darkTheme} from "naive-ui"
+
+// 寇书瑞改动的部分
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
+const theme = darkTheme
+// 在这里结束
 const route = useRoute();
 let showModalRef = ref(false)
-let teamID  = ref()
+let teamID = ref()
 let Email = ref('')
 let email = ref('')
 let opUserID = ref()
@@ -67,6 +94,7 @@ const displayMedal = () => {
   showModalRef.value = true
 }
 const onPositiveClick = () => {
+  console.log("Identity:"+headers)
   let url='/team/'+route.query.teamID+'/invite?email='+Email.value
     axios.put(url,{headers:headers}).then(res=>{
       console.log(res.data)
@@ -94,6 +122,11 @@ const getList = () => {
   axios.get(url,{headers:headers}).then(res=>{
     console.log(res.data)
     members.value=res.data.data.items
+    console.log(members.value)
+  })
+  url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  axios.get(url, {headers: headers}).then(res => {
+    myIdentify.value = res.data.data.identify
   })
 }
 const invite = () =>{
@@ -103,6 +136,16 @@ const invite = () =>{
     console.log(res.data)
     alert(res.data.msg)
   })
+}
+// 改动的地方
+const showRemove = (identify) => {
+  if (myIdentify.value === 2 && identify <= 1) {
+    return true;
+  } else if (myIdentify.value === 1 && identify <= 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 const remove = (ID) =>{
   opUserID.value=ID
@@ -122,6 +165,13 @@ const remove = (ID) =>{
     }
     alert(res.data.msg)
   })
+}
+const showAdmin = (identify) => {
+  if (myIdentify.value === 2 && identify === 0) {
+    return true;
+  } else {
+    return false
+  }
 }
 const admin = (id,op) => {
   opUserID.value=id;
@@ -172,6 +222,7 @@ a{
   position: relative;
   /*width: 100%;
   height: 70px;*/
+    height: 50px;
   padding: 15px 60px;
   display: flex;
   justify-content: space-between;
