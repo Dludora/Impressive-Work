@@ -25,9 +25,9 @@
         }"
           />
         </n-form-item>
-        <n-form-item label="锁定加入" path="switchValue">
+        <!-- <n-form-item label="锁定加入" path="switchValue">
           <n-switch v-model:value="model.switchValue"/>
-        </n-form-item>
+        </n-form-item> -->
       </n-form>
       <n-button @click="change" style="margin-left:200px" size="large" type="primary">
         保存修改
@@ -42,13 +42,14 @@
 
 <script setup tang="ts">
 import {onMounted, ref,watch,computed} from 'vue'
-import {darkTheme} from 'naive-ui'
+import {darkTheme,useMessage} from 'naive-ui'
 import axios from "axios";
 import {useRouter, useRoute} from "vue-router";
 import utils from '../../Utils'
 const theme = darkTheme
 const router = useRouter()
 const route = useRoute()
+const message = useMessage()
 const model = ref({
   inputValue: '',
   textareaValue: '',
@@ -80,12 +81,12 @@ const change=()=>{
       console.log(res.data)
       if(res.data.msg==="成功")
       {
-        alert("修改成功!")
+        message.info("修改成功!")
         // router.go(0)
 
       }
       else{
-        alert(res.data.msg)
+        message.info(res.data.msg)
       }
     })
 }

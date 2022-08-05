@@ -10,16 +10,16 @@
                         <Add28Regular/>
                     </Icon>
                 </n-button>
-                <n-button size="tiny" @click="exportLayout">
+                <!-- <n-button size="tiny" @click="exportLayout">
                     导 出 页 面&nbsp;
                     <Icon size="14">
                         <Export/>
                     </Icon>
-                </n-button>
+                </n-button> -->
             </div>
         </div>
         <div class="pagelist">
-          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
+          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.src" class="card"
                     @delCard="delCard(ind)" @openCard="openCard(ind)"/>
         </div>
     </div>
@@ -90,6 +90,7 @@ let proID = ref(0);
 
 let page = ref(2);
 const router = useRouter()
+const message = useMessage()
 
 //原型项目
 
@@ -174,7 +175,7 @@ const posAdd = () => {
 
   if(addModelRef.value.addName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 
