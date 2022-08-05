@@ -108,15 +108,12 @@ export default defineComponent({
           .then(res => {
             let array = ref(res.data.data.items)
             dataList = res.data.data.items
-            console.log(res.data.data)
-            // console.log(res.data.data.items)
-            console.log(array.value)
+            console.log(res.data.data.items)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
               let idd=array.value[i].ID
-              console.log(idd)
               sideMenuOptions.value.push(
                   {
                     label: () =>
@@ -124,8 +121,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: 
-                                '/team/teamprojects?teamID='+idd, 
-
+                                '/team/teamprojects?teamID='+idd,
                             },
                             {default: () => array.value[i].name}
                         ),
@@ -151,10 +147,8 @@ export default defineComponent({
       load,
       getAllTeams,
       handleUpdateValue (key: string, item: MenuOption) {
-        console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
             emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
             utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
-            console.log("全局修改"+utils.getCookie('teamID'))
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
@@ -188,6 +182,7 @@ export default defineComponent({
   padding-left: 20px;
   width:220px;
   height:100%;
+  overflow:hidden;
 }
 
 .logo {
