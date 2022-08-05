@@ -4,7 +4,7 @@
       <n-config-provider  :theme="darkTheme">
       <div>
         <p class="docu-all">
-          管理你的 {{ documents.length }} 个文档
+          管理你的文档
         </p>
         <n-button icon-placement="right" class="docu-add" @click="viewAddDocu" size="tiny">
           新 建 文 档
