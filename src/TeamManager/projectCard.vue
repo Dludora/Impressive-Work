@@ -49,6 +49,7 @@ export default defineComponent({
             utils.setCookie('proID',props.id)
             utils.setCookie('proNAME',props.name)
             utils.setCookie('proTeam',route.query.teamID)
+
             console.log("proID:"+utils.getCookie("proID"))
             router.replace({name:'project'})
         }
