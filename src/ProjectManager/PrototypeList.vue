@@ -296,7 +296,7 @@ const exportLayout =() => {
     color: #414958;
 }
 .buttons{
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .newpage{
     margin-right: 10px;

@@ -203,7 +203,7 @@ export default defineComponent({
   height: 70px;
   margin-top: 30px;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .avatar {

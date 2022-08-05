@@ -1,12 +1,13 @@
 <template>
 
+    <div class="main">
     <div class="big-contain">
       <n-config-provider  :theme="darkTheme">
-      <div>
+      <div class="discribe">
         <p class="docu-all">
           管理你的 {{ documents.length }} 个文档
         </p>
-        <n-button icon-placement="right" class="docu-add" @click="viewAddDocu">
+        <n-button icon-placement="right" class="docu-add" size="tiny" @click="viewAddDocu">
           新 建 文 档
           <template #icon>
             <n-icon ><Add /></n-icon>
@@ -36,6 +37,7 @@
 
 
       </div>
+    </div>
     </div>
 
   <n-config-provider  :theme="darkTheme">
@@ -446,17 +448,20 @@ function openDocu(index){
 
 <style scoped>
 
+.main{
+    width:100%;
+}
 .big-contain{
-  width:fit-content;
+  /*width:fit-content;*/
   margin:39px 43px 0 61px;
 }
 
 .docu-all{
 
-  position: relative;
+  /*position: relative;*/
 
   width: 357px;
-  height: 40px;
+  /*height: 40px;*/
   left: 0px;
   top: -26px;
 
@@ -465,14 +470,14 @@ function openDocu(index){
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
+  font-size: 16px;
   line-height: 29px;
 
   align-items: center;
 
   color: #414958;
 }
-
+/*
 .docu-add{
 
   box-sizing: border-box;
@@ -484,14 +489,15 @@ function openDocu(index){
   left: 500px;
   top: -32px;
 
-  /*border: 1px solid #A7AFBE;
-  border-radius: 2px;*/
+  border: 1px solid #A7AFBE;
+  border-radius: 2px;
 }
+*/
 
 .items{
-  position: relative;
+  /*position: relative;
   left: 0px;
-  top:-15px;
+  top:-15px;*/
 }
 
 .docu-item{
@@ -501,13 +507,12 @@ function openDocu(index){
 
 .docu-cover{
 
-  width: 150px;
-  height: 192px;
-
+  width: 100px;
+  border-radius: 0 5px;
+  height: 132px;
   display: flex;
-
   background: #E2E4E9;
-  border-right: 16px solid #414958;
+  border-right: 8px solid #414958;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
@@ -534,7 +539,7 @@ function openDocu(index){
 .docu-title{
   min-width: border-box;
 
-  width: 150px;
+  width: 100px;
   height: 30px;
 
   font-family: 'Inter';
@@ -558,8 +563,8 @@ function openDocu(index){
   cursor: pointer;
 }
 #edi {
-  position: relative;
-  margin-top: 160px;
+  /*position: relative;
+  margin-top: 160px;*/
   margin-right: 37%;
 }
 #del {
@@ -568,5 +573,20 @@ function openDocu(index){
   margin-left: 37%;
   alignment: right;
 }
+.discribe{
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 29px;
+    align-items: center;
+    margin-bottom: 12px;
 
+    display:flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #414958;
+}
 </style>
