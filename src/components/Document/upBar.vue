@@ -29,7 +29,7 @@ const headers = {
     programname.value=utils.getCookie('proNAME');
     teamID.value=utils.getCookie('proTeam');
 
-    let getTeamURL = '/team' + teamID.value +'/info';
+    let getTeamURL = '/team/' + teamID.value +'/info';
 
 
     axios.get(getTeamURL,{headers:headers,}
