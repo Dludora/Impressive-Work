@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="pagelist">
-          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
+          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.src" class="card"
                     @delCard="delCard(ind)" @openCard="openCard(ind)"/>
         </div>
     </div>

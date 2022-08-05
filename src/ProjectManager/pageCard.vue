@@ -21,7 +21,7 @@ export default {
   name: 'PageCard',
   props: {
     name: String,
-    img: Image,
+    src: String,
   },
   components: {
     CloseRound,
