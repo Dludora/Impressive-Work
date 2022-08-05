@@ -1,5 +1,6 @@
 <template>
     <div class="main">
+    <div class="layout">
         <div class="discribe">
             管理你的{{length}}个项目
             <div class="buttons">
@@ -12,9 +13,9 @@
             </div>
         </div>
         <div class="prolist">
-            <!-- <ProCard v-for="(item, i) in shortcuts" :key="i" :name="item.name" :id="item.id" :date="item.date" :img="item.img" class="card" @rename="displayMedal(item.id)" @del="displayDel(item.id)"/> -->
             <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"  class="card" @rename="displayMedal(item.ID)" @del="displayDel(item.ID)"/>
         </div>
+    </div>
     </div>
     
   <n-config-provider :theme="theme">
@@ -57,7 +58,7 @@
         @positive-click="onPositiveAddClick"
         @negative-click="onNegativeAddClick"
     >
-      <n-form ref="formAddRef" :model="modelAddRef">
+      <n-form :model="modelAddRef">
         <n-form-item label="项目名称" :rule="ruleAdd" :render-feedback="formatFeedback">
           <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
         </n-form-item>
@@ -131,25 +132,26 @@ const modelRef = ref({
   name: ""
 })
 const getList = () =>{
-  console.log('head'+utils.getCookie('Authorization'))
     const url = '/program/list?'+'teamID='+router.query.teamID+'&page=0&size=10'
     axios.get(url,{headers:headers}).then(res=>{
-      console.log(res.data)
-      console.log(projects)
-      projects.value=res.data.data.items
       
+      projects.value=res.data.data.items
+            for(let i=0;i<projects.value.length;i++)
+      {
+        let tempDate = new Date(projects.value[i].createTime ).toLocaleString().replace(/:\d{1,2}$/,' ')
+        projects.value[i].createTime=tempDate
+      }
+      console.log(projects.value)
     })
 }
 const getGlobal = computed(()=>{
   return router.query.teamID
 })
 watch(getGlobal, (newVal,oldVal)=>{
-  console.log("value change"+newVal)
+
   getList()
 },{immediate:true,deep:true})
 onMounted(()=>{
-  console.log("project get :"+router.query.teamID)
-  console.log(router.query.teamID)
   teamID.value=parseInt(router.query.teamID.toString())
 
   getList()
@@ -181,7 +183,7 @@ const onNegativeClick = () => {
 };
 
 const onPositiveClick = () => {
-  console.log("修改："+opID.value)
+
   if(modelRef.value.name.length===0){
     alert("项目名称不能为空～")
     return;
@@ -191,7 +193,7 @@ const onPositiveClick = () => {
     "src": "src",
     "name":modelRef.value.name
   },{headers:headers}).then(res=>{
-    console.log(res.data)
+
     if(res.data.msg==="成功"){
       alert("修改成功")
       for(let i=0 ;i<projects.value.length;i++){
@@ -224,7 +226,7 @@ const onNegativeClickDel = () => {
 
 const onPositiveClickDel = () => {
   let deleUrl = '/program/'+opID.value
-  console.log(deleUrl)
+
   axios.delete(deleUrl,{headers:headers}).then(res=>{
     console.log(res.data)
     for(let i=0;i<projects.value.length;i++){
@@ -239,7 +241,7 @@ const onPositiveClickDel = () => {
 
 // 添加项目表单
 let showModalAddRef = ref(false)
-const formAddRef = ref<FormData | null>(null)
+
 const modelAddRef = ref({
   name: ""
 })
@@ -305,8 +307,7 @@ const onPositiveAddClick = () => {
 
 <style scoped>
 .main{
-    width:fit-content;
-    margin:39px 43px 0 61px;
+    width:100%;
 }
 .card {
     margin:0 10px 20px 0;
@@ -333,9 +334,12 @@ const onPositiveAddClick = () => {
     color: #414958;
 }
 .buttons{
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .newpage{
     margin-right: 10px;
+}
+.layout{
+  margin:39px 43px 0 61px;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <n-layout has-sider >
     <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true" />
     </n-layout-sider>
     <n-layout :native-scrollbar="false">
       <n-layout-header>
-        <TeamHead ref="com" style="margin-left: 30px"/>
+        <TeamHead style="margin-left: 30px"/>
       </n-layout-header>
       <n-layout-content >
         <div class="menu">
@@ -17,26 +17,7 @@
       </n-layout-content>
     </n-layout>
   </n-layout>
-  <!-- <div class="frame">
-    <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true"/>
-    </div>
-    <div class="main">
-      <TeamHead ref="com" style="z-index:1;padding:25px 60px 22px"/>
 
-      <div class="three-cls">
-        <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions"/>
-        </n-config-provider>
-      </div>
-
-      <div class="view">
-        <n-scrollbar style="max-height:100%">
-            <router-view/>
-        </n-scrollbar>
-      </div>
-    </div>
-  </div> -->
   <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModal"
@@ -48,7 +29,7 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
-      <n-form :ref="formRef" :model="modelRef">
+      <n-form>
         <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
@@ -154,7 +135,7 @@ export default defineComponent({
     let teamID = ref(-1)
     const com = ref(null)
     const showModalRef = ref(false)
-    const formRef = ref<FormData | null>(null)
+
     const modelRef = ref({
       name: "",
       description: "",
@@ -222,7 +203,6 @@ export default defineComponent({
       ruleDescription,
       ruleName,
       modelRef,
-      formRef,
       teamID,
       formatFeedback(raw: string | undefined) {
         h('div', {style: 'color: green'}, [raw + '而且是绿的'])
