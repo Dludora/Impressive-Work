@@ -170,7 +170,7 @@ const login = () => {
         if (res.data.msg === "成功") {
           alert("用户" + res.data.data.nickname + "已登录")
           a = 1;
-          router.push('/')
+          router.push('/team')
         } else {
           axios.post('/auth/token', {
                 'email': email.value,
