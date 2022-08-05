@@ -175,7 +175,7 @@ const addDocuAbl = () =>{
 
   axios.post('/document',
       {
-        'content': "",
+        'content': "默认内容",
         'title': addModelRef.value.addName,
         'src': null,
         'programID': proID.value,//proID.value
