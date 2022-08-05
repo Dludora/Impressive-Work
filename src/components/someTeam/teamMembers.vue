@@ -150,7 +150,7 @@ const showRemove = (identify) => {
 const remove = (ID) =>{
   opUserID.value=ID
   let url='/team/'+route.query.teamID+'/remove?userID='+opUserID.value
-  axios.put(url,{headers:headers}).then(res=>{
+  axios.put(url,{},{headers:headers}).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功")
     {
@@ -181,7 +181,7 @@ const admin = (id,op) => {
     isAdmin.value=0;
   }
   let url='/team/'+route.query.teamID+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
-  axios.put(url,{headers:headers}).then(res=>{
+  axios.put(url,{},{headers:headers}).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功"){
       for(let i=0;i<members.value.length;i++){
