@@ -41,7 +41,7 @@
 </template>
 
 <script setup tang="ts">
-import {onMounted, ref} from 'vue'
+import {onMounted, ref,watch,computed} from 'vue'
 import {darkTheme} from 'naive-ui'
 import axios from "axios";
 import {useRouter, useRoute} from "vue-router";
@@ -71,15 +71,39 @@ const ruleName = {
   trigger: ['input', 'blur']
 }
 const change=()=>{
+    axios.put('/team',{
+      "ID": route.query.teamID,
+      "name": model.value.inputValue,
+      "src":"",
+      "introduction":model.value.textareaValue
+    },{headers:headers}).then(res=>{
+      console.log(res.data)
+      if(res.data.msg==="成功")
+      {
+        alert("修改成功!")
+        // router.go(0)
 
+      }
+      else{
+        alert(res.data.msg)
+      }
+    })
 }
 const getTeamInfo = () => {
-  const teamID = route.params.teamID
-  axios.get('/team/' + {teamID} + '/info',{headers:headers}).then(res => {
-    model.value.inputValue = res.data.name
-    model.value.textareaValue = res.data.introduction
+  console.log(route.query.teamID)
+  axios.get('/team/' + route.query.teamID+ '/info',{headers:headers}).then(res => {
+    console.log(res.data)
+    model.value.inputValue = res.data.data.name
+    model.value.textareaValue = res.data.data.introduction
   })
 }
+const getGlobal = computed(()=>{
+  return route.query.teamID
+})
+watch(getGlobal, (newVal,oldVal)=>{
+  console.log("value change"+newVal)
+  getTeamInfo();
+},{immediate:true,deep:true})
 onMounted(() => {
   getTeamInfo()
 })

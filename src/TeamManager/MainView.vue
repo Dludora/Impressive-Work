@@ -1,7 +1,7 @@
 <template>
   <div class="frame">
     <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true"/>
+        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </div>
     <div class="main">
       <router-view/>

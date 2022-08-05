@@ -20,14 +20,14 @@
         :id="'textInputer' + elementParams.index"
         ref="inputer"
         v-if="textModifying"
-        v-model:value="text"
+        v-model:value="transform.text"
         placeholder=""
         type="textarea"
         :autosize="{
           minRows: 0,
         }"
       ></n-input>
-      <div v-else>{{ text }}</div>
+      <div v-else>{{ transform.text }}</div>
     </div>
 
     <div
@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch,reactive } from "vue";
 import interact from "interactjs";
 import { gsap } from "gsap";
 import { InputInst } from "naive-ui";
@@ -95,6 +95,7 @@ type Params = {
   borderColor: string;
   src: string;
   fontSize: number;
+  text:string,
 };
 
 type Props = {
@@ -115,6 +116,7 @@ const props = withDefaults(defineProps<Props>(), {
       borderRadius: 0,
       type: "Rect",
       locked: false,
+      text:"",
       fontSize: 0,
       src: "",
       color: "red",
@@ -136,7 +138,7 @@ const snapGrid = interact.snappers.grid({
   offset: { x: 0.5, y: 0 },
 });
 
-const transform = {
+const transform = reactive({
   id:0,
   index: -1,
   x: 0,
@@ -147,11 +149,12 @@ const transform = {
   borderRadius: 0,
   type: "Rect",
   locked: false,
+  text:"",
   fontSize: 0,
   src: "",
   color: "red",
   borderColor: "blue",
-};
+});
 
 const updateServer = ()=>{
   emits("updateServer",transform.index)
@@ -280,10 +283,11 @@ const UnSelect = () => {
 
   switch (props.elementParams.type) {
     case "text": {
-      console.log(text.value == "");
-      if (text.value == "") {
-        console.log(text.value);
+      if (transform.text == "") {
         emits("destroy", props.elementParams.index);
+      }
+      else{
+        updateParams();
       }
       textModifying.value = false;
       break;
@@ -328,10 +332,16 @@ onMounted(() => {
       // document.getElementById(
       //   `textDiv${props.elementParams.index}`
       // )!.style.padding = "20px";
-      textModifying.value = true;
+      if(props.elementParams.id==0)
+      {
+        textModifying.value = true;
+      }
     }
   }
-  select();
+  if(props.elementParams.id==0)
+  {
+    select();
+  }
 });
 
 watch(
@@ -362,6 +372,8 @@ const ResetTrans = (newVal: Params) => {
   )!.style.transform = `translate(${newVal.x}px, ${newVal.y}px)`;
   transform.x = newVal.x;
   transform.y = newVal.y;
+  transform.id = newVal.id;
+  transform.index = newVal.index;
   transform.width = newVal.width;
   transform.height = newVal.height;
   transform.borderWidth = newVal.borderWidth;
@@ -372,6 +384,7 @@ const ResetTrans = (newVal: Params) => {
   transform.borderColor = newVal.borderColor;
   transform.src = newVal.src;
   transform.locked = newVal.locked;
+  transform.text = newVal.text;
   transform.fontSize = newVal.fontSize;
   switch (newVal.type) {
     case "text": {

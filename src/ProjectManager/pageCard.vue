@@ -3,7 +3,7 @@
     <div class="img">
     </div>
     <div class="bottom">
-      <div class="name">{{ name }}</div>
+      <div class="name" style="cursor: pointer" @click="openCard">{{ name }}</div>
       <Icon size="20" class="del" @click="delCard">
         <CloseRound/>
       </Icon>
@@ -31,8 +31,12 @@ export default {
     const delCard = () => {
       emit('delCard')
     }
+    const openCard = () => {
+      emit('openCard')
+    }
     return {
-      delCard
+      delCard,
+      openCard
     }
   }
 }
