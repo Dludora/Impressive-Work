@@ -113,6 +113,7 @@ const headers = {
 }
 
 let proID = ref(0);
+const message = useMessage();
 
 let page = ref(2);
 
@@ -169,7 +170,7 @@ const getDocuAbl = () =>{
 const addDocuAbl = () =>{
   if(addModelRef.value.addName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 
@@ -196,7 +197,7 @@ const addDocuAbl = () =>{
 const ediDocuAbl = () =>{
   if(ediModelRef.value.ediName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 
@@ -254,7 +255,7 @@ const posAdd = () => {
 
   if(addModelRef.value.addName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 
@@ -320,7 +321,7 @@ const posEdi = () => {
 
   if(ediModelRef.value.ediName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 

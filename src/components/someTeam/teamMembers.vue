@@ -73,7 +73,7 @@ import axios from 'axios'
 import {onMounted, ref,computed,watch} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
-import {darkTheme} from "naive-ui"
+import {darkTheme,useMessage} from "naive-ui"
 
 // 寇书瑞改动的部分
 const myID = ref(utils.getCookie('userID'))
@@ -81,6 +81,7 @@ const myIdentify = ref(0)
 const theme = darkTheme
 // 在这里结束
 const route = useRoute();
+const message = useMessage();
 let showModalRef = ref(false)
 let teamID = ref()
 let Email = ref('')
@@ -98,7 +99,7 @@ const onPositiveClick = () => {
   let url='/team/'+route.query.teamID+'/invite?email='+Email.value
     axios.put(url,{},{headers:headers}).then(res=>{
       console.log(res.data)
-      alert(res.data.msg)
+      message.info(res.data.msg)
     })
     showModalRef.value = false
 }
@@ -134,7 +135,7 @@ const invite = () =>{
   let url='/team/'+route.query.teamID+'/invite?email='+email.value
   axios.put(url,{},{headers:headers}).then(res=>{
     console.log(res.data)
-    alert(res.data.msg)
+    message.info(res.data.msg)
   })
 }
 // 改动的地方
@@ -163,7 +164,7 @@ const remove = (ID) =>{
         }
       }
     }
-    alert(res.data.msg)
+    message.info(res.data.msg)
   })
 }
 const showAdmin = (identify) => {

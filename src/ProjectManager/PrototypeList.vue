@@ -90,6 +90,7 @@ let proID = ref(0);
 
 let page = ref(2);
 const router = useRouter()
+const message = useMessage()
 
 //原型项目
 
@@ -174,7 +175,7 @@ const posAdd = () => {
 
   if(addModelRef.value.addName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 

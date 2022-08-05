@@ -90,7 +90,7 @@
 <script setup lang="ts">
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
-import {darkTheme} from "naive-ui";
+import {darkTheme,useMessage} from "naive-ui";
 import {defineComponent, computed,watch,h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
@@ -98,6 +98,7 @@ import {PlusOutlined} from "@vicons/antd";
 import utils from '../../Utils'
 import axios from "axios";
 const router = useRoute();
+const message = useMessage();
 
 const headers ={
    Authorization: utils.getCookie('Authorization')
@@ -173,7 +174,7 @@ const onNegativeClick = () => {
 const onPositiveClick = () => {
   console.log("修改："+opID.value)
   if(modelRef.value.name.length===0){
-    alert("项目名称不能为空～")
+    message.warning("项目名称不能为空～")
     return;
   }
   axios.put("/program",{
@@ -183,7 +184,7 @@ const onPositiveClick = () => {
   },{headers:headers}).then(res=>{
     console.log(res.data)
     if(res.data.msg==="成功"){
-      alert("修改成功")
+      message.info("修改成功")
       for(let i=0 ;i<projects.value.length;i++){
         if(projects.value[i].ID===opID.value)
         {
@@ -193,7 +194,7 @@ const onPositiveClick = () => {
       }
     }
     else{
-      alert("修改失败")
+      message.error("修改失败")
     }
   })
   showModalRef.value = false
@@ -222,7 +223,7 @@ const onPositiveClickDel = () => {
         projects.value.splice(i,1)
       }
     }
-    alert("删除成功！")
+    message.info("删除成功！")
   })
   delRef.value = false
 }
@@ -265,7 +266,7 @@ const onNegativeAddClick = () => {
 const onPositiveAddClick = () => {
   if(modelAddRef.value.name.length===0)
   {
-    alert("项目名称不能为空！")
+    message.error("项目名称不能为空！")
     return
   }
   axios.post('/program',{
@@ -283,10 +284,10 @@ const onPositiveAddClick = () => {
         "ID":res.data.data
       }
       projects.value.push(item)
-      alert("添加成功！")
+      message.info("添加成功！")
     }
     else{
-      alert("添加失败！")
+      message.error("添加失败！")
     }
   })
   showModalRef.value = false
