@@ -1,7 +1,7 @@
 <template>
   <n-config-provider :theme="theme">
   <div class="nav">
-    <div class="logo" @click="toMain">墨书</div>
+    <div class="logo" @click="toMain"></div>
     <div class="user-info">
       <div class="avatar">
         <n-avatar class="pic">
@@ -192,11 +192,14 @@ export default defineComponent({
 
 .logo {
   width: 200px;
-  height: 56px;
-  background-color: rgba(217, 217, 217, 1);
-  text-align: center;
-  line-height: 56px;
+  height: 139px;
+  /*background-color: rgba(217, 217, 217, 1);*/
+  background-image: url("@/assets/slogan2048x705.png");
+  background-size:contain;
+  /*text-align: center;
+  line-height: 56px;*/
   margin-top:20px;
+  background-repeat: no-repeat;
 }
 
 .user-info {
