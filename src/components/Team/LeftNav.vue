@@ -121,7 +121,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: 
-                                '/team/projects?teamID='+idd,
+                                '/team/teamprojects?teamID='+idd,
                             },
                             {default: () => array.value[i].name}
                         ),
