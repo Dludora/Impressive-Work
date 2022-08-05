@@ -1,5 +1,6 @@
 <template>
     <div class="main">
+    <div class="layout">
         <div class="discribe">
             管理你的{{shortcuts.length}}个页面
             <div class="buttons">
@@ -21,6 +22,7 @@
           <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
                     @delCard="delCard(ind)" @openCard="openCard(ind)"/>
         </div>
+    </div>
     </div>
 
 
@@ -266,8 +268,8 @@ const exportLayout =() => {
 
 <style scoped>
 .main{
-    width:fit-content;
-    margin:39px 43px 0 61px;
+    width:100%;
+    /*margin:39px 43px 0 61px;*/
 }
 .card {
     margin:0 10px 20px 0;
@@ -298,5 +300,8 @@ const exportLayout =() => {
 }
 .newpage{
     margin-right: 10px;
+}
+.layout{
+  margin:39px 43px 0 61px;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
     <div class="main">
+    <div class="layout">
         <div class="discribe">
             管理你的{{length}}个项目
             <div class="buttons">
@@ -12,9 +13,9 @@
             </div>
         </div>
         <div class="prolist">
-            <!-- <ProCard v-for="(item, i) in shortcuts" :key="i" :name="item.name" :id="item.id" :date="item.date" :img="item.img" class="card" @rename="displayMedal(item.id)" @del="displayDel(item.id)"/> -->
             <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"  class="card" @rename="displayMedal(item.ID)" @del="displayDel(item.ID)"/>
         </div>
+    </div>
     </div>
     
   <n-config-provider :theme="theme">
@@ -305,8 +306,7 @@ const onPositiveAddClick = () => {
 
 <style scoped>
 .main{
-    width:fit-content;
-    margin:39px 43px 0 61px;
+    width:100%;
 }
 .card {
     margin:0 10px 20px 0;
@@ -333,9 +333,12 @@ const onPositiveAddClick = () => {
     color: #414958;
 }
 .buttons{
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .newpage{
     margin-right: 10px;
+}
+.layout{
+  margin:39px 43px 0 61px;
 }
 </style>
