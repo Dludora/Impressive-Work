@@ -6,7 +6,7 @@
         <p class="docu-all">
           管理你的 {{ documents.length }} 个文档
         </p>
-        <n-button icon-placement="right" class="docu-add" @click="viewAddDocu">
+        <n-button icon-placement="right" class="docu-add" @click="viewAddDocu" size="tiny">
           新 建 文 档
           <template #icon>
             <n-icon ><Add /></n-icon>
@@ -465,7 +465,7 @@ function openDocu(index){
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 30px;
+  font-size: 16px;
   line-height: 29px;
 
   align-items: center;
@@ -479,8 +479,8 @@ function openDocu(index){
 
 
   position: relative;
-  width: 150px;
-  height: 32px;
+  /* width: 150px;
+  height: 32px; */
   left: 500px;
   top: -32px;
 

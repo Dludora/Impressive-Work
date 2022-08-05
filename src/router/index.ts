@@ -27,10 +27,10 @@ import docuEdit from "../views/Document/docuEdit.vue";
 
 import UML from "../components/UML.vue";
 
-const routerHistory = createWebHistory()
+
 // @ts-ignore
 const router = createRouter({
-    history: routerHistory,
+    history: createWebHistory(),
     routes: [
         {
             name:'homePage',
