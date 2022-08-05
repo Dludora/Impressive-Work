@@ -60,13 +60,17 @@ let Email = ref('')
 let email = ref('')
 let opUserID = ref()
 let isAdmin = ref(0)
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 const displayMedal = () => {
   showModalRef.value = true
 }
 const onPositiveClick = () => {
-  let url='/team/'+route.query.teamID+'/invite?email'+Email.value
+  let url='/team/'+route.query.teamID+'/invite?email='+Email.value
     axios.put(url,{headers:headers}).then(res=>{
-
+      console.log(res.data)
+      alert(res.data.msg)
     })
     showModalRef.value = false
 }
@@ -84,9 +88,7 @@ const members = ref([
     },
 
 ])
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
+
 const getList = () => {
   let url='/team/'+route.query.teamID+'/members?page=0&size=20'
   axios.get(url,{headers:headers}).then(res=>{

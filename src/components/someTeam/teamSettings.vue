@@ -81,6 +81,8 @@ const change=()=>{
       if(res.data.msg==="成功")
       {
         alert("修改成功!")
+        // router.go(0)
+
       }
       else{
         alert(res.data.msg)
