@@ -71,7 +71,7 @@ import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
-import {RouterLink,useRouter,useRoute} from "vue-router";
+import {RouterLink, useRouter, useRoute} from "vue-router";
 
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
@@ -79,6 +79,7 @@ import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 import utils from "@/Utils";
+
 const route = useRoute()
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -98,7 +99,6 @@ let profile = {
 }
 
 
-
 export default defineComponent({
   components: {
     LeftNav,
@@ -106,50 +106,50 @@ export default defineComponent({
   },
   setup() {
     let menuOptions: MenuOption[] = [
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: 
-                '/team/teamprojects?teamID='+teamID.value           
-            },
-            {default: () => '项目'}
-        ),
-    key: 'go-to-projects',
-    icon: renderIcon(Project)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to: 
-                // name: 'teamMembers',
-              '/team/teammembers?teamID='+teamID.value
-               
-              
-            },
-            {default: () => '成员'}
-        ),
-    key: 'go-to-members',
-    icon: renderIcon(PersonIcon)
-  },
-  {
-    label: () =>
-        h(
-            RouterLink,
-            {
-              to:
-                 '/team/teamsettings?teamID='+teamID.value
-            
-            },
-            {default: () => '设置'}
-        ),
-    key: 'go-to-settings',
-    icon: renderIcon(Settings)
-  },
-]
+      {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                  to:
+                      '/team/teamprojects?teamID=' + teamID.value
+                },
+                {default: () => '项目'}
+            ),
+        key: 'go-to-projects',
+        icon: renderIcon(Project)
+      },
+      {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                  to:
+                  // name: 'teamMembers',
+                      '/team/teammembers?teamID=' + teamID.value
+
+
+                },
+                {default: () => '成员'}
+            ),
+        key: 'go-to-members',
+        icon: renderIcon(PersonIcon)
+      },
+      {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                  to:
+                      '/team/teamsettings?teamID=' + teamID.value
+
+                },
+                {default: () => '设置'}
+            ),
+        key: 'go-to-settings',
+        icon: renderIcon(Settings)
+      },
+    ]
     const router = useRouter()
     let teamID = ref(-1)
     const com = ref(null)
@@ -159,16 +159,16 @@ export default defineComponent({
       name: "",
       description: "",
     })
-    const getID = (msg:any) =>{
-        console.log("father get:"+msg)
-        teamID.value = parseInt(msg)
-        com.value.teamData.ID=teamID.value
-        console.log(com.value.teamData)
-        console.log("father push"+teamID.value)
-        let tID=(teamID.value)
-        // router.push({path:'/team/teamProjects',
-        //   query:{teamID:tID}
-        // })
+    const getID = (msg: any) => {
+      console.log("father get:" + msg)
+      teamID.value = parseInt(msg)
+      com.value.teamData.ID = teamID.value
+      console.log(com.value.teamData)
+      console.log("father push" + teamID.value)
+      let tID = (teamID.value)
+      // router.push({path:'/team/teamProjects',
+      //   query:{teamID:tID}
+      // })
     }
     const ruleName = {
       required: true,
@@ -203,8 +203,8 @@ export default defineComponent({
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(()=>{
-        
+      onMounted(() => {
+
       })
     }
     return {
@@ -233,6 +233,7 @@ export default defineComponent({
     load() {
       axios.get('user/info', {headers: headers}).then(res => {
         profile = res.data.data
+        utils.setCookie('userID', profile.ID)
       })
     },
   },
@@ -266,35 +267,40 @@ export default defineComponent({
 .menu {
   margin-left: 30px;
 }
-.main{
-    height: 100%;
-    /* max-height: 100%; */
-    /* overflow: auto; */
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    width: 100%;
+
+.main {
+  height: 100%;
+  /* max-height: 100%; */
+  /* overflow: auto; */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
 }
-.view{
-    overflow: auto;
+
+.view {
+  overflow: auto;
 }
-.frame{
+
+.frame {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  height:100%;
+  height: 100%;
 }
-.side{
-  height:100%;
-  z-index:2;
+
+.side {
+  height: 100%;
+  z-index: 2;
 }
-.three-cls{
+
+.three-cls {
   background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   /*position: absolute;*/
   min-width: 100%;
   /*top:0%;*/
   padding: 0px 50px;
-  z-index:1;
+  z-index: 1;
 }
 </style>
