@@ -191,7 +191,7 @@ const login = () => {
               axios.defaults.headers.common['Authorization'] = res.data.data;
               utils.setCookie('Authorization', res.data.data)
               console.log(utils.getCookie('Authorization'))
-              router.push('/')
+              router.push('/team')
             }
           })
         }
