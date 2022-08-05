@@ -1,28 +1,31 @@
 <template>
   <div class="list">
     <div v-for="member in members" :key="member" class="member-card">
-      <div style="display:flex;align-items: center;">
+      <div style="display:flex;align-items: center;flex: 1;">
         <!-- <div class="member-avatar">
           <n-avatar round class="avatar"/>
         </div> -->
+<!--         寇书瑞修改的部分-->
         <div class="avatar">{{ member.nickname[0] }}</div>
         <div class="member-message">
           <p id="name">{{ member.nickname }}({{ member.name }})</p>
           <p id="email">{{ member.email }}</p>
         </div>
       </div>
-      <div class="tag">
-        <n-tag type="success" round v-if="member.identify===2">
-          群主
-        </n-tag>
-        <n-tag type="warning" round v-else-if="member.identify===1">
-          管理员
-        </n-tag>
-        <n-tag type="error" round v-else>
-          成员
-        </n-tag>
+      <div class="tag" style="flex: 2; line-height: 50px; text-align: center;">
+        <n-config-provider :theme="theme">
+          <n-tag type="success" size="large" round v-if="member.identify===2">
+            群主
+          </n-tag>
+          <n-tag type="warning" round v-else-if="member.identify===1">
+            管理员
+          </n-tag>
+          <n-tag type="error" round v-else>
+            成员
+          </n-tag>
+        </n-config-provider>
       </div>
-      <div class="member-operate">
+      <div class="member-operate" style="flex: 3">
         <Icon style="margin-right:4px" class="star"
               size="24" color="#FFFFFF" v-if="showAdmin(member.identify)">
           <UserCertification @click="admin(member.ID, member.identify)"/>
@@ -31,7 +34,9 @@
           <CloseOutline/>
         </Icon>
       </div>
+<!--      // 在这里结束-->
     </div>
+<!--    // 修改结束-->
     <div class="member-add ">
       <div class="add-icon">
         <Icon size="36" id="add">
@@ -73,10 +78,12 @@ import {useRoute} from 'vue-router'
 import utils from '../../Utils'
 import {darkTheme} from "naive-ui"
 
-
+// 寇书瑞改动的部分
 const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 const theme = darkTheme
+// 在这里结束
+
 const route = useRoute();
 let showModalRef = ref(false)
 let teamID = ref()
@@ -134,6 +141,8 @@ const invite = () => {
     alert(res.data.msg)
   })
 }
+
+// 改动的地方
 const showRemove = (identify) => {
   if (myIdentify.value === 2 && identify <= 1) {
     return true;
@@ -189,6 +198,7 @@ const admin = (id, op) => {
     }
   })
 }
+
 const getGlobal = computed(() => {
   return route.query.teamID
 })
@@ -198,7 +208,6 @@ watch(getGlobal, (newVal, oldVal) => {
 }, {immediate: true, deep: true})
 onMounted(() => {
   getList()
-
 })
 
 </script>
@@ -215,8 +224,10 @@ a {
 .member-card {
   /*margin-left: 60px;*/
   position: relative;
-  /*width: 100%;
-  height: 70px;*/
+  /*width: 100%;*/
+  /*// 寇书瑞这里改了一下*/
+  height: 50px;
+  /*// 结束*/
   padding: 15px 60px;
   display: flex;
   justify-content: space-between;
