@@ -261,11 +261,11 @@ const select = () => {
       });
     }
 
-    selectEns = true;
+    // selectEns = true;
     emits("select", props.elementParams.index);
-    setTimeout(() => {
-      selectEns = false;
-    }, 500);
+    // setTimeout(() => {
+    //   selectEns = false;
+    // }, 500);
   }
 };
 

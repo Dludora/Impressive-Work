@@ -8,6 +8,9 @@
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
         <file-download-filled />
       </n-icon>
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
+        <save16-regular />
+      </n-icon>
     </div>
     <div class="canvasBoard">
       <layout-canvas
@@ -222,6 +225,7 @@ import {
   Cursor24Regular,
   TextAddT24Regular,
   Image24Regular,
+  Save16Regular
 } from "@vicons/fluent";
 import {
   FrontHandOutlined,
@@ -371,6 +375,7 @@ const updateProps = (data: Property) => {
     borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
     borderCircles.value[selectedBorderColor].style.margin = "4.5px";
   }
+  property.id = data.id;
   property.index = data.index;
   property.x = data.x;
   property.y = data.y;
@@ -383,6 +388,7 @@ const updateProps = (data: Property) => {
   property.borderColor = data.borderColor;
   property.src = data.src;
   property.fontSize = data.fontSize;
+  property.text = data.text;
   property.locked = data.locked;
 
   for (var i = 0; i < palette.length; ++i) {
