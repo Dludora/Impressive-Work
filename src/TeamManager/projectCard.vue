@@ -51,6 +51,8 @@ export default defineComponent({
             utils.setCookie('proTeam',route.query.teamID)
 
             console.log("proID:"+utils.getCookie("proID"))
+            console.log("proName:"+utils.getCookie("proName"))
+            console.log("proTeam:"+utils.getCookie("proTeam"))
             router.replace({name:'project'})
         }
         const renameThis=()=>{
