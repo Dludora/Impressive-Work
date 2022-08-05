@@ -1,20 +1,49 @@
 <template>
   <div class="up">
     <div class="pro-name">
-      {{programname}}
+      项目: {{programname}}
     </div>
     <div class="pro-des">
-      由 {{teamname}} 创建于 {{programtime}}
+      来自团队 {{teamname}}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import {ref } from "vue"
+import {onMounted, ref} from "vue"
+import utils from "@/Utils";
+import axios from "axios";
 
-  let programname=ref<String>('项目一');
-  let teamname=ref<String>('团队一');
-  let programtime=ref<String>('2022.8.2');
+  let proid=ref(0);
+
+  let programname=ref<String>('');
+  let teamname=ref<String>('');
+  let teamID=ref('');
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
+  onMounted(()=>{
+    proid.value = parseInt(utils.getCookie('proID'));
+    programname.value=utils.getCookie('proNAME');
+    teamID.value=utils.getCookie('proTeam');
+
+    let getTeamURL = '/team' + teamID.value +'/info';
+
+
+    axios.get(getTeamURL,{headers:headers,}
+    ).then(res=>{
+      if(res.data.msg==='成功'){
+
+        console.log("获取团队信息成功");
+
+        teamname.value = res.data.data.name;
+
+        console.log(teamname.value);
+      }
+    })
+  })
 
 
 </script>
@@ -25,7 +54,7 @@ import {ref } from "vue"
   /*height: 100%;*/
   top: 0px;
 
-  background: #16181D;
+  background: #666f83;
 }
 
 .pro-name{
