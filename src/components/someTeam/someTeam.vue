@@ -1,13 +1,13 @@
 <template>
-  <n-layout has-sider native-scrollbar="false">
+  <n-layout has-sider >
     <n-layout-sider>
       <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
-    <n-layout>
+    <n-layout :native-scrollbar="false">
       <n-layout-header>
         <TeamHead ref="com" style="margin-left: 30px"/>
       </n-layout-header>
-      <n-layout-content content-style="padding: 24px 0px;">
+      <n-layout-content >
         <div class="menu">
           <n-config-provider :theme="theme">
             <n-menu mode="horizontal" :options="menuOptions"/>

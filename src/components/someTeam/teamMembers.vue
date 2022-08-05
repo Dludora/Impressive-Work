@@ -97,6 +97,7 @@ const getList = () => {
   })
 }
 const invite = () =>{
+  console.log("身份验证 "+headers)
   let url='/team/'+route.query.teamID+'/invite?email='+email.value
   axios.put(url,{headers:headers}).then(res=>{
     console.log(res.data)
