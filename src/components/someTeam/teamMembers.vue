@@ -99,6 +99,8 @@ const onPositiveClick = () => {
     axios.put(url,{},{headers:headers}).then(res=>{
       console.log(res.data)
       alert(res.data.msg)
+      getList()
+
     })
     showModalRef.value = false
 }
@@ -162,6 +164,7 @@ const remove = (ID) =>{
           break
         }
       }
+      getList()
     }
     alert(res.data.msg)
   })
@@ -190,6 +193,7 @@ const admin = (id,op) => {
           break
         }
       }
+      getList()
     }
     else{
       console.log("设置失败")

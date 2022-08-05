@@ -25,9 +25,9 @@
         }"
           />
         </n-form-item>
-        <n-form-item label="锁定加入" path="switchValue">
+        <!-- <n-form-item label="锁定加入" path="switchValue">
           <n-switch v-model:value="model.switchValue"/>
-        </n-form-item>
+        </n-form-item> -->
       </n-form>
       <n-button @click="change" style="margin-left:200px" size="large" type="primary">
         保存修改
