@@ -238,8 +238,9 @@ const SwitchState = (value: string | number) => {
 }
 
 .back-g {
-  margin-top: 50px;
   color: white;
+  width: 100%;
+  height: 100%;
 }
 
 span {
