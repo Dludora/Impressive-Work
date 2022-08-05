@@ -23,7 +23,7 @@
     <a href="#" @click="displayMedal" id="invite">邀请成员</a>
   </div>
   </div>
-  <n-config-provider :theme="theme">
+  <n-config-provider>
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"
@@ -34,7 +34,7 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
-      <n-form  :model="modelRef">
+      <n-form  >
         <n-form-item label="邀请用户的邮箱" :rule="rule" :render-feedback="formatFeedback">
           <n-input v-model:value="Email" @keydown.enter.prevent/>
         </n-form-item>

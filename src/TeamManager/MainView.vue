@@ -83,8 +83,7 @@ export default defineComponent({
     const getID = (msg:any) =>{
         console.log("father get:"+msg)
         teamID.value = parseInt(msg)
-        com.value.teamData.ID=teamID.value
-        console.log(com.value.teamData)
+
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
         router.push({path:'/team/teamProjects',

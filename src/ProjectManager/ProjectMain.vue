@@ -230,7 +230,7 @@ const sideMenuOptions: MenuOption[] = [
   margin-top: 36px;
 }
 .three-cls{
-  background: #16181D;
+  background: #666f83;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   /*position: absolute;*/
   min-width: 100%;

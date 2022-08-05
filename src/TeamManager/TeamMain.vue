@@ -19,7 +19,7 @@
 <script lang="ts">
 import axios from 'axios';
 // import LeftNav from "../Team/LeftNav.vue"
-import TeamHead from "../components/Team/TeamHead.vue"
+import * as TeamHead from "../components/Team/TeamHead.vue"
 
 import {useRoute} from "vue-router";
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
@@ -117,8 +117,7 @@ export default defineComponent({
     const getID = (msg:any) =>{
         console.log("father get:"+msg)
         teamID.value = parseInt(msg)
-        com.value.teamData.ID=teamID.value
-        console.log(com.value.teamData)
+
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
         // router.push({path:'/team/projects',
