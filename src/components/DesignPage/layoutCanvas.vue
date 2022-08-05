@@ -17,6 +17,7 @@
         @destroy="destroy"
         @updateParams="updateParams"
         @updateServer="updateUpdates"
+        @changeUpdate="changeUpdate"
         ref="layoutElements"
       >
       </layout-element>
@@ -86,11 +87,16 @@ type Prop = {
 
 const props = defineProps<Prop>();
 
-const emits = defineEmits(["updateProps"]);
+const emits = defineEmits(["updateProps","changeUpdate"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const layoutElements = ref<any>([]);
 let updates:elementParams[]=[]
+
+const changeUpdate = ()=>{
+  update.value = true;
+  emits("changeUpdate");
+}
 
 const updateUpdates = (index:number)=>{
   if(index>=0&&index<layoutElementParams.length)
@@ -185,7 +191,7 @@ const destroy = (index: number) => {
     selected.value = null;
     selectedId.value = -1;
   }
-  axios.delete(`/layout/${props.layoutId}/element/${layoutElementParams[index].id}`)
+  axios.delete(`/layout/${props.layoutId}/element/${layoutElementParams[index].id}`,{headers:headers})
 };
 
 const PrepareElement = (elementType: string) => {
@@ -217,6 +223,7 @@ const ProduceElement = (e: MouseEvent) => {
       locked: false,
     });
     preparedType = "";
+    axios.post(`/layout/${props.layoutId}/element`,layoutElementParams[layoutElementParams.length-1],{headers:headers})
   }
   //updateServer(layoutElementParams.length-1);
 };
@@ -309,21 +316,24 @@ onMounted(() => {
       }
     }
   };
-  initScale();
-  canvasTrans.width = document.getElementById("canvas")!.clientWidth;
-  canvasTrans.height = document.getElementById("canvas")!.clientHeight;
-  canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
-  canvasTrans.y = 148;
-  document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
-  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
-  document.getElementById("canvas")!.style.width = `${canvasTrans.width}px`;
-  document.getElementById("canvas")!.style.height = `${canvasTrans.height}px`;
+  // canvasTrans.width = document.getElementById("canvas")!.clientWidth;
+  // canvasTrans.height = document.getElementById("canvas")!.clientHeight;
+  // canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
+  // canvasTrans.y = 148;
+  // document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
+  // document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
   wheelScale();
 });
 
 const initScale = ()=>{
   document.getElementById("canvas")!.style.width = props.canvasWidth/2.4+"px";
   document.getElementById("canvas")!.style.height = props.canvasHeight/2.4+"px";
+  canvasTrans.width = document.getElementById("canvas")!.clientWidth;
+  canvasTrans.height = document.getElementById("canvas")!.clientHeight;
+  canvasTrans.x = document.body.clientWidth / 2 - canvasTrans.width / 2;
+  canvasTrans.y = 148;
+  document.getElementById("canvas")!.style.left = `${canvasTrans.x}px`;
+  document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
 }
 
 let scale = 1;
@@ -377,7 +387,12 @@ const wheelScale = () => {
 watch(
   () => props,
   (newVal) => {
-    if (selectedId.value < 0||props.update==false) {
+    if(props.update==false)
+    {
+      changeUpdate()
+      return;
+    }
+    if (selectedId.value < 0) {
       return;
     }
     update.value = true;
@@ -407,6 +422,13 @@ watch(
     immediate: true,
   }
 );
+
+watch(
+  ()=>props.canvasWidth,
+  (newVal)=>{
+    initScale();
+  }
+)
 </script>
 
 <style scoped>
