@@ -1,70 +1,9 @@
 <template>
-    <div class="main">
-        <div class="discribe">
-            管理你的{{length}}个页面
-            <div class="buttons">
-                <n-button class="newpage" size="tiny" @click="viewAddDocu">
-                    新 建 页 面&nbsp;
-                    <Icon size="14">
-                        <Add28Regular/>
-                    </Icon>
-                </n-button>
-                <n-button size="tiny">
-                    导 出 页 面&nbsp;
-                    <Icon size="14">
-                        <Export/>
-                    </Icon>
-                </n-button>
-            </div>
-        </div>
-        <div class="pagelist">
-          <PageCard v-for="item in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
-                    @delCard="showDelModal=true;delID=item.ID"/>
-        </div>
-    </div>
-
-
-  <n-config-provider  :theme="darkTheme">
-    <n-modal
-        v-model:show="showAdd"
-        preset="dialog"
-        title="新建布局"
-        positive-text="确认"
-        negative-text="取消"
-        @positive-click="posAdd"
-        @negative-click="negAdd"
-    >
-      <n-form ref="addFormRef" :model="addModelRef">
-        <n-form-item label="布局名称" :rule="addRule" >
-          <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
-        </n-form-item>
-        <n-form-item label="布局宽度" :rule="widthRule" >
-          <n-input v-model:value="addModelRef.addWidth" @keydown.enter.prevent/>
-        </n-form-item>
-        <n-form-item label="布局高度" :rule="heightRule" >
-          <n-input v-model:value="addModelRef.addHeight" @keydown.enter.prevent/>
-        </n-form-item>
-      </n-form>
-
-    </n-modal>
-
-    <n-modal
-          v-model:show="showDelModal"
-          :mask-closable="false"
-          preset="dialog"
-          title="删除布局"
-          positive-text="确认"
-          negative-text="取消"
-          @positive-click="onPositiveClick"
-          @negative-click="onNegativeClick"
-    >
-    </n-modal>
-    </n-config-provider>
   <div class="main">
     <div class="discribe">
-      管理你的{{ shortcuts.length }}个页面
+      管理你的{{ length }}个页面
       <div class="buttons">
-        <n-button class="newpage" size="tiny">
+        <n-button class="newpage" size="tiny" @click="viewAddDocu">
           新 建 页 面&nbsp;
           <Icon size="14">
             <Add28Regular/>
@@ -80,15 +19,40 @@
     </div>
     <div class="pagelist">
       <PageCard v-for="item in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
-                @delCard="showDelModal=true;delID=item.ID"/>
+                @delCard="delCard(item)"/>
     </div>
   </div>
-  <n-config-provider :theme="theme">
+
+
+  <n-config-provider :theme="darkTheme">
+    <n-modal
+        v-model:show="showAdd"
+        preset="dialog"
+        title="新建布局"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="posAdd"
+        @negative-click="negAdd"
+    >
+      <n-form ref="addFormRef" :model="addModelRef">
+        <n-form-item label="布局名称" :rule="addRule">
+          <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item label="布局宽度" :rule="widthRule">
+          <n-input v-model:value="addModelRef.addWidth" @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item label="布局高度" :rule="heightRule">
+          <n-input v-model:value="addModelRef.addHeight" @keydown.enter.prevent/>
+        </n-form-item>
+      </n-form>
+
+    </n-modal>
+
     <n-modal
         v-model:show="showDelModal"
         :mask-closable="false"
         preset="dialog"
-        title="删除项目"
+        title="删除布局"
         positive-text="确认"
         negative-text="取消"
         @positive-click="onPositiveClick"
@@ -96,15 +60,7 @@
     >
     </n-modal>
   </n-config-provider>
-
 </template>
-<!-- <script lang="ts">
-export default {
-    components: {
-        PageCard,
-    }
-}
-</script> -->
 <script setup lang="ts">
 import {
   Export
@@ -126,7 +82,7 @@ let page = ref(2);
 
 //原型项目
 
-let shortcuts=ref([]);
+let shortcuts = ref([]);
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -134,26 +90,28 @@ const headers = {
 
 //自己设置项目id
 
-utils.setCookie('proID',13);
+utils.setCookie('proID', 13);
 
 //获取项目id
-proID.value=parseInt(utils.getCookie('proID')) ;
+proID.value = parseInt(utils.getCookie('proID'));
 
-onMounted(()=>{
-  proID.value=parseInt(utils.getCookie('proID')) ;
-  console.log("成功获取项目ID:"+proID.value);
+onMounted(() => {
+  proID.value = parseInt(utils.getCookie('proID'));
+  console.log("成功获取项目ID:" + proID.value);
   getList();
 })
 
-const getList = () =>{ //TODO 前后端对接：获取页面列表
+const getList = () => { //TODO 前后端对接：获取页面列表
 
-  axios.get('/layout/list',{headers:headers,
-    params:
-        {
-          programID: proID.value, // proID.value,
-        }}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  axios.get('/layout/list', {
+        headers: headers,
+        params:
+            {
+              programID: proID.value, // proID.value,
+            }
+      }
+  ).then(res => {
+    if (res.data.msg === '成功') {
 
       console.log("获取布局列表成功");
 
@@ -161,6 +119,8 @@ const getList = () =>{ //TODO 前后端对接：获取页面列表
 
       console.log(shortcuts.value);
     }
+  }).catch(err => {
+    console.log(err)
   })
 }
 
@@ -170,6 +130,10 @@ const theme = darkTheme
 // 删除区域
 const showDelModal = ref(false)
 
+const delCard = (item) => {
+  showDelModal.value = true
+  delID.value = item.ID
+}
 const onNegativeClick = () => {
   showDelModal.value = false
 }
@@ -184,9 +148,9 @@ const onPositiveClick = () => {
 
 // 添加布局
 
-const showAdd= ref (false);
+const showAdd = ref(false);
 const addFormRef = ref<FormData | null>(null)
-const addModelRef = ref({ addName: "",addWidth: "",addHeight: ""})
+const addModelRef = ref({addName: "", addWidth: "", addHeight: ""})
 
 const viewAddDocu = () => {
   showAdd.value = true;
@@ -198,8 +162,7 @@ const posAdd = () => {
 
   //成功添加文档
 
-  if(addModelRef.value.addName === '')
-  {
+  if (addModelRef.value.addName === '') {
     alert("文档名不可为空！")
     return;
   }
@@ -211,9 +174,9 @@ const posAdd = () => {
         'width': addModelRef.value.addWidth,
         'height': addModelRef.value.addHeight,
         'programID': proID.value,//proID.value
-      },{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+      }, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(addModelRef.value.addName);
       console.log("创建布局成功");
 
@@ -237,7 +200,7 @@ const r = /^\+?[1-9][0-9]*$/;
 const addRule = {
   required: true,
   validator() {
-    if (addModelRef.value.addName.length === 0 ) {
+    if (addModelRef.value.addName.length === 0) {
       return new Error("布局名称不可为空")
     } else {
       if (addModelRef.value.addName.length >= 12) {
@@ -271,38 +234,43 @@ const heightRule = {
 </script>
 
 <style scoped>
-.main{
-    width:fit-content;
-    margin:39px 43px 0 61px;
+.main {
+  width: fit-content;
+  margin: 39px 43px 0 61px;
 }
+
 .card {
-    margin:0 10px 20px 0;
+  margin: 0 10px 20px 0;
 }
-.pagelist{
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-.discribe{
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 29px;
-    align-items: center;
-    margin-bottom: 12px;
 
-    display:flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
+.pagelist {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
 
-    color: #414958;
+.discribe {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 29px;
+  align-items: center;
+  margin-bottom: 12px;
+
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #414958;
 }
-.buttons{
-    margin-right: 10px;
+
+.buttons {
+  margin-right: 10px;
 }
-.newpage{
-    margin-right: 10px;
+
+.newpage {
+  margin-right: 10px;
 }
 </style>
