@@ -26,7 +26,7 @@ import router from '@/router';
 import { useRoute} from 'vue-router'
 import utils from '../Utils'
 
-const route = useRoute()
+
 export default defineComponent({
     name: 'PageCard',
     props: {
@@ -43,6 +43,7 @@ export default defineComponent({
         Edit16Regular,
     },
     setup(props, {emit}) {
+        const route = useRoute()
         const gotoProject=()=>{
             console.log("go")
             utils.setCookie('proID',props.id)
@@ -65,6 +66,7 @@ export default defineComponent({
             gotoProject,
             renameThis,
             delThis,
+            route
         }
     },
 })
