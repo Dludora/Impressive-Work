@@ -100,6 +100,7 @@ export default defineComponent({
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
+        utils.setCookie("userID",profile.value.ID)
       })
     }
     const getAllTeams = (page: number, size: number) => {
