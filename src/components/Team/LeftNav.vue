@@ -225,12 +225,17 @@ export default defineComponent({
   margin-top: 5px;
   margin-left: 8px;
   height: 65px;
-  color: rgba(255, 255, 255, 1);
+  color: #fff;
+  text-overflow: ellipsis;
+  width: 127px;
+  overflow: hidden;
+  white-space: nowrap;
   font-size: larger;
 }
 
 .user p {
   margin-top: 5px;
+  overflow: hidden;
 }
 
 .teams {
