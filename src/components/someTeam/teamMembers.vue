@@ -40,7 +40,7 @@
         <PlusOutlined/>
       </Icon>
     </div>
-    <a href="#" @click="displayMedal" id="invite">邀请成员</a>
+    <a @click="displayMedal" id="invite">邀请成员</a>
   </div>
   </div>
   <n-config-provider :theme="theme">
@@ -94,9 +94,9 @@ const displayMedal = () => {
   showModalRef.value = true
 }
 const onPositiveClick = () => {
-  console.log("Identity:"+headers)
+  console.log("Identity:"+utils.getCookie('Authorization'))
   let url='/team/'+route.query.teamID+'/invite?email='+Email.value
-    axios.put(url,{headers:headers}).then(res=>{
+    axios.put(url,{},{headers:headers}).then(res=>{
       console.log(res.data)
       alert(res.data.msg)
     })
@@ -130,9 +130,9 @@ const getList = () => {
   })
 }
 const invite = () =>{
-  console.log("身份验证 "+headers)
+  console.log("身份验证 "+utils.getCookie('Authorization'))
   let url='/team/'+route.query.teamID+'/invite?email='+email.value
-  axios.put(url,{headers:headers}).then(res=>{
+  axios.put(url,{},{headers:headers}).then(res=>{
     console.log(res.data)
     alert(res.data.msg)
   })
