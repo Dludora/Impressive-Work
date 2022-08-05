@@ -43,6 +43,7 @@ export default defineComponent({
         const gotoProject=()=>{
             console.log("go")
             utils.setCookie('proID',props.id)
+            utils.setCookie('proNAME',props.name)
             console.log("proID:"+utils.getCookie("proID"))
             router.replace({name:'project'})
         }

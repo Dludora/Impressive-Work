@@ -120,9 +120,14 @@ const getList = () =>{
     const url = '/program/list?'+'teamID='+router.query.teamID+'&page=0&size=10'
     axios.get(url,{headers:headers}).then(res=>{
       console.log(res.data)
-      console.log(projects)
+      console.log(projects.value)
       projects.value=res.data.data.items
-      
+      for(let i=0;i<projects.value.length;i++)
+      {
+        let tempDate = new Date(parseInt(projects.value[i].createTime) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ')
+        projects.value[i].createTime=tempDate
+      }
+      console.log(projects.value)
     })
 }
 const getGlobal = computed(()=>{
