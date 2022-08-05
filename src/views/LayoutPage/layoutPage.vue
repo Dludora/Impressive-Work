@@ -15,6 +15,7 @@
         ref="canvas"
         :update="update"
         @updateProps="updateProps"
+        @changeUpdate = "changeUpdate"
         :elementProps="property"
         :layoutId="layoutId"
         :canvasWidth="canvasWidth"
@@ -348,6 +349,10 @@ const property = reactive<Property>({
 
 const initPage = () => {};
 
+const changeUpdate = ()=>{
+  update.value = true;
+}
+
 const updateProps = (data: Property) => {
   if (data == null) {
     property.type = "none";
@@ -440,7 +445,6 @@ onMounted(() => {
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string)
   canvasHeight.value = parseInt(route.query.canvasHeight as string)
-
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);

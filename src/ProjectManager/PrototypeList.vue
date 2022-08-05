@@ -245,15 +245,15 @@ const heightRule = {
 let openID= ref(0); //要打开的布局ID
 
 const openCard =(indx) => {
-  console.log(shortcuts.value[indx].ID)
+  //console.log(shortcuts.value[indx].ID)
   openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
 
   router.push({path:"/layout",
   query:{
     layoutId: openID.value,
-    layoutName: addModelRef.value.addName,
-    CanvasWidth: addModelRef.value.addWidth,
-    canvasHeight: addModelRef.value.addHeight
+    layoutName: shortcuts.value[indx].name,
+    canvasWidth: shortcuts.value[indx].width,
+    canvasHeight: shortcuts.value[indx].height
   }
 })
 
