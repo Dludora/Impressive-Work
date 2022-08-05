@@ -14,7 +14,7 @@
     <div class="tag" style="flex: 2; line-height: 50px; text-align: center;">
         <n-config-provider :theme="theme">
           <n-tag type="success" size="large" round v-if="member.identify===2">
-            群主
+            创建者
           </n-tag>
           <n-tag type="warning" round v-else-if="member.identify===1">
             管理员
