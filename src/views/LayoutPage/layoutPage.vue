@@ -388,6 +388,7 @@ const updateProps = (data: Property) => {
   property.borderColor = data.borderColor;
   property.src = data.src;
   property.fontSize = data.fontSize;
+  property.text = data.text;
   property.locked = data.locked;
 
   for (var i = 0; i < palette.length; ++i) {

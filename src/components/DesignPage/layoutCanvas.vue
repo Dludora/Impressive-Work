@@ -4,6 +4,8 @@
     @mouseup="ProduceElement"
     @click="cancelSelect"
     @mousemove="dragCanvas"
+    @updateParams="updateParams"
+    @updateServer="updateUpdates"
     @mousedown="startDrag"
     id="board"
   >
@@ -148,16 +150,16 @@ const updateParams = (data: elementParams) => {
     layoutElementParams.push(data);
     return;
   }
-  if (
-    updates.findIndex((cv, ci) => {
-      console.log(cv.id+"  "+data.id);
-      if (cv.id == data.id) {
-        return true;
-      }
-    }) != -1
-  ) {
-    return;
-  }
+  // if (
+  //   updates.findIndex((cv, ci) => {
+  //     console.log(cv.id+"  "+data.id);
+  //     if (cv.id == data.id) {
+  //       return true;
+  //     }
+  //   }) != -1
+  // ) {
+  //   return;
+  // }
   layoutElementParams[data.index]!.id = data.id;
   layoutElementParams[data.index]!.index = data.index;
   layoutElementParams[data.index]!.x = data.x;
