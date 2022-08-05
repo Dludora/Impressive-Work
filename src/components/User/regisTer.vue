@@ -138,7 +138,7 @@ const register = () => {
     return;
   }
   if (password1.value === '' || password2.value === '') {
-    alert("密码不可为空！")
+    message.warning("密码不可为空！")
     return;
   }
   axios.post('/auth/register',
@@ -150,7 +150,7 @@ const register = () => {
 
       }
   ).then(res => {
-    alert(res.data.msg);
+    message.info(res.data.msg);
     router.go(0)
   })
 }
@@ -158,7 +158,7 @@ const register = () => {
 const login = () => {
 
   if (email.value.length === 0 || password1.value.length === 0) {
-    alert("用户邮箱或密码不能为空！")
+    message.warning("用户邮箱或密码不能为空！")
     return;
   }
 
@@ -168,7 +168,7 @@ const login = () => {
   axios.get('/user/info', {headers: headers}).then(res => {
         console.log(res.data)
         if (res.data.msg === "成功") {
-          alert("用户" + res.data.data.nickname + "已登录")
+          message.info("用户" + res.data.data.nickname + "已登录")
           a = 1;
           router.push('/team')
         } else {
@@ -186,7 +186,7 @@ const login = () => {
                 console.log(res2.data.data)
                 console.log("登录成功=>")
                 if (res2.data.msg === "成功")
-                  alert("欢迎 " + res2.data.data.nickname)
+                  message.info("欢迎 " + res2.data.data.nickname)
               })
               axios.defaults.headers.common['Authorization'] = res.data.data;
               utils.setCookie('Authorization', res.data.data)

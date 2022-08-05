@@ -16,8 +16,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import axios from 'axios';
+import {useMessage} from "naive-ui"
 import utils from "@/Utils";
 const router = useRouter();
+const message = useMessage();
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -34,12 +36,12 @@ const logout = () => {
     {
       utils.clearCookie('Authorization')
       axios.defaults.headers.common['Authorization'] = '';
-      alert("注销成功")
+      message.info("注销成功")
     }
     else{
       utils.clearCookie('Authorization')
       axios.defaults.headers.common['Authorization'] = '';
-      alert("用户未登录")
+      message.error("用户未登录")
     }
   })
 }
