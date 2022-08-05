@@ -220,11 +220,15 @@ interact(`#content${props.elementParams.index}`).resizable({
 })
 .on('resizeend',updateServer);
 
-const emits = defineEmits(["select", "destroy", "updateParams","updateServer"]);
+const emits = defineEmits(["select", "destroy", "updateParams","updateServer","changeUpdate"]);
 
 const updateParams = () => {
   emits("updateParams", transform);
 };
+
+const changeUpdate = ()=>{
+  emits("changeUpdate")
+}
 
 const Highlight = () => {
   if (!props.elementParams.locked) {
@@ -349,6 +353,7 @@ watch(
   (newVal) => {
     if(!newVal.update)
     {
+      changeUpdate();
       return;
     }
     if (newVal.elementParams == null||newVal.elementParams.type == "none") {
