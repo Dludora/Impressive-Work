@@ -35,7 +35,7 @@ const router = createRouter({
         {
             name:'homePage',
             path: '/',
-            component: regisTer
+            component: homePage
         },
         {
             name:'regisTer',

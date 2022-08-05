@@ -1,13 +1,15 @@
 <template>
   <n-config-provider :theme="theme">
   <div class="nav">
-    <div class="logo" @click="toMain"></div>
+    <!-- <div class="logo" @click="toMain"></div> -->
     <div class="user-info">
-      <div class="avatar">
+      <!-- <div class="avatar">
         <n-avatar class="pic">
           {{ profile.nickname }}
         </n-avatar>
-      </div>
+      </div> -->
+      <div class="lineI"></div>
+      <SvgI size="50" border="0.34" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
         <p>{{ profile.nickname }}</p>
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
@@ -16,7 +18,8 @@
         <div class="teamsHead">
           团队和项目
         </div>
-    <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
+    <!-- <div style="width:100%;"> -->
+    <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
       <div class="teams"> 
         <div class="team">
           <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
@@ -34,6 +37,7 @@
         </div>
       </div>
     </n-scrollbar>
+    <!-- </div> -->
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -60,6 +64,7 @@ import { Add12Filled } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
+import SvgI from '@/components/svgI.vue'
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -78,6 +83,7 @@ export default defineComponent({
   components: {
     Icon,
     Add12Filled,
+    SvgI,
   },
   setup(props, {emit}) {
     const toMain=()=>{
@@ -177,11 +183,12 @@ export default defineComponent({
 .nav {
   display:flex;
   flex-direction: column;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
-  background-color: rgba(43, 48, 59, 1);
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  background-color: #16181D;
+  border-right: 1px solid #414958;
   /*padding-top: 20px;*/
-  padding-left: 20px;
-  width:220px;
+  padding-left: 8px;
+  width:192px;
   height:100%;
   overflow:hidden;
 }
@@ -205,6 +212,7 @@ export default defineComponent({
   margin-top: 30px;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: center;
 }
 
 .avatar {
@@ -223,20 +231,20 @@ export default defineComponent({
 }
 
 .user {
-  margin-top: 5px;
-  margin-left: 8px;
-  height: 65px;
+  margin:0 8px;
+  /*height: 65px;*/
   color: #fff;
   text-overflow: ellipsis;
-  width: 127px;
+  /*width: 127px;*/
   overflow: hidden;
   white-space: nowrap;
   font-size: larger;
 }
 
 .user p {
-  margin-top: 5px;
+  /*margin-top: 5px;*/
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .teams {
@@ -246,7 +254,7 @@ export default defineComponent({
 }
 
 .teamsHead {
-  margin-top: 30px;
+  margin: 30px 0 0 4px;
   color:#FFFFFF;
   font-size:16px;
   font-weight: 700;
@@ -320,5 +328,24 @@ export default defineComponent({
   /*position: absolute;
   top: calc(100% - 80px);*/
   padding:5px 0 20px;
+}
+.signI{
+  width:0;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+  transition-duration: 0.5s;
+}
+.user-info:hover .signI{
+  width:50px;
+}
+.lineI{
+  width:1px;
+  border-radius: 1px;
+  height: 100%;
+  background-color:#fff;
+  transition: 0.2s;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+}
+.user-info:hover .lineI{
+  height:0;
 }
 </style>

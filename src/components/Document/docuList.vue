@@ -26,7 +26,7 @@
 
 
                 <p @click="openDocu(document.ID)" style="cursor: pointer;width: 80px;position: relative;display: flex">{{document.title}}</p>
-                <n-space justify="end">
+                <n-space justify="end" style="0gap: 0; flex-wrap: nowrap;">
                   <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)"><Edit /></Icon>
                   <Icon id="del" size="24" @click="viewDelDocu(document.ID)"><Delete48Regular /></Icon>
                 </n-space>
@@ -485,8 +485,8 @@ function openDocu(index){
 
 
   position: relative;
-  /* width: 150px;
-  height: 32px; */
+  width: 150px;
+  height: 32px;
   left: 500px;
   top: -32px;
 
@@ -569,8 +569,8 @@ function openDocu(index){
   margin-right: 37%;
 }
 #del {
-  position: relative;
-  margin-top: 160px;
+  /*position: relative;
+  margin-top: 160px;*/
   margin-left: 37%;
   alignment: right;
 }
