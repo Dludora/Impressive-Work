@@ -121,9 +121,9 @@ export default defineComponent({
         console.log(com.value.teamData)
         console.log("father push"+teamID.value)
         let tID=(teamID.value)
-        router.push({path:'/team/projects',
-          query:{teamID1:tID}
-        })
+        // router.push({path:'/team/projects',
+        //   query:{teamID1:tID}
+        // })
     }
     const ruleName = {
       required: true,
@@ -158,9 +158,6 @@ export default defineComponent({
         modelRef.value.description = ""
       })
       onMounted(()=>{
-        router.push({path:'/team/teamProjects',
-          query:{teamID:teamID.value}
-        })
       })
     }
     return {

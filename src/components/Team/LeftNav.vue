@@ -121,8 +121,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: 
-                                '/team/teamprojects?teamID='+idd, 
-
+                                '/team/projects?teamID='+idd,
                             },
                             {default: () => array.value[i].name}
                         ),
@@ -183,6 +182,7 @@ export default defineComponent({
   padding-left: 20px;
   width:220px;
   height:100%;
+  overflow:hidden;
 }
 
 .logo {
