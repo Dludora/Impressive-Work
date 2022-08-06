@@ -3,10 +3,12 @@
         <div class="img">
         </div>
         <div class="bottom">
-            <div class="name">{{name}}</div>
+            <div class="name">
             <Icon size="20" class="rename">
                 <Edit16Regular @click="renameThis"/>
             </Icon>
+            {{name}}
+            </div>
         </div>
         <div class="desc">
             创建于&nbsp;{{date}}
@@ -82,12 +84,14 @@ export default defineComponent({
 .card{
     width: 300px;
     height: 220px;
-    background-color: #2B303B;
+    /*background-color: #2B303B;*/
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 5px;
+    border-radius: 3px;
+    border: 1px solid #414958;
 }
 .card:hover{
-    background-color: #414958;
+    background: #2B303B;
+    border: 1px solid #A7AFBE;
     cursor:pointer;
 }
 .card:hover .del,.card:hover .rename{
@@ -115,7 +119,7 @@ export default defineComponent({
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 36px;
     text-overflow:ellipsis;
 
@@ -138,7 +142,7 @@ export default defineComponent({
     font-size: 12px;
     line-height: 18px;
     height: 18px;
-    padding: 0 40px;
+    /*padding: 0 40px;*/
     
     justify-content: space-between;
     flex-wrap: nowrap;

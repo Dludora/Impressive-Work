@@ -1,12 +1,13 @@
 <template>
     <div class="mainframe">
       
-      <UpBar style="z-index:1;padding:25px 60px 22px"/>
+      <UpBar style="padding:25px 60px 23px"/>
       <div class="three-cls">
         <n-config-provider :theme="theme">
           <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
         </n-config-provider>
       </div>
+      <div class="divline"/>
 
       <div class="view">
         <n-scrollbar style="max-height:100%">
@@ -230,8 +231,8 @@ const sideMenuOptions: MenuOption[] = [
   margin-top: 36px;
 }
 .three-cls{
-  background: #666f83;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  /*background: #666f83;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);*/
   /*position: absolute;*/
   min-width: 100%;
   /*top:0%;*/
@@ -271,5 +272,10 @@ const sideMenuOptions: MenuOption[] = [
 }
 .view{
     overflow: auto;
+}
+.divline{
+    height:1px;
+    margin:0 60px;
+    background:#414958;
 }
 </style>
