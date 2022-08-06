@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
@@ -15,6 +15,7 @@ import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
 
+
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
 
@@ -29,28 +30,35 @@ import UML from "../components/UML.vue";
 
 
 // @ts-ignore
+// @ts-ignore
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            name:'homePage',
+            name: 'homePage',
             path: '/',
-            component: homePage
+            component: homePage,
         },
         {
-            name:'regisTer',
+            name: 'regisTer',
             path: '/regisTer',
             component: regisTer
         },
         {
-            name:'layoutPage',
-            path:"/layout",
-            component: layoutPage
+            name: 'layoutPage',
+            path: "/layout",
+            component: layoutPage,
+            meta: {
+                auth: true
+            }
         },
         {
-            name:'main',
+            name: 'main',
             path: '/',
             component: mainView,
+            meta: {
+                auth: true
+            },
             children: [
                 // {
                 //     name: 'team',
@@ -77,24 +85,36 @@ const router = createRouter({
                 // },
                 {
                     name: 'project',
-                    path:'/project',
+                    path: '/project',
                     redirect: '/project/prototypes',
                     component: projectMain,
-                    children:[
+                    meta: {
+                        auth: true
+                    },
+                    children: [
                         {
-                            name:'prototypes',
+                            name: 'prototypes',
                             path: 'prototypes',
                             component: prototypes,
+                            meta: {
+                                auth: true
+                            },
                         },
                         {
-                             name:'UML',
-                             path: 'UML',
-                             component: UML,
+                            name: 'UML',
+                            path: 'UML',
+                            component: UML,
+                            meta: {
+                                auth: true
+                            },
                         },
                         {
-                            name:'documents',
+                            name: 'documents',
                             path: 'documents',
                             component: docuList,
+                            meta: {
+                                auth: true
+                            },
                         },
                     ]
                 },
@@ -104,59 +124,93 @@ const router = createRouter({
             name: 'team',
             path: '/team',
             component: someTeam,
+            meta: {
+                auth: true
+            },
+            // redirect: '/team/teamProjects',
             children: [
                 {
                     name: 'teamProjects',
                     path: 'teamProjects',
-                    component: teamProjects
+                    component: teamProjects,
+                    meta: {
+                        auth: true
+                    },
                 },
                 {
                     name: 'teamMembers',
                     path: 'teamMembers',
-                    component: teamMembers
+                    component: teamMembers,
+                    meta: {
+                        auth: true
+                    },
                 },
                 {
                     name: 'teamSettings',
                     path: 'teamSettings',
-                    component: teamSettings
+                    component: teamSettings,
+                    meta: {
+                        auth: true
+                    },
                 },
             ]
         },
         {
-            name:'vDitor',
+            name: 'vDitor',
             path: '/vDitor',
-            component: vDitor
+            component: vDitor,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'testVditor',
+            name: 'testVditor',
             path: '/testVditor',
-            component: testVditor
+            component: testVditor,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'upBar',
+            name: 'upBar',
             path: '/upBar',
-            component: upBar
+            component: upBar,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'programView',
-            path:'/programView',
-            component: programView
+            name: 'programView',
+            path: '/programView',
+            component: programView,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'docuList',
-            path:'/docuList',
-            component: docuList
+            name: 'docuList',
+            path: '/docuList',
+            component: docuList,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'docuEdit',
-            path:'/docuEdit',
+            name: 'docuEdit',
+            path: '/docuEdit',
             component: docuEdit,
+            meta: {
+                auth: true
+            },
         },
         {
-            name:'UML',
-            path:'/UML',
+            name: 'UML',
+            path: '/UML',
             component: UML,
-        }
+            meta: {
+                auth: true
+            },
+        },
         // {
         //     name: 'programBig',
         //     path: '/programBig',
@@ -181,4 +235,21 @@ const router = createRouter({
         // },
     ]
 })
+
+import utils from "@/Utils";
+
+router.beforeEach((to, from, next) => {
+    // 1. 每个条件执行后都要跟上 next() 或 使用路由跳转 api 否则页面就会停留一动不动
+    // 2. 要合理的搭配条件语句，避免出现路由死循环。
+    const token = utils.getCookie('Authorization')
+
+    if (to.meta.auth) {
+        if (!token) {
+            next({name: 'regisTer'})
+        }
+    } else {
+        next()
+    }
+})
+
 export default router
