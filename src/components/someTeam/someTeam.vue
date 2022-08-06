@@ -1,13 +1,13 @@
 <template>
-  <n-layout has-sider >
+  <n-layout has-sider>
     <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true" />
+      <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </n-layout-sider>
     <n-layout :native-scrollbar="false">
       <n-layout-header>
         <TeamHead style="margin-left: 30px"/>
       </n-layout-header>
-      <n-layout-content >
+      <n-layout-content>
         <div class="menu">
           <n-config-provider :theme="theme">
             <n-menu mode="horizontal" :options="menuOptions"/>
@@ -62,9 +62,6 @@ import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import utils from "@/Utils";
 
 const route = useRoute()
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -135,21 +132,23 @@ export default defineComponent({
     let teamID = ref(-1)
     const com = ref(null)
     const showModalRef = ref(false)
-
+    const headers = {
+      Authorization: utils.getCookie('Authorization')
+    }
     const modelRef = ref({
       name: "",
       description: "",
     })
-    const getID = (msg:any) =>{
-        console.log("father get:"+msg)
-        teamID.value = parseInt(msg)
+    const getID = (msg: any) => {
+      console.log("father get:" + msg)
+      teamID.value = parseInt(msg)
 
 
-        console.log("father push"+teamID.value)
-        let tID=(teamID.value)
-        // router.push({path:'/team/teamProjects',
-        //   query:{teamID:tID}
-        // })
+      console.log("father push" + teamID.value)
+      let tID = (teamID.value)
+      // router.push({path:'/team/teamProjects',
+      //   query:{teamID:tID}
+      // })
     }
     const ruleName = {
       required: true,
@@ -179,15 +178,14 @@ export default defineComponent({
         'src': profile.src,
         'introduction': modelRef.value.description
       }, {headers: headers}).then(res => {
-        console.log(res)
+        // console.log(res)
         getChildList.value.getAllTeams(0, 8)
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(() => {
-
-      })
     }
+    onMounted(() => {
+    })
     return {
       theme: darkTheme,
       menuOptions,
@@ -209,17 +207,14 @@ export default defineComponent({
       },
     }
   },
-  methods: {
-    load() {
-      axios.get('user/info', {headers: headers}).then(res => {
-        profile = res.data.data
-        utils.setCookie('userID', profile.ID)
-      })
-    },
-  },
-  created() {
-    this.load()
-  },
+  // methods: {
+  //   load() {
+  //
+  //   },
+  // },
+  // created() {
+  //   this.load()
+  // },
 })
 
 </script>
