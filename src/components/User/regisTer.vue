@@ -146,17 +146,52 @@ const register = () => {
     message.warning("密码不可为空！")
     return;
   }
+  // 注册成功
   axios.post('/auth/register',
       {
         'email': email.value,
         'nick': nick.value,
         'name': name.value,
         'passwd': password1.value,
-
       }
   ).then(res => {
     message.info(res.data.msg);
-    router.go(0)
+    // 登录拿到token -> 利用token调用创建团队api -> 得到团队ID后创建示例项目
+    axios.post('/auth/token', {
+          'email': email.value,
+          'passwd': password1.value
+        }
+    ).then(res2 => {
+      if (res2.data.msg === "成功") {
+        axios.defaults.headers.common['Authorization'] = res2.data.data;
+        utils.setCookie('Authorization', res2.data.data)
+        // 利用token获取个人信息
+        const headers = {
+          Authorization: utils.getCookie('Authorization')
+        }
+        axios.get('/user/info').then(res3 => {
+          if (res3.data.msg === "成功") {
+            // 利用token调用创建团队api
+            axios.post('/team', {
+              'name': '示例团队',
+              'src': res3.data.src,
+              'introduction': '示例团队'
+            }).then(res4 => {
+              // 得到团队ID后创建示例项目
+              let teamID = res4.data.data
+              axios.post('/program', {
+                'teamID': teamID,
+                'src': "what the fuck photos",
+                'name': "示例项目"
+              }, {headers: headers}).then(res5 => {
+                message.info("欢迎 " + res3.data.data.nickname)
+                router.push('/team')
+              })
+            })
+          }
+        })
+      }
+    })
   })
 }
 
@@ -166,12 +201,8 @@ const login = () => {
     message.warning("用户邮箱或密码不能为空！")
     return;
   }
-
-  // console.log("head:" + axios.defaults.headers.common['Authorization'])
-  // console.log("cookie:" + utils.getCookie("Authorization"))
   let a = 0;
   axios.get('/user/info', {headers: headers}).then(res => {
-
         if (res.data.msg === "成功") {
           message.info("用户" + res.data.data.nickname + "已登录")
           a = 1;

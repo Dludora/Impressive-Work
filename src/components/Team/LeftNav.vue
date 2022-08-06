@@ -25,9 +25,6 @@
             <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
           </div>
           <div class="addTeam" @click="addTeam">
-            <!-- <div class="addImg">
-              <img src="@/assets/plus.png"/>
-            </div> -->
             <Icon style="margin-right:8px;" size="24">
               <Add12Filled/>
             </Icon>
@@ -75,9 +72,6 @@ function renderIcon(icon: Component) {
 }
 
 export default defineComponent({
-  data() {
-    return {}
-  },
   components: {
     Icon,
     Add12Filled,
@@ -115,7 +109,7 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             console.log(res)
-            let array = ref(res.data.data.items)
+            const array = ref(res.data.data.items)
             dataList = res.data.data.items
             // console.log(res.data.data.items)
             total.value = res.data.data.total
@@ -139,6 +133,8 @@ export default defineComponent({
                   }
               )
             }
+            // emit("ID", array.value[0].ID)
+            // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
     }
     const changePage = (page: number) => {
