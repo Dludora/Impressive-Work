@@ -3,11 +3,6 @@
   <div class="nav">
     <!-- <div class="logo" @click="toMain"></div> -->
     <div class="user-info">
-      <!-- <div class="avatar">
-        <n-avatar class="pic">
-          {{ profile.nickname }}
-        </n-avatar>
-      </div> -->
       <div class="lineI"></div>
       <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
@@ -89,6 +84,7 @@ export default defineComponent({
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
+    const defaultMenu = ref('')
     const toMain = () => {
       router.push("/")
     }
@@ -169,7 +165,7 @@ export default defineComponent({
       // 个人信息
       profile,
       sideMenuOptions,
-
+      defaultMenu,
       // 分页
       currentPage,
       total,

@@ -5,14 +5,12 @@
     </div>
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
-      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
       <div class="three-cls">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions"/>
+          <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
         </n-config-provider>
       </div>
       <div class="divline"/>
-
       <div class="view">
         <n-scrollbar style="max-height:100%">
             <router-view/>
@@ -22,7 +20,7 @@
   </div>
   <!-- <n-layout has-sider>
     <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout :native-scrollbar="false">
       <n-layout-header>
@@ -31,7 +29,7 @@
       <n-layout-content>
         <div class="menu">
           <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions"/>
+            <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
           </n-config-provider>
         </div>
         <router-view/>
@@ -81,6 +79,9 @@ import {IosSettings as Settings} from "@vicons/ionicons4"
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 import utils from "@/Utils";
+
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
 
 const route = useRoute()
 
