@@ -33,15 +33,15 @@
           <CloseOutline/>
         </Icon>
       </div>
-  </div>
-  <div class="member-add ">
-    <div class="add-icon">
-      <Icon size="36" id="add">
-        <PlusOutlined/>
-      </Icon>
     </div>
-    <a @click="displayMedal" id="invite">邀请成员</a>
-  </div>
+    <div class="member-add ">
+      <div class="add-icon">
+        <Icon size="36" id="add">
+          <PlusOutlined/>
+        </Icon>
+      </div>
+      <a @click="displayMedal" id="invite">邀请成员</a>
+    </div>
   </div>
   <n-config-provider :theme="theme">
     <n-modal
@@ -54,7 +54,7 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
-      <n-form  >
+      <n-form>
         <n-form-item label="邀请用户的邮箱" :rule="rule" :render-feedback="formatFeedback">
           <n-input v-model:value="Email" @keydown.enter.prevent/>
         </n-form-item>
@@ -73,7 +73,7 @@ import axios from 'axios'
 import {onMounted, ref, computed, watch} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
-import {darkTheme,useMessage} from "naive-ui"
+import {darkTheme, useMessage} from "naive-ui"
 
 // 寇书瑞改动的部分
 const myID = ref(utils.getCookie('userID'))
@@ -95,15 +95,15 @@ const displayMedal = () => {
   showModalRef.value = true
 }
 const onPositiveClick = () => {
-  console.log("Identity:"+utils.getCookie('Authorization'))
-  let url='/team/'+route.query.teamID+'/invite?email='+Email.value
-    axios.put(url,{},{headers:headers}).then(res=>{
-      console.log(res.data)
+  console.log("Identity:" + utils.getCookie('Authorization'))
+  let url = '/team/' + route.query.teamID + '/invite?email=' + Email.value
+  axios.put(url, {}, {headers: headers}).then(res => {
+    console.log(res.data)
 
-      message.info(res.data.msg)
-      getList()
-    })
-    showModalRef.value = false
+    message.info(res.data.msg)
+    getList()
+  })
+  showModalRef.value = false
 }
 const onNegativeClick = () => {
   showModalRef.value = false
@@ -124,7 +124,7 @@ const getList = () => {
   let url = '/team/' + route.query.teamID + '/members?page=0&size=20'
   axios.get(url, {headers: headers}).then(res => {
     console.log(res.data)
-    members.value=res.data.data.items
+    members.value = res.data.data.items
     console.log(members.value)
   })
   url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
@@ -132,10 +132,10 @@ const getList = () => {
     myIdentify.value = res.data.data.identify
   })
 }
-const invite = () =>{
-  console.log("身份验证 "+utils.getCookie('Authorization'))
-  let url='/team/'+route.query.teamID+'/invite?email='+email.value
-  axios.put(url,{},{headers:headers}).then(res=>{
+const invite = () => {
+  console.log("身份验证 " + utils.getCookie('Authorization'))
+  let url = '/team/' + route.query.teamID + '/invite?email=' + email.value
+  axios.put(url, {}, {headers: headers}).then(res => {
     console.log(res.data)
     message.info(res.data.msg)
   })
@@ -150,10 +150,10 @@ const showRemove = (identify) => {
     return false;
   }
 }
-const remove = (ID) =>{
-  opUserID.value=ID
-  let url='/team/'+route.query.teamID+'/remove?userID='+opUserID.value
-  axios.put(url,{},{headers:headers}).then(res=>{
+const remove = (ID) => {
+  opUserID.value = ID
+  let url = '/team/' + route.query.teamID + '/remove?userID=' + opUserID.value
+  axios.put(url, {}, {headers: headers}).then(res => {
     console.log(res.data)
     if (res.data.msg === "成功") {
       for (let i = 0; i < members.value.length; i++) {
@@ -174,13 +174,7 @@ const showAdmin = (identify) => {
     return false
   }
 }
-const showAdmin = (identify) => {
-  if (myIdentify.value === 2 && identify === 0) {
-    return true;
-  } else {
-    return false
-  }
-}
+
 const admin = (id, op) => {
   opUserID.value = id;
   if (op === 0)
@@ -188,8 +182,8 @@ const admin = (id, op) => {
   else {
     isAdmin.value = 0;
   }
-  let url='/team/'+route.query.teamID+'/admin?userID='+opUserID.value+'&isAdmin='+isAdmin.value
-  axios.put(url,{},{headers:headers}).then(res=>{
+  let url = '/team/' + route.query.teamID + '/admin?userID=' + opUserID.value + '&isAdmin=' + isAdmin.value
+  axios.put(url, {}, {headers: headers}).then(res => {
     console.log(res.data)
     if (res.data.msg === "成功") {
       for (let i = 0; i < members.value.length; i++) {
@@ -199,8 +193,7 @@ const admin = (id, op) => {
         }
       }
       getList()
-    }
-    else{
+    } else {
       console.log("设置失败")
     }
   })
@@ -233,7 +226,7 @@ a {
   position: relative;
   /*width: 100%;
   height: 70px;*/
-    height: 50px;
+  height: 50px;
   padding: 15px 60px;
   display: flex;
   justify-content: space-between;
