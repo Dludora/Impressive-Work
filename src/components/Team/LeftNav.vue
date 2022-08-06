@@ -362,7 +362,7 @@ export default defineComponent({
   align-items: stretch;
 }
 .teamlist:hover .divline{
-  background:#2B303B;
+  border-bottom: 1px solid #2B303B;
 }
 .teamlist:hover .teamsHead{
   color:#fff;
@@ -370,7 +370,8 @@ export default defineComponent({
 .divline{
   height:1px;
   margin:0 12px 0 0;
-  background:#16181D;
+  /*background:#16181D;*/
+  border-bottom: 1px solid #16181D;
   transition-duration: 0.3s;
 }
 </style>

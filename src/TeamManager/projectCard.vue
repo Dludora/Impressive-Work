@@ -4,11 +4,11 @@
         </div>
         <div class="bottom">
             <div class="name">
+                {{name}}
+            </div>
             <Icon size="20" class="rename">
                 <Edit16Regular @click="renameThis"/>
             </Icon>
-            {{name}}
-            </div>
         </div>
         <div class="desc">
             创建于&nbsp;{{date}}
@@ -82,11 +82,12 @@ export default defineComponent({
   transition: 0.2s;
 }
 .card{
-    width: 300px;
-    height: 220px;
+    width: 240px;
+    height: 190px;
+    padding: 5px 30px;
     /*background-color: #2B303B;*/
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 3px;
+    border-radius: 2px;
     border: 1px solid #414958;
 }
 .card:hover{
@@ -99,19 +100,19 @@ export default defineComponent({
 }
 .img{
     width:100%;
-    height: 160px;
+    height: 140px;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 5px 5px 0px 0px;
+    border-radius: 4px;
 }
 .bottom{
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding: 0 40px;
-    width:220px;
-    height: 36px;
+    /*padding: 0 40px;*/
+    width:100%;
+    height: 32px;
     align-items: center;
 }
 .name{
@@ -120,7 +121,7 @@ export default defineComponent({
     font-style: normal;
     font-weight: 700;
     font-size: 16px;
-    line-height: 36px;
+    line-height: 32px;
     text-overflow:ellipsis;
 
     overflow:hidden;

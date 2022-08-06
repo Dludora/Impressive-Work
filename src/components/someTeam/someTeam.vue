@@ -1,5 +1,26 @@
 <template>
-  <n-layout has-sider>
+  <div class="frame">
+    <div class="side">
+        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+    </div>
+    <div class="main">
+      <TeamHead style="padding:25px 60px 23px"/>
+      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
+      <div class="three-cls">
+        <n-config-provider :theme="theme">
+          <n-menu mode="horizontal" :options="menuOptions"/>
+        </n-config-provider>
+      </div>
+      <div class="divline"/>
+
+      <div class="view">
+        <n-scrollbar style="max-height:100%">
+            <router-view/>
+        </n-scrollbar>
+      </div>
+    </div>
+  </div>
+  <!-- <n-layout has-sider>
     <n-layout-sider>
       <LeftNav @ID="getID" @addTeam="showModal=true"/>
     </n-layout-sider>
@@ -16,7 +37,7 @@
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout>
+  </n-layout> -->
 
   <n-config-provider :theme="theme">
     <n-modal
@@ -270,12 +291,18 @@ export default defineComponent({
 }
 
 .three-cls {
-  background: #16181D;
+  /*background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  /*position: absolute;*/
+  position: absolute;*/
   min-width: 100%;
   /*top:0%;*/
   padding: 0px 50px;
   z-index: 1;
+}
+.divline{
+    height:1px;
+    margin:0 60px;
+    /* background: #414958; */
+    border-bottom: 1px solid #414958;
 }
 </style>
