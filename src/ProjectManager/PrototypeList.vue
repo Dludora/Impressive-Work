@@ -1,5 +1,6 @@
 <template>
     <div class="main">
+    <div class="layout">
         <div class="discribe">
             管理你的{{shortcuts.length}}个页面
             <div class="buttons">
@@ -9,18 +10,19 @@
                         <Add28Regular/>
                     </Icon>
                 </n-button>
-                <n-button size="tiny" @click="exportLayout">
+                <!-- <n-button size="tiny" @click="exportLayout">
                     导 出 页 面&nbsp;
                     <Icon size="14">
                         <Export/>
                     </Icon>
-                </n-button>
+                </n-button> -->
             </div>
         </div>
         <div class="pagelist">
-          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.img" class="card"
+          <PageCard v-for="(item,ind) in shortcuts" :key="item.ID" :name="item.name" :img="item.src" class="card"
                     @delCard="delCard(ind)" @openCard="openCard(ind)"/>
         </div>
+    </div>
     </div>
 
 
@@ -88,6 +90,7 @@ let proID = ref(0);
 
 let page = ref(2);
 const router = useRouter()
+const message = useMessage()
 
 //原型项目
 
@@ -172,7 +175,7 @@ const posAdd = () => {
 
   if(addModelRef.value.addName === '')
   {
-    alert("文档名不可为空！")
+    message.warning("文档名不可为空！")
     return;
   }
 
@@ -243,15 +246,15 @@ const heightRule = {
 let openID= ref(0); //要打开的布局ID
 
 const openCard =(indx) => {
-  console.log(shortcuts.value[indx].ID)
+  //console.log(shortcuts.value[indx].ID)
   openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
 
   router.push({path:"/layout",
   query:{
     layoutId: openID.value,
-    layoutName: addModelRef.value.addName,
-    CanvasWidth: addModelRef.value.addWidth,
-    canvasHeight: addModelRef.value.addHeight
+    layoutName: shortcuts.value[indx].name,
+    canvasWidth: shortcuts.value[indx].width,
+    canvasHeight: shortcuts.value[indx].height
   }
 })
 
@@ -266,8 +269,8 @@ const exportLayout =() => {
 
 <style scoped>
 .main{
-    width:fit-content;
-    margin:39px 43px 0 61px;
+    width:100%;
+    /*margin:39px 43px 0 61px;*/
 }
 .card {
     margin:0 10px 20px 0;
@@ -294,9 +297,12 @@ const exportLayout =() => {
     color: #414958;
 }
 .buttons{
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .newpage{
     margin-right: 10px;
+}
+.layout{
+  margin:39px 43px 0 61px;
 }
 </style>

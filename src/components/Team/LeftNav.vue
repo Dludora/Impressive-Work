@@ -1,13 +1,15 @@
 <template>
   <n-config-provider :theme="theme">
   <div class="nav">
-    <div class="logo" @click="toMain">墨书</div>
+    <!-- <div class="logo" @click="toMain"></div> -->
     <div class="user-info">
-      <div class="avatar">
+      <!-- <div class="avatar">
         <n-avatar class="pic">
           {{ profile.nickname }}
         </n-avatar>
-      </div>
+      </div> -->
+      <div class="lineI"></div>
+      <SvgI size="50" border="0.34" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
         <p>{{ profile.nickname }}</p>
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
@@ -16,7 +18,8 @@
         <div class="teamsHead">
           团队和项目
         </div>
-    <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
+    <!-- <div style="width:100%;"> -->
+    <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
       <div class="teams"> 
         <div class="team">
           <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
@@ -34,6 +37,7 @@
         </div>
       </div>
     </n-scrollbar>
+    <!-- </div> -->
         <n-pagination v-model:page="currentPage"
                       :page-count="pageNum"
                       show-quick-jumper
@@ -60,6 +64,7 @@ import { Add12Filled } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
+import SvgI from '@/components/svgI.vue'
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -78,6 +83,7 @@ export default defineComponent({
   components: {
     Icon,
     Add12Filled,
+    SvgI,
   },
   setup(props, {emit}) {
     const toMain=()=>{
@@ -100,7 +106,7 @@ export default defineComponent({
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
-        utils.setCookie('userID', profile.value.ID)
+        utils.setCookie("userID",profile.value.ID)
       })
     }
     const getAllTeams = (page: number, size: number) => {
@@ -109,15 +115,12 @@ export default defineComponent({
           .then(res => {
             let array = ref(res.data.data.items)
             dataList = res.data.data.items
-            console.log(res.data.data)
-            // console.log(res.data.data.items)
-            console.log(array.value)
+            console.log(res.data.data.items)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
               let idd=array.value[i].ID
-              console.log(idd)
               sideMenuOptions.value.push(
                   {
                     label: () =>
@@ -125,8 +128,7 @@ export default defineComponent({
                             RouterLink,
                             {
                               to: 
-                                '/team/teamprojects?teamID='+idd, 
-
+                                '/team/teamprojects?teamID='+idd,
                             },
                             {default: () => array.value[i].name}
                         ),
@@ -152,10 +154,8 @@ export default defineComponent({
       load,
       getAllTeams,
       handleUpdateValue (key: string, item: MenuOption) {
-        console.log("EmitID"+dataList[parseInt(JSON.stringify(key))].ID)
             emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
             utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
-            console.log("全局修改"+utils.getCookie('teamID'))
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
@@ -183,21 +183,26 @@ export default defineComponent({
 .nav {
   display:flex;
   flex-direction: column;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
-  background-color: rgba(43, 48, 59, 1);
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  background-color: #16181D;
+  border-right: 1px solid #414958;
   /*padding-top: 20px;*/
-  padding-left: 20px;
-  width:220px;
+  padding-left: 8px;
+  width:192px;
   height:100%;
+  overflow:hidden;
 }
 
 .logo {
   width: 200px;
-  height: 56px;
-  background-color: rgba(217, 217, 217, 1);
-  text-align: center;
-  line-height: 56px;
+  height: 139px;
+  /*background-color: rgba(217, 217, 217, 1);*/
+  background-image: url("@/assets/slogan2048x705.png");
+  background-size:contain;
+  /*text-align: center;
+  line-height: 56px;*/
   margin-top:20px;
+  background-repeat: no-repeat;
 }
 
 .user-info {
@@ -206,7 +211,8 @@ export default defineComponent({
   height: 70px;
   margin-top: 30px;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .avatar {
@@ -225,15 +231,20 @@ export default defineComponent({
 }
 
 .user {
-  margin-top: 5px;
-  margin-left: 8px;
-  height: 65px;
-  color: rgba(255, 255, 255, 1);
+  margin:0 8px;
+  /*height: 65px;*/
+  color: #fff;
+  text-overflow: ellipsis;
+  /*width: 127px;*/
+  overflow: hidden;
+  white-space: nowrap;
   font-size: larger;
 }
 
 .user p {
-  margin-top: 5px;
+  /*margin-top: 5px;*/
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .teams {
@@ -243,7 +254,7 @@ export default defineComponent({
 }
 
 .teamsHead {
-  margin-top: 30px;
+  margin: 30px 0 0 4px;
   color:#FFFFFF;
   font-size:16px;
   font-weight: 700;
@@ -317,5 +328,24 @@ export default defineComponent({
   /*position: absolute;
   top: calc(100% - 80px);*/
   padding:5px 0 20px;
+}
+.signI{
+  width:0;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+  transition-duration: 0.5s;
+}
+.user-info:hover .signI{
+  width:50px;
+}
+.lineI{
+  width:1px;
+  border-radius: 1px;
+  height: 100%;
+  background-color:#fff;
+  transition: 0.2s;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+}
+.user-info:hover .lineI{
+  height:0;
 }
 </style>

@@ -8,6 +8,9 @@
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
         <file-download-filled />
       </n-icon>
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
+        <save16-regular />
+      </n-icon>
     </div>
     <div class="canvasBoard">
       <layout-canvas
@@ -15,6 +18,7 @@
         ref="canvas"
         :update="update"
         @updateProps="updateProps"
+        @changeUpdate = "changeUpdate"
         :elementProps="property"
         :layoutId="layoutId"
         :canvasWidth="canvasWidth"
@@ -221,6 +225,7 @@ import {
   Cursor24Regular,
   TextAddT24Regular,
   Image24Regular,
+  Save16Regular
 } from "@vicons/fluent";
 import {
   FrontHandOutlined,
@@ -348,6 +353,10 @@ const property = reactive<Property>({
 
 const initPage = () => {};
 
+const changeUpdate = ()=>{
+  update.value = true;
+}
+
 const updateProps = (data: Property) => {
   if (data == null) {
     property.type = "none";
@@ -366,6 +375,7 @@ const updateProps = (data: Property) => {
     borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
     borderCircles.value[selectedBorderColor].style.margin = "4.5px";
   }
+  property.id = data.id;
   property.index = data.index;
   property.x = data.x;
   property.y = data.y;
@@ -378,6 +388,7 @@ const updateProps = (data: Property) => {
   property.borderColor = data.borderColor;
   property.src = data.src;
   property.fontSize = data.fontSize;
+  property.text = data.text;
   property.locked = data.locked;
 
   for (var i = 0; i < palette.length; ++i) {
@@ -440,7 +451,6 @@ onMounted(() => {
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string)
   canvasHeight.value = parseInt(route.query.canvasHeight as string)
-
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
