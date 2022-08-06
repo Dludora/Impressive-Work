@@ -1,23 +1,24 @@
 <template>
-    <div class="main">
+  <div class="main">
     <div class="layout">
-        <div class="discribe">
-            管理你的{{length}}个项目
-            <div class="buttons">
-                <n-button class="newpage" @click="displayAdd" size="tiny">
-                    新 建 项 目&nbsp;
-                    <Icon size="14">
-                        <Add28Regular/>
-                    </Icon>
-                </n-button>
-            </div>
+      <div class="discribe">
+        管理你的{{ length }}个项目
+        <div class="buttons">
+          <n-button class="newpage" @click="displayAdd" size="tiny">
+            新 建 项 目&nbsp;
+            <Icon size="14">
+              <Add28Regular/>
+            </Icon>
+          </n-button>
         </div>
-        <div class="prolist">
-            <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"  class="card" @rename="displayMedal(item.ID)" @del="displayDel(item.ID)"/>
-        </div>
+      </div>
+      <div class="prolist">
+        <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+                 class="card" @rename="displayMedal(item.ID)" @del="displayDel(item.ID)"/>
+      </div>
     </div>
-    </div>
-    
+  </div>
+
   <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
@@ -29,7 +30,7 @@
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
-      <n-form  :model="modelRef">
+      <n-form :model="modelRef">
         <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
@@ -86,7 +87,7 @@ export default {
 </script> -->
 <script setup lang="ts">
 import {
-    Export
+  Export
 } from '@vicons/carbon'
 import {
   Add28Regular
@@ -95,35 +96,33 @@ import {
 import ProCard from "@/TeamManager/projectCard.vue"
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
-import {darkTheme,useMessage} from "naive-ui";
-import {defineComponent, computed,watch,h, onMounted, reactive, ref} from "vue";
+import {darkTheme, useMessage} from "naive-ui";
+import {defineComponent, computed, watch, h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
 import utils from '../Utils'
 import axios from "axios";
 
-let shortcuts=[
-    {
-        id: 0,
-        name: '',
-        img: null,
-        date: '',
-    },
+let shortcuts = [
+  {
+    id: 0,
+    name: '',
+    img: null,
+    date: '',
+  },
 ]
-let length=0
+let length = 0
 
 const router = useRoute();
 const message = useMessage();
 
-const headers ={
-   Authorization: utils.getCookie('Authorization')
+const headers = {
+  Authorization: utils.getCookie('Authorization')
 }
 const teamID = ref(0)
 const theme = darkTheme
-let projects =ref( [
-
-])
+let projects = ref([])
 
 
 // 重命名表单
@@ -132,28 +131,27 @@ const formRef = ref<FormData | null>(null)
 const modelRef = ref({
   name: ""
 })
-const getList = () =>{
-    const url = '/program/list?'+'teamID='+router.query.teamID+'&page=0&size=10'
-    axios.get(url,{headers:headers}).then(res=>{
-      
-      projects.value=res.data.data.items
-            for(let i=0;i<projects.value.length;i++)
-      {
-        let tempDate = new Date(projects.value[i].createTime ).toLocaleString().replace(/:\d{1,2}$/,' ')
-        projects.value[i].createTime=tempDate
-      }
-      console.log(projects.value)
-    })
+const getList = () => {
+  const url = '/program/list?' + 'teamID=' + router.query.teamID + '&page=0&size=10'
+  axios.get(url, {headers: headers}).then(res => {
+
+    projects.value = res.data.data.items
+    for (let i = 0; i < projects.value.length; i++) {
+      let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+      projects.value[i].createTime = tempDate
+    }
+    console.log(projects.value)
+  })
 }
-const getGlobal = computed(()=>{
+const getGlobal = computed(() => {
   return router.query.teamID
 })
-watch(getGlobal, (newVal,oldVal)=>{
+watch(getGlobal, (newVal, oldVal) => {
 
   getList()
-},{immediate:true,deep:true})
-onMounted(()=>{
-  teamID.value=parseInt(router.query.teamID.toString())
+}, {immediate: true, deep: true})
+onMounted(() => {
+  teamID.value = parseInt(router.query.teamID.toString())
 
   getList()
 })
@@ -174,7 +172,7 @@ const ruleAdd = {
 // 操作dialog
 // 重命名
 const displayMedal = (ID) => {
-  opID.value=ID
+  opID.value = ID
   showModalRef.value = true
 }
 
@@ -185,27 +183,25 @@ const onNegativeClick = () => {
 
 const onPositiveClick = () => {
 
-  if(modelRef.value.name.length===0){
+  if (modelRef.value.name.length === 0) {
     message.warning("项目名称不能为空～")
     return;
   }
-  axios.put("/program",{
-    "ID":opID.value,
+  axios.put("/program", {
+    "ID": opID.value,
     "src": "src",
-    "name":modelRef.value.name
-  },{headers:headers}).then(res=>{
+    "name": modelRef.value.name
+  }, {headers: headers}).then(res => {
 
-    if(res.data.msg==="成功"){
+    if (res.data.msg === "成功") {
       message.info("修改成功")
-      for(let i=0 ;i<projects.value.length;i++){
-        if(projects.value[i].ID===opID.value)
-        {
-          projects.value[i].name=modelRef.value.name
+      for (let i = 0; i < projects.value.length; i++) {
+        if (projects.value[i].ID === opID.value) {
+          projects.value[i].name = modelRef.value.name
           break;
         }
       }
-    }
-    else{
+    } else {
       message.error("修改失败")
     }
   })
@@ -215,9 +211,9 @@ const onPositiveClick = () => {
 // 删除项目
 let delRef = ref(false)
 let opID = ref()
-const displayDel = (ID)=> {
+const displayDel = (ID) => {
   console.log(ID)
-  opID.value  =ID
+  opID.value = ID
   delRef.value = true
 }
 
@@ -226,13 +222,13 @@ const onNegativeClickDel = () => {
 };
 
 const onPositiveClickDel = () => {
-  let deleUrl = '/program/'+opID.value
+  let deleUrl = '/program/' + opID.value
 
-  axios.delete(deleUrl,{headers:headers}).then(res=>{
+  axios.delete(deleUrl, {headers: headers}).then(res => {
     console.log(res.data)
-    for(let i=0;i<projects.value.length;i++){
-      if(projects.value[i].ID===opID.value){
-        projects.value.splice(i,1)
+    for (let i = 0; i < projects.value.length; i++) {
+      if (projects.value[i].ID === opID.value) {
+        projects.value.splice(i, 1)
       }
     }
     message.info("删除成功！")
@@ -276,29 +272,28 @@ const onNegativeAddClick = () => {
 };
 
 const onPositiveAddClick = () => {
-  if(modelAddRef.value.name.length===0)
-  {
+  if (modelAddRef.value.name.length === 0) {
     message.warning("项目名称不能为空！")
     return
   }
-  axios.post('/program',{
-    'teamID':router.query.teamID,
-    "src":"what the fuck photos",
-    "name":modelAddRef.value.name
-  },{headers:headers}).then(res=>{
-    if(res.data.msg==="成功"){
-      console.log("添加项目成功！")
-      let t= new Date();
+  axios.post('/program', {
+    'teamID': router.query.teamID,
+    "src": "what the fuck photos",
+    "name": modelAddRef.value.name
+  }, {headers: headers}).then(res => {
+    console.log(res)
+    if (res.data.msg === "成功") {
+      // console.log("添加项目成功！")
+      let t = new Date();
       let item = {
         "name": modelAddRef.value.name,
         "src": "nope",
-        "createTime":t,
-        "ID":res.data.data
+        "createTime": t,
+        "ID": res.data.data
       }
       projects.value.push(item)
       message.info("添加成功！")
-    }
-    else{
+    } else {
       message.error("添加失败！")
     }
   })
@@ -307,40 +302,46 @@ const onPositiveAddClick = () => {
 </script>
 
 <style scoped>
-.main{
-    width:100%;
+.main {
+  width: 100%;
 }
+
 .card {
-    margin:0 10px 20px 0;
+  margin: 0 10px 20px 0;
 }
-.prolist{
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-.discribe{
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 29px;
-    align-items: center;
-    margin-bottom: 12px;
 
-    display:flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
+.prolist {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
 
-    color: #414958;
+.discribe {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 29px;
+  align-items: center;
+  margin-bottom: 12px;
+
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #414958;
 }
-.buttons{
-    /*margin-right: 10px;*/
+
+.buttons {
+  /*margin-right: 10px;*/
 }
-.newpage{
-    margin-right: 10px;
+
+.newpage {
+  margin-right: 10px;
 }
-.layout{
-  margin:39px 43px 0 61px;
+
+.layout {
+  margin: 39px 43px 0 61px;
 }
 </style>

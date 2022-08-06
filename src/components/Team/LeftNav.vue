@@ -3,11 +3,6 @@
   <div class="nav">
     <!-- <div class="logo" @click="toMain"></div> -->
     <div class="user-info">
-      <!-- <div class="avatar">
-        <n-avatar class="pic">
-          {{ profile.nickname }}
-        </n-avatar>
-      </div> -->
       <div class="lineI"></div>
       <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
@@ -26,7 +21,7 @@
       <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
         <div class="teams"> 
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="0"/>
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -87,6 +82,7 @@ export default defineComponent({
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
+    const defaultMenu = ref('')
     const toMain = () => {
       router.push("/")
     }
@@ -167,7 +163,7 @@ export default defineComponent({
       // 个人信息
       profile,
       sideMenuOptions,
-
+      defaultMenu,
       // 分页
       currentPage,
       total,

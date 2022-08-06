@@ -8,15 +8,23 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
+    <div v-if="myIdentify === 2" style="float: right">
+      <n-config-provider :theme="theme">
+        <n-button @click="dissolve">解散团队</n-button>
+      </n-config-provider>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import {onMounted, ref, watch, computed} from 'vue'
 import axios from 'axios'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import utils from '../../Utils'
+import {darkTheme} from "naive-ui"
 
-const route = useRoute();
+const theme = darkTheme
+const route = useRoute()
+const router = useRouter()
 let teamData = ref({
   ID: null,
   name: '选择您的团队',
@@ -26,11 +34,9 @@ let teamData = ref({
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-/*监听props*/
-// watch(utils.getCookie("teamID"),(newProps, oldProps) => {
-//       console.log("全局监听收到"+newProps)
-//       temp.value=parseInt(newProps.toString())
-//  });
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
+
 const getMessage = () => {
   axios.get('/team/' + route.query.teamID + '/info', {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -39,6 +45,23 @@ const getMessage = () => {
         teamData.value.introduction = "队长很懒，什么都没写喔～"
       }
     }
+  })
+  let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  axios.get(url, {headers: headers}).then(res => {
+    myIdentify.value = res.data.data.identify
+  })
+}
+
+// const getIdentify = () => {
+//   let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+//   axios.get(url, {headers: headers}).then(res => {
+//     myIdentify.value = res.data.data.identify
+//   })
+// }
+const dissolve = () => {
+  axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
+    // console.log(res)
+    router.push('/team')
   })
 }
 const getGlobal = computed(() => {
@@ -50,7 +73,6 @@ watch(getGlobal, (newVal, oldVal) => {
   getMessage();
 }, {immediate: true, deep: true})
 
-
 onMounted(() => {
   getMessage()
 })
@@ -61,6 +83,7 @@ defineExpose({
 <style scoped>
 .Team {
   /*height: 70px;*/
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: row;
