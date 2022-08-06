@@ -77,9 +77,6 @@ function renderIcon(icon: Component) {
 }
 
 export default defineComponent({
-  data() {
-    return {}
-  },
   components: {
     Icon,
     Add12Filled,
@@ -118,7 +115,7 @@ export default defineComponent({
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
             console.log(res)
-            let array = ref(res.data.data.items)
+            const array = ref(res.data.data.items)
             dataList = res.data.data.items
             // console.log(res.data.data.items)
             total.value = res.data.data.total
@@ -142,6 +139,8 @@ export default defineComponent({
                   }
               )
             }
+            // emit("ID", array.value[0].ID)
+            // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
     }
     const changePage = (page: number) => {

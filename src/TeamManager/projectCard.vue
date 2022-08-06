@@ -20,65 +20,65 @@
 </template>
 <script lang="ts">
 import {CloseRound} from '@vicons/material'
-import {EditTwotone,EditOutlined} from '@vicons/antd'
+import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
-import { Icon } from '@vicons/utils'
-import { defineComponent } from 'vue'
+import {Icon} from '@vicons/utils'
+import {defineComponent} from 'vue'
 import router from '@/router';
-import { useRoute} from 'vue-router'
+import {useRoute} from 'vue-router'
 import utils from '../Utils'
 
 
 export default defineComponent({
-    name: 'PageCard',
-    props: {
-        name: String,
-        img: Image,
-        date: String,
-        id: {
-            default:0
-        },
+  name: 'PageCard',
+  props: {
+    name: String,
+    img: Image,
+    date: String,
+    id: {
+      default: 0
     },
-    components: {
-        CloseRound,
-        Icon,
-        Edit16Regular,
-    },
-    setup(props, {emit}) {
-        const route = useRoute()
-        const gotoProject=()=>{
-            console.log("go")
-            utils.setCookie('proID',props.id)
-            utils.setCookie('proNAME',props.name)
-            utils.setCookie('proTeam',route.query.teamID)
+  },
+  components: {
+    CloseRound,
+    Icon,
+    Edit16Regular,
+  },
+  setup(props, {emit}) {
+    const route = useRoute()
+    const gotoProject = () => {
+      console.log("go")
+      utils.setCookie('proID', props.id)
+      utils.setCookie('proNAME', props.name)
+      utils.setCookie('proTeam', route.query.teamID)
 
-            console.log("proID:"+utils.getCookie("proID"))
-            console.log("proName:"+utils.getCookie("proName"))
-            console.log("proTeam:"+utils.getCookie("proTeam"))
-            router.replace({name:'project'})
-        }
-        const renameThis=()=>{
-            event.stopPropagation();
-            console.log("rename"+props.id)
-            emit("rename")
-        }
-        const delThis=()=>{
-            event.stopPropagation();
-            console.log("del"+props.id)
-            emit("del")
-        }
-        return{
-            gotoProject,
-            renameThis,
-            delThis,
-            route
-        }
-    },
+      // console.log("proID:" + utils.getCookie("proID"))
+      // console.log("proName:" + utils.getCookie("proName"))
+      // console.log("proTeam:" + utils.getCookie("proTeam"))
+      router.replace({name: 'project'})
+    }
+    const renameThis = () => {
+      event.stopPropagation();
+      console.log("rename" + props.id)
+      emit("rename")
+    }
+    const delThis = () => {
+      event.stopPropagation();
+      console.log("del" + props.id)
+      emit("del")
+    }
+    return {
+      gotoProject,
+      renameThis,
+      delThis,
+      route
+    }
+  },
 })
 </script>
 
 <style scoped>
-*{
+* {
   transition: 0.2s;
 }
 .card{
@@ -95,8 +95,9 @@ export default defineComponent({
     border: 1px solid #A7AFBE;
     cursor:pointer;
 }
-.card:hover .del,.card:hover .rename{
-    display: flex;
+
+.card:hover .del, .card:hover .rename {
+  display: flex;
 }
 .img{
     width:100%;
@@ -124,20 +125,22 @@ export default defineComponent({
     line-height: 32px;
     text-overflow:ellipsis;
 
-    overflow:hidden;
-    white-space:nowrap;
+  overflow: hidden;
+  white-space: nowrap;
 
-    color: #E2E4E9;
+  color: #E2E4E9;
 }
-.del,.rename{
-    color:#A7AFBE;
-    display:none;
+
+.del, .rename {
+  color: #A7AFBE;
+  display: none;
 }
-.desc{
-    display:flex;
-    text-overflow:ellipsis;
-    overflow:hidden;
-    white-space:nowrap;
+
+.desc {
+  display: flex;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 
     color:#A7AFBE;
     font-size: 12px;

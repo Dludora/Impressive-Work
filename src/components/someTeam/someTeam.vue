@@ -126,8 +126,6 @@ export default defineComponent({
                   to:
                   // name: 'teamMembers',
                       '/team/teammembers?teamID=' + teamID.value
-
-
                 },
                 {default: () => '成员'}
             ),
@@ -141,7 +139,6 @@ export default defineComponent({
                 {
                   to:
                       '/team/teamsettings?teamID=' + teamID.value
-
                 },
                 {default: () => '设置'}
             ),
@@ -150,7 +147,7 @@ export default defineComponent({
       },
     ]
     const router = useRouter()
-    let teamID = ref(-1)
+    let teamID = ref('')
     const com = ref(null)
     const showModalRef = ref(false)
     const headers = {
@@ -161,15 +158,11 @@ export default defineComponent({
       description: "",
     })
     const getID = (msg: any) => {
-      console.log("father get:" + msg)
-      teamID.value = parseInt(msg)
-
-
-      console.log("father push" + teamID.value)
-      let tID = (teamID.value)
-      // router.push({path:'/team/teamProjects',
-      //   query:{teamID:tID}
-      // })
+      teamID.value = msg
+      let tID = teamID.value
+      router.push({path:'/team/teamProjects',
+        query:{teamID:tID}
+      })
     }
     const ruleName = {
       required: true,
