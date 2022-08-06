@@ -1,26 +1,30 @@
 <template>
   <n-config-provider :theme="theme">
-    <div class="nav">
-      <!-- <div class="logo" @click="toMain"></div> -->
-      <div class="user-info">
-        <!-- <div class="avatar">
-          <n-avatar class="pic">
-            {{ profile.nickname }}
-          </n-avatar>
-        </div> -->
-        <div class="lineI"></div>
-        <SvgI size="50" border="0.34" pricolor="none" secolor="none" class="signI"/>
-        <div class="user">
-          <p>{{ profile.nickname }}</p>
-          <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
+  <div class="nav">
+    <!-- <div class="logo" @click="toMain"></div> -->
+    <div class="user-info">
+      <!-- <div class="avatar">
+        <n-avatar class="pic">
+          {{ profile.nickname }}
+        </n-avatar>
+      </div> -->
+      <div class="lineI"></div>
+      <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
+      <div class="user">
+        <p>{{ profile.nickname }}</p>
+        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
+      </div>
+    </div>
+    <div class="teamlist">
+        <div class="teamsHead">
+          <Icon size="18" style="margin: 0px 8px 0 0;">
+          <BoxMultiple20Regular/>
+          </Icon>
+          团队和项目
         </div>
-      </div>
-      <div class="teamsHead">
-        团队和项目
-      </div>
-      <!-- <div style="width:100%;"> -->
+      <div class="divline"/>
       <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
-        <div class="teams">
+        <div class="teams"> 
           <div class="team">
             <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
           </div>
@@ -34,7 +38,8 @@
           </div>
         </div>
       </n-scrollbar>
-      <!-- </div> -->
+      <div class="divline"/>
+    </div>
       <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
                     show-quick-jumper
@@ -45,7 +50,7 @@
           请回答
         </template>
       </n-pagination>
-    </div>
+      </div>
   </n-config-provider>
 </template>
 
@@ -56,8 +61,8 @@ import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
 import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
-import {Icon} from '@vicons/utils'
-import {Add12Filled} from '@vicons/fluent'
+import { Icon } from '@vicons/utils'
+import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
@@ -76,6 +81,7 @@ export default defineComponent({
     Icon,
     Add12Filled,
     SvgI,
+    BoxMultiple20Regular,
   },
   setup(props, {emit}) {
     const headers = {
@@ -190,24 +196,11 @@ export default defineComponent({
   height: 100%;
   overflow: hidden;
 }
-
-.logo {
-  width: 200px;
-  height: 139px;
-  /*background-color: rgba(217, 217, 217, 1);*/
-  background-image: url("@/assets/slogan2048x705.png");
-  background-size: contain;
-  /*text-align: center;
-  line-height: 56px;*/
-  margin-top: 20px;
-  background-repeat: no-repeat;
-}
-
 .user-info {
   display: flex;
   width: 100%;
-  height: 70px;
-  margin-top: 30px;
+  height: 50px;
+  margin-top: 25px;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
@@ -252,10 +245,16 @@ export default defineComponent({
 }
 
 .teamsHead {
-  margin: 30px 0 0 4px;
-  color: #FFFFFF;
-  font-size: 16px;
-  font-weight: 700;
+  margin: 23px 16px 0 4px;
+  color: #E2E4E9;
+  font-size: 12px;
+  line-height: 42px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  /*font-weight:700;*/
+  /*border-bottom: 1px solid #414958;*/
 }
 
 .src {
@@ -329,9 +328,9 @@ export default defineComponent({
   top: calc(100% - 80px);*/
   padding: 5px 0 20px;
 }
-
-.signI {
-  width: 0;
+.signI{
+  overflow: hidden;
+  width:0;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
   transition-duration: 0.5s;
 }
@@ -348,8 +347,29 @@ export default defineComponent({
   transition: 0.2s;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
 }
-
-.user-info:hover .lineI {
-  height: 0;
+.user-info:hover .lineI{
+  height:0;
+}
+.teamlist{
+  /* margin: 0 0 190px 0; */
+  overflow: overlay;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-items: stretch;
+}
+.teamlist:hover .divline{
+  background:#2B303B;
+}
+.teamlist:hover .teamsHead{
+  color:#fff;
+}
+.divline{
+  height:1px;
+  margin:0 12px 0 0;
+  background:#16181D;
+  transition-duration: 0.3s;
 }
 </style>

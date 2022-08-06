@@ -1,20 +1,22 @@
 <template>
-  <div class="card" @click="gotoProject">
-    <div class="img">
+    <div class="card" @click="gotoProject">
+        <div class="img">
+        </div>
+        <div class="bottom">
+            <div class="name">
+            <Icon size="20" class="rename">
+                <Edit16Regular @click="renameThis"/>
+            </Icon>
+            {{name}}
+            </div>
+        </div>
+        <div class="desc">
+            创建于&nbsp;{{date}}
+            <Icon size="20" class="del">
+                <CloseRound @click="delThis"/>
+            </Icon>
+        </div>
     </div>
-    <div class="bottom">
-      <div class="name">{{ name }}</div>
-      <Icon size="20" class="rename">
-        <Edit16Regular @click="renameThis"/>
-      </Icon>
-    </div>
-    <div class="desc">
-      创建于&nbsp;{{ date }}
-      <Icon size="20" class="del">
-        <CloseRound @click="delThis"/>
-      </Icon>
-    </div>
-  </div>
 </template>
 <script lang="ts">
 import {CloseRound} from '@vicons/material'
@@ -79,18 +81,18 @@ export default defineComponent({
 * {
   transition: 0.2s;
 }
-
-.card {
-  width: 300px;
-  height: 220px;
-  background-color: #2B303B;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
+.card{
+    width: 300px;
+    height: 220px;
+    /*background-color: #2B303B;*/
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 3px;
+    border: 1px solid #414958;
 }
-
-.card:hover {
-  background-color: #414958;
-  cursor: pointer;
+.card:hover{
+    background: #2B303B;
+    border: 1px solid #A7AFBE;
+    cursor:pointer;
 }
 
 .card:hover .del, .card:hover .rename {
@@ -115,15 +117,14 @@ export default defineComponent({
   height: 36px;
   align-items: center;
 }
-
-.name {
-  display: block;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 36px;
-  text-overflow: ellipsis;
+.name{
+    display:block;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 36px;
+    text-overflow:ellipsis;
 
   overflow: hidden;
   white-space: nowrap;
@@ -142,14 +143,14 @@ export default defineComponent({
   overflow: hidden;
   white-space: nowrap;
 
-  color: #A7AFBE;
-  font-size: 12px;
-  line-height: 18px;
-  height: 18px;
-  padding: 0 40px;
-
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  flex-direction: row;
+    color:#A7AFBE;
+    font-size: 12px;
+    line-height: 18px;
+    height: 18px;
+    /*padding: 0 40px;*/
+    
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    flex-direction: row;
 }
 </style>

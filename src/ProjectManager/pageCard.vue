@@ -1,12 +1,16 @@
 <template>
   <div class="card">
-    <div class="img">
-    </div>
+    <div class="img"/>
     <div class="bottom">
-      <div class="name" style="cursor: pointer" @click="openCard">{{ name }}</div>
-      <Icon size="20" class="del" @click="delCard">
-        <CloseRound/>
-      </Icon>
+      <SvgCreate class="svg-create" size="16" border="6" bordercolor="#A7AFBE" color="none" style="margin:10px;"/>
+      <div class="nameanddel">
+        <div class="name" style="cursor: pointer" @click="openCard">
+        {{ name }}
+        </div>
+        <Icon size="20" class="del" @click="delCard">
+          <CloseRound/>
+        </Icon>
+      </div>
     </div>
   </div>
 </template>
@@ -16,7 +20,7 @@ import {
   CloseRound
 } from '@vicons/material'
 import {Icon} from '@vicons/utils'
-
+import SvgCreate from "@/components/svgCreate.vue"
 export default {
   name: 'PageCard',
   props: {
@@ -26,6 +30,7 @@ export default {
   components: {
     CloseRound,
     Icon,
+    SvgCreate,
   },
   setup(props, {emit}) {
     const delCard = () => {
@@ -53,36 +58,50 @@ export default {
   background-color: #2B303B;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 3px;
+  padding:1px;
 }
 
 .card:hover {
-  background-color: #414958;
+  background-color: #A7AFBE;
   /*cursor:pointer;*/
 }
 
 .card:hover .del {
   display: flex;
 }
+.card:hover .svg-create {
+  display: flex;
+  transform: rotate(30deg);
+  transition-timing-function: ease-out;
+}
 
 .img {
   width: 100%;
-  height: 105px;
+  height: 104px;
   background-color: #A7AFBE;
   box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 3px 3px 0px 0px;
 }
 
 .bottom {
+  background-color: #16181D;
+  border-radius: 0px 0px 3px 3px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  /*padding: 0 21px;*/
+  width: 100%;
+  height: 36px;
+  /*align-items: center;*/
+}
+.nameanddel{
+  width: 156px;
   display: flex;
   justify-content: space-between;
   flex-direction: row;
   flex-wrap: nowrap;
-  padding: 0 21px;
-  width: 150px;
-  height: 35px;
-  align-items: center;
 }
-
 .name {
   display: block;
   font-family: 'Inter';
@@ -101,7 +120,7 @@ export default {
 .del {
   color: #A7AFBE;
   display: none;
-
+  margin: 8px;
   cursor: pointer;
 }
 </style>
