@@ -276,6 +276,7 @@ const sideMenuOptions: MenuOption[] = [
 .divline{
     height:1px;
     margin:0 60px;
-    background:#414958;
+    /* background: #414958; */
+    border-bottom: 1px solid #414958;
 }
 </style>
