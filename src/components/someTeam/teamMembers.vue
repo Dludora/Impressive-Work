@@ -1,17 +1,17 @@
 <template>
   <div class="list">
-  <div v-for="member in members" :key="member" class="member-card">
-    <div style="display:flex;align-items: center;flex: 1;">
-      <!-- <div class="member-avatar">
-        <n-avatar round class="avatar"/>
-      </div> -->
-      <div class="avatar">{{member.nickname[0]}}</div>
-      <div class="member-message">
-        <p id="name">{{member.nickname}}({{member.name}})</p>
-        <p id="email">{{member.email}}</p>
+    <div v-for="member in members" :key="member" class="member-card">
+      <div style="display:flex;align-items: center;flex: 1;">
+        <!-- <div class="member-avatar">
+          <n-avatar round class="avatar"/>
+        </div> -->
+        <div class="avatar">{{ member.nickname[0] }}</div>
+        <div class="member-message">
+          <p id="name">{{ member.nickname }}({{ member.name }})</p>
+          <p id="email">{{ member.email }}</p>
+        </div>
       </div>
-    </div>
-    <div class="tag" style="flex: 2; line-height: 50px; text-align: center;">
+      <div class="tag" style="flex: 2; line-height: 50px; text-align: center;">
         <n-config-provider :theme="theme">
           <n-tag type="success" size="large" round v-if="member.identify===2">
             创建者
@@ -25,9 +25,13 @@
         </n-config-provider>
       </div>
       <div class="member-operate" style="flex: 3">
-        <Icon style="margin-right:4px" class="star"
-              size="24" color="#FFFFFF" v-if="showAdmin(member.identify)">
-          <UserCertification @click="admin(member.ID, member.identify)"/>
+        <Icon style="margin-right:8px" class="star"
+              size="24" color="#FFFFFF" v-if="showAdmin(member.identify) === 1">
+          <UserAdmin @click="admin(member.ID, member.identify)"/>
+        </Icon>
+        <Icon style="margin-right:8px" class="star"
+              size="24" color="#FFFFFF" v-if="showAdmin(member.identify) === 2">
+          <UserX @click="admin(member.ID, member.identify)"/>
         </Icon>
         <Icon v-if="showRemove(member.identify)" @click="remove(member.ID)" id="close" size="32" color="#FFFFFF">
           <CloseOutline/>
@@ -55,8 +59,8 @@
         @negative-click="onNegativeClick"
     >
       <n-form>
-        <n-form-item label="邀请用户的邮箱" :rule="rule" :render-feedback="formatFeedback">
-          <n-input v-model:value="Email" @keydown.enter.prevent/>
+        <n-form-item label="邀请用户的邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
+          <n-input v-model:value="Email" @keydown.enter.prevent placeholder="请输入被邀请者的邮箱"/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -66,11 +70,12 @@
 <script setup lang="ts">
 import {PlusOutlined} from "@vicons/antd";
 import {UserCertification} from "@vicons/carbon";
-import {IosStarOutline, IosStar} from "@vicons/ionicons4"
+import {UserAdmin} from "@vicons/carbon"
+import {UserX} from "@vicons/tabler"
 import {CloseOutline} from "@vicons/ionicons5"
 import {Icon} from "@vicons/utils";
 import axios from 'axios'
-import {onMounted, ref, computed, watch} from 'vue'
+import {onMounted, ref, computed, watch, h} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
 import {darkTheme, useMessage} from "naive-ui"
@@ -119,7 +124,23 @@ const members = ref([
   },
 
 ])
-
+const formatFeedback = (raw: string | undefined) => {
+  h('div', {style: 'color: green'}, [raw + '而且是绿的'])
+}
+const ruleEmail = {
+  required: true,
+  validator() {
+    if (email.value.length === 0) {
+      return new Error("邮箱不能为空")
+    } else {
+      const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+      if (!reg.test(email.value)) {
+        return new Error('请输入有效的邮箱')
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
 const getList = () => {
   let url = '/team/' + route.query.teamID + '/members?page=0&size=20'
   axios.get(url, {headers: headers}).then(res => {
@@ -169,9 +190,11 @@ const remove = (ID) => {
 }
 const showAdmin = (identify) => {
   if (myIdentify.value === 2 && identify === 0) {
-    return true;
+    return 1;
+  } else if (myIdentify.value === 2 && identify === 1) {
+    return 2;
   } else {
-    return false
+    return 3;
   }
 }
 
@@ -201,13 +224,14 @@ const admin = (id, op) => {
 const getGlobal = computed(() => {
   return route.query.teamID
 })
+
 watch(getGlobal, (newVal, oldVal) => {
   console.log("value change" + newVal)
   getList()
 }, {immediate: true, deep: true})
+
 onMounted(() => {
   getList()
-
 })
 
 </script>

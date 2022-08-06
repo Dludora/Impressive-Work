@@ -132,10 +132,12 @@ const getList = () => {
 const getGlobal = computed(() => {
   return router.query.teamID
 })
+
 watch(getGlobal, (newVal, oldVal) => {
   console.log("value change" + newVal)
   getList()
 }, {immediate: true, deep: true})
+
 onMounted(() => {
   console.log("project get :" + router.query.teamID)
   console.log(router.query.teamID)
