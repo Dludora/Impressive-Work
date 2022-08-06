@@ -27,6 +27,7 @@
         <div class="teams"> 
           <div class="team">
             <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
+            <TandP :options="sideMenuOptions" @update:value="handleUpdateValue"/>
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -42,13 +43,12 @@
     </div>
       <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
-                    show-quick-jumper
-                    :page-slot="3" size="small"
+                    :page-slot="4" size="small"
                     :on-update:page="changePage"
                     id="pagination">
-        <template #goto>
+        <!-- <template #goto>
           请回答
-        </template>
+        </template> -->
       </n-pagination>
       </div>
   </n-config-provider>
@@ -67,6 +67,7 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 import SvgI from '@/components/svgI.vue'
+import TandP from '@/components/Team/teamAndProjects.vue'
 
 
 const sideMenuOptions = ref([] as MenuOption[])
@@ -82,6 +83,7 @@ export default defineComponent({
     Add12Filled,
     SvgI,
     BoxMultiple20Regular,
+    TandP,
   },
   setup(props, {emit}) {
     const headers = {
@@ -327,6 +329,7 @@ export default defineComponent({
   /*position: absolute;
   top: calc(100% - 80px);*/
   padding: 5px 0 20px;
+  justify-content: center;
 }
 .signI{
   overflow: hidden;
