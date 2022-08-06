@@ -9,6 +9,8 @@
 
     <n-button @click="UML">UML</n-button>
 
+    <n-button @click="tipTap">tiptap</n-button>
+
     <img src="https://soft2-1251130379.cos.ap-beijing.myqcloud.com/exampleobject.jpg"/>
   </n-space>
 </template>
@@ -55,6 +57,10 @@ const programView = () => {
 
 const UML = () => {
   router.push('/UML');
+}
+
+const tipTap = () => {
+  router.push('/tipTap');
 }
 
 </script>

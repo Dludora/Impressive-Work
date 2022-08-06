@@ -187,6 +187,7 @@ const login = () => {
                 console.log("登录成功=>")
                 if (res2.data.msg === "成功")
                   message.info("欢迎 " + res2.data.data.nickname)
+                  utils.setCookie('UserName',res2.data.data.nickname)
               })
               axios.defaults.headers.common['Authorization'] = res.data.data;
               utils.setCookie('Authorization', res.data.data)
