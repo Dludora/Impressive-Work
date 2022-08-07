@@ -1,5 +1,61 @@
 <template>
-  <n-space>
+  <div class="mainframe">
+    <div class="figure"/>
+    <div class="gradient"/>
+    <headNav/>
+    <n-scrollbar @scroll="scroll" ref="scroller" style="max-height:100%">
+      <div class="homepage">
+        <div class="wide vastitle">
+          <div class="describe">
+            <div class="brand">
+            </div>
+            <a>筹备人马</a>，主导软件设计<br/>
+            参与其他优秀开发者的<a>项目</a>也是一种乐趣<br/>
+            尝试<a>原型设计工具</a>、协作文档编辑器<br/>
+            提升工作效率<br/>
+            在浪潮中留下你的<a>印迹</a><br/>
+          </div>
+          <div @click="teamMain" class="startnow">
+            马上开始
+            <div class="rightarrow"/>
+          </div>
+        </div>
+        <div class="wide feature">
+          <div class="pic teampic"/>
+          <div class="essay">
+            <div class="describe">
+              <!-- <div class="brand"> -->
+              <!-- </div> -->
+              组建<a>团队</a>、邀请其他开发者加入<br/>
+              共同构建一个或多个<a>项目</a><br/>
+            </div>
+            <div @click="programView" class="startnow">
+              现在尝试
+              <div class="rightarrow"/>
+            </div>
+          </div>
+        </div>
+        <div class="wide feature">
+          <div class="essay">
+            <div class="describe">
+              <!-- <div class="brand"> -->
+              <!-- </div> -->
+              使用Impress Work的页面编辑器<br/>
+              帮助完成<a>原型设计</a><br/>
+              配合内嵌的tipTap文档编辑器<br/>
+              让<a>文档管理</a>也不是难题<br/>
+            </div>
+            <div @click="programView" class="startnow">
+              现在尝试
+              <div class="rightarrow"/>
+            </div>
+          </div>
+          <div class="pic editorpic"/>
+        </div>
+      </div>
+    </n-scrollbar>
+  </div>
+  <!-- <n-space>
     <n-button @click="regisRouter">登录/注册</n-button>
     <n-button @click="logout">登出</n-button>
 
@@ -9,16 +65,15 @@
 
     <n-button @click="UML">UML</n-button>
 
-    <n-button @click="tipTap">tiptap</n-button>
-
-    <img src="https://soft2-1251130379.cos.ap-beijing.myqcloud.com/exampleobject.jpg"/>
-  </n-space>
+  </n-space> -->
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import {useMessage} from "naive-ui"
+import headNav from "@/components/headNav.vue"
 import utils from "@/Utils";
 const router = useRouter();
 const message = useMessage();
@@ -62,9 +117,141 @@ const UML = () => {
 const tipTap = () => {
   router.push('/tipTap');
 }
-
+const scroller=ref()
+const scroll =(e:Event)=>{
+  let offsetY=document.getElementsByClassName('brand')[0].getBoundingClientRect().y
+  let figure=document.getElementsByClassName('figure')[0]
+  console.log(offsetY)
+  if(offsetY<0){
+    // figure.setAttribute('opacity',(100-offsetY)/100);
+    let alpha=(100+offsetY)/100
+    if(alpha>0.2)
+      figure.style.opacity=(100+offsetY)/100
+    else figure.style.opacity=0.2
+  }else figure.style.opacity=1
+}
 </script>
 
-<style>
-
+<style scoped>
+*{
+  transition-duration:0.5s;
+  transition-timing-function: ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+.figure{
+  transition-duration:1.2s;
+  width:100%;
+  height:100%;
+  background-image: url("@/assets/titlefigure.jpg");
+  background-size: cover;
+  position: absolute;
+  z-index: -1;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.gradient{
+  width:100%;
+  height:100%;
+  position: absolute;
+  z-index: -1;
+  background: linear-gradient(to top, #16181Dff, 37%, #16181D00);
+}
+.width{
+  width:100%;
+}
+.homepage{
+  margin:0 100px;
+  /*width:100%;
+  height:1084px;*/
+}
+.describe{
+  color:#fff;
+  font-size:18px;
+  line-height: 36px;
+  font-weight: 100;
+}
+.describe a{
+  color:#D42B39;
+  font-weight: 400;
+}
+.brand{
+  width:100%;
+  height:84px;
+  margin-bottom: 30px;
+  background-image: url("@/assets/brand1685x256.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+}
+.mainframe{
+    width: 100%;
+    height: 100%;
+    /* max-height: 100%; */
+    /* overflow: auto; */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+.vastitle{
+  margin:210px 8px 0;
+  display:flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.feature{
+  margin:160px 8px 0;
+  display:flex;
+  align-items: stretch;
+  justify-content: space-between;
+}
+.feature .essay,.feature .pic{
+  margin:30px;
+}
+.pic{
+  height:360px;
+  width:400px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
+}
+.startnow{
+  padding:4px 24px;
+  display:flex;
+  color:#fff;
+  font-weight: 100;
+  font-size:22px;
+  align-items: center;
+  border: 1px solid #FFFFFF00;
+}
+.startnow:hover{
+  cursor:pointer;
+  border: 1px solid #FFFFFFFF;
+  color:#D42B39;
+  text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.3);
+}
+.startnow:hover .rightarrow{
+  border-right: 1.4px solid #D42B39;
+  border-bottom: 1.4px solid #D42B39;
+}
+.rightarrow{
+  height:16px;
+  width:16px;
+  margin:6px;
+  border-right: 1.4px solid #fff;
+  border-bottom: 1.4px solid #fff;
+  transform: rotate(-45deg);
+}
+.essay{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.teampic{
+  background-image: url("@/assets/teamup.jpg");
+}
+.editorpic{
+  background-image: url("@/assets/creation.jpg");
+}
 </style>

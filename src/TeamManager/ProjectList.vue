@@ -212,7 +212,9 @@ watch(getGlobal, (newVal,oldVal)=>{
   getList()
 },{immediate:true,deep:true})
 onMounted(()=>{
+  if(typeof(route.query.teamID)!="undefined")
   teamID.value=parseInt(route.query.teamID.toString())
+
   if(typeof(route.query.searchText)!="undefined")
   keyword.value = route.query.searchText.toString();
   getList()

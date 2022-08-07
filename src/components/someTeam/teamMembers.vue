@@ -34,7 +34,7 @@
               size="24" color="#FFFFFF" v-if="showAdmin(member.identify) === 2">
           <UserX @click="admin(member.ID, member.identify)"/>
         </Icon>
-        <Icon v-if="showRemove(member.identify)" @click="remove(member.ID)" id="close" size="32" color="#FFFFFF">
+        <Icon v-if="showRemove(member.identify)" @click="displayDel(member.ID,member.nickname)" id="close" size="32" color="#FFFFFF">
           <CloseOutline/>
         </Icon>
       </div>
@@ -65,6 +65,18 @@
         </n-form-item>
       </n-form>
     </n-modal>
+    <n-modal
+        v-model:show="showModalRefDel"
+        :mask-closable="false"
+        preset="dialog"
+        :title="'是否确认删除 '+nickDel"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="onPositiveClickDel"
+        @negative-click="onNegativeClickDel"
+    >
+
+    </n-modal>
   </n-config-provider>
 </div>
 </template>
@@ -90,6 +102,7 @@ const theme = darkTheme
 const route = useRoute();
 const message = useMessage();
 let showModalRef = ref(false)
+let showModalRefDel = ref(false)
 let teamID = ref()
 let Email = ref('')
 let email = ref('')
@@ -112,16 +125,29 @@ const onPositiveClick = () => {
   })
   showModalRef.value = false
 }
+let IDdel = ref(null)
+let nickDel = ref('')
+const onPositiveClickDel = () => {
+  remove(IDdel.value);
+  showModalRefDel.value = false
+}
 const onNegativeClick = () => {
   showModalRef.value = false
 };
-
+const onNegativeClickDel = () => {
+  showModalRefDel.value = false
+};
+const displayDel = (ID,nick) => {
+  nickDel.value = nick;
+  showModalRefDel.value = true;
+  IDdel.value = ID;
+}
 const members = ref([
   {
     ID: 0,
-    nickname: '获取成员列表中...',
+    nickname: '获取中.',
     name: '',
-    email: '宝贝,正在加载中 请稍后~',
+    email: '请稍后~',
     identity: 0
   },
 

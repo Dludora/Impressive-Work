@@ -12,16 +12,18 @@
     </div>
     <div class="teamlist">
         <div class="teamsHead">
-          <Icon size="18" style="margin: 0px 8px 0 0;">
+          <Icon size="18" style="margin:12px;">
           <BoxMultiple20Regular/>
           </Icon>
-          团队和项目
+           您的团队
         </div>
       <div class="divline"/>
-      <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
-        <div class="teams"> 
+      <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
+      <n-scrollbar>
+        <div class="teams">
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="0"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
+            <!-- <TandP :options="teamAndProjects" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -37,13 +39,12 @@
     </div>
       <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
-                    show-quick-jumper
-                    :page-slot="3" size="small"
+                    :page-slot="4" size="small"
                     :on-update:page="changePage"
                     id="pagination">
-        <template #goto>
+        <!-- <template #goto>
           请回答
-        </template>
+        </template> -->
       </n-pagination>
       </div>
   </n-config-provider>
@@ -54,7 +55,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink, useRouter} from "vue-router";
+import {RouterLink, useRoute} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import { Icon } from '@vicons/utils'
 import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
@@ -62,9 +63,12 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 import SvgI from '@/components/svgI.vue'
+import { menuLight } from 'naive-ui/es/menu/styles';
+import TandP from '@/components/Team/teamAndProjects.vue'
 
 
 const sideMenuOptions = ref([] as MenuOption[])
+let teamAndProjects=ref([])
 let dataList = ref([{ID: 0}])
 
 function renderIcon(icon: Component) {
@@ -77,8 +81,11 @@ export default defineComponent({
     Add12Filled,
     SvgI,
     BoxMultiple20Regular,
+    // TandP,
   },
   setup(props, {emit}) {
+    const route = useRoute();
+    let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
@@ -117,8 +124,15 @@ export default defineComponent({
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
+            teamAndProjects.value.splice(0, teamAndProjects.value.length)
             for (let i = 0; i < array.value.length; i++) {
               let idd = array.value[i].ID
+              teamAndProjects.value.push({
+                link:'/team/teamprojects?teamID=' + idd,
+                name:array.value[i].name,
+                color:"#2350A9",
+                projects:[],
+              })
               sideMenuOptions.value.push(
                   {
                     label: () =>
@@ -130,11 +144,12 @@ export default defineComponent({
                             },
                             {default: () => array.value[i].name}
                         ),
-                    key: i,
+                    key: idd.toString(),
                     icon: renderIcon(Team)
                   }
               )
             }
+            
             // emit("ID", array.value[0].ID)
             // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
@@ -144,17 +159,24 @@ export default defineComponent({
     }
     onMounted(() => {
       load()
+      if(typeof(route.query.teamID)!="undefined")
+       menuKey.value=route.query.teamID.toString();
+       console.log("menuKey:"+menuKey.value)
       getAllTeams(0, 8)
     })
     return {
+      route,
+      menuKey,
       theme: darkTheme,
       addTeam,
       toMain,
       load,
       getAllTeams,
       handleUpdateValue(key: string, item: MenuOption) {
-        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
-        utils.setCookie('teamID', dataList[parseInt(JSON.stringify(key))].ID)
+        emit("ID", parseInt(key))
+        utils.setCookie('teamID', parseInt(key))
+        menuKey.value=key
+        emit("judgechild")
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
@@ -163,6 +185,7 @@ export default defineComponent({
       // 个人信息
       profile,
       sideMenuOptions,
+      teamAndProjects,
       defaultMenu,
       // 分页
       currentPage,
@@ -323,6 +346,7 @@ export default defineComponent({
   /*position: absolute;
   top: calc(100% - 80px);*/
   padding: 5px 0 20px;
+  justify-content: center;
 }
 .signI{
   overflow: hidden;
