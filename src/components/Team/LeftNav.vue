@@ -15,14 +15,14 @@
           <Icon size="18" style="margin:12px;">
           <BoxMultiple20Regular/>
           </Icon>
-          团队和项目
+           您的团队
         </div>
       <div class="divline"/>
       <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
       <n-scrollbar>
         <div class="teams">
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
             <TandP :options="teamAndProjects" @update:value="handleUpdateValue"/>
           </div>
           <div class="addTeam" @click="addTeam">
@@ -55,7 +55,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink, useRouter} from "vue-router";
+import {RouterLink, useRoute} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import { Icon } from '@vicons/utils'
 import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
@@ -63,6 +63,7 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 import SvgI from '@/components/svgI.vue'
+import { menuLight } from 'naive-ui/es/menu/styles';
 import TandP from '@/components/Team/teamAndProjects.vue'
 
 
@@ -83,6 +84,8 @@ export default defineComponent({
     TandP,
   },
   setup(props, {emit}) {
+    const route = useRoute();
+    let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
@@ -141,11 +144,12 @@ export default defineComponent({
                             },
                             {default: () => array.value[i].name}
                         ),
-                    key: i,
+                    key: idd.toString(),
                     icon: renderIcon(Team)
                   }
               )
             }
+            
             // emit("ID", array.value[0].ID)
             // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
@@ -155,17 +159,23 @@ export default defineComponent({
     }
     onMounted(() => {
       load()
+      if(typeof(route.query.teamID)!="undefined")
+       menuKey.value=route.query.teamID.toString();
+       console.log("menuKey:"+menuKey.value)
       getAllTeams(0, 8)
     })
     return {
+      route,
+      menuKey,
       theme: darkTheme,
       addTeam,
       toMain,
       load,
       getAllTeams,
       handleUpdateValue(key: string, item: MenuOption) {
-        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
-        utils.setCookie('teamID', dataList[parseInt(JSON.stringify(key))].ID)
+        emit("ID", parseInt(key))
+        utils.setCookie('teamID', parseInt(key))
+        menuKey.value=key
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })

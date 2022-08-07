@@ -119,9 +119,9 @@ const onNegativeClick = () => {
 const members = ref([
   {
     ID: 0,
-    nickname: '获取成员列表中...',
+    nickname: '获取中.',
     name: '',
-    email: '宝贝,正在加载中 请稍后~',
+    email: '请稍后~',
     identity: 0
   },
 
