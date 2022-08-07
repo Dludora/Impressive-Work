@@ -1,4 +1,5 @@
 <template>
+<div class="out">
   <div class="frame">
     <div class="side">
         <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
@@ -6,9 +7,26 @@
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
       <div class="three-cls">
+        <div class="clsL">
         <n-config-provider :theme="theme">
           <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
         </n-config-provider>
+        </div>
+        <div class="clsR">
+          <div class="search">
+        <n-input v-model:value="searchText" round placeholder="搜索项目" >
+        <template #suffix>
+            <n-button quaternary size="tiny" @click="clear" >
+            <Icon size="16">
+              <Backspace24Filled/>
+            </Icon>
+          </n-button>
+      </template></n-input>
+          </div>
+          <div class="search">
+        <n-button quaternary @click="search" >搜索</n-button>
+          </div>
+        </div>
       </div>
       <div class="divline"/>
       <div class="view">
@@ -18,24 +36,6 @@
       </div>
     </div>
   </div>
-  <!-- <n-layout has-sider>
-    <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
-    </n-layout-sider>
-    <n-layout :native-scrollbar="false">
-      <n-layout-header>
-        <TeamHead style="margin-left: 30px"/>
-      </n-layout-header>
-      <n-layout-content>
-        <div class="menu">
-          <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout> -->
 
   <n-config-provider :theme="theme">
     <n-modal
@@ -58,21 +58,22 @@
       </n-form>
     </n-modal>
   </n-config-provider>
+</div>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
-
-
+import {Icon} from "@vicons/utils";
+import {Backspace24Filled} from "@vicons/fluent"
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
 import {RouterLink, useRouter, useRoute} from "vue-router";
-
+const router = useRouter();
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
@@ -83,7 +84,7 @@ import utils from "@/Utils";
 const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 
-const route = useRoute()
+
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -102,7 +103,9 @@ let profile = {
 export default defineComponent({
   components: {
     LeftNav,
-    TeamHead
+    TeamHead,
+    Icon,
+    Backspace24Filled
   },
   setup() {
     let menuOptions: MenuOption[] = [
@@ -148,11 +151,17 @@ export default defineComponent({
       },
     ]
     const router = useRouter()
+    const route = useRoute()
+    let searchText = ref('')
     let teamID = ref('')
     const com = ref(null)
     const showModalRef = ref(false)
     const headers = {
       Authorization: utils.getCookie('Authorization')
+    }
+    const clear= () => {
+      searchText.value = ''
+      search()
     }
     const modelRef = ref({
       name: "",
@@ -165,6 +174,13 @@ export default defineComponent({
         query:{teamID:tID}
       })
     }
+    const search = () =>{
+    router.push({
+      path:"/team/teamprojects",
+      query:{teamID:route.query.teamID,
+            searchText:searchText.value}
+    })
+}
     const ruleName = {
       required: true,
       validator() {
@@ -202,6 +218,10 @@ export default defineComponent({
     onMounted(() => {
     })
     return {
+      clear,
+      searchText,
+      route,
+      search,
       theme: darkTheme,
       menuOptions,
       getChildList,
@@ -235,6 +255,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.search{
+  display: inline-block;
+}
+.clsL,.clsR{
+  display: inline-block;
+}
+
+.clsR{
+  width: 450px;
+  margin-left: 50px;
+  vertical-align: top;
+}
 .n-layout {
   height: calc(100%);
 }
