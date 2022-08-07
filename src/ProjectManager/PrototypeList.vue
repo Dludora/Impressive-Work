@@ -284,10 +284,10 @@ const exportLayout =() => {
     font-family: 'Inter';
     font-style: normal;
     font-weight: 400;
-    font-size: 16px;
-    line-height: 29px;
+    font-size: 12px;
+    line-height: 28px;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
 
     display:flex;
     flex-wrap: nowrap;
@@ -297,12 +297,12 @@ const exportLayout =() => {
     color: #414958;
 }
 .buttons{
-    /*margin-right: 10px;*/
-}
-.newpage{
     margin-right: 10px;
 }
+.newpage{
+    /*margin-right: 10px;*/
+}
 .layout{
-  margin:39px 43px 0 61px;
+  margin:20px 50px 0 60px;
 }
 </style>

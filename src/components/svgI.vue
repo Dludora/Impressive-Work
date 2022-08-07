@@ -47,8 +47,8 @@ export default defineComponent({
 
 <style scoped>
 .svg-icon{
-    /*width: 81px;*/
-    overflow: hidden;
+    /*width: 81px;
+    overflow: hidden;*/
     display: flex;
     align-items: center;
     flex-direction: column;

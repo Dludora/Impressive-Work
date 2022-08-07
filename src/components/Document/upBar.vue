@@ -1,10 +1,10 @@
 <template>
   <div class="up">
     <div class="pro-name">
-      项目: {{programname}}
+      {{programname}}
     </div>
     <div class="pro-des">
-      来自团队 {{teamname}}
+      来自 {{teamname}} 的项目
     </div>
   </div>
 </template>
@@ -54,12 +54,12 @@ const headers = {
   /*height: 100%;*/
   top: 0px;
 
-  background: #666f83;
+  /*background: #666f83;*/
 }
 
 .pro-name{
   position: relative;
-  height: 22px;
+  /*height: 22px;*/
   top: 0px;
 
   display: inline-block;
@@ -69,8 +69,8 @@ const headers = {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
-  font-size: 24px;
-  /*line-height: 44px;*/
+  font-size: 20px;
+  line-height: 30px;
 
   color: #FFFFFF;
 
@@ -79,14 +79,14 @@ const headers = {
 
 .pro-des{
   position: relative;
-  height: 24px;
+  /*height: 24px;*/
   top: 6px;
 
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
-  /*line-height: 24px;*/
+  line-height: 20px;
   display: flex;
   align-items: flex-end;
 

@@ -1,22 +1,43 @@
 <template>
-  <n-layout has-sider >
+  <div class="frame">
+    <div class="side">
+        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+    </div>
+    <div class="main">
+      <TeamHead style="padding:25px 60px 23px"/>
+      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
+      <div class="three-cls">
+        <n-config-provider :theme="theme">
+          <n-menu mode="horizontal" :options="menuOptions"/>
+        </n-config-provider>
+      </div>
+      <div class="divline"/>
+
+      <div class="view">
+        <n-scrollbar style="max-height:100%">
+            <router-view/>
+        </n-scrollbar>
+      </div>
+    </div>
+  </div>
+  <!-- <n-layout has-sider>
     <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true" />
+      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </n-layout-sider>
     <n-layout :native-scrollbar="false">
       <n-layout-header>
         <TeamHead style="margin-left: 30px"/>
       </n-layout-header>
-      <n-layout-content >
+      <n-layout-content>
         <div class="menu">
           <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions"/>
+            <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
           </n-config-provider>
         </div>
         <router-view/>
       </n-layout-content>
     </n-layout>
-  </n-layout>
+  </n-layout> -->
 
   <n-config-provider :theme="theme">
     <n-modal
@@ -61,10 +82,10 @@ import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 import utils from "@/Utils";
 
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
+
 const route = useRoute()
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -108,8 +129,6 @@ export default defineComponent({
                   to:
                   // name: 'teamMembers',
                       '/team/teammembers?teamID=' + teamID.value
-
-
                 },
                 {default: () => '成员'}
             ),
@@ -123,7 +142,6 @@ export default defineComponent({
                 {
                   to:
                       '/team/teamsettings?teamID=' + teamID.value
-
                 },
                 {default: () => '设置'}
             ),
@@ -132,24 +150,22 @@ export default defineComponent({
       },
     ]
     const router = useRouter()
-    let teamID = ref(-1)
+    let teamID = ref('')
     const com = ref(null)
     const showModalRef = ref(false)
-
+    const headers = {
+      Authorization: utils.getCookie('Authorization')
+    }
     const modelRef = ref({
       name: "",
       description: "",
     })
-    const getID = (msg:any) =>{
-        console.log("father get:"+msg)
-        teamID.value = parseInt(msg)
-
-
-        console.log("father push"+teamID.value)
-        let tID=(teamID.value)
-        // router.push({path:'/team/teamProjects',
-        //   query:{teamID:tID}
-        // })
+    const getID = (msg: any) => {
+      teamID.value = msg
+      let tID = teamID.value
+      router.push({path:'/team/teamProjects',
+        query:{teamID:tID}
+      })
     }
     const ruleName = {
       required: true,
@@ -179,15 +195,14 @@ export default defineComponent({
         'src': profile.src,
         'introduction': modelRef.value.description
       }, {headers: headers}).then(res => {
-        console.log(res)
+        // console.log(res)
         getChildList.value.getAllTeams(0, 8)
         modelRef.value.name = ""
         modelRef.value.description = ""
       })
-      onMounted(() => {
-
-      })
     }
+    onMounted(() => {
+    })
     return {
       theme: darkTheme,
       menuOptions,
@@ -209,17 +224,14 @@ export default defineComponent({
       },
     }
   },
-  methods: {
-    load() {
-      axios.get('user/info', {headers: headers}).then(res => {
-        profile = res.data.data
-        utils.setCookie('userID', profile.ID)
-      })
-    },
-  },
-  created() {
-    this.load()
-  },
+  // methods: {
+  //   load() {
+  //
+  //   },
+  // },
+  // created() {
+  //   this.load()
+  // },
 })
 
 </script>
@@ -275,12 +287,18 @@ export default defineComponent({
 }
 
 .three-cls {
-  background: #16181D;
+  /*background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  /*position: absolute;*/
+  position: absolute;*/
   min-width: 100%;
   /*top:0%;*/
   padding: 0px 50px;
   z-index: 1;
+}
+.divline{
+    height:1px;
+    margin:0 60px;
+    /* background: #414958; */
+    border-bottom: 1px solid #414958;
 }
 </style>
