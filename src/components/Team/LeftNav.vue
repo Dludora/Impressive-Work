@@ -22,8 +22,8 @@
       <n-scrollbar>
         <div class="teams">
           <div class="team">
-            <!-- <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
-            <TandP :options="teamAndProjects" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
+            <!-- <TandP :options="teamAndProjects" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
