@@ -203,10 +203,18 @@ const login = () => {
   }
   let a = 0;
   axios.get('/user/info', {headers: headers}).then(res => {
+        let teamIDTemp;
         if (res.data.msg === "成功") {
           message.info("用户" + res.data.data.nickname + "已登录")
-          a = 1;
-          router.push('/team')
+           axios.get('/team/list',
+                                {headers: headers, params: {page: 0, size: 10}})
+                                .then(res => {
+                                  console.log("teamListforLogin"+res.data)
+                                  const array = ref(res.data.data.items)
+                                  teamIDTemp=array.value[0].ID;
+
+                                })
+                                router.push('/team/teamprojects?teamID='+teamIDTemp)
         } else {
           axios.post('/auth/token', {
                 'email': email.value,
@@ -217,7 +225,7 @@ const login = () => {
                     axios.defaults.headers.common['Authorization'] = res.data.data;
                     utils.setCookie('Authorization', res.data.data)
                     axios.get('/user/info').then(res2 => {
-                              let teamIDTemp;
+                              
                               if (res2.data.msg === "成功")
                                 message.info("欢迎 " + res2.data.data.nickname)
                                 utils.setCookie('UserName',res2.data.data.nickname)
