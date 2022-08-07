@@ -9,7 +9,7 @@
       <div class="three-cls">
         <div class="clsL">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions" default-value=""/>
+          <n-menu mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" default-value="" :value="judge"/>
         </n-config-provider>
         </div>
         <div class="clsR">
@@ -235,10 +235,16 @@ export default defineComponent({
     onMounted(() => {
      if(typeof(route.query.teamID)!="undefined")
      teamID.value=(route.query.teamID).toString();
-     let urlStr=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+     judge.value=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
      
     })
     return {
+       handleUpdateValue(key: string, item: MenuOption) {
+        judge.value=key
+        //     router.push({path:'/team/teamProjects',
+        //   query:{teamID:utils.getCookie("teamID")}
+        // })
+      },
       judge,
 
       clear,
