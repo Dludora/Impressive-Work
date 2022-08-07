@@ -246,9 +246,12 @@ router.beforeEach((to, from, next) => {
     if (to.meta.auth) {
         if (!token) {
             next({name: 'regisTer'})
+        } else {
+            next()
         }
     } else {
         next()
+
     }
 })
 
