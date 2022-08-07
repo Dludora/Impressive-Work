@@ -1,4 +1,5 @@
 <template>
+<div class="out">
   <div class="list">
     <div v-for="member in members" :key="member" class="member-card">
       <div style="display:flex;align-items: center;flex: 1;">
@@ -65,6 +66,7 @@
       </n-form>
     </n-modal>
   </n-config-provider>
+</div>
 </template>
 
 <script setup lang="ts">
