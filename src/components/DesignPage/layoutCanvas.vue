@@ -163,6 +163,26 @@ const initMoveable = () => {
       layoutElementParams[selectedId.value[0]].x = drag.translate[0];
       layoutElementParams[selectedId.value[0]].y = drag.translate[1];
       updateProps();
+    })
+    .on("resizeGroupStart", ({ events }) => {
+      events.forEach((ev, i) => {
+        ev.dragStart && ev.dragStart.set([
+            layoutElementParams[selectedId.value[i]].x,
+            layoutElementParams[selectedId.value[i]].y,
+          ]);
+      });
+    })
+    .on("resizeGroup", ({ events }) => {
+      events.forEach((ev, i) => {
+        layoutElementParams[selectedId.value[i]].x = ev.drag.translate[0];
+        layoutElementParams[selectedId.value[i]].y = ev.drag.translate[1];
+        layoutElementParams[selectedId.value[i]].width = ev.width;
+        layoutElementParams[selectedId.value[i]].height = ev.height;
+        updateTransform(
+          selected.value[i],
+          layoutElementParams[selectedId.value[i]]
+        );
+      });
     });
 
   /* scalable */
@@ -176,26 +196,33 @@ const initMoveable = () => {
     });
 
   /* rotatable */
-  moveable.on(
-    "rotate",
-    ({ target, rotation, transform}) => {
+  moveable
+    .on("rotate", ({ target, rotation, transform }) => {
       target!.style.transform = transform;
       layoutElementParams[selectedId.value[0]].rotation = rotation;
-    }
-  ).on("rotateGroupStart", ({ events }) => {
-    events.forEach((ev, i) => {
+    })
+    .on("rotateGroupStart", ({ events }) => {
+      events.forEach((ev, i) => {
         ev.set(layoutElementParams[selectedId.value[i]].rotation);
-        ev.dragStart && ev.dragStart.set([layoutElementParams[selectedId.value[i]].x,layoutElementParams[selectedId.value[i]].y]);
-    });
-}).on("rotateGroup", ({ events }) => {
-    events.forEach((ev, i) => {
+        ev.dragStart &&
+          ev.dragStart.set([
+            layoutElementParams[selectedId.value[i]].x,
+            layoutElementParams[selectedId.value[i]].y,
+          ]);
+      });
+    })
+    .on("rotateGroup", ({ events }) => {
+      events.forEach((ev, i) => {
         layoutElementParams[selectedId.value[i]].x = ev.drag.translate[0];
         layoutElementParams[selectedId.value[i]].y = ev.drag.translate[1];
         layoutElementParams[selectedId.value[i]].rotation = ev.rotation;
 
-        updateTransform(selected.value[i],layoutElementParams[selectedId.value[i]]);
+        updateTransform(
+          selected.value[i],
+          layoutElementParams[selectedId.value[i]]
+        );
+      });
     });
-});;
 
   /* warpable */
   let matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -313,14 +340,14 @@ const updateSelects = (data: elementParams) => {
 };
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
-  element!.style.width = data.width*scale + "px";
-  element!.style.height = data.height*scale + "px";
+  element!.style.width = data.width * scale + "px";
+  element!.style.height = data.height * scale + "px";
   console.log(data);
 
   element!.style.transform =
-    `translate(${data.x*scale}px,${data.y*scale}px)` +
-    ` scale(${data.scaleX},${data.scaleY})`
-  +` rotate(${data.rotation}deg)`;
+    `translate(${data.x * scale}px,${data.y * scale}px)` +
+    ` scale(${data.scaleX},${data.scaleY})` +
+    ` rotate(${data.rotation}deg)`;
 };
 
 const updateParams = (data: elementParams) => {
@@ -382,8 +409,12 @@ const destroy = () => {
       `/layout/${props.layoutId}/element/${layoutElementParams[el].id}`,
       { headers: headers }
     );
-    layoutElementParams.splice(el, 1);
   });
+  selectedId.value.sort();
+  for(var i=selectedId.value.length-1;i>=0;--i)
+  {
+    layoutElementParams.splice(selectedId.value[i],1);
+  }
   selected.value.splice(0);
   selectedId.value.splice(0);
   moveable.target = null;
@@ -593,7 +624,10 @@ const wheelScale = () => {
       // layoutElementParams[i]!.width *= scope;
       // layoutElementParams[i]!.height *= scope;
       layoutElementParams[i]!.fontSize *= scope;
-      updateTransform(document.getElementsByName("elements")[i],layoutElementParams[i]);
+      updateTransform(
+        document.getElementsByName("elements")[i],
+        layoutElementParams[i]
+      );
     }
     canvasTrans.x = (canvasTrans.x - e.clientX) * scope + e.clientX;
     canvasTrans.y = (canvasTrans.y - e.clientY) * scope + e.clientY;
