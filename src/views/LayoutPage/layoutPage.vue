@@ -163,7 +163,7 @@
             ></n-input>
           </div>
           <div
-            id="hPorperty"
+            id="wPorperty"
             class="porpertyBarInpUnit"
             v-show="property.type != 'text'"
           >
@@ -180,7 +180,7 @@
             ></n-input>
           </div>
           <div
-            id="yPorperty"
+            id="tPorperty"
             class="porpertyBarInpUnit"
             v-show="property.type == 'text'"
           >
