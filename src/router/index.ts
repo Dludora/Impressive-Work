@@ -14,7 +14,7 @@ import someTeam from "../components/someTeam/someTeam.vue";
 import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
-
+import teamDocuments from '../components/someTeam/teamDocument.vue'
 
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
@@ -155,6 +155,15 @@ const router = createRouter({
                         auth: true
                     },
                 },
+                {
+                    name: 'teamDocuments',
+                    path: 'teamDocuments',
+                    component: teamDocuments,
+                    meta: {
+                        auth: true
+                    }
+                }
+
             ]
         },
         {

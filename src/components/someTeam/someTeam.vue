@@ -1,7 +1,7 @@
 <template>
   <div class="frame">
     <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </div>
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
@@ -13,7 +13,7 @@
       <div class="divline"/>
       <div class="view">
         <n-scrollbar style="max-height:100%">
-            <router-view/>
+          <router-view/>
         </n-scrollbar>
       </div>
     </div>
@@ -76,6 +76,7 @@ import {RouterLink, useRouter, useRoute} from "vue-router";
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
+import {Document} from '@vicons/carbon'
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 
 import utils from "@/Utils";
@@ -112,7 +113,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamprojects?teamID=' + teamID.value
+                      '/team/teamProjects?teamID=' + teamID.value
                 },
                 {default: () => '项目'}
             ),
@@ -126,7 +127,7 @@ export default defineComponent({
                 {
                   to:
                   // name: 'teamMembers',
-                      '/team/teammembers?teamID=' + teamID.value
+                      '/team/teamMembers?teamID=' + teamID.value
                 },
                 {default: () => '成员'}
             ),
@@ -139,7 +140,20 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamsettings?teamID=' + teamID.value
+                      '/team/teamDocuments?teamID=' + teamID.value
+                },
+                {default: () => '文档'}
+            ),
+        key: 'go-to-documents',
+        icon: renderIcon(Document)
+      },
+      {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                  to:
+                      '/team/teamSettings?teamID=' + teamID.value
                 },
                 {default: () => '设置'}
             ),
@@ -161,8 +175,9 @@ export default defineComponent({
     const getID = (msg: any) => {
       teamID.value = msg
       let tID = teamID.value
-      router.push({path:'/team/teamProjects',
-        query:{teamID:tID}
+      router.push({
+        path: '/team/teamProjects',
+        query: {teamID: tID}
       })
     }
     const ruleName = {
@@ -293,10 +308,11 @@ export default defineComponent({
   padding: 0px 50px;
   z-index: 1;
 }
-.divline{
-    height:1px;
-    margin:0 60px;
-    /* background: #414958; */
-    border-bottom: 1px solid #414958;
+
+.divline {
+  height: 1px;
+  margin: 0 60px;
+  /* background: #414958; */
+  border-bottom: 1px solid #414958;
 }
 </style>
