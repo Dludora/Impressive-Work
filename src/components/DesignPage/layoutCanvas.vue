@@ -409,8 +409,12 @@ const destroy = () => {
       `/layout/${props.layoutId}/element/${layoutElementParams[el].id}`,
       { headers: headers }
     );
-    layoutElementParams.splice(el, 1);
   });
+  selectedId.value.sort();
+  for(var i=selectedId.value.length-1;i>=0;--i)
+  {
+    layoutElementParams.splice(selectedId.value[i],1);
+  }
   selected.value.splice(0);
   selectedId.value.splice(0);
   moveable.target = null;
