@@ -2,7 +2,7 @@
 <div class="out">
   <div class="frame">
     <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+        <LeftNav @ID="getID" @judgechild="judge='teamprojects'" @addTeam="showModal=true" ref="getChildList"/>
     </div>
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
@@ -71,9 +71,7 @@ import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
-
 import {RouterLink, useRouter, useRoute} from "vue-router";
-
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
@@ -221,14 +219,12 @@ export default defineComponent({
      if(typeof(route.query.teamID)!="undefined")
      teamID.value=(route.query.teamID).toString();
      judge.value=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
-     
+     console.log('judge change to '+judge.value)
     })
     return {
        handleUpdateValue(key: string, item: MenuOption) {
         judge.value=key
-        //     router.push({path:'/team/teamProjects',
-        //   query:{teamID:utils.getCookie("teamID")}
-        // })
+        console.log('judge change to '+judge.value)
       },
       judge,
 

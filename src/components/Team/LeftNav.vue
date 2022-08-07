@@ -166,6 +166,7 @@ export default defineComponent({
         emit("ID", parseInt(key))
         utils.setCookie('teamID', parseInt(key))
         menuKey.value=key
+        emit("judgechild")
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
