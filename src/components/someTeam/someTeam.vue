@@ -5,14 +5,12 @@
     </div>
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
-      <!-- <UpBar style="z-index:1;padding:25px 60px 22px"/> -->
       <div class="three-cls">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions"/>
+          <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
         </n-config-provider>
       </div>
       <div class="divline"/>
-
       <div class="view">
         <n-scrollbar style="max-height:100%">
             <router-view/>

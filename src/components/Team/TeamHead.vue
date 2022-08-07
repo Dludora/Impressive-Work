@@ -48,7 +48,8 @@ const getMessage = () => {
   })
   let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
   axios.get(url, {headers: headers}).then(res => {
-    myIdentify.value = res.data.data.identify
+    if(res.data.msg === "成功")
+      myIdentify.value = res.data.data.identify
   })
 }
 
