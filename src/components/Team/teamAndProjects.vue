@@ -50,8 +50,8 @@ a {
     background-color: #2B303B;
 }
 .colorTag{
-    height:18px;
-    width:18px;
-    margin:12px;
+    height:12px;
+    width:12px;
+    margin:15px;
 }
 </style>
