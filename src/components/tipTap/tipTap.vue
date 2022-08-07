@@ -1,20 +1,28 @@
 <template>
-  <div class="editor" v-if="editor">
-    <menu-bar class="editor__header" :editor="editor" />
-    <editor-content class="editor__content" :editor="editor" />
-    <div class="editor__footer">
-      <div :class="`editor__status editor__status--${status}`">
-        <template v-if="status === 'connected'">
-          {{ editor.storage.collaborationCursor.users.length }} 用户 正在编辑文档： {{ title }}
-        </template>
-        <template v-else>
-          offline
-        </template>
-      </div>
-      <div class="editor__name">
-        <p>
-          {{ currentUser.name }}
-        </p>
+
+  <div class="big-bg">
+
+    <n-button @click="toHTML">打印html</n-button>
+    <n-button @click="toJSON">打印json</n-button>
+    <n-button @click="getText">打印纯文本</n-button>
+
+    <div class="editor" v-if="editor">
+      <menu-bar class="editor__header" :editor="editor" />
+      <editor-content class="editor__content" :editor="editor" />
+      <div class="editor__footer">
+        <div :class="`editor__status editor__status--${status}`">
+          <template v-if="status === 'connected'">
+            {{ editor.storage.collaborationCursor.users.length }} 用户 正在编辑文档： {{ title }}
+          </template>
+          <template v-else>
+            offline
+          </template>
+        </div>
+        <div class="editor__name">
+          <p>
+            {{ currentUser.name }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -52,12 +60,16 @@ const getRandomRoom = () => {
 //获取文档ID
 
 const getDocuID = () => {
-  return "1"
+  return "2"
 }
 
 const UserName = () =>{
   return utils.getCookie("UserName");
 }
+
+
+
+
 
 export default {
   components: {
@@ -87,9 +99,9 @@ export default {
     this.title = utils.getCookie('DocTitle');
     const ydoc = new Y.Doc()
     this.provider = new HocuspocusProvider({
-      url: 'ws://127.0.0.1',
+      url: 'ws://127.0.0.1:80',
       parameters: {
-        key: 'write_bqgvQ3Zwl34V4Nxt43zR',
+        //key: 'write_bqgvQ3Zwl34V4Nxt43zR',
       },
       name: this.room,
       document: ydoc,
@@ -100,8 +112,7 @@ export default {
     })
 
     this.editor = new Editor({
-      height:1000,
-      width:1000,
+      content: "a",
       extensions: [
         StarterKit.configure({
           history: false,
@@ -139,6 +150,18 @@ export default {
       ])
     },
 
+    toHTML(){
+      console.log(this.editor.getHTML());
+    },
+
+    toJSON(){
+      console.log(this.editor.getJSON());
+    },
+
+    getText(){
+      console.log(this.editor.getText());
+    },
+
     getRandomName() {
       return getRandomElement([
         'Lea Thompson', 'Cyndi Lauper', 'Tom Cruise', 'Madonna', 'Jerry Hall', 'Joan Collins', 'Winona Ryder', 'Christina Applegate', 'Alyssa Milano', 'Molly Ringwald', 'Ally Sheedy', 'Debbie Harry', 'Olivia Newton-John', 'Elton John', 'Michael J. Fox', 'Axl Rose', 'Emilio Estevez', 'Ralph Macchio', 'Rob Lowe', 'Jennifer Grey', 'Mickey Rourke', 'John Cusack', 'Matthew Broderick', 'Justine Bateman', 'Lisa Bonet',
@@ -169,10 +192,21 @@ export default {
 </script>
 
 <style lang="scss">
+
+.big-bg{
+  min-width: 100%;
+  min-height: 100%;
+  background-color: #414958;
+}
+
 .editor {
+  position: absolute;
   display: flex;
   flex-direction: column;
-  max-height: 26rem;
+  margin-left: 20rem;
+  margin-top: 10rem;
+  height: 26rem;
+  width: 50rem;
   color: #0D0D0D;
   background-color: #FFF;
   border: 3px solid #0D0D0D;
