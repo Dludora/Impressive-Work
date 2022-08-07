@@ -9,7 +9,7 @@
       <div class="three-cls">
         <div class="clsL">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
+          <n-menu mode="horizontal" :options="menuOptions" default-value=""/>
         </n-config-provider>
         </div>
         <div class="clsR">
@@ -73,7 +73,7 @@ import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
 
 import {RouterLink, useRouter, useRoute} from "vue-router";
-const router = useRouter();
+
 import {PersonOutline as PersonIcon} from "@vicons/ionicons5"
 import {ProjectOutlined as Project} from "@vicons/antd"
 import {IosSettings as Settings} from "@vicons/ionicons4"
@@ -108,6 +108,8 @@ export default defineComponent({
     Backspace24Filled
   },
   setup() {
+    let judge = ref('');
+    const router = useRouter();
     let menuOptions: MenuOption[] = [
       {
         label: () =>
@@ -119,7 +121,7 @@ export default defineComponent({
                 },
                 {default: () => '项目'}
             ),
-        key: 'go-to-projects',
+        key: 'teamprojects',
         icon: renderIcon(Project)
       },
       {
@@ -133,7 +135,7 @@ export default defineComponent({
                 },
                 {default: () => '成员'}
             ),
-        key: 'go-to-members',
+        key: 'teammembers',
         icon: renderIcon(PersonIcon)
       },
       {
@@ -146,11 +148,11 @@ export default defineComponent({
                 },
                 {default: () => '设置'}
             ),
-        key: 'go-to-settings',
+        key: 'teamsettings',
         icon: renderIcon(Settings)
       },
     ]
-    const router = useRouter()
+
     const route = useRoute()
     let searchText = ref('')
     let teamID = ref('')
@@ -216,9 +218,14 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-      teamID.value=(route.query.teamID.toString())
+     if(typeof(route.query.teamID)!="undefined")
+     teamID.value=(route.query.teamID).toString();
+     let urlStr=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+     
     })
     return {
+      judge,
+
       clear,
       searchText,
       route,

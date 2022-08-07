@@ -21,7 +21,7 @@
       <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
         <div class="teams"> 
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="menuKey"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -54,7 +54,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {defineComponent, h, Component} from 'vue'
 import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
-import {RouterLink, useRouter} from "vue-router";
+import {RouterLink, useRoute} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import { Icon } from '@vicons/utils'
 import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
@@ -80,6 +80,7 @@ export default defineComponent({
     BoxMultiple20Regular,
   },
   setup(props, {emit}) {
+    const route = useRoute();
     let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')
@@ -119,6 +120,7 @@ export default defineComponent({
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
+           
             for (let i = 0; i < array.value.length; i++) {
               let idd = array.value[i].ID
               sideMenuOptions.value.push(
@@ -137,7 +139,7 @@ export default defineComponent({
                   }
               )
             }
-            menuKey.value=array.value[0].ID
+            
             // emit("ID", array.value[0].ID)
             // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
@@ -147,17 +149,22 @@ export default defineComponent({
     }
     onMounted(() => {
       load()
+      if(typeof(route.query.teamID)!="undefined")
+       menuKey.value=route.query.teamID.toString();
+       console.log("menuKey:"+menuKey.value)
       getAllTeams(0, 8)
     })
     return {
+      route,
+      menuKey,
       theme: darkTheme,
       addTeam,
       toMain,
       load,
       getAllTeams,
       handleUpdateValue(key: string, item: MenuOption) {
-        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
-        utils.setCookie('teamID', dataList[parseInt(JSON.stringify(key))].ID)
+        emit("ID", parseInt(key))
+        utils.setCookie('teamID', parseInt(key))
         menuKey.value=key
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
