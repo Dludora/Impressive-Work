@@ -1,4 +1,5 @@
 <template>
+<div class="out">
   <div class="list">
     <div v-for="member in members" :key="member" class="member-card">
       <div style="display:flex;align-items: center;flex: 1;">
@@ -65,6 +66,7 @@
       </n-form>
     </n-modal>
   </n-config-provider>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -117,9 +119,9 @@ const onNegativeClick = () => {
 const members = ref([
   {
     ID: 0,
-    nickname: '获取成员列表中...',
+    nickname: '获取中.',
     name: '',
-    email: '宝贝,正在加载中 请稍后~',
+    email: '请稍后~',
     identity: 0
   },
 

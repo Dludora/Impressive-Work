@@ -1,8 +1,34 @@
 <template>
+<div class="out">
     <div class="main">
     <div class="layout">
         <div class="discribe">
-            管理你的{{length}}个项目
+
+            管理你的{{projects.length}}个项目
+            <div class="order">
+              <span>排序方式:</span>
+              <n-dropdown trigger="hover" :options="options" @select="handleSelect">
+                <n-button quaternary>{{sortMethod}}</n-button>
+              </n-dropdown>
+              <div class="up" v-if="ifUp===true">
+                <n-button size="tiny" quaternary @click="changeUp">
+                <div class="upTag">
+              <Icon size="20">
+                        <CaretUp24Filled/>
+              </Icon>
+                </div>
+                </n-button>
+              </div>
+              <div class="up" v-if="ifUp===false">
+              <n-button size="tiny" quaternary @click="changeUp">
+                <div class="upTag">
+              <Icon size="20">
+                        <CaretDown24Filled/>
+              </Icon></div>
+              </n-button>
+
+              </div>
+            </div>
             <div class="buttons">
                 <n-button class="newpage" @click="displayAdd" size="tiny">
                     新 建 项 目&nbsp;
@@ -13,7 +39,7 @@
             </div>
         </div>
         <div class="prolist">
-            <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"  class="card" @rename="displayMedal(item.ID)" @del="displayDel(item.ID)"/>
+            <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"  class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)" @del="displayDel(item.ID)"/>
         </div>
     </div>
     </div>
@@ -76,14 +102,9 @@
     >
     </n-modal>
   </n-config-provider>
+  </div>
 </template>
-<!-- <script lang="ts">
-export default {
-    components: {
-        PageCard,
-    }
-}
-</script> -->
+
 <script setup lang="ts">
 import {
     Export
@@ -95,6 +116,8 @@ import {
 import ProCard from "@/TeamManager/projectCard.vue"
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
+import {CaretUp24Filled} from "@vicons/fluent"
+import {CaretDown24Filled} from "@vicons/fluent"
 import {darkTheme,useMessage} from "naive-ui";
 import {defineComponent, computed,watch,h, onMounted, reactive, ref} from "vue";
 import {useRoute} from 'vue-router'
@@ -112,13 +135,42 @@ let shortcuts=[
     },
 ]
 let length=0
-
-const router = useRoute();
+const sortMethod = ref('修改时间')
+const route = useRoute();
 const message = useMessage();
-
+const showDropdownRef = ref(false);
+let ifUp = ref(false);
+const changeUp = () =>{
+  ifUp.value=!ifUp.value
+  getList();
+}
+const sort = ref(0)
+const options = [
+        {
+          label: '创建时间',
+          key: '创建时间',
+        },
+        {
+          label: '项目名称',
+          key: "项目名称"
+        }
+      ]
+const handleSelect = (key: string | number)=> {
+        message.info(String(key))
+        sortMethod.value = String(key)
+        if(sortMethod.value==='创建时间')
+        sort.value=0;
+        else if (sortMethod.value==="项目名称")
+        sort.value=1;
+        getList();
+      }
+const  handleClick = () => {
+        showDropdownRef.value = !showDropdownRef.value
+      }
 const headers ={
    Authorization: utils.getCookie('Authorization')
 }
+let keyword = ref('')
 const teamID = ref(0)
 const theme = darkTheme
 let projects =ref( [
@@ -133,7 +185,13 @@ const modelRef = ref({
   name: ""
 })
 const getList = () =>{
-    const url = '/program/list?'+'teamID='+router.query.teamID+'&page=0&size=10'
+    let direction = 0;
+    if(ifUp.value)
+    direction=1;
+
+    const url = '/program/list?'+'teamID='+route.query.teamID+'&page=0&size=100&sort='
+      +sort.value+'&direction='+direction+'&keyword='+keyword.value;
+      console.log("keyword is "+keyword.value)
     axios.get(url,{headers:headers}).then(res=>{
       
       projects.value=res.data.data.items
@@ -142,20 +200,25 @@ const getList = () =>{
         let tempDate = new Date(projects.value[i].createTime ).toLocaleString().replace(/:\d{1,2}$/,' ')
         projects.value[i].createTime=tempDate
       }
-      console.log(projects.value)
+      console.log("getList:"+projects.value)
     })
 }
 const getGlobal = computed(()=>{
-  return router.query.teamID
+  return route.query.teamID+'&'+route.query.searchText
 })
 watch(getGlobal, (newVal,oldVal)=>{
-
+  if(typeof(route.query.searchText)!="undefined")
+  keyword.value = route.query.searchText.toString();
   getList()
 },{immediate:true,deep:true})
 onMounted(()=>{
-  teamID.value=parseInt(router.query.teamID.toString())
+  if(typeof(route.query.teamID)!="undefined")
+  teamID.value=parseInt(route.query.teamID.toString())
 
+  if(typeof(route.query.searchText)!="undefined")
+  keyword.value = route.query.searchText.toString();
   getList()
+
 })
 const ruleAdd = {
   required: true,
@@ -177,7 +240,16 @@ const displayMedal = (ID) => {
   opID.value=ID
   showModalRef.value = true
 }
-
+const displayCopy = (ID) => {
+  console.log("start copy "+ID)
+  let url = '/program/copy?ID='+ID;
+  axios.put(url,{},{headers:headers}).then(res=>{
+    if(res.data.msg==="成功"){
+      getList();
+      message.success("复制成功");
+    }
+  })
+}
 const onNegativeClick = () => {
   modelRef.value.name = ""
   showModalRef.value = false
@@ -282,7 +354,7 @@ const onPositiveAddClick = () => {
     return
   }
   axios.post('/program',{
-    'teamID':router.query.teamID,
+    'teamID':route.query.teamID,
     "src":"what the fuck photos",
     "name":modelAddRef.value.name
   },{headers:headers}).then(res=>{
@@ -307,6 +379,20 @@ const onPositiveAddClick = () => {
 </script>
 
 <style scoped>
+.upTag{
+  vertical-align: bottom;
+  padding-top: 8px;
+}
+.up{
+  padding-top: 2px;
+   float: right;
+    vertical-align: bottom;
+}
+.order{
+  font-size: 13px;
+  color: #A7AFBE;
+  vertical-align: bottom;
+}
 .main{
     width:100%;
 }
@@ -336,9 +422,6 @@ const onPositiveAddClick = () => {
 }
 .buttons{
     margin-right: 10px;
-}
-.newpage{
-    /*margin-right: 10px;*/
 }
 .layout{
   margin:20px 50px 0 60px;

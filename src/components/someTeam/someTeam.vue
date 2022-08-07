@@ -1,4 +1,5 @@
 <template>
+<div class="out">
   <div class="frame">
     <div class="side">
       <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
@@ -6,9 +7,26 @@
     <div class="main">
       <TeamHead style="padding:25px 60px 23px"/>
       <div class="three-cls">
+        <div class="clsL">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
+          <n-menu mode="horizontal" :options="menuOptions" default-value=""/>
         </n-config-provider>
+        </div>
+        <div class="clsR">
+          <div class="search">
+        <n-input v-model:value="searchText" round placeholder="搜索项目" >
+        <template #suffix>
+            <n-button quaternary size="tiny" @click="clear" >
+            <Icon size="16">
+              <Backspace24Filled/>
+            </Icon>
+          </n-button>
+      </template></n-input>
+          </div>
+          <div class="search">
+        <n-button quaternary @click="search" >搜索</n-button>
+          </div>
+        </div>
       </div>
       <div class="divline"/>
       <div class="view">
@@ -18,24 +36,6 @@
       </div>
     </div>
   </div>
-  <!-- <n-layout has-sider>
-    <n-layout-sider>
-      <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
-    </n-layout-sider>
-    <n-layout :native-scrollbar="false">
-      <n-layout-header>
-        <TeamHead style="margin-left: 30px"/>
-      </n-layout-header>
-      <n-layout-content>
-        <div class="menu">
-          <n-config-provider :theme="theme">
-            <n-menu mode="horizontal" :options="menuOptions" default-value="go-to-projects"/>
-          </n-config-provider>
-        </div>
-        <router-view/>
-      </n-layout-content>
-    </n-layout>
-  </n-layout> -->
 
   <n-config-provider :theme="theme">
     <n-modal
@@ -58,14 +58,15 @@
       </n-form>
     </n-modal>
   </n-config-provider>
+</div>
 </template>
 
 <script lang="ts">
 import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
-
-
+import {Icon} from "@vicons/utils";
+import {Backspace24Filled} from "@vicons/fluent"
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
@@ -84,7 +85,7 @@ import utils from "@/Utils";
 const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 
-const route = useRoute()
+
 
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
@@ -103,9 +104,13 @@ let profile = {
 export default defineComponent({
   components: {
     LeftNav,
-    TeamHead
+    TeamHead,
+    Icon,
+    Backspace24Filled
   },
   setup() {
+    let judge = ref('');
+    const router = useRouter();
     let menuOptions: MenuOption[] = [
       {
         label: () =>
@@ -117,7 +122,7 @@ export default defineComponent({
                 },
                 {default: () => '项目'}
             ),
-        key: 'go-to-projects',
+        key: 'teamprojects',
         icon: renderIcon(Project)
       },
       {
@@ -131,7 +136,7 @@ export default defineComponent({
                 },
                 {default: () => '成员'}
             ),
-        key: 'go-to-members',
+        key: 'teammembers',
         icon: renderIcon(PersonIcon)
       },
       {
@@ -157,16 +162,22 @@ export default defineComponent({
                 },
                 {default: () => '设置'}
             ),
-        key: 'go-to-settings',
+        key: 'teamsettings',
         icon: renderIcon(Settings)
       },
     ]
-    const router = useRouter()
+
+    const route = useRoute()
+    let searchText = ref('')
     let teamID = ref('')
     const com = ref(null)
     const showModalRef = ref(false)
     const headers = {
       Authorization: utils.getCookie('Authorization')
+    }
+    const clear= () => {
+      searchText.value = ''
+      search()
     }
     const modelRef = ref({
       name: "",
@@ -180,6 +191,13 @@ export default defineComponent({
         query: {teamID: tID}
       })
     }
+    const search = () =>{
+    router.push({
+      path:"/team/teamprojects",
+      query:{teamID:route.query.teamID,
+            searchText:searchText.value}
+    })
+}
     const ruleName = {
       required: true,
       validator() {
@@ -215,8 +233,18 @@ export default defineComponent({
       })
     }
     onMounted(() => {
+     if(typeof(route.query.teamID)!="undefined")
+     teamID.value=(route.query.teamID).toString();
+     let urlStr=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+     
     })
     return {
+      judge,
+
+      clear,
+      searchText,
+      route,
+      search,
       theme: darkTheme,
       menuOptions,
       getChildList,
@@ -250,6 +278,19 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.search{
+  display: inline-block;
+}
+.clsL,.clsR{
+  display: inline-block;
+}
+
+.clsR{
+  width: 450px;
+  margin-left: 50px;
+  vertical-align: top;
+}
 .n-layout {
   height: calc(100%);
 }

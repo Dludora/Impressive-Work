@@ -9,6 +9,9 @@
             <Icon size="20" class="rename">
                 <Edit16Regular @click="renameThis"/>
             </Icon>
+            <Icon size="20" class="rename">
+                <Copy16Filled @click="copyThis"/>
+            </Icon>
         </div>
         <div class="desc">
             创建于&nbsp;{{date}}
@@ -22,6 +25,7 @@
 import {CloseRound} from '@vicons/material'
 import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
+import {Copy16Filled} from '@vicons/fluent'
 import {Icon} from '@vicons/utils'
 import {defineComponent} from 'vue'
 import router from '@/router';
@@ -43,6 +47,7 @@ export default defineComponent({
     CloseRound,
     Icon,
     Edit16Regular,
+    Copy16Filled
   },
   setup(props, {emit}) {
     const route = useRoute()
@@ -67,10 +72,16 @@ export default defineComponent({
       console.log("del" + props.id)
       emit("del")
     }
+    const copyThis = () => {
+      event.stopPropagation();
+      console.log("copy"+props.id)
+      emit("copy")
+    }
     return {
       gotoProject,
       renameThis,
       delThis,
+      copyThis,
       route
     }
   },

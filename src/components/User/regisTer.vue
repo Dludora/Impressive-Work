@@ -185,7 +185,7 @@ const register = () => {
                 'name': "示例项目"
               }, {headers: headers}).then(res5 => {
                 message.info("欢迎 " + res3.data.data.nickname)
-                router.push('/team')
+                router.push('/team/teamprojects')
               })
             })
           }
@@ -214,14 +214,24 @@ const login = () => {
               }
           ).then(res => {
             if (res.data.msg === "成功") {
-              axios.defaults.headers.common['Authorization'] = res.data.data;
-              utils.setCookie('Authorization', res.data.data)
-              axios.get('/user/info').then(res2 => {
-                if (res2.data.msg === "成功")
-                  message.info("欢迎 " + res2.data.data.nickname)
-                  utils.setCookie('UserName',res2.data.data.nickname)
-                  router.push('/team')
-              })
+                    axios.defaults.headers.common['Authorization'] = res.data.data;
+                    utils.setCookie('Authorization', res.data.data)
+                    axios.get('/user/info').then(res2 => {
+                              let teamIDTemp;
+                              if (res2.data.msg === "成功")
+                                message.info("欢迎 " + res2.data.data.nickname)
+                                utils.setCookie('UserName',res2.data.data.nickname)
+                                
+                                axios.get('/team/list',
+                                {headers: headers, params: {page: 0, size: 10}})
+                                .then(res => {
+                                  console.log("teamListforLogin"+res.data)
+                                  const array = ref(res.data.data.items)
+                                  teamIDTemp=array.value[0].ID;
+
+                                })
+                                router.push('/team/teamprojects?teamID='+teamIDTemp)
+                            })
             }
           })
         }
