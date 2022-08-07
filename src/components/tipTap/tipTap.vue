@@ -4,7 +4,8 @@
 
     <n-button @click="toHTML">打印html</n-button>
     <n-button @click="toJSON">打印json</n-button>
-    <n-button @click="getText">打印纯文本</n-button>
+    <n-button @click="toMD">打印MD</n-button>
+    <n-button @click="toText">打印纯文本</n-button>
 
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
@@ -43,6 +44,8 @@ import * as Y from 'yjs'
 import MenuBar from './MenuBar.vue'
 import utils from "@/Utils";
 import axios from "axios";
+
+import TurndownService from 'turndown'
 
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
@@ -158,7 +161,18 @@ export default {
       console.log(this.editor.getJSON());
     },
 
-    getText(){
+    toMD(){
+      const turndown = new TurndownService({
+        emDelimiter: '_',
+        linkStyle: 'inlined',
+        headingStyle: 'atx'
+      })
+
+      const markdown = turndown.turndown(this.editor.getHTML());
+      console.log(markdown);
+    },
+
+    toText(){
       console.log(this.editor.getText());
     },
 
