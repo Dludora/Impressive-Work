@@ -216,6 +216,7 @@ export default defineComponent({
       })
     }
     onMounted(() => {
+      teamID.value=(route.query.teamID.toString())
     })
     return {
       clear,

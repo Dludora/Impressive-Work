@@ -15,13 +15,13 @@
           <Icon size="18" style="margin: 0px 8px 0 0;">
           <BoxMultiple20Regular/>
           </Icon>
-          团队和项目
+           您的团队
         </div>
       <div class="divline"/>
       <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
         <div class="teams"> 
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="0"/>
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="menuKey"/>
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -42,7 +42,7 @@
                     :on-update:page="changePage"
                     id="pagination">
         <template #goto>
-          请回答
+          页码
         </template>
       </n-pagination>
       </div>
@@ -62,6 +62,7 @@ import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 import SvgI from '@/components/svgI.vue'
+import { menuLight } from 'naive-ui/es/menu/styles';
 
 
 const sideMenuOptions = ref([] as MenuOption[])
@@ -79,6 +80,7 @@ export default defineComponent({
     BoxMultiple20Regular,
   },
   setup(props, {emit}) {
+    let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
@@ -130,11 +132,12 @@ export default defineComponent({
                             },
                             {default: () => array.value[i].name}
                         ),
-                    key: i,
+                    key: idd.toString(),
                     icon: renderIcon(Team)
                   }
               )
             }
+            menuKey.value=array.value[0].ID
             // emit("ID", array.value[0].ID)
             // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
@@ -155,6 +158,7 @@ export default defineComponent({
       handleUpdateValue(key: string, item: MenuOption) {
         emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
         utils.setCookie('teamID', dataList[parseInt(JSON.stringify(key))].ID)
+        menuKey.value=key
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
