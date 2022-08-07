@@ -3,30 +3,15 @@
     <div class="figure"/>
     <div class="gradient"/>
     <headNav/>
-    <n-scrollbar ref="scroller" style="max-height:100%">
-      <!-- <div class="wide vastitle">
-        <div class="describe">
-          <div class="brand">
-          </div>
-          <a>筹备人马</a>，主导软件开发<br/>
-          参与到其他创作者的<a>项目</a>中去<br/>
-          尝试<a>原型设计工具</a>以及协作文档编辑器<br/>
-          提升工作效率<br/>
-          在浪潮中留下你的<a>印迹</a><br/>
-        </div>
-        <div @click="teamMain" class="startnow">
-          马上开始
-          <div class="rightarrow"/>
-        </div>
-      </div> -->
+    <n-scrollbar @scroll="scroll" ref="scroller" style="max-height:100%">
       <div class="homepage">
         <div class="wide vastitle">
           <div class="describe">
             <div class="brand">
             </div>
-            <a>筹备人马</a>，主导软件开发<br/>
+            <a>筹备人马</a>，主导软件设计<br/>
             参与其他优秀开发者的<a>项目</a>也是一种乐趣<br/>
-            尝试<a>原型设计工具</a>以及协作文档编辑器<br/>
+            尝试<a>原型设计工具</a>、协作文档编辑器<br/>
             提升工作效率<br/>
             在浪潮中留下你的<a>印迹</a><br/>
           </div>
@@ -36,18 +21,15 @@
           </div>
         </div>
         <div class="wide feature">
-          <div class="pic team"/>
+          <div class="pic teampic"/>
           <div class="essay">
             <div class="describe">
               <!-- <div class="brand"> -->
               <!-- </div> -->
-              <a>筹备人马</a>，主导软件开发<br/>
-              参与到其他创作者的<a>项目</a>中去<br/>
-              尝试<a>原型设计工具</a>以及协作文档编辑器<br/>
-              提升工作效率<br/>
-              在浪潮中留下你的<a>印迹</a><br/>
+              组建<a>团队</a>、邀请其他开发者加入<br/>
+              共同构建一个或多个<a>项目</a><br/>
             </div>
-            <div @click="teamMain" class="startnow">
+            <div @click="programView" class="startnow">
               现在尝试
               <div class="rightarrow"/>
             </div>
@@ -58,18 +40,17 @@
             <div class="describe">
               <!-- <div class="brand"> -->
               <!-- </div> -->
-              <a>筹备人马</a>，主导软件开发<br/>
-              参与到其他创作者的<a>项目</a>中去<br/>
-              尝试<a>原型设计工具</a>以及协作文档编辑器<br/>
-              提升工作效率<br/>
-              在浪潮中留下你的<a>印迹</a><br/>
+              使用Impress Work的页面编辑器<br/>
+              帮助完成<a>原型设计</a><br/>
+              配合内嵌的tipTap文档编辑器<br/>
+              让<a>文档管理</a>也不是难题<br/>
             </div>
             <div @click="teamMain" class="startnow">
               现在尝试
               <div class="rightarrow"/>
             </div>
           </div>
-          <div class="pic editor"/>
+          <div class="pic editorpic"/>
         </div>
       </div>
     </n-scrollbar>
@@ -88,6 +69,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import {useMessage} from "naive-ui"
@@ -132,6 +114,22 @@ const UML = () => {
   router.push('/UML');
 }
 
+const tipTap = () => {
+  router.push('/tipTap');
+}
+const scroller=ref()
+const scroll =(e:Event)=>{
+  let offsetY=document.getElementsByClassName('brand')[0].getBoundingClientRect().y
+  let figure=document.getElementsByClassName('figure')[0]
+  console.log(offsetY)
+  if(offsetY<0){
+    // figure.setAttribute('opacity',(100-offsetY)/100);
+    let alpha=(100+offsetY)/100
+    if(alpha>0.2)
+      figure.style.opacity=(100+offsetY)/100
+    else figure.style.opacity=0.2
+  }else figure.style.opacity=1
+}
 </script>
 
 <style scoped>
@@ -142,7 +140,7 @@ const UML = () => {
 }
 .figure{
   width:100%;
-  height:556px;
+  height:100%;
   background-image: url("@/assets/titlefigure.jpg");
   background-size: cover;
   position: absolute;
@@ -152,7 +150,7 @@ const UML = () => {
 }
 .gradient{
   width:100%;
-  height:556px;
+  height:100%;
   position: absolute;
   z-index: -1;
   background: linear-gradient(to top, #16181Dff, 37%, #16181D00);
@@ -249,10 +247,10 @@ const UML = () => {
   justify-content: space-between;
   align-items: center;
 }
-.team{
+.teampic{
   background-image: url("@/assets/teamup.jpg");
 }
-.editor{
+.editorpic{
   background-image: url("@/assets/creation.jpg");
 }
 </style>

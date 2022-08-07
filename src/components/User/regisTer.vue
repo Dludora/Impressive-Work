@@ -219,7 +219,8 @@ const login = () => {
               axios.get('/user/info').then(res2 => {
                 if (res2.data.msg === "成功")
                   message.info("欢迎 " + res2.data.data.nickname)
-                router.push('/team')
+                  utils.setCookie('UserName',res2.data.data.nickname)
+                  router.push('/team')
               })
             }
           })

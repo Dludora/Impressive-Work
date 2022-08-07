@@ -28,6 +28,8 @@ import docuEdit from "../views/Document/docuEdit.vue";
 
 import UML from "../components/UML.vue";
 
+import tipTap from "../components/tipTap/tipTap.vue";
+
 
 // @ts-ignore
 // @ts-ignore
@@ -211,6 +213,12 @@ const router = createRouter({
                 auth: true
             },
         },
+        {
+            name:'tipTap',
+            path:'/tipTap',
+            component: tipTap,
+        }
+
         // {
         //     name: 'programBig',
         //     path: '/programBig',
