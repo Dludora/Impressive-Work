@@ -1,73 +1,98 @@
 <template>
-    <div class="Team">
-        <div class="avator">
-            {{teamData.name[0]}}
-        </div>
-        <div class="name">
-            <h2>{{teamData.name}}</h2>
-            <!-- <span>{{teamData.introduction}}</span> -->
-            <div>{{teamData.introduction}}</div>
-        </div>
+  <div class="Team">
+    <div class="avator">
+      {{ teamData.name[0] }}
     </div>
+    <div class="name">
+      <h2>{{ teamData.name }}</h2>
+      <!-- <span>{{teamData.introduction}}</span> -->
+      <div>{{ teamData.introduction }}</div>
+    </div>
+    <div v-if="myIdentify === 2" style="float: right">
+      <n-config-provider :theme="theme">
+        <n-button @click="dissolve">解散团队</n-button>
+      </n-config-provider>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
-import {onMounted, ref,watch,computed} from 'vue'
+import {onMounted, ref, watch, computed} from 'vue'
 import axios from 'axios'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import utils from '../../Utils'
-const route = useRoute();
+import {darkTheme} from "naive-ui"
+
+const theme = darkTheme
+const route = useRoute()
+const router = useRouter()
 let teamData = ref({
-    ID:null,
-    name:'选择您的团队',
-    src:'',
-    introduction:'通过选择您的团队，然后来进行管理项目，成员等操作'
+  ID: null,
+  name: '选择您的团队',
+  src: '',
+  introduction: '通过选择您的团队，然后来进行管理项目，成员等操作'
 })
 const headers = {
-   Authorization: utils.getCookie('Authorization')
+  Authorization: utils.getCookie('Authorization')
 }
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
 
-/*监听props*/
-// watch(utils.getCookie("teamID"),(newProps, oldProps) => {
-//       console.log("全局监听收到"+newProps)
-//       temp.value=parseInt(newProps.toString())
-//  });
-const getMessage = () =>{
-  axios.get('/team/'+route.query.teamID+'/info',{headers:headers}).then(res=>{
-    if(res.data.msg==="成功"){
-      teamData.value=res.data.data
-      if(res.data.data.introduction.length===0)
-      {
-          teamData.value.introduction="队长很懒，什么都没写喔～"
+const getMessage = () => {
+  axios.get('/team/' + route.query.teamID + '/info', {headers: headers}).then(res => {
+    if (res.data.msg === "成功") {
+      teamData.value = res.data.data
+      if (res.data.data.introduction.length === 0) {
+        teamData.value.introduction = "队长很懒，什么都没写喔～"
       }
     }
   })
+  let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  axios.get(url, {headers: headers}).then(res => {
+    if(res.data.msg === "成功")
+      myIdentify.value = res.data.data.identify
+  })
 }
-const getGlobal = computed(()=>{
+
+// const getIdentify = () => {
+//   let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+//   axios.get(url, {headers: headers}).then(res => {
+//     myIdentify.value = res.data.data.identify
+//   })
+// }
+const dissolve = () => {
+  axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
+    // console.log(res)
+    router.push('/team')
+  })
+}
+const getGlobal = computed(() => {
   return route.query.teamID
 })
-watch(getGlobal, (newVal,oldVal)=>{
-  console.log("value change"+newVal)
+
+watch(getGlobal, (newVal, oldVal) => {
+  console.log("value change" + newVal)
   getMessage();
-},{immediate:true,deep:true})
+}, {immediate: true, deep: true})
 
-
-onMounted(()=>{
+onMounted(() => {
   getMessage()
 })
-     defineExpose({
-        teamData
-  });
+defineExpose({
+  teamData
+});
 </script>
 <style scoped>
 .Team {
   /*height: 70px;*/
+  width: 100%;
   position: relative;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   /*line-height: 70px;*/
 }
-.avator{
+
+.avator {
   width: 50px;
   height: 50px;
   background: rgba(228, 27, 77, 1);
@@ -78,20 +103,23 @@ onMounted(()=>{
   line-height: 50px;
   display: inline-block;
 }
-.name span{
+
+.name span {
   position: relative;
-  top:6px;
-    color:  rgba(65, 73, 88, 1);
-    height: 24px;
+  top: 6px;
+  color: rgba(65, 73, 88, 1);
+  height: 24px;
   line-height: 24px;
 }
-.name div{
+
+.name div {
   position: relative;
-  top:6px;
-    color:  rgba(65, 73, 88, 1);
-    height: 24px;
+  top: 6px;
+  color: rgba(65, 73, 88, 1);
+  height: 24px;
   line-height: 24px;
 }
+
 .name {
   height: 100%;
   /*display: inline-block;*/
@@ -101,9 +129,10 @@ onMounted(()=>{
   /*margin-top: 5px;*/
   font-size: 14px;
 }
-.name h2{
-    vertical-align: top;
-    font-size: 20px;
-    line-height: 22px;
+
+.name h2 {
+  vertical-align: top;
+  font-size: 20px;
+  line-height: 22px;
 }
 </style>

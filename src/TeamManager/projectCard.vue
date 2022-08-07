@@ -3,7 +3,9 @@
         <div class="img">
         </div>
         <div class="bottom">
-            <div class="name">{{name}}</div>
+            <div class="name">
+                {{name}}
+            </div>
             <Icon size="20" class="rename">
                 <Edit16Regular @click="renameThis"/>
             </Icon>
@@ -18,96 +20,100 @@
 </template>
 <script lang="ts">
 import {CloseRound} from '@vicons/material'
-import {EditTwotone,EditOutlined} from '@vicons/antd'
+import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
-import { Icon } from '@vicons/utils'
-import { defineComponent } from 'vue'
+import {Icon} from '@vicons/utils'
+import {defineComponent} from 'vue'
 import router from '@/router';
-import { useRoute} from 'vue-router'
+import {useRoute} from 'vue-router'
 import utils from '../Utils'
 
 
 export default defineComponent({
-    name: 'PageCard',
-    props: {
-        name: String,
-        img: Image,
-        date: String,
-        id: {
-            default:0
-        },
+  name: 'PageCard',
+  props: {
+    name: String,
+    img: Image,
+    date: String,
+    id: {
+      default: 0
     },
-    components: {
-        CloseRound,
-        Icon,
-        Edit16Regular,
-    },
-    setup(props, {emit}) {
-        const route = useRoute()
-        const gotoProject=()=>{
-            console.log("go")
-            utils.setCookie('proID',props.id)
-            utils.setCookie('proNAME',props.name)
-            utils.setCookie('proTeam',route.query.teamID)
+  },
+  components: {
+    CloseRound,
+    Icon,
+    Edit16Regular,
+  },
+  setup(props, {emit}) {
+    const route = useRoute()
+    const gotoProject = () => {
+      console.log("go")
+      utils.setCookie('proID', props.id)
+      utils.setCookie('proNAME', props.name)
+      utils.setCookie('proTeam', route.query.teamID)
 
-            console.log("proID:"+utils.getCookie("proID"))
-            console.log("proName:"+utils.getCookie("proName"))
-            console.log("proTeam:"+utils.getCookie("proTeam"))
-            router.replace({name:'project'})
-        }
-        const renameThis=()=>{
-            event.stopPropagation();
-            console.log("rename"+props.id)
-            emit("rename")
-        }
-        const delThis=()=>{
-            event.stopPropagation();
-            console.log("del"+props.id)
-            emit("del")
-        }
-        return{
-            gotoProject,
-            renameThis,
-            delThis,
-            route
-        }
-    },
+      // console.log("proID:" + utils.getCookie("proID"))
+      // console.log("proName:" + utils.getCookie("proName"))
+      // console.log("proTeam:" + utils.getCookie("proTeam"))
+      router.replace({name: 'project'})
+    }
+    const renameThis = () => {
+      event.stopPropagation();
+      console.log("rename" + props.id)
+      emit("rename")
+    }
+    const delThis = () => {
+      event.stopPropagation();
+      console.log("del" + props.id)
+      emit("del")
+    }
+    return {
+      gotoProject,
+      renameThis,
+      delThis,
+      route
+    }
+  },
 })
 </script>
 
 <style scoped>
-*{
+* {
   transition: 0.2s;
 }
 .card{
-    width: 300px;
-    height: 220px;
-    background-color: #2B303B;
+    width: 240px;
+    height: 190px;
+    padding: 5px 30px;
+    /*background-color: #2B303B;*/
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 5px;
+    border-radius: 2px;
+    border: 1px solid #414958;
 }
 .card:hover{
-    background-color: #414958;
+    background: #2B303B;
+    border: 1px solid #A7AFBE;
     cursor:pointer;
 }
-.card:hover .del,.card:hover .rename{
-    display: flex;
+
+.card:hover .del, .card:hover .rename {
+  display: flex;
 }
 .img{
     width:100%;
-    height: 160px;
+    height: 140px;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 5px 5px 0px 0px;
+    border-radius: 4px;
 }
 .bottom{
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
     flex-wrap: nowrap;
-    padding: 0 40px;
-    width:220px;
-    height: 36px;
+    /*padding: 0 40px;*/
+    width:100%;
+    height: 32px;
     align-items: center;
 }
 .name{
@@ -115,30 +121,32 @@ export default defineComponent({
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
-    font-size: 20px;
-    line-height: 36px;
+    font-size: 16px;
+    line-height: 32px;
     text-overflow:ellipsis;
 
-    overflow:hidden;
-    white-space:nowrap;
+  overflow: hidden;
+  white-space: nowrap;
 
-    color: #E2E4E9;
+  color: #E2E4E9;
 }
-.del,.rename{
-    color:#A7AFBE;
-    display:none;
+
+.del, .rename {
+  color: #A7AFBE;
+  display: none;
 }
-.desc{
-    display:flex;
-    text-overflow:ellipsis;
-    overflow:hidden;
-    white-space:nowrap;
+
+.desc {
+  display: flex;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 
     color:#A7AFBE;
     font-size: 12px;
     line-height: 18px;
     height: 18px;
-    padding: 0 40px;
+    /*padding: 0 40px;*/
     
     justify-content: space-between;
     flex-wrap: nowrap;

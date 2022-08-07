@@ -22,7 +22,7 @@
       >
       </layout-element>
     </div>
-    <div id="blank" class= "blank"></div>
+    <div id="blank" class="blank"></div>
   </div>
 </template>
 
@@ -70,6 +70,9 @@ type elementParams = {
   y: number;
   width: number;
   height: number;
+  scaleX: number;
+  scaleY: number;
+  rotation: number;
   borderWidth: number;
   borderRadius: number;
   type: string;
@@ -82,7 +85,7 @@ type elementParams = {
 
 type Prop = {
   layoutId: number;
-  tool:string;
+  tool: string;
   update: boolean;
   elementProps: elementParams;
   canvasWidth: number;
@@ -107,6 +110,7 @@ const initMoveable = () => {
     container: document.getElementById("canvas"),
     renderDirections: ["n", "nw", "ne", "s", "se", "sw", "e", "w"],
     defaultGroupOrigin: "50% 50%",
+    defaultGroupRotate: 0,
     draggable: true,
     resizable: true,
     scalable: false,
@@ -138,8 +142,8 @@ const initMoveable = () => {
         var i = 0;
         for (i = 0; i < targets.length; ++i) {
           moveable.target[i]!.style.transform = events[i].transform;
-          layoutElementParams[selectedId.value[0]].x = events[i].translate[0];
-          layoutElementParams[selectedId.value[0]].y = events[i].translate[1];
+          layoutElementParams[selectedId.value[i]].x = events[i].translate[0];
+          layoutElementParams[selectedId.value[i]].y = events[i].translate[1];
         }
       }
     });
@@ -150,7 +154,7 @@ const initMoveable = () => {
       e.setOrigin(["%", "%"]);
       e.dragStart && e.dragStart.set([0, 0]);
     })
-    .on("resize", ({ target, delta, width, height, transform,drag }) => {
+    .on("resize", ({ target, delta, width, height, transform, drag }) => {
       target!.style.width = `${width}px`;
       target!.style.height = `${height}px`;
       target.style.transform = transform; //`translate(${drag.beforeTranslate[0]}px, ${drag.beforeTranslate[1]}px)`;
@@ -172,26 +176,37 @@ const initMoveable = () => {
     });
 
   /* rotatable */
-  moveable
-    .on(
-      "rotate",
-      ({ target, beforeDelta, delta, dist, transform, clientX, clientY }) => {
-        console.log("onRotate", dist);
-        target!.style.transform = transform;
-      }
-    )
+  moveable.on(
+    "rotate",
+    ({ target, rotation, transform}) => {
+      target!.style.transform = transform;
+      layoutElementParams[selectedId.value[0]].rotation = rotation;
+    }
+  ).on("rotateGroupStart", ({ events }) => {
+    events.forEach((ev, i) => {
+        ev.set(layoutElementParams[selectedId.value[i]].rotation);
+        ev.dragStart && ev.dragStart.set([layoutElementParams[selectedId.value[i]].x,layoutElementParams[selectedId.value[i]].y]);
+    });
+}).on("rotateGroup", ({ events }) => {
+    events.forEach((ev, i) => {
+        layoutElementParams[selectedId.value[i]].x = ev.drag.translate[0];
+        layoutElementParams[selectedId.value[i]].y = ev.drag.translate[1];
+        layoutElementParams[selectedId.value[i]].rotation = ev.rotation;
+
+        updateTransform(selected.value[i],layoutElementParams[selectedId.value[i]]);
+    });
+});;
 
   /* warpable */
   let matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-  moveable
-    .on(
-      "warp",
-      ({ target, clientX, clientY, delta, dist, multiply, transform }) => {
-        // target.style.transform = transform;
-        matrix = multiply(matrix, delta);
-        target.style.transform = `matrix3d(${matrix.join(",")})`;
-      }
-    )
+  moveable.on(
+    "warp",
+    ({ target, clientX, clientY, delta, dist, multiply, transform }) => {
+      // target.style.transform = transform;
+      matrix = multiply(matrix, delta);
+      target.style.transform = `matrix3d(${matrix.join(",")})`;
+    }
+  );
 };
 
 let selecto: Selecto;
@@ -225,6 +240,7 @@ const initSelecto = () => {
       });
 
       selected.value = e.selected;
+      moveable.target = null;
       moveable.target = e.selected;
 
       selectedId.value.splice(0);
@@ -296,6 +312,17 @@ const updateSelects = (data: elementParams) => {
   layoutElementParams[selectedId.value[0]].text = data.text;
 };
 
+const updateTransform = (element: HTMLElement, data: elementParams) => {
+  element!.style.width = data.width*scale + "px";
+  element!.style.height = data.height*scale + "px";
+  console.log(data);
+
+  element!.style.transform =
+    `translate(${data.x*scale}px,${data.y*scale}px)` +
+    ` scale(${data.scaleX},${data.scaleY})`
+  +` rotate(${data.rotation}deg)`;
+};
+
 const updateParams = (data: elementParams) => {
   if (paramsDic[data.id] == null) {
     layoutElementParams.push(data);
@@ -308,6 +335,7 @@ const updateParams = (data: elementParams) => {
   paramsDic[data.id]!.y = data.y;
   paramsDic[data.id]!.width = data.width;
   paramsDic[data.id]!.height = data.height;
+  paramsDic[data.id]!.rotation = data.rotation;
   paramsDic[data.id]!.borderWidth = data.borderWidth;
   paramsDic[data.id]!.borderRadius = data.borderRadius;
   paramsDic[data.id]!.type = data.type;
@@ -378,6 +406,9 @@ const ProduceElement = (e: MouseEvent) => {
       y: e.clientY - canvasTrans.y,
       width: 200 * scale,
       height: 200 * scale,
+      scaleX: 1,
+      scaleY: 1,
+      rotation: 0,
       borderWidth: 0,
       borderRadius: 0,
       type: preparedType,
@@ -400,14 +431,7 @@ const ProduceElement = (e: MouseEvent) => {
       );
       var el =
         document.getElementsByName("elements")[layoutElementParams.length - 1];
-      el!.style.transform = `translate(${
-        layoutElementParams[layoutElementParams.length - 1].x
-      }px,${layoutElementParams[layoutElementParams.length - 1].y}px`;
-
-      el!.style.width =
-        layoutElementParams[layoutElementParams.length - 1].width + "px";
-      el!.style.height =
-        layoutElementParams[layoutElementParams.length - 1].height + "px";
+      updateTransform(el, layoutElementParams[layoutElementParams.length - 1]);
       selecto.clickTarget(e, el);
     });
 
@@ -493,7 +517,9 @@ onMounted(() => {
       destroy();
     }
     if (e.key == " ") {
-      selecto.dragCondition = ()=>{return true};
+      selecto.dragCondition = () => {
+        return true;
+      };
       moveable.draggable = true;
       console.log("space");
       spacing = false;
@@ -503,7 +529,9 @@ onMounted(() => {
   };
   document.onkeydown = (e) => {
     if (e.key == " ") {
-      selecto.dragCondition = ()=>{return false};
+      selecto.dragCondition = () => {
+        return false;
+      };
       moveable.draggable = false;
       spacing = true;
       locked = true;
@@ -553,21 +581,19 @@ const wheelScale = () => {
       if (layoutElementParams[i] == null) {
         continue;
       }
-      //layoutElementParams[i]!.update = true;
-      layoutElementParams[i]!.x *= scope;
+      // layoutElementParams[i]!.update = true;
+      // layoutElementParams[i]!.x *= scope;
       // (layoutElementParams[i]!.x - e.clientX + canvasTrans.x) * scope +
       // e.clientX -
       // canvasTrans.x;
-      layoutElementParams[i]!.y *= scope;
+      // layoutElementParams[i]!.y *= scope;
       // (layoutElementParams[i]!.y - e.clientY + canvasTrans.y) * scope +
       // e.clientY -
       // canvasTrans.y;
-      layoutElementParams[i]!.width *= scope;
-      layoutElementParams[i]!.height *= scope;
+      // layoutElementParams[i]!.width *= scope;
+      // layoutElementParams[i]!.height *= scope;
       layoutElementParams[i]!.fontSize *= scope;
-      document.getElementsByName("elements")[i]!.style.width = `${layoutElementParams[i].width}px`;
-      document.getElementsByName("elements")[i]!.style.height = `${layoutElementParams[i].height}px`;
-      document.getElementsByName("elements")[i]!.style.transform = `translate(${layoutElementParams[i].x}px, ${layoutElementParams[i].y}px)`;
+      updateTransform(document.getElementsByName("elements")[i],layoutElementParams[i]);
     }
     canvasTrans.x = (canvasTrans.x - e.clientX) * scope + e.clientX;
     canvasTrans.y = (canvasTrans.y - e.clientY) * scope + e.clientY;
@@ -593,8 +619,7 @@ watch(
       changeUpdate();
       return;
     }
-    if(selected.value.length>1)
-    {
+    if (selected.value.length > 1) {
       return;
     }
     if (selectedId.value.length <= 0 || selectedId.value[0] < 0) {
@@ -615,6 +640,12 @@ watch(
     layoutElementParams[selectedId.value[0]]!.width = newVal.elementProps.width;
     layoutElementParams[selectedId.value[0]]!.height =
       newVal.elementProps.height;
+    layoutElementParams[selectedId.value[0]]!.scaleX =
+      newVal.elementProps.scaleX;
+    layoutElementParams[selectedId.value[0]]!.scaleY =
+      newVal.elementProps.scaleY;
+    layoutElementParams[selectedId.value[0]]!.rotation =
+      newVal.elementProps.rotation;
     layoutElementParams[selectedId.value[0]]!.borderWidth =
       newVal.elementProps.borderWidth;
     layoutElementParams[selectedId.value[0]]!.borderRadius =
@@ -627,6 +658,7 @@ watch(
     layoutElementParams[selectedId.value[0]]!.text = newVal.elementProps.text;
     layoutElementParams[selectedId.value[0]]!.fontSize =
       newVal.elementProps.fontSize;
+    //updateTransform(layoutElementParams[selectedId.value[0]]);
     updateUpdates(layoutElementParams[selectedId.value[0]]);
   },
   {
@@ -645,9 +677,8 @@ watch(
 watch(
   () => props.tool,
   (newVal) => {
-    switch(newVal)
-    {
-      case "pointer":{
+    switch (newVal) {
+      case "pointer": {
         moveable.draggable = true;
         moveable.resizable = true;
         moveable.scalable = false;
@@ -659,7 +690,7 @@ watch(
         moveable.originDraggable = true;
         break;
       }
-      case "drag":{
+      case "drag": {
         moveable.draggable = true;
         moveable.resizable = false;
         moveable.scalable = false;
@@ -671,7 +702,7 @@ watch(
         moveable.originDraggable = false;
         break;
       }
-      case "resize":{
+      case "resize": {
         moveable.draggable = true;
         moveable.resizable = true;
         moveable.scalable = false;
@@ -683,7 +714,7 @@ watch(
         moveable.originDraggable = false;
         break;
       }
-      case "scale":{
+      case "scale": {
         moveable.draggable = true;
         moveable.resizable = false;
         moveable.scalable = true;
@@ -695,7 +726,7 @@ watch(
         moveable.originDraggable = false;
         break;
       }
-      case "rotate":{
+      case "rotate": {
         moveable.draggable = true;
         moveable.resizable = false;
         moveable.scalable = false;
@@ -707,7 +738,7 @@ watch(
         moveable.originDraggable = true;
         break;
       }
-      case "wrap":{
+      case "wrap": {
         moveable.draggable = false;
         moveable.resizable = false;
         moveable.scalable = false;
@@ -718,7 +749,7 @@ watch(
         moveable.origin = false;
         moveable.originDraggable = false;
       }
-      case "clip":{
+      case "clip": {
         moveable.draggable = false;
         moveable.resizable = false;
         moveable.scalable = false;
@@ -729,7 +760,7 @@ watch(
         moveable.origin = false;
         moveable.originDraggable = false;
       }
-      case "round":{
+      case "round": {
         moveable.draggable = true;
         moveable.resizable = false;
         moveable.scalable = false;
@@ -742,7 +773,7 @@ watch(
       }
     }
   }
-)
+);
 </script>
 
 <style scoped>
@@ -758,8 +789,8 @@ watch(
   left: 50%;
   top: 100px;
 }
-.blank{
+.blank {
   position: absolute;
-  top:100vw;
+  top: 100vw;
 }
 </style>

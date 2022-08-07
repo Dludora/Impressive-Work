@@ -1,49 +1,50 @@
 <template>
   <n-config-provider :theme="theme">
   <div class="nav">
-    <div class="logo" @click="toMain"></div>
+    <!-- <div class="logo" @click="toMain"></div> -->
     <div class="user-info">
-      <div class="avatar">
-        <n-avatar class="pic">
-          {{ profile.nickname }}
-        </n-avatar>
-      </div>
+      <div class="lineI"></div>
+      <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
         <p>{{ profile.nickname }}</p>
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
     </div>
+    <div class="teamlist">
         <div class="teamsHead">
+          <Icon size="18" style="margin: 0px 8px 0 0;">
+          <BoxMultiple20Regular/>
+          </Icon>
           团队和项目
         </div>
-    <n-scrollbar style="margin:0 0 0 -20px;width:236px;padding-right:4px;">
-      <div class="teams"> 
-        <div class="team">
-          <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue"/>
-        </div>
-        <div class="addTeam" @click="addTeam">
-          <!-- <div class="addImg">
-            <img src="@/assets/plus.png"/>
-          </div> -->
-          <Icon style="margin-right:8px;" size="24">
-            <Add12Filled/>
-          </Icon>
-          <div class="word">
-            新建团队
+      <div class="divline"/>
+      <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;">
+        <div class="teams"> 
+          <div class="team">
+            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" default-value="0"/>
+          </div>
+          <div class="addTeam" @click="addTeam">
+            <Icon style="margin-right:8px;" size="24">
+              <Add12Filled/>
+            </Icon>
+            <div class="word">
+              新建团队
+            </div>
           </div>
         </div>
-      </div>
-    </n-scrollbar>
-        <n-pagination v-model:page="currentPage"
-                      :page-count="pageNum"
-                      show-quick-jumper
-                      :page-slot="3" size="small"
-                      :on-update:page="changePage"
-                      id="pagination">
-          <template #goto>
-            请回答
-          </template>
-        </n-pagination>
+      </n-scrollbar>
+      <div class="divline"/>
+    </div>
+      <n-pagination v-model:page="currentPage"
+                    :page-count="pageNum"
+                    show-quick-jumper
+                    :page-slot="3" size="small"
+                    :on-update:page="changePage"
+                    id="pagination">
+        <template #goto>
+          请回答
+        </template>
+      </n-pagination>
       </div>
   </n-config-provider>
 </template>
@@ -56,31 +57,33 @@ import type {MenuOption} from 'naive-ui'
 import {RouterLink, useRouter} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
 import { Icon } from '@vicons/utils'
-import { Add12Filled } from '@vicons/fluent'
+import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
+import SvgI from '@/components/svgI.vue'
 
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
 
 const sideMenuOptions = ref([] as MenuOption[])
-let dataList = ref([{ID:0}])
+let dataList = ref([{ID: 0}])
+
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
 
 export default defineComponent({
-  data() {
-    return {}
-  },
   components: {
     Icon,
     Add12Filled,
+    SvgI,
+    BoxMultiple20Regular,
   },
   setup(props, {emit}) {
-    const toMain=()=>{
+    const headers = {
+      Authorization: utils.getCookie('Authorization')
+    }
+    const defaultMenu = ref('')
+    const toMain = () => {
       router.push("/")
     }
     const profile = ref({
@@ -100,29 +103,30 @@ export default defineComponent({
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
-        utils.setCookie("userID",profile.value.ID)
+        utils.setCookie("userID", profile.value.ID)
       })
     }
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
           {headers: headers, params: {page: page, size: size}})
           .then(res => {
-            let array = ref(res.data.data.items)
+            console.log(res)
+            const array = ref(res.data.data.items)
             dataList = res.data.data.items
-            console.log(res.data.data.items)
+            // console.log(res.data.data.items)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             for (let i = 0; i < array.value.length; i++) {
-              let idd=array.value[i].ID
+              let idd = array.value[i].ID
               sideMenuOptions.value.push(
                   {
                     label: () =>
                         h(
                             RouterLink,
                             {
-                              to: 
-                                '/team/teamprojects?teamID='+idd,
+                              to:
+                                  '/team/teamprojects?teamID=' + idd,
                             },
                             {default: () => array.value[i].name}
                         ),
@@ -131,34 +135,35 @@ export default defineComponent({
                   }
               )
             }
+            // emit("ID", array.value[0].ID)
+            // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
     }
     const changePage = (page: number) => {
-      getAllTeams(page-1, 8)
+      getAllTeams(page - 1, 8)
     }
-    onMounted(async () => {
+    onMounted(() => {
       load()
       getAllTeams(0, 8)
     })
-
     return {
       theme: darkTheme,
       addTeam,
       toMain,
       load,
       getAllTeams,
-      handleUpdateValue (key: string, item: MenuOption) {
-            emit("ID",dataList[parseInt(JSON.stringify(key))].ID)
-            utils.setCookie('teamID',dataList[parseInt(JSON.stringify(key))].ID)
+      handleUpdateValue(key: string, item: MenuOption) {
+        emit("ID", dataList[parseInt(JSON.stringify(key))].ID)
+        utils.setCookie('teamID', dataList[parseInt(JSON.stringify(key))].ID)
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })
-        },
+      },
       changePage,
       // 个人信息
       profile,
       sideMenuOptions,
-
+      defaultMenu,
       // 分页
       currentPage,
       total,
@@ -170,41 +175,31 @@ export default defineComponent({
 </script>
 
 <style scoped>
-*{
+* {
   transition: 0.1s;
   transition-delay: 0s;
 }
+
 .nav {
-  display:flex;
+  display: flex;
   flex-direction: column;
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
-  background-color: rgba(43, 48, 59, 1);
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  background-color: #16181D;
+  border-right: 1px solid #414958;
   /*padding-top: 20px;*/
-  padding-left: 20px;
-  width:220px;
-  height:100%;
-  overflow:hidden;
+  padding-left: 8px;
+  width: 192px;
+  height: 100%;
+  overflow: hidden;
 }
-
-.logo {
-  width: 200px;
-  height: 139px;
-  /*background-color: rgba(217, 217, 217, 1);*/
-  background-image: url("@/assets/slogan2048x705.png");
-  background-size:contain;
-  /*text-align: center;
-  line-height: 56px;*/
-  margin-top:20px;
-  background-repeat: no-repeat;
-}
-
 .user-info {
   display: flex;
   width: 100%;
-  height: 70px;
-  margin-top: 30px;
+  height: 50px;
+  margin-top: 25px;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .avatar {
@@ -223,15 +218,20 @@ export default defineComponent({
 }
 
 .user {
-  margin-top: 5px;
-  margin-left: 8px;
-  height: 65px;
-  color: rgba(255, 255, 255, 1);
+  margin: 0 8px;
+  /*height: 65px;*/
+  color: #fff;
+  text-overflow: ellipsis;
+  /*width: 127px;*/
+  overflow: hidden;
+  white-space: nowrap;
   font-size: larger;
 }
 
 .user p {
-  margin-top: 5px;
+  /*margin-top: 5px;*/
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .teams {
@@ -241,10 +241,16 @@ export default defineComponent({
 }
 
 .teamsHead {
-  margin-top: 30px;
-  color:#FFFFFF;
-  font-size:16px;
-  font-weight: 700;
+  margin: 23px 16px 0 4px;
+  color: #E2E4E9;
+  font-size: 12px;
+  line-height: 42px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  /*font-weight:700;*/
+  /*border-bottom: 1px solid #414958;*/
 }
 
 .src {
@@ -273,20 +279,22 @@ export default defineComponent({
 .pack:hover {
   background: #414958;
 }
-.n-menu{
-  padding:0;
+
+.n-menu {
+  padding: 0;
 }
+
 .addTeam {
   height: 42px;
   line-height: 42px;
   display: flex;
-  font-size:12px;
+  font-size: 12px;
   /*margin-right: 10px;
   margin-left: -10px;*/
-  margin:6px 8px 0 8px;
+  margin: 6px 8px 0 8px;
   padding-left: 24px;
   color: #A7AFBE;
-  border-radius:2px;
+  border-radius: 2px;
   align-items: center;
 }
 
@@ -314,6 +322,51 @@ export default defineComponent({
 #pagination {
   /*position: absolute;
   top: calc(100% - 80px);*/
-  padding:5px 0 20px;
+  padding: 5px 0 20px;
+}
+.signI{
+  overflow: hidden;
+  width:0;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+  transition-duration: 0.5s;
+}
+
+.user-info:hover .signI {
+  width: 50px;
+}
+
+.lineI {
+  width: 1px;
+  border-radius: 1px;
+  height: 100%;
+  background-color: #fff;
+  transition: 0.2s;
+  transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
+}
+.user-info:hover .lineI{
+  height:0;
+}
+.teamlist{
+  /* margin: 0 0 190px 0; */
+  overflow: overlay;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-items: stretch;
+}
+.teamlist:hover .divline{
+  border-bottom: 1px solid #2B303B;
+}
+.teamlist:hover .teamsHead{
+  color:#fff;
+}
+.divline{
+  height:1px;
+  margin:0 12px 0 0;
+  /*background:#16181D;*/
+  border-bottom: 1px solid #16181D;
+  transition-duration: 0.3s;
 }
 </style>

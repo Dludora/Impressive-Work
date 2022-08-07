@@ -397,7 +397,7 @@ const toolAvailable:{[key:string]:boolean} = {
   "pointer":true,
   "drag":true,
   "resize":true,
-  "scale":true,
+  "scale":false,
   "rotate":true,
   "wrap":true,
   "clip":false,
@@ -426,6 +426,9 @@ type Property = {
   y: number;
   width: number;
   height: number;
+  scaleX:number;
+  scaleY:number;
+  rotation:number;
   borderWidth: number;
   borderRadius: number;
   type: string;
@@ -444,6 +447,9 @@ const property = reactive<Property>({
   y: 0,
   width: 0,
   height: 0,
+  scaleX: 1,
+  scaleY: 1,
+  rotation: 0,
   borderWidth: 0,
   borderRadius: 0,
   type: "none",
