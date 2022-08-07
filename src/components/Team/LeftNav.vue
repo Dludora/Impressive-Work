@@ -23,7 +23,7 @@
         <div class="teams">
           <div class="team">
             <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
-            <TandP :options="teamAndProjects" @update:value="handleUpdateValue"/>
+            <!-- <TandP :options="teamAndProjects" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
           </div>
           <div class="addTeam" @click="addTeam">
             <Icon style="margin-right:8px;" size="24">
@@ -81,7 +81,7 @@ export default defineComponent({
     Add12Filled,
     SvgI,
     BoxMultiple20Regular,
-    TandP,
+    // TandP,
   },
   setup(props, {emit}) {
     const route = useRoute();
@@ -176,6 +176,7 @@ export default defineComponent({
         emit("ID", parseInt(key))
         utils.setCookie('teamID', parseInt(key))
         menuKey.value=key
+        emit("judgechild")
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
         // })

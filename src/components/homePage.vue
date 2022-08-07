@@ -45,7 +45,7 @@
               配合内嵌的tipTap文档编辑器<br/>
               让<a>文档管理</a>也不是难题<br/>
             </div>
-            <div @click="teamMain" class="startnow">
+            <div @click="programView" class="startnow">
               现在尝试
               <div class="rightarrow"/>
             </div>
@@ -139,6 +139,7 @@ const scroll =(e:Event)=>{
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .figure{
+  transition-duration:1.2s;
   width:100%;
   height:100%;
   background-image: url("@/assets/titlefigure.jpg");
