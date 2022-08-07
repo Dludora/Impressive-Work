@@ -346,4 +346,7 @@ export default defineComponent({
     /* background: #414958; */
     border-bottom: 1px solid #414958;
 }
+.out{
+  height:100%;
+}
 </style>
