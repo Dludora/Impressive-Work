@@ -1,6 +1,6 @@
 <template>
   <div class="board" @mousedown="ShutBoard">
-    <div class="layoutHeader home">
+    <div class="layoutHeader home ui">
       <n-icon size="18" color="#A7AFBE" class="backArrow" @click="exit">
         <arrow-back-ios-round />
       </n-icon>
@@ -18,13 +18,90 @@
         ref="canvas"
         :update="update"
         @updateProps="updateProps"
-        @changeUpdate = "changeUpdate"
+        @changeUpdate="changeUpdate"
         :elementProps="property"
+        :tool = "tool"
         :layoutId="layoutId"
         :canvasWidth="canvasWidth"
         :canvasHeight="canvasHeight"
       ></layout-canvas>
       <div>
+        <div class="toolBar">
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon toolIconTop"
+            id = "toolpointer"
+            @click="switchTool('pointer')"
+          >
+            <cursor24-regular />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="tooldrag"
+            @click="switchTool('drag')"
+          >
+            <md-move />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="toolresize"
+            @click="switchTool('resize')"
+          >
+            <resize-large20-regular />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="toolscale"
+            @click="switchTool('scale')"
+          >
+            <scale-fill24-regular />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="toolrotate"
+            @click="switchTool('rotate')"
+          >
+            <arrow-rotate-clockwise16-regular />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="toolwrap"
+            @click="switchTool('wrap')"
+          >
+            <format-shapes-outlined />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon"
+            id="toolclip"
+            @click="switchTool('clip')"
+          >
+            <crop20-filled />
+          </n-icon>
+          <n-icon
+            size="27"
+            color="#A7AFBE"
+            class="toolIcon toolIconBottom"
+            id="toolround"
+            @click="switchTool('round')"
+          >
+            <rounded-corner-round />
+          </n-icon>
+          
+        </div>
+        
         <div class="ui porpertyBar" v-show="property.type != 'none'">
           <div id="xPorperty" class="porpertyBarInpUnit">
             <span class="porpertyText">X</span>
@@ -190,26 +267,34 @@
             </div>
           </div>
         </div>
-        <div class="ui toolBar">
-          <div
-            class="ui toolBarUnit toolLeftUnit"
+        <div class="ui elementBar">
+          <!-- <div
+            class="ui elementBarUnit elementLeftUnit"
             @mousedown="PrepareElement('rect')"
           >
-            <n-icon size="42" class="ui toolUnit toolPointer" color="#ffffff">
+            <n-icon
+              size="42"
+              class="ui elementUnit elementPointer"
+              color="#ffffff"
+            >
               <cursor24-regular />
             </n-icon>
+          </div> -->
+          <div class="ui elementBarUnit elementLeftUnit" @mousedown="PrepareElement('rect')">
+            <div class="ui elementUnit elementRectangle"></div>
           </div>
-          <div class="ui ui toolBarUnit" @mousedown="PrepareElement('rect')">
-            <div class="ui toolUnit toolRectangle"></div>
-          </div>
-          <div class="ui toolBarUnit" @mousedown="PrepareElement('circle')">
-            <div class="ui toolUnit toolCircle"></div>
+          <div class="ui elementBarUnit" @mousedown="PrepareElement('circle')">
+            <div class="ui elementUnit elementCircle"></div>
           </div>
           <div
-            class="ui toolBarUnit toolRightUnit"
+            class="ui elementBarUnit elementRightUnit"
             @mousedown="PrepareElement('text')"
           >
-            <n-icon size="42" class="ui toolUnit toolPointer" color="#ffffff">
+            <n-icon
+              size="48"
+              class="ui elementUnit elementPointer"
+              color="#ffffff"
+            >
               <text-add-t24-regular />
             </n-icon>
           </div>
@@ -225,19 +310,26 @@ import {
   Cursor24Regular,
   TextAddT24Regular,
   Image24Regular,
-  Save16Regular
+  Save16Regular,
+  ResizeLarge20Regular,
+  ScaleFill24Regular,
+  ArrowRotateClockwise16Regular,
+  Crop20Filled
 } from "@vicons/fluent";
 import {
   FrontHandOutlined,
   KeyboardArrowUpRound,
   ArrowBackIosRound,
   FileDownloadFilled,
+  FormatShapesOutlined,
+  RoundedCornerRound
 } from "@vicons/material";
+import {MdMove} from "@vicons/ionicons4"
 import { useMessage } from "naive-ui";
 
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
-import {useRoute,useRouter} from "vue-router"
+import { useRoute, useRouter } from "vue-router";
 
 import utils from "@/Utils";
 
@@ -301,6 +393,16 @@ const palette = reactive<string[]>([
   "#551117",
   "#2D1155",
 ]);
+const toolAvailable:{[key:string]:boolean} = {
+  "pointer":true,
+  "drag":true,
+  "resize":true,
+  "scale":true,
+  "rotate":true,
+  "wrap":true,
+  "clip":false,
+  "round":false
+}
 const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value);
 
 const showPalette = ref<boolean>(false);
@@ -309,6 +411,8 @@ const showBorderPalette = ref<boolean>(false);
 const colorCircles = ref<any>([]);
 const borderCircles = ref<any>([]);
 const update = ref<boolean>(true);
+
+const tool = ref<string>("pointer")
 
 let selectedColor: number = 27;
 let selectedBorderColor: number = 30;
@@ -328,7 +432,7 @@ type Property = {
   color: string;
   borderColor: string;
   src: string;
-  text:string;
+  text: string;
   fontSize: number;
   locked: boolean;
 };
@@ -344,25 +448,22 @@ const property = reactive<Property>({
   borderRadius: 0,
   type: "none",
   locked: false,
-  text:"",
+  text: "",
   fontSize: 0,
   src: "",
   color: "#D42B39",
   borderColor: "transparent",
 });
 
-const initPage = () => {};
-
-const changeUpdate = ()=>{
+const changeUpdate = () => {
   update.value = true;
-}
+};
 
 const updateProps = (data: Property) => {
   if (data == null) {
     property.type = "none";
     return;
   }
-  console.log(data.type);
   update.value = false;
   // setTimeout(() => {
   //   update.value = true;
@@ -376,7 +477,6 @@ const updateProps = (data: Property) => {
     borderCircles.value[selectedBorderColor].style.margin = "4.5px";
   }
   property.id = data.id;
-  property.index = data.index;
   property.x = data.x;
   property.y = data.y;
   property.width = data.width;
@@ -389,7 +489,6 @@ const updateProps = (data: Property) => {
   property.src = data.src;
   property.fontSize = data.fontSize;
   property.text = data.text;
-  property.locked = data.locked;
 
   for (var i = 0; i < palette.length; ++i) {
     if (property.color == palette[i]) {
@@ -400,6 +499,15 @@ const updateProps = (data: Property) => {
     }
   }
 };
+
+const switchTool = (toTool:string)=>{
+  if(toolAvailable[toTool])
+  {
+    document.getElementById("tool"+tool.value)!.style.backgroundColor = "";
+    tool.value=toTool;
+    document.getElementById("tool"+toTool)!.style.backgroundColor = "#464b56";
+  }
+}
 
 const updateColor = (colorId: number) => {
   update.value = true;
@@ -419,7 +527,7 @@ const updateBorder = (colorId: number) => {
   selectedBorderColor = colorId;
   borderCircles.value[selectedBorderColor].style.borderWidth = "2px";
   borderCircles.value[selectedBorderColor].style.margin = "2.5px";
-  if (palette[colorId] != "transparent") {
+  if (palette[colorId] != "transparent" && property.borderWidth == 0) {
     message.info("注意：边框宽度为0");
   }
 };
@@ -449,8 +557,8 @@ onMounted(() => {
   var imgInputer = document.getElementById("fileUploader");
   layoutId.value = parseInt(route.query.layoutId as string);
   layoutName.value = route.query.layoutName as string;
-  canvasWidth.value = parseInt(route.query.canvasWidth as string)
-  canvasHeight.value = parseInt(route.query.canvasHeight as string)
+  canvasWidth.value = parseInt(route.query.canvasWidth as string);
+  canvasHeight.value = parseInt(route.query.canvasHeight as string);
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -467,11 +575,12 @@ onMounted(() => {
       }
     });
   };
+  switchTool("pointer")
 });
 
-const exit = ()=>{
+const exit = () => {
   router.push("/project/prototypes");
-}
+};
 </script>
 
 <style scoped>
@@ -490,10 +599,12 @@ const exit = ()=>{
   top: 36px;
   bottom: 0px;
   width: 100%;
+  z-index: 1;
 }
 .ui {
   z-index: 100;
   user-select: none;
+  position: relative;
 }
 .layoutHeader {
   height: 36px;
@@ -516,6 +627,31 @@ const exit = ()=>{
   font-size: 18px;
   line-height: 36px;
   color: #e2e4e9;
+}
+.toolBar {
+  position: absolute;
+  display: inline-block;
+  background-color: #2b303b;
+  left: 40px;
+  top: 50%;
+  transform: translate(0,-50%);
+  width: 42px;
+  border-radius: 8px;
+}
+.toolIcon {
+  float: left;
+  padding:8px;
+}
+.toolIconTop {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.toolIconBottom {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.toolIcon:hover {
+  background-color: #3a404f;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -555,8 +691,8 @@ const exit = ()=>{
   position: absolute;
   left: 0;
   opacity: 0;
-  width:40px;
-  height:45px;
+  width: 40px;
+  height: 45px;
 }
 .porpertyBarIconUnit {
   height: 36px;
@@ -613,7 +749,7 @@ const exit = ()=>{
   box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
 }
-.toolBar {
+.elementBar {
   background-color: #2b303b;
   display: inline-block;
   position: absolute;
@@ -622,24 +758,24 @@ const exit = ()=>{
   bottom: 30px;
   border-radius: 18px;
 }
-.toolLeftUnit {
+.elementLeftUnit {
   border-top-left-radius: 18px;
   border-bottom-left-radius: 18px;
 }
-.toolRightUnit {
+.elementRightUnit {
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;
 }
-.toolBarUnit {
+.elementBarUnit {
   width: 72px;
   height: 72px;
   float: left;
   position: relative;
 }
-.toolBarUnit:hover {
+.elementBarUnit:hover {
   background-color: #3a404f;
 }
-.toolUnit {
+.elementUnit {
   position: absolute;
   left: 0;
   right: 0;
@@ -647,22 +783,18 @@ const exit = ()=>{
   bottom: 0;
   margin: auto;
 }
-.toolPointer {
-  width: 39px;
-  height: 42px;
-}
-.toolRectangle {
+.elementRectangle {
   background-color: #ddb055;
-  width: 54px;
+  width: 42px;
   height: 42px;
 }
-.toolCircle {
+.elementCircle {
   background-color: #ddb055;
   width: 42px;
   height: 42px;
   border-radius: 50% 50%;
 }
-.toolText {
+.elementText {
   width: 42px;
   height: 42px;
 }
