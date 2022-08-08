@@ -473,7 +473,7 @@ const updateProps = (data: Property) => {
     property.type = "none";
     return;
   }
-  update.value = false;
+  //update.value = false;
   // setTimeout(() => {
   //   update.value = true;
   // }, 100);

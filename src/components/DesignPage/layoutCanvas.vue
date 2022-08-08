@@ -194,6 +194,7 @@ const initMoveable = () => {
           selected.value[0],
           layoutElementParams[selectedId.value[0]]
         );
+      updateProps();
     });
 
   /* rotatable */
@@ -204,6 +205,7 @@ const initMoveable = () => {
           selected.value[0],
           layoutElementParams[selectedId.value[0]]
         );
+        updateProps();
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -722,7 +724,11 @@ watch(
     layoutElementParams[selectedId.value[0]]!.text = newVal.elementProps.text;
     layoutElementParams[selectedId.value[0]]!.fontSize =
       newVal.elementProps.fontSize;
-    //updateTransform(layoutElementParams[selectedId.value[0]]);
+    updateTransform(selected.value[0], layoutElementParams[selectedId.value[0]]);
+    moveable.target = null;
+    setTimeout(() => {
+      moveable.target = selected.value;
+    });
     updateUpdates(layoutElementParams[selectedId.value[0]]);
   },
   {
