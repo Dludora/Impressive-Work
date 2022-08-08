@@ -120,15 +120,15 @@ const tipTap = () => {
 const scroller=ref()
 const scroll =(e:Event)=>{
   let offsetY=document.getElementsByClassName('brand')[0].getBoundingClientRect().y
-  let figure=document.getElementsByClassName('figure')[0]
+  let figure=document.getElementsByClassName('figure')[0] as HTMLIFrameElement
   console.log(offsetY)
   if(offsetY<0){
     // figure.setAttribute('opacity',(100-offsetY)/100);
     let alpha=(100+offsetY)/100
     if(alpha>0.2)
-      figure.style.opacity=(100+offsetY)/100
-    else figure.style.opacity=0.2
-  }else figure.style.opacity=1
+      figure.style.opacity=alpha.toString()
+    else figure.style.opacity='0.2'
+  }else figure.style.opacity='1'
 }
 </script>
 
