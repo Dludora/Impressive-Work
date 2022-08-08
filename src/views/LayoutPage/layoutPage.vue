@@ -343,7 +343,7 @@ const headers = {
   Authorization: utils.getCookie("Authorization"),
 };
 
-const canvas = ref<layoutCanvas>(null);
+const canvas = ref<any>(null);
 const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
