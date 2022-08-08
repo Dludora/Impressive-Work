@@ -12,15 +12,12 @@
             <Icon size="20" class="rename">
                 <Copy16Filled @click="copyThis"/>
             </Icon>
-             <div class="del">
-            <Icon size="20" class="del">
-                <CloseRound @click="delThis"/>
-            </Icon>
-            </div>
         </div>
         <div class="desc">
             创建于&nbsp;{{date}}
-           
+            <Icon size="20" class="del">
+                <CloseRound @click="delThis"/>
+            </Icon>
         </div>
     </div>
 </template>
@@ -55,21 +52,26 @@ export default defineComponent({
   setup(props, {emit}) {
     const route = useRoute()
     const gotoProject = () => {
+      // console.log("go")
+      utils.setCookie('proID', props.id)
+      utils.setCookie('proNAME', props.name)
+      utils.setCookie('proTeam', route.query.teamID)
 
+      router.replace({name: 'project'})
     }
     const renameThis = () => {
-      // event.stopPropagation();
-      // console.log("rename" + props.id)
+      event.stopPropagation();
+      console.log("rename" + props.id)
       emit("rename")
     }
     const delThis = () => {
-      // event.stopPropagation();
-      // console.log("del" + props.id)
+      event.stopPropagation();
+      console.log("del" + props.id)
       emit("del")
     }
     const copyThis = () => {
-      // event.stopPropagation();
-      // console.log("copy"+props.id)
+      event.stopPropagation();
+      console.log("copy"+props.id)
       emit("copy")
     }
     return {
@@ -84,10 +86,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.del{
-  margin-top: 15px;
-  margin-left: auto;
-}
 * {
   transition: 0.2s;
 }
