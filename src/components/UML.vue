@@ -15,23 +15,26 @@
           回到<a @click="programView">项目</a>/<a @click="teamMain">团队</a>
         </div>
 
-        <div class="diagramlist">
-          <div class="diagramitem" v-for="item in diagrams" :key="item.id" @click="open(item)">
-            <Icon style="margin-right:8px;" size="20">
-              <ProjectDiagram/>
-            </Icon>
-            {{item.name}}
+        <n-scrollbar>
+          <div class="diagramlist">
+            <div class="diagramitem" v-for="item in diagrams" :key="item.id" @click="open(item)">
+              <Icon style="margin-right:8px;" size="20">
+                <ProjectDiagram/>
+              </Icon>
+              {{item.name}}
+            </div>
+            <div @click="newDiagram" class="diagramitem">
+              <Icon style="margin-right:8px;" size="20">
+                <Add12Filled/>
+              </Icon>
+              新建绘图
+            </div>
           </div>
-          <div @click="newDiagram" class="diagramitem">
-            <Icon style="margin-right:8px;" size="20">
-              <Add12Filled/>
-            </Icon>
-            新建绘图
-          </div>
-        </div>
+        </n-scrollbar>
       </div>
+      
       <div class="main">
-        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark"/>
+        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark&noSaveBtn=1"/>
       </div>
   </div>
       <n-modal
@@ -91,6 +94,7 @@ export default defineComponent({
   },
   
   setup () {
+    let selectid=utils.getCookie('UMLid')
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
@@ -99,8 +103,8 @@ export default defineComponent({
     const getDiagrams=()=>{//TODO:动态获取UML图
       axios.get('/uml/list', {headers: headers,params:{programID:proid,}})
       .then(res=>{
-        console.log('获取图列表')
-        console.log(res)
+        // console.log('获取图列表')
+        // console.log(res)
         const array = ref(res.data.data.items)
         diagrams.value.splice(0,diagrams.value.length)
         for (let i = 0; i < array.value.length; i++) {
@@ -111,16 +115,6 @@ export default defineComponent({
           })
         }
       })
-      // diagrams.value.push({
-      //   id:'1',
-      //   name:'图1',
-      //   xml:'<?xml version="1.0" encoding="UTF-8"?><mxfile host="embed.diagrams.net" modified="2022-08-08T11:51:22.831Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" version="20.2.3" etag="RZbnpVGeSEaDHZF3EW5u" type="embed"><diagram id="k-Zqvsd3rF9-AA1y40a9">vZTBcoMgEEC/xnsQJzHXpml76clDz1Q2wgyKg1i1X99NWaOOzbSHNBcH3rLAPsCIH8r+2YlavVoJJoo3so/4YxTH202K3zMYAkh2SQCF0zIgNoFMfwLBDdFWS2gWA721xut6CXNbVZD7BRPO2W457GTNctVaFLACWS7Mmr5p6VWgabyb+AvoQo0rs+0+REoxDqZKGiWk7WaIHyN+cNb60Cr7A5izu9FLyHu6Er1szEHl/5IQh4QPYVqqjfblh7FYTECv2HnolPaQ1SI/Rzo8WWTKlwZ7DJs0FTgP/dXtsEuReDnAluDdgEMoIU7IC10MxqnfTZrZ6E7NFKfEBJ1scZl6Kh4bVP/PLvjvLpyy5Xvb3MUF2y9d4LNZuUj/SUVyw2shmjq8wZPuQd7GDb+fG+xOz/E7Nvun8eMX</diagram></mxfile>'
-      // })
-      // diagrams.value.push({
-      //   id:'2',
-      //   name:'图2',
-      //   xml:'<mxfile host="embed.diagrams.net" modified="2022-08-08T11:32:52.948Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" version="20.2.3" etag="nSHcr28rU2-Whm-xz8xP" type="embed"><diagram id="zRPebFThs4FdP4GKLKOd">vZXdjpswEIWfhtsqhPzQyw3Z7lZKpaq56LWDJ2DVMMgMJenTdwx2CEui3UpRpSiyj2dg5psDBFFSnF6MqPJvKEEH85k8BdE2mM9Xs5j/rXDuhcV60QuZUbKXwkHYqz/gxJlTGyWhHgUSoiZVjcUUyxJSGmnCGGzHYUfU47tWIoOJsE+Fnqo/laS8V+P5etBfQWW5v3O4+tyfFMIHu07qXEhsr6ToOYgSg0j9qjgloC07z6XP+3Ln9FKYgZI+krDsE34L3bjeXF109s1yiZVdSkyborvsps0Vwb4SqdVbHjFrORWadyEvD9iUEuTu4AV3EzAEp7uFhpf22TaABZA5c4hLYNP0KWdvBbdvhwGEnmp+BT92mnAzzy6XHrDwwpG5TWk1ofSUEpq7qJpC9wHRxjat2Dk7cQD9HWtFCksOOSARFlcBT1pl9oDwDU1sSKsSkouXZ48heqHliS6nRKMbQFcPALp+33acwI8zbzaeaqqxke+77xFo4jGa+eI/mi2esNmpmlj5SlBMMHGT9omsyeAv9oi2ptuWWFpwR6X1G0k4l2k40g3zFUpK3TFnvKrMdl3YdjEoP1yzVkJOP+ru9ZVzIvAVNhWqkrrulxv+MY9k9mkZLLnWhPfhsOefDTfEzubyhepmA6KmFmpbnEESJA5dpw/yfOQ/NH6wNzwf35hr9O9z5e3wGu/Orr6F0fNf</diagram></mxfile>'
-      // })
     }
     getDiagrams()
 
@@ -138,13 +132,15 @@ export default defineComponent({
       validator() {
         if (modelAddRef.value.name.length === 0) {
           return new Error("名称不能为空")
+        }else if (modelAddRef.value.name.length > 24) {
+          return new Error("名称太长了")
         }
       },
       trigger: ['input', 'blur']
     }
     const onPositiveClick = () => {
       if (modelAddRef.value.name.length === 0) {
-        message.warning("项目名称不能为空！")
+        message.warning("名称不能为空")
         return
       }
       axios.post('/uml', {
@@ -153,7 +149,7 @@ export default defineComponent({
         "programID": proid,
       }, {headers: headers}).then(res => {
         if (res.data.msg === "成功") {
-          console.log("添加绘图成功！")
+          // console.log("添加绘图成功！")
           let t = new Date();
           let item = {
             "name": modelAddRef.value.name,
@@ -167,6 +163,7 @@ export default defineComponent({
         }
       })
       showModalRef.value = false
+      // modelAddRef.value.name = ""
     }
     const onNegativeClick = () => {
       modelAddRef.value.name = ""
@@ -180,14 +177,13 @@ export default defineComponent({
       router.push('/project')
     }
     const loaddiagram =() =>{
-      let selectid=utils.getCookie('UMLid')
       let loaded=false;
       for(var item of diagrams.value){
         if(item.id==selectid){
           axios.get('/uml/'+item.id,{headers: headers})
           .then(res=>{
-            console.log('获取内容')
-            console.log(res)
+            // console.log('获取内容')
+            // console.log(res)
             if(res.data.msg === "成功"){
               let loadxml=res.data.data.content
               umleditor.contentWindow.postMessage(JSON.stringify({action:'load',xml:loadxml,autosave:1}),'*')
@@ -206,12 +202,13 @@ export default defineComponent({
     }
     const open =(diagram:Diagram) =>{
       utils.setCookie('UMLid', diagram.id)
+      selectid=diagram.id
       utils.setCookie('UMLname', diagram.name)
       router.push({name:'UML'})
       loaddiagram()
     }
     window.addEventListener("message", function(event) {
-      console.log(event)
+      // console.log(event)
       console.log( "received:(" + event.data +')from('+event.origin +')');
       if (event.origin == 'https://embed.diagrams.net') {
         let msg = JSON.parse(event.data);
@@ -227,6 +224,17 @@ export default defineComponent({
           }, 800);
 
           loaddiagram()
+        }else if(msg.event=='exit'){
+          //drawio退出
+          router.back()
+        }else if(msg.event=='save' || msg.event=='autosave'){
+          let savexml=msg.xml
+          console.log('saving'+selectid)
+          axios.put('/uml/content',{id:selectid,content:savexml},{headers:headers}).then(res=>{
+            console.log(res.data)
+          })
+          if(msg.exit==true)
+            routerBack()
         }
       }
     });
@@ -244,6 +252,7 @@ export default defineComponent({
       ruleAdd,
       formatFeedback,
       modelAddRef,
+      darkTheme,
     }
   }
 })
@@ -284,10 +293,13 @@ a {
   background-color:#2A2A2A;
 }
 .side{
+  display: flex;
   height: 100%;
   width: 200px;
-  background-color:#2A2A2A;
-  border-right:1px solid #4E5456;
+  background-color: #2A2A2A;
+  border-right: 1px solid #4E5456;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 .backnav{
   margin: 0 9px;
