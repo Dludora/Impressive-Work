@@ -344,7 +344,7 @@ export default {
         if(res.data.msg==='成功'){
 
           console.log("保存文档成功");
-          router.push('/docuList');
+          router.push('/project/documents');
 
         }
       })

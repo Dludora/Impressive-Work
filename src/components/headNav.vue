@@ -51,11 +51,11 @@ const logout = () => {
   })
 }
 const teamMain= () =>{
-  router.push('/team');
+  router.push('/teamchoose');
 }
 
 const programView = () => {
-  router.push('/project');
+  router.push('/teamchoose');
 }
 
 const UML = () => {
@@ -96,6 +96,7 @@ a {
     flex-wrap: nowrap;
 }
 .options *{
+    user-select:none;
     white-space: nowrap;
 }
 .options a{

@@ -4,7 +4,7 @@
       {{programname}}
     </div>
     <div class="pro-des">
-      来自 {{teamname}} 的项目
+      来自团队: {{teamname}} 的项目
     </div>
   </div>
 </template>

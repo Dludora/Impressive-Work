@@ -81,7 +81,6 @@ export default defineComponent({
     Add12Filled,
     SvgI,
     BoxMultiple20Regular,
-    // TandP,
   },
   setup(props, {emit}) {
     const route = useRoute();

@@ -163,7 +163,7 @@
             ></n-input>
           </div>
           <div
-            id="hPorperty"
+            id="wPorperty"
             class="porpertyBarInpUnit"
             v-show="property.type != 'text'"
           >
@@ -180,7 +180,7 @@
             ></n-input>
           </div>
           <div
-            id="yPorperty"
+            id="tPorperty"
             class="porpertyBarInpUnit"
             v-show="property.type == 'text'"
           >
@@ -343,7 +343,7 @@ const headers = {
   Authorization: utils.getCookie("Authorization"),
 };
 
-const canvas = ref<layoutCanvas>(null);
+const canvas = ref<any>(null);
 const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
@@ -473,7 +473,7 @@ const updateProps = (data: Property) => {
     property.type = "none";
     return;
   }
-  update.value = false;
+  //update.value = false;
   // setTimeout(() => {
   //   update.value = true;
   // }, 100);
@@ -493,6 +493,8 @@ const updateProps = (data: Property) => {
   property.y = data.y;
   property.width = data.width;
   property.height = data.height;
+  property.scaleX = data.scaleX;
+  property.scaleY = data.scaleY;
   property.rotation = data.rotation;
   property.borderWidth = data.borderWidth;
   property.borderRadius = data.borderRadius;

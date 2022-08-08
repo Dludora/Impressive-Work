@@ -18,11 +18,12 @@
         v-model:value="transform.text"
         placeholder=""
         type="textarea"
+        class="textWrap"
         :autosize="{
           minRows: 0,
         }"
       ></n-input>
-      <div v-else>{{ transform.text }}</div>
+      <div class="textWrap" v-else>{{ transform.text }}</div>
     </div>
   </div>
 </template>
@@ -102,10 +103,10 @@ const transform = reactive({
   borderColor: "blue",
 });
 
-const emits = defineEmits(["updateParams", "changeUpdate"]);
+const emits = defineEmits(["updateSelects", "changeUpdate"]);
 
 const updateParams = () => {
-  emits("updateParams", transform);
+  emits("updateSelects", transform);
 };
 
 const changeUpdate = () => {
@@ -136,6 +137,7 @@ const Select = () => {
 };
 
 const selectContent = () => {
+  console.log("editContent");
   switch (props.elementParams.type) {
     case "text": {
       textModifying.value = true;
@@ -166,6 +168,7 @@ const UnSelect = () => {
 defineExpose({
   UnSelect,
   Select,
+  selectContent
 });
 
 onMounted(() => {
@@ -300,6 +303,10 @@ const ResetTrans = (newVal: Params) => {
   border-width: 1px;
   width: 6px;
   height: 6px;
+  word-wrap:break-word;
+}
+.textWrap{
+  word-wrap:break-word;
 }
 .leftResizer {
   left: -8px;
