@@ -9,6 +9,7 @@
     <n-button @click="downPDF">下载PDF</n-button>
     <n-button @click="billPrintClick">新玩意</n-button>
     <n-button @click="openPrint">新新玩意</n-button>
+    <n-button @click="saveWord">新新玩意</n-button>
 
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
@@ -52,6 +53,9 @@ import TurndownService from 'turndown';
 import router from "@/router";
 
 import printJS from "print-js";
+
+import htmlDocx from 'html-docx-js/dist/html-docx';
+import saveAs from 'file-saver';
 
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
@@ -270,6 +274,20 @@ export default {
       if (navigator.userAgent.indexOf("MSIE") > 0){
         document.body.removeChild(iframe);
       }
+    },
+
+    saveWord(){
+      let htmlStr = document.querySelector("#pdfDom").innerHTML;
+      let page = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${htmlStr}
+        </body></html>`
+      // console.log(page);return
+      saveAs(
+          htmlDocx.asBlob(page, {
+            orientation: "landscape"//跨域设置
+          }),
+          //文件名
+          "1"+".doc"
+      )
     },
 
     getRandomName() {

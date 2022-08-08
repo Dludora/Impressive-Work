@@ -13,21 +13,22 @@
         </n-config-provider>
         </div>
         <div class="clsR">
+           <div class="search">
+                  <n-button quaternary @click="search" >搜索</n-button>
+                    </div>
           <div class="search">
-        <n-input v-model:value="searchText" round placeholder="搜索项目" >
-        <template #suffix>
-            <n-button quaternary size="tiny" @click="clear" >
-            <Icon size="16">
-              <Backspace24Filled/>
-            </Icon>
-          </n-button>
-      </template></n-input>
+                  <n-input v-model:value="searchText" round placeholder="搜索项目" >
+                  <template #suffix>
+                      <n-button quaternary size="tiny" @click="clear" >
+                      <Icon size="16">
+                        <Backspace24Filled/>
+                      </Icon>
+                    </n-button>
+                </template></n-input>
+                    </div>
+                   
+                  </div>
           </div>
-          <div class="search">
-        <n-button quaternary @click="search" >搜索</n-button>
-          </div>
-        </div>
-      </div>
       <div class="divline"/>
       <div class="view">
         <n-scrollbar style="max-height:100%">
@@ -267,7 +268,8 @@ export default defineComponent({
 <style scoped>
 
 .search{
-  display: inline-block;
+  margin-left: auto;
+  float:right;
 }
 .clsL,.clsR{
   display: inline-block;

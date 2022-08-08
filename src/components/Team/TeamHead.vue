@@ -8,10 +8,10 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
-    <div v-if="myIdentify === 2" style="float: right">
-      <n-config-provider :theme="theme">
+    <div class="dismiss" v-if="myIdentify === 2">
+      <!-- <n-config-provider :theme="theme"> -->
         <n-button @click="dissolve">解散团队</n-button>
-      </n-config-provider>
+
     </div>
   </div>
 </template>
@@ -62,7 +62,7 @@ const getMessage = () => {
 const dissolve = () => {
   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
     // console.log(res)
-    router.push('/team')
+    router.push('/team/teamprojects?teamID=undefined')
   })
 }
 const getGlobal = computed(() => {
@@ -82,6 +82,11 @@ defineExpose({
 });
 </script>
 <style scoped>
+.dismiss{
+  margin-left: auto;
+  margin-right: 200px;
+
+}
 .Team {
   /*height: 70px;*/
   width: 100%;
