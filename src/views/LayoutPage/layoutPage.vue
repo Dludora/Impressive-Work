@@ -8,7 +8,7 @@
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
         <file-download-filled />
       </n-icon>
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
         <save16-regular />
       </n-icon>
     </div>
@@ -100,6 +100,31 @@
             <rounded-corner-round />
           </n-icon>
         </div>
+
+        <!-- <div class="settingBar">
+          <div class="settingMenu">设备</div>
+          <div class="settingMenu">模板</div>
+          <div class="settingLine"></div>
+          <n-scrollbar content-style="paddingRight:10px;">
+            <div :key="outkey" v-for="(outvalue, outkey) in resolutionModel">
+              <div class="settingDevice">{{ outkey }}</div>
+              <div
+                :key="inkey"
+                v-for="(value, inkey) in outvalue"
+                class="settingDeviceModel"
+                @click="canvasWidth = value[0];canvasHeight = value[1]"
+              >
+                <div class="settingDeviceModelName">
+                  {{ inkey }}
+                </div>
+                <div class="settingDeviceResolution">
+                  {{ value[0] }}*{{ value[1] }}
+                </div>
+                <div class="clear"></div>
+              </div>
+            </div>
+          </n-scrollbar>
+        </div> -->
 
         <div class="ui porpertyBar" v-show="property.type != 'none'">
           <div id="xPorperty" class="porpertyBarInpUnit">
@@ -267,38 +292,42 @@
           </div>
         </div>
         <div class="ui elementBar">
-          <!-- <div
-            class="ui elementBarUnit elementLeftUnit"
-            @mousedown="PrepareElement('rect')"
-          >
-            <n-icon
-              size="42"
-              class="ui elementUnit elementPointer"
-              color="#ffffff"
+          <div class="ui elementSubBar">
+            <div class="elementLeftUnit elementBrowser">
+              <n-icon size="18" color="#A7AFBE" class="elementArrow" @click="exit">
+                <arrow-back-ios-round />
+              </n-icon>
+              <div class="elementVerticalLine" style="right:0px"></div>
+            </div>
+            <div class="ui elementBarUnit" @mousedown="PrepareElement('rect')">
+              <div class="ui elementUnit elementRectangle"></div>
+            </div>
+            <div
+              class="ui elementBarUnit"
+              @mousedown="PrepareElement('circle')"
             >
-              <cursor24-regular />
-            </n-icon>
-          </div> -->
-          <div
-            class="ui elementBarUnit elementLeftUnit"
-            @mousedown="PrepareElement('rect')"
-          >
-            <div class="ui elementUnit elementRectangle"></div>
+              <div class="ui elementUnit elementCircle"></div>
+            </div>
+            <div class="elementRightUnit elementBrowser">
+              <div class="elementVerticalLine" style="left:0px"></div>
+              <n-icon size="18" color="#A7AFBE" class="elementArrow" @click="exit">
+                <arrow-forward-ios-round />
+              </n-icon>
+            </div>
           </div>
-          <div class="ui elementBarUnit" @mousedown="PrepareElement('circle')">
-            <div class="ui elementUnit elementCircle"></div>
-          </div>
-          <div
-            class="ui elementBarUnit elementRightUnit"
-            @mousedown="PrepareElement('text')"
-          >
-            <n-icon
-              size="48"
-              class="ui elementUnit elementPointer"
-              color="#ffffff"
+          <div class="ui elementSubBar">
+            <div
+              class="ui elementBarUnit elementRightUnit elementLeftUnit"
+              @mousedown="PrepareElement('text')"
             >
-              <text-add-t24-regular />
-            </n-icon>
+              <n-icon
+                size="48"
+                class="ui elementUnit elementPointer"
+                color="#ffffff"
+              >
+                <text-add-t24-regular />
+              </n-icon>
+            </div>
           </div>
         </div>
       </div>
@@ -322,6 +351,7 @@ import {
   FrontHandOutlined,
   KeyboardArrowUpRound,
   ArrowBackIosRound,
+  ArrowForwardIosRound,
   FileDownloadFilled,
   FormatShapesOutlined,
   RoundedCornerRound,
@@ -352,11 +382,52 @@ const download = () => {
   canvas.value?.download(true);
 };
 
+const save = ()=>{
+  canvas.value?.updateServer();
+}
+
 const layoutId = ref<number>(2);
 const layoutName = ref<string>("Home");
 const canvasWidth = ref<number>(0);
 const canvasHeight = ref<number>(0);
 
+const resolutionModel: { [key: string]: { [key: string]: number[] } } =
+  reactive({
+    Phone: {
+      "iPhone 13 Pro Max": [428, 926],
+      "iPhone 13 / 13 Pro": [390, 844],
+      "iPhone 13 mini": [375, 812],
+      "iPhone 11 Pro Max": [414, 896],
+      "iPhone 11 Pro / X": [375, 812],
+      "iPhone SE": [320, 568],
+      "iPhone 8 Plus": [414, 736],
+      "iPhone 8": [375, 667],
+      "Android small": [360, 640],
+      "Android large": [360, 800],
+    },
+    Tablet: {
+      "Surface Pro 8": [1440, 960],
+      "iPad mini 8.3": [774, 1133],
+      "iPad Pro 11''": [834, 1194],
+      "iPad Pro 12.9''": [1024, 1366],
+    },
+    Desktop: {
+      "Mac Pro 14''": [1512, 982],
+      "Mac Pro 16''": [1728, 1117],
+      Desktop: [1440, 1024],
+      iMac: [1280, 720],
+    },
+    Presentation: {
+      "Slide 16:9": [1920, 1080],
+      "Slide 4:3": [1024, 768],
+    },
+    Paper: {
+      A4: [595, 842],
+      A5: [420, 595],
+      Letter: [612, 792],
+      Tabloid: [792, 1224],
+    },
+  });
 const palette = reactive<string[]>([
   "#F2F2F2",
   "#AAC1EE",
@@ -473,7 +544,7 @@ const updateProps = (data: Property) => {
     property.type = "none";
     return;
   }
-  //update.value = false;
+  update.value = false;
   // setTimeout(() => {
   //   update.value = true;
   // }, 100);
@@ -485,7 +556,7 @@ const updateProps = (data: Property) => {
     borderCircles.value[selectedBorderColor].style.borderWidth = "0px";
     borderCircles.value[selectedBorderColor].style.margin = "4.5px";
   }
-  if(property.type != data.type) {
+  if (property.type != data.type) {
     switchType(data.type);
   }
   property.id = data.id;
@@ -522,10 +593,10 @@ const switchType = (etype: string) => {
       toolAvailable["wrap"] = false;
       toolAvailable["clip"] = false;
       toolAvailable["round"] = false;
-      document.getElementById("toolscale").style.color="#50555e"
-      document.getElementById("toolwrap").style.color="#50555e"
-      document.getElementById("toolclip").style.color="#50555e"
-      document.getElementById("toolround").style.color="#50555e"
+      document.getElementById("toolscale").style.color = "#50555e";
+      document.getElementById("toolwrap").style.color = "#50555e";
+      document.getElementById("toolclip").style.color = "#50555e";
+      document.getElementById("toolround").style.color = "#50555e";
       break;
     }
     case "text": {
@@ -533,10 +604,10 @@ const switchType = (etype: string) => {
       toolAvailable["wrap"] = false;
       toolAvailable["clip"] = false;
       toolAvailable["round"] = false;
-      document.getElementById("toolscale").style.color="#A7AFBE"
-      document.getElementById("toolwrap").style.color="#50555e"
-      document.getElementById("toolclip").style.color="#50555e"
-      document.getElementById("toolround").style.color="#50555e"
+      document.getElementById("toolscale").style.color = "#A7AFBE";
+      document.getElementById("toolwrap").style.color = "#50555e";
+      document.getElementById("toolclip").style.color = "#50555e";
+      document.getElementById("toolround").style.color = "#50555e";
       break;
     }
     default: {
@@ -548,16 +619,17 @@ const switchType = (etype: string) => {
       toolAvailable["wrap"] = false;
       toolAvailable["clip"] = false;
       toolAvailable["round"] = false;
-      document.getElementById("toolscale").style.color="#50555e"
-      document.getElementById("toolwrap").style.color="#50555e"
-      document.getElementById("toolclip").style.color="#50555e"
-      document.getElementById("toolround").style.color="#50555e"
+      document.getElementById("toolscale").style.color = "#50555e";
+      document.getElementById("toolwrap").style.color = "#50555e";
+      document.getElementById("toolclip").style.color = "#50555e";
+      document.getElementById("toolround").style.color = "#50555e";
       break;
     }
   }
-}
+};
 
 const switchTool = (toTool: string) => {
+  console.log(toTool);
   if (toolAvailable[toTool]) {
     document.getElementById("tool" + tool.value)!.style.backgroundColor = "";
     tool.value = toTool;
@@ -709,6 +781,69 @@ const exit = () => {
 .toolIcon:hover {
   background-color: #3a404f;
 }
+.settingBar {
+  position: absolute;
+  display: inline-block;
+  background-color: #2b303b;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  /* transform: translate(100%, 0); */
+  width: 270px;
+  text-align: left;
+  padding: 20px;
+  padding-right: 0px;
+}
+.settingMenu {
+  display: inline-block;
+  cursor: pointer;
+  color: #fff;
+  font-size: 12px;
+  line-height: 42px;
+  margin-right: 20px;
+}
+.settingLine {
+  margin-right: 10px;
+  height: 1px;
+  border-bottom: 1px solid #fff;
+}
+.settingDevice {
+  font-weight: bold;
+  font-family: "Microsoft Yahei";
+  color: #fff;
+  margin-top: 15px;
+}
+.settingDeviceModel {
+  line-height: 30px;
+}
+.settingDeviceModel:hover {
+  background-color: #4c5263;
+}
+.settingDeviceModelName {
+  float: left;
+  margin-left: 10px;
+  color: #fff;
+}
+.settingDeviceResolution {
+  float: right;
+  color: #ccc;
+}
+.pageBoard{
+  position: absolute;
+  display: inline-block;
+  background-color: #2b303b;
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  /* transform: translate(100%, 0); */
+  width: 70px;
+  text-align: left;
+  padding: 15px;
+}
+.pageImage{
+  width:240px;
+  height:140px;
+}
 .porpertyBar {
   background-color: #2b303b;
   display: inline-block;
@@ -806,27 +941,59 @@ const exit = () => {
   box-sizing: border-box;
 }
 .elementBar {
-  background-color: #2b303b;
   display: inline-block;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
   bottom: 30px;
-  border-radius: 18px;
+}
+.elementSubBar {
+  margin-right: 30px;
+  float: left;
+}
+.elementBrowser {
+  width: 18px;
+  height: 72px;
+  background-color: #2b303b;
+  float:left;
+  position:relative;
 }
 .elementLeftUnit {
   border-top-left-radius: 18px;
   border-bottom-left-radius: 18px;
 }
+.elementArrow {
+  position:absolute;
+  left:1px;
+  top:0;
+  bottom: 0;
+  margin:auto;
+}
+.elementBrowser:hover{
+  background-color: #3a404f;
+}
+.elementBrowser:active{
+  background-color: #515868;
+}
 .elementRightUnit {
   border-top-right-radius: 18px;
   border-bottom-right-radius: 18px;
+}
+.elementVerticalLine {
+  position:absolute;
+  background: #4a4a4a;
+  width: 1px;
+  top:0;
+  bottom:0;
+  margin:auto;
+  height:64px;
 }
 .elementBarUnit {
   width: 72px;
   height: 72px;
   float: left;
   position: relative;
+  background-color: #2b303b;
 }
 .elementBarUnit:hover {
   background-color: #3a404f;
@@ -856,5 +1023,8 @@ const exit = () => {
 }
 .sider {
   width: 240px;
+}
+.clear {
+  clear: both;
 }
 </style>
