@@ -4,11 +4,15 @@
 
     <n-button @click="toHTML">打印html</n-button>
     <n-button @click="toJSON">打印json</n-button>
-    <n-button @click="getText">打印纯文本</n-button>
+    <n-button @click="toMD">打印MD</n-button>
+    <n-button @click="toText">打印纯文本</n-button>
+    <n-button @click="downPDF">下载PDF</n-button>
+    <n-button @click="billPrintClick">新玩意</n-button>
+    <n-button @click="openPrint">新新玩意</n-button>
 
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
-      <editor-content class="editor__content" :editor="editor" />
+      <editor-content id="pdfDom" class="editor__content" :editor="editor" />
       <div class="editor__footer">
         <div :class="`editor__status editor__status--${status}`">
           <template v-if="status === 'connected'">
@@ -44,6 +48,11 @@ import MenuBar from './MenuBar.vue'
 import utils from "@/Utils";
 import axios from "axios";
 
+import TurndownService from 'turndown';
+import router from "@/router";
+
+import printJS from "print-js";
+
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
 }
@@ -66,10 +75,6 @@ const getDocuID = () => {
 const UserName = () =>{
   return utils.getCookie("UserName");
 }
-
-
-
-
 
 export default {
   components: {
@@ -158,8 +163,113 @@ export default {
       console.log(this.editor.getJSON());
     },
 
-    getText(){
+    toMD(){
+      const turndown = new TurndownService({
+        emDelimiter: '_',
+        linkStyle: 'inlined',
+        headingStyle: 'atx'
+      })
+
+      const markdown = turndown.turndown(this.editor.getHTML());
+      console.log(markdown);
+    },
+
+    toText(){
       console.log(this.editor.getText());
+    },
+
+    downPDF(){
+
+
+      async function back() {
+        return 1;
+      }
+      back().then(result => {
+        router.go(0);
+      })
+      console.log('虽然在后面，但是我先执行');
+
+      const previewEl = document.querySelector("#pdfDom").innerHTML;
+      window.document.body.innerHTML=previewEl;
+      window.print();
+
+
+
+      /*
+            const turndown = new TurndownService({
+              emDelimiter: '_',
+              linkStyle: 'inlined',
+              headingStyle: 'atx'
+            })
+
+            const markdown = turndown.turndown(this.editor.getHTML());
+
+            var markdownpdf = require("markdown-pdf")
+            const fs = require('fs')
+            const path = require('path')
+            const rm = require('rimraf')
+
+            var md = "foo===\n* bar\n* baz\n\nLorem ipsum dolor sit"
+                , outputPath = "/Users/niezhanheng/Desktop/2er0/doc.pdf"
+
+            markdownpdf().from.string(md).to(outputPath, function () {
+              console.log("Created", outputPath)
+            })
+
+            //let aaa = document.querySelector("#pdfDom");
+            //htmlToPdf.downloadPDF(aaa, '1'); //右边文件名
+
+       */
+    },
+
+    billPrintClick(){
+      const style = '@page {margin:0 10mm};'//打印时去掉眉页眉尾
+      //打印为什么要去掉眉页眉尾？因为眉页title时打印当前页面的title，相当于是获取html中title标签里面的内容，但是比如我打印的内容只是一个弹框里面的内容，是没有title的，这时候就会出现undefined，为了避免出现这种情况，就可以隐藏眉页眉尾
+      printJS({
+        printable: 'pdfDom',// 标签元素id
+        type: 'html',
+        header: '',
+        targetStyles: ['*'],
+        width:
+        style
+      });
+      //各个配置项
+      //printable:要打印的id。
+      //type:可以是 html 、pdf、 json 等。
+      //properties:是打印json时所需要的数据属性。
+      //gridHeaderStyle和gridStyle都是打印json时可选的样式。
+      //repeatTableHeader:在打印JSON数据时使用。设置为时false，数据表标题将仅在第一页显示。
+      //scanStyles:设置为false时，库将不处理应用于正在打印的html的样式。使用css参数时很有用，此时自己设置的原来想要打印的样式就会失效，在打印预览时可以看到效果
+      //targetStyles: [’*’],这样设置继承了页面要打印元素原有的css属性。
+      //style:传入自定义样式的字符串，使用在要打印的html页面 也就是纸上的样子。
+      //ignoreElements：传入要打印的div中的子元素id，使其不打印。非常好用
+    },
+
+    openPrint(){
+//判断iframe是否存在，不存在则创建iframe
+      let iframe = document.getElementById("pdfDom");
+      console.log("test")
+
+      if(!iframe){
+        const el = document.getElementById("pdfDom");
+        iframe = document.createElement('IFRAME');
+        let doc = null;
+        iframe.setAttribute("id", "print-iframe");
+        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
+//left负值不会出现横向滚动条
+        document.body.appendChild(iframe);
+        doc = iframe.contentWindow.document;
+        //这里可以自定义样式
+        doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
+        doc.write('<div>' + el.innerHTML + '</div>');
+        doc.close();
+        iframe.contentWindow.focus();
+      }
+
+      iframe.contentWindow.print();
+      if (navigator.userAgent.indexOf("MSIE") > 0){
+        document.body.removeChild(iframe);
+      }
     },
 
     getRandomName() {
@@ -225,7 +335,7 @@ export default {
     padding: 1.25rem 1rem;
     flex: 1 1 auto;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
   }
 
