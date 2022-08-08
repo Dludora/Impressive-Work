@@ -1,46 +1,48 @@
 <template>
 
-    <div class="main">
+  <div class="main">
     <div class="big-contain">
-      <n-config-provider  :theme="darkTheme">
-      <div class="discribe">
-        <p class="docu-all">
-          管理你的文档
-        </p>
-        <n-button icon-placement="right" class="docu-add" size="tiny" @click="viewAddDocu">
-          新 建 文 档
-          <template #icon>
-            <n-icon ><Add /></n-icon>
-          </template>
-        </n-button>
-      </div>
+      <n-config-provider :theme="darkTheme">
+        <div class="discribe">
+          <p class="docu-all">
+            管理你的文档
+          </p>
+          <n-button icon-placement="right" class="docu-add" size="tiny" @click="viewAddDocu">
+            新 建 文 档
+            <template #icon>
+              <n-icon>
+                <Add/>
+              </n-icon>
+            </template>
+          </n-button>
+        </div>
       </n-config-provider>
-      <div id="docuITEMS" class="items"  :key="docuitemKey">
-        <n-grid :x-gap="70" :y-gap="12" cols="5" responsive="screen" >
+      <div id="docuITEMS" class="items" :key="docuitemKey">
+        <n-grid :x-gap="70" :y-gap="12" cols="5" responsive="screen">
           <n-grid-item v-for="document in documents" :key="document">
             <div class="docu-item">
               <div class="docu-cover">
-
               </div>
-              <div class="docu-title" >
-
-
-                <p @click="openDocu(document.ID)" style="cursor: pointer;width: 80px;position: relative;display: flex">{{document.title}}</p>
-                <n-space justify="end" style="0gap: 0; flex-wrap: nowrap;">
-                  <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)"><Edit /></Icon>
-                  <Icon id="del" size="24" @click="viewDelDocu(document.ID)"><Delete48Regular /></Icon>
+              <div class="docu-title">
+                <p @click="openDocu(document.ID)" style="cursor: pointer;width: 80px;position: relative;display: flex">
+                  {{ document.title }}</p>
+                <n-space justify="end" style="gap: 0; flex-wrap: nowrap;">
+                  <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)">
+                    <Edit/>
+                  </Icon>
+                  <Icon id="del" size="24" @click="viewDelDocu(document.ID)">
+                    <Delete48Regular/>
+                  </Icon>
                 </n-space>
               </div>
             </div>
           </n-grid-item>
         </n-grid>
-
-
       </div>
     </div>
-    </div>
+  </div>
 
-  <n-config-provider  :theme="darkTheme">
+  <n-config-provider :theme="darkTheme">
     <n-modal
         v-model:show="showAdd"
         preset="dialog"
@@ -51,7 +53,7 @@
         @negative-click="negAdd"
     >
       <n-form ref="addFormRef" :model="addModelRef">
-        <n-form-item label="项目名称" :rule="addRule" >
+        <n-form-item label="项目名称" :rule="addRule">
           <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
@@ -68,27 +70,27 @@
         @negative-click="negEdi"
     >
       <n-form ref="ediFormRef" :model="ediModelRef">
-        <n-form-item label="项目名称 · 新" :rule="ediRule" >
+        <n-form-item label="项目名称 · 新" :rule="ediRule">
           <n-input v-model:value="ediModelRef.ediName" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
 
     </n-modal>
 
-      <n-modal
-          v-model:show="showDel"
-          preset="dialog"
-          title="删除文档"
-          positive-text="确认"
-          negative-text="取消"
-          @positive-click="posDel"
-          @negative-click="negDel"
-      >
-        <p style="font-size: 15px">
-          确定删除文档
-        </p>
+    <n-modal
+        v-model:show="showDel"
+        preset="dialog"
+        title="删除文档"
+        positive-text="确认"
+        negative-text="取消"
+        @positive-click="posDel"
+        @negative-click="negDel"
+    >
+      <p style="font-size: 15px">
+        确定删除文档
+      </p>
 
-      </n-modal>
+    </n-modal>
 
   </n-config-provider>
 
@@ -124,39 +126,39 @@ let docuitemKey = 0;
 
 //文档项目
 
-let documents =ref( [
-
-])
+let documents = ref([])
 
 //自己设置项目id
 
 
 //获取项目id
-proID.value=parseInt(utils.getCookie('proID')) ;
+proID.value = parseInt(utils.getCookie('proID'));
 /*
 const load = () => {
   proID.value=parseInt(utils.getCookie('proID')) ;
   console.log("成功获取项目ID:"+proID.value);
 }
 */
-onMounted(()=>{
-  proID.value=parseInt(utils.getCookie('proID')) ;
-  console.log("成功获取项目ID:"+proID.value);
+onMounted(() => {
+  proID.value = parseInt(utils.getCookie('proID'));
+  console.log("成功获取项目ID:" + proID.value);
   getDocuAbl();
 })
 
 
 //获取文档列表
 
-const getDocuAbl = () =>{
+const getDocuAbl = () => {
 
-  axios.get('/document/list',{headers:headers,
-      params:
-      {
-        programID: proID.value, // proID.value,
-      }}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  axios.get('/document/list', {
+        headers: headers,
+        params:
+            {
+              programID: proID.value, // proID.value,
+            }
+      }
+  ).then(res => {
+    if (res.data.msg === '成功') {
 
       console.log("获取文档列表成功");
 
@@ -169,9 +171,8 @@ const getDocuAbl = () =>{
 
 // 添加文档功能
 
-const addDocuAbl = () =>{
-  if(addModelRef.value.addName === '')
-  {
+const addDocuAbl = () => {
+  if (addModelRef.value.addName === '') {
     message.warning("文档名不可为空！")
     return;
   }
@@ -183,8 +184,8 @@ const addDocuAbl = () =>{
         'src': null,
         'programID': proID.value,//proID.value
       }
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(addModelRef.value.addName);
       console.log("创建文档成功");
 
@@ -196,9 +197,8 @@ const addDocuAbl = () =>{
 
 // 重命名文档功能
 
-const ediDocuAbl = () =>{
-  if(ediModelRef.value.ediName === '')
-  {
+const ediDocuAbl = () => {
+  if (ediModelRef.value.ediName === '') {
     message.warning("文档名不可为空！")
     return;
   }
@@ -208,8 +208,8 @@ const ediDocuAbl = () =>{
         'ID': utils.getCookie('docIndex'),
         'title': ediModelRef.value.ediName,
       }
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(ediModelRef.value.ediName);
       console.log("重命名文档成功");
 
@@ -221,15 +221,15 @@ const ediDocuAbl = () =>{
 
 // 删除文档功能
 
-const delDocuAbl = () =>{
+const delDocuAbl = () => {
 
   let ID = utils.getCookie('docIndex');
-  let urlll = "/document/" + ID ;
+  let urlll = "/document/" + ID;
   console.log("/document/" + ID);
 
-  axios.delete('/document/' + ID,{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  axios.delete('/document/' + ID, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(urlll);
       console.log("删除文档成功");
 
@@ -241,9 +241,9 @@ const delDocuAbl = () =>{
 
 // 添加文档
 
-const showAdd= ref (false);
+const showAdd = ref(false);
 const addFormRef = ref<FormData | null>(null)
-const addModelRef = ref({ addName: ""})
+const addModelRef = ref({addName: ""})
 
 const viewAddDocu = () => {
   showAdd.value = true;
@@ -255,8 +255,7 @@ const posAdd = () => {
 
   //成功添加文档
 
-  if(addModelRef.value.addName === '')
-  {
+  if (addModelRef.value.addName === '') {
     message.warning("文档名不可为空！")
     return;
   }
@@ -267,9 +266,9 @@ const posAdd = () => {
         'title': addModelRef.value.addName,
         'src': null,
         'programID': proID.value,//proID.value
-      },{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+      }, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(addModelRef.value.addName);
       console.log("创建文档成功");
 
@@ -291,7 +290,7 @@ const negAdd = () => {
 const addRule = {
   required: true,
   validator() {
-    if (addModelRef.value.addName.length === 0 ) {
+    if (addModelRef.value.addName.length === 0) {
       return new Error("文档名称不可为空")
     } else {
       if (addModelRef.value.addName.length >= 12) {
@@ -305,13 +304,13 @@ const addRule = {
 
 // 重命名文档
 
-const showEdi= ref (false);
+const showEdi = ref(false);
 const ediFormRef = ref<FormData | null>(null)
-const ediModelRef = ref({ ediName: ""})
-let editID =ref();
+const ediModelRef = ref({ediName: ""})
+let editID = ref();
 
 function viewEdiDocu(ind) {
-  editID.value=ind;
+  editID.value = ind;
   showEdi.value = true;
 }
 
@@ -321,8 +320,7 @@ const posEdi = () => {
 
   console.log(editID.value);
 
-  if(ediModelRef.value.ediName === '')
-  {
+  if (ediModelRef.value.ediName === '') {
     message.warning("文档名不可为空！")
     return;
   }
@@ -331,9 +329,9 @@ const posEdi = () => {
       {
         'ID': editID.value,
         'title': ediModelRef.value.ediName,
-      },{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+      }, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(ediModelRef.value.ediName);
       console.log("重命名文档成功");
 
@@ -341,7 +339,6 @@ const posEdi = () => {
       getDocuAbl();
     }
   })
-
 
 
   ediModelRef.value.ediName = "";
@@ -357,7 +354,7 @@ const negEdi = () => {
 const ediRule = {
   required: true,
   validator() {
-    if (ediModelRef.value.ediName.length === 0 ) {
+    if (ediModelRef.value.ediName.length === 0) {
       return new Error("文档名称不可为空")
     } else {
       if (ediModelRef.value.ediName.length >= 12) {
@@ -372,7 +369,7 @@ const ediRule = {
 
 let docIndex: string;
 
-const showDel= ref (false);
+const showDel = ref(false);
 
 let delID = ref();
 
@@ -385,12 +382,12 @@ const posDel = () => {
 
   //成功删除文档 序号: ind
 
-  let urldel = "/document/" + delID.value ;
+  let urldel = "/document/" + delID.value;
   console.log("/document/" + delID.value);
 
-  axios.delete(urldel,{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  axios.delete(urldel, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
       console.log(urldel);
       console.log("删除文档成功");
 
@@ -413,27 +410,25 @@ const negDel = () => {
 
 let opdocuID = ref();
 
-function openDocu(index){
-
+function openDocu(index) {
   //获取文档内容
+  opdocuID.value = index;
 
-  opdocuID.value=index;
-
-  let urlOP="/document/" + opdocuID.value;
+  let urlOP = "/document/" + opdocuID.value;
   console.log(urlOP);
 
-  axios.get(urlOP,{headers:headers}
-  ).then(res=>{
-    if(res.data.msg==='成功'){
+  axios.get(urlOP, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
 
       console.log("获取文档内容成功");
 
       let opContent = res.data.data.content;
       let opTitle = res.data.data.title;
 
-      utils.setCookie('editDocID',index);
-      utils.setCookie('DocTitle',opTitle);
-      utils.setCookie('DocContent',opContent);
+      utils.setCookie('editDocID', index);
+      utils.setCookie('DocTitle', opTitle);
+      utils.setCookie('DocContent', opContent);
 
       console.log(opContent);
 
@@ -444,20 +439,20 @@ function openDocu(index){
 }
 
 
-
 </script>
 
 <style scoped>
 
-.main{
-    width:100%;
-}
-.big-contain{
-  /*width:fit-content;*/
-  margin:39px 43px 0 61px;
+.main {
+  width: 100%;
 }
 
-.docu-all{
+.big-contain {
+  /*width:fit-content;*/
+  margin: 39px 43px 0 61px;
+}
+
+.docu-all {
 
   /*position: relative;*/
 
@@ -478,6 +473,7 @@ function openDocu(index){
 
   color: #414958;
 }
+
 /*
 .docu-add{
 
@@ -495,19 +491,18 @@ function openDocu(index){
 }
 */
 
-.items{
+.items {
   /*position: relative;
   left: 0px;
   top:-15px;*/
 }
 
-.docu-item{
+.docu-item {
   height: 240px;
   width: 140px;
 }
 
-.docu-cover{
-
+.docu-cover {
   width: 100px;
   border-radius: 0 5px;
   height: 132px;
@@ -521,7 +516,7 @@ function openDocu(index){
   background-color: #FFFFFF;
 }
 
-.docu-cover-word{
+.docu-cover-word {
   width: 100%;
   height: 192px;
 
@@ -537,7 +532,7 @@ function openDocu(index){
   color: #16181D;
 }
 
-.docu-title{
+.docu-title {
   min-width: border-box;
 
   width: 100px;
@@ -555,7 +550,7 @@ function openDocu(index){
   color: #E2E4E9;
 }
 
-.docu-title:hover{
+.docu-title:hover {
   color: #FFFFFF;
 }
 
@@ -563,31 +558,34 @@ function openDocu(index){
   display: flex;
   cursor: pointer;
 }
+
 #edi {
   /*position: relative;
   margin-top: 160px;*/
   margin-right: 37%;
 }
+
 #del {
   /*position: relative;
   margin-top: 160px;*/
   margin-left: 37%;
   alignment: right;
 }
-.discribe{
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 29px;
-    align-items: center;
-    margin-bottom: 12px;
 
-    display:flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
+.discribe {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 29px;
+  align-items: center;
+  margin-bottom: 12px;
 
-    color: #414958;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #414958;
 }
 </style>
