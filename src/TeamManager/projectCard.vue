@@ -55,29 +55,21 @@ export default defineComponent({
   setup(props, {emit}) {
     const route = useRoute()
     const gotoProject = () => {
-      console.log("go")
-      utils.setCookie('proID', props.id)
-      utils.setCookie('proNAME', props.name)
-      utils.setCookie('proTeam', route.query.teamID)
 
-      // console.log("proID:" + utils.getCookie("proID"))
-      // console.log("proName:" + utils.getCookie("proName"))
-      // console.log("proTeam:" + utils.getCookie("proTeam"))
-      router.replace({name: 'project'})
     }
     const renameThis = () => {
-      event.stopPropagation();
-      console.log("rename" + props.id)
+      // event.stopPropagation();
+      // console.log("rename" + props.id)
       emit("rename")
     }
     const delThis = () => {
-      event.stopPropagation();
-      console.log("del" + props.id)
+      // event.stopPropagation();
+      // console.log("del" + props.id)
       emit("del")
     }
     const copyThis = () => {
-      event.stopPropagation();
-      console.log("copy"+props.id)
+      // event.stopPropagation();
+      // console.log("copy"+props.id)
       emit("copy")
     }
     return {

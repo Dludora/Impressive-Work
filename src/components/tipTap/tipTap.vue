@@ -9,7 +9,11 @@
     <n-button @click="downPDF">下载PDF</n-button>
     <n-button @click="billPrintClick">新玩意</n-button>
     <n-button @click="openPrint">新新玩意</n-button>
-    <n-button @click="saveWord">新新玩意</n-button>
+    <n-button @click="saveWord">下载word</n-button>
+    <n-button @click="saveMD">下载MD</n-button>
+    <n-button @click="saveHTML">下载HTML</n-button>
+    <n-button @click="saveJSON">下载JSON</n-button>
+    <n-button @click="saveText">下载纯文本</n-button>
 
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
@@ -288,6 +292,38 @@ export default {
           //文件名
           "1"+".doc"
       )
+    },
+
+    saveMD(){
+
+      const turndown = new TurndownService({
+        emDelimiter: '_',
+        linkStyle: 'inlined',
+        headingStyle: 'atx'
+      })
+
+      const markdown = turndown.turndown(this.editor.getHTML());
+
+      var file = new File([markdown], "1.md", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveHTML(){
+
+      var file = new File([this.editor.getHTML()], "1.html", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveJSON(){
+
+      var file = new File([this.editor.getJSON()], "1.json", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
+    },
+
+    saveText(){
+
+      var file = new File([this.editor.getText()], "1.txt", {type: "text/plain;charset=utf-8"});
+      saveAs(file);
     },
 
     getRandomName() {
