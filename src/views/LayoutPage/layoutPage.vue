@@ -493,6 +493,8 @@ const updateProps = (data: Property) => {
   property.y = data.y;
   property.width = data.width;
   property.height = data.height;
+  property.scaleX = data.scaleX;
+  property.scaleY = data.scaleY;
   property.rotation = data.rotation;
   property.borderWidth = data.borderWidth;
   property.borderRadius = data.borderRadius;

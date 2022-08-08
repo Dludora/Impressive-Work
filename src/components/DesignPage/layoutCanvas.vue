@@ -3,8 +3,6 @@
     class="innerboard"
     @mouseup="ProduceElement"
     @mousemove="dragCanvas"
-    @updateParams="updateSelects"
-    @changeUpdate="changeUpdate"
     @mousedown="startDrag"
     id="board"
   >
@@ -16,7 +14,9 @@
         :update="update"
         :index="index"
         :data-index="index"
-        @updateParams="updateSelect"
+        @updateSelects="updateSelects"
+        @changeUpdate="changeUpdate"
+        @dblclick="editContent(index)"
         ref="layoutElements"
         name="elements"
       >
@@ -187,19 +187,23 @@ const initMoveable = () => {
 
   /* scalable */
   moveable
-    .on("scaleStart", ({ target, clientX, clientY }) => {
-      console.log("onScaleStart", target);
-    })
-    .on("scale", ({ target, transform }) => {
-      console.log("onScale scale", scale);
-      target!.style.transform = transform;
+    .on("scale", ({ target, transform, scale }) => {
+      layoutElementParams[selectedId.value[0]].scaleX = scale[0];
+      layoutElementParams[selectedId.value[0]].scaleY = scale[1];
+      updateTransform(
+          selected.value[0],
+          layoutElementParams[selectedId.value[0]]
+        );
     });
 
   /* rotatable */
   moveable
     .on("rotate", ({ target, rotation, transform }) => {
-      target!.style.transform = transform;
       layoutElementParams[selectedId.value[0]].rotation = rotation;
+      updateTransform(
+          selected.value[0],
+          layoutElementParams[selectedId.value[0]]
+        );
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -245,6 +249,7 @@ const initSelecto = () => {
     selectableTargets: [].slice.call(document.getElementsByName("elements")),
     selectByClick: true,
     selectFromInside: false,
+    checkInput: true,
     continueSelect: false,
     toggleContinueSelect: "shift",
     keyContainer: window,
@@ -336,12 +341,32 @@ const updateServer = () => {
 };
 
 const updateSelects = (data: elementParams) => {
-  layoutElementParams[selectedId.value[0]].text = data.text;
+  console.log(data.text)
+  if(data.text == "" || data.text == null)
+  {
+    destroy();
+  }
+  else{
+    layoutElementParams[selectedId.value[0]].text = data.text;
+  }
 };
+
+const editContent = (index:number)=>{
+  var target = layoutElements.value[index];
+  target.selectContent();
+  moveable.target = null;
+}
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
   element!.style.width = data.width * scale + "px";
-  element!.style.height = data.height * scale + "px";
+  if(data.height<0)
+  {
+    element!.style.height = "auto"
+  }
+  else{
+    element!.style.height = data.height * scale + "px";
+  }
+  
   console.log(data);
 
   element!.style.transform =
@@ -462,6 +487,12 @@ const ProduceElement = (e: MouseEvent) => {
       );
       var el =
         document.getElementsByName("elements")[layoutElementParams.length - 1];
+      switch(layoutElementParams[layoutElementParams.length-1].type)
+      {
+        case "text":{
+          layoutElementParams[layoutElementParams.length-1].height = -1;
+        }
+      }
       updateTransform(el, layoutElementParams[layoutElementParams.length - 1]);
       selecto.clickTarget(e, el);
     });
@@ -552,7 +583,6 @@ onMounted(() => {
         return true;
       };
       moveable.draggable = true;
-      console.log("space");
       spacing = false;
       dragging = false;
       locked = false;
