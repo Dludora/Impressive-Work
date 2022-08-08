@@ -77,7 +77,7 @@ import {gsap} from "gsap";
 import axios from 'axios';
 import {h, ref} from 'vue'
 import {useRouter} from 'vue-router'
-
+import utils from "@/Utils";
 const theme = darkTheme
 const router = useRouter();
 let email = ref('')
@@ -86,7 +86,7 @@ let password1 = ref('');
 let password2 = ref('');
 let nick = ref('');
 const message = useMessage();
-import utils from '../../Utils'
+
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -185,7 +185,7 @@ const register = () => {
                 'name': "示例项目"
               }, {headers: headers}).then(res5 => {
                 message.info("欢迎 " + res3.data.data.nickname)
-                router.push('/team/teamprojects')
+                router.push('/team/teamchoose')
               })
             })
           }
@@ -206,15 +206,7 @@ const login = () => {
         let teamIDTemp;
         if (res.data.msg === "成功") {
           message.info("用户" + res.data.data.nickname + "已登录")
-           axios.get('/team/list',
-                                {headers: headers, params: {page: 0, size: 10}})
-                                .then(res => {
-                                  console.log("teamListforLogin"+res.data)
-                                  const array = ref(res.data.data.items)
-                                  teamIDTemp=array.value[0].ID;
-
-                                })
-                                router.push('/team/teamprojects?teamID='+teamIDTemp)
+                                router.push('/team/teamchoose')
         } else {
           axios.post('/auth/token', {
                 'email': email.value,
@@ -230,15 +222,7 @@ const login = () => {
                                 message.info("欢迎 " + res2.data.data.nickname)
                                 utils.setCookie('UserName',res2.data.data.nickname)
                                 
-                                axios.get('/team/list',
-                                {headers: headers, params: {page: 0, size: 10}})
-                                .then(res => {
-                                  console.log("teamListforLogin"+res.data)
-                                  const array = ref(res.data.data.items)
-                                  teamIDTemp=array.value[0].ID;
-
-                                })
-                                router.push('/team/teamprojects?teamID='+teamIDTemp)
+                                router.push('/team/teamchoose')
                             })
             }
           })
