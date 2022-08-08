@@ -5,32 +5,35 @@
         <div class="bottom">
             <div class="name">
                 {{name}}
-            </div>
-            <Icon size="20" class="rename">
+                <!-- <Icon size="20" class="rename">
                 <Edit16Regular @click="renameThis"/>
-            </Icon>
-            <Icon size="20" class="rename">
-                <Copy16Filled @click="copyThis"/>
-            </Icon>
+            </Icon> -->
+            </div>
+            
+            <div class="desc">
+                简介：&nbsp;{{date}}
+                <!-- <br/>
+                <Icon size="20" class="del">
+                    <CloseRound @click="delThis"/>
+                </Icon> -->
+            </div>
+            
         </div>
-        <div class="desc">
-            创建于&nbsp;{{date}}
-            <Icon size="20" class="del">
-                <CloseRound @click="delThis"/>
-            </Icon>
-        </div>
+        
+            
+
     </div>
 </template>
 <script lang="ts">
 import {CloseRound} from '@vicons/material'
 import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
-import {Copy16Filled} from '@vicons/fluent'
+
 import {Icon} from '@vicons/utils'
 import {defineComponent} from 'vue'
 import router from '@/router';
 import {useRoute} from 'vue-router'
-import utils from '../Utils'
+import utils from '../../Utils'
 
 
 export default defineComponent({
@@ -44,20 +47,17 @@ export default defineComponent({
     },
   },
   components: {
-    CloseRound,
-    Icon,
-    Edit16Regular,
-    Copy16Filled
+
+    // Icon,
+    // Edit16Regular,
+
   },
   setup(props, {emit}) {
     const route = useRoute()
     const gotoProject = () => {
-      // console.log("go")
-      utils.setCookie('proID', props.id)
-      utils.setCookie('proNAME', props.name)
-      utils.setCookie('proTeam', route.query.teamID)
-
-      router.replace({name: 'project'})
+      console.log("teamchoose go"+props.id )
+      let url = '/team/teamprojects?teamID='+props.id
+      router.push(url)
     }
     const renameThis = () => {
       event.stopPropagation();
@@ -91,8 +91,10 @@ export default defineComponent({
 }
 .card{
     width: 240px;
-    height: 190px;
-    padding: 5px 30px;
+    height: 100px;
+    padding: 5px;
+    padding-left: 30px;
+    padding-right: 30px;
     /*background-color: #2B303B;*/
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
@@ -105,24 +107,29 @@ export default defineComponent({
 }
 
 .card:hover .del, .card:hover .rename {
-  display: flex;
+  display: inline-block;
 }
 .img{
-    width:100%;
-    height: 140px;
+    width:40%;
+    vertical-align: top;
+    margin-top: 15px;
+    height: 70px;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
+    display: inline-block;
 }
-.bottom{
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: row;
-    flex-wrap: nowrap;
+  .bottom{
+    margin-left: 20px;
+    margin-top: 10px;
+    display: inline-block;
+    /* justify-content: flex-start; */
+    /* flex-direction: row;
+    flex-wrap: nowrap; */
     /*padding: 0 40px;*/
-    width:100%;
-    height: 32px;
-    align-items: center;
+    width:50%;
+    height: 100%;
+    /* align-items: center; */
 }
 .name{
     display:block;
@@ -141,23 +148,23 @@ export default defineComponent({
 
 .del, .rename {
   color: #A7AFBE;
-  display: none;
+  display: inline-block;
 }
 
 .desc {
-  display: flex;
-  text-overflow: ellipsis;
+  display: inline-block;
+  /* text-overflow: ellipsis; */
   overflow: hidden;
-  white-space: nowrap;
-
+  /* white-space: nowrap; */
+    width: 120%;
     color:#A7AFBE;
     font-size: 12px;
-    line-height: 18px;
-    height: 18px;
+    height: auto;
+    max-height: 45px;
     /*padding: 0 40px;*/
     
-    justify-content: space-between;
+    /* justify-content: space-between;
     flex-wrap: nowrap;
-    flex-direction: row;
+    flex-direction: row; */
 }
 </style>

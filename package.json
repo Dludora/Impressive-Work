@@ -26,6 +26,7 @@
     "html-docx-js": "^0.3.1",
     "html2canvas": "^1.4.1",
     "interactjs": "^1.10.17",
+    "jquery": "^3.6.0",
     "movable": "^0.0.0",
     "moveable": "^0.35.0",
     "print-js": "^1.6.0",

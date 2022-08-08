@@ -103,11 +103,11 @@ const logout = () => {
   })
 }
 const teamMain= () =>{
-  router.push('/team');
+  router.push('/teamchoose');
 }
 
 const programView = () => {
-  router.push('/project');
+  router.push('/teamchoose');
 }
 
 const UML = () => {
@@ -120,15 +120,15 @@ const tipTap = () => {
 const scroller=ref()
 const scroll =(e:Event)=>{
   let offsetY=document.getElementsByClassName('brand')[0].getBoundingClientRect().y
-  let figure=document.getElementsByClassName('figure')[0]
+  let figure=document.getElementsByClassName('figure')[0] as HTMLIFrameElement
   console.log(offsetY)
   if(offsetY<0){
     // figure.setAttribute('opacity',(100-offsetY)/100);
     let alpha=(100+offsetY)/100
     if(alpha>0.2)
-      figure.style.opacity=(100+offsetY)/100
-    else figure.style.opacity=0.2
-  }else figure.style.opacity=1
+      figure.style.opacity=alpha.toString()
+    else figure.style.opacity='0.2'
+  }else figure.style.opacity='1'
 }
 </script>
 
@@ -136,7 +136,7 @@ const scroll =(e:Event)=>{
 *{
   transition-duration:0.5s;
   transition-timing-function: ease;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 }
 .figure{
   transition-duration:1.2s;
