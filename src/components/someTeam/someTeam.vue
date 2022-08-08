@@ -13,10 +13,8 @@
         </n-config-provider>
         </div>
         <div class="clsR">
-           <div class="search search2">
-                  <n-button quaternary @click="search" >搜索</n-button>
-                    </div>
-          <div class="search">
+          
+          <div class="search search1">
                   <n-input size="small" v-model:value="searchText" round placeholder="搜索项目" >
                   <template #suffix>
                       <n-button quaternary size="tiny" @click="clear" >
@@ -25,7 +23,11 @@
                       </Icon>
                     </n-button>
                 </template></n-input>
-                    </div>
+          </div>
+          <div class="box"> </div>
+          <div class="search search2">
+                  <n-button quaternary @click="search" >搜索</n-button>
+          </div>
                    
                   </div>
           </div>
@@ -266,22 +268,31 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.box{
+  
+  display: inline-block;
+}
 .search2{
-  margin-top: 0;
+  margin-top: 2px;
+  vertical-align: top;
+
+}
+.search1{
+  margin-top: 6px;
+  vertical-align: top;
+
 }
 .search{
-  margin-top: 10px;
-  vertical-align: top;
-  margin-left: auto;
-  float:right;
+  display: inline-block;
 }
 .clsL,.clsR{
   display: inline-block;
 }
 
 .clsR{
-  width: 450px;
-  margin-left: 200px;
+
+  margin-left: 30%;
+  margin-right: 0;
   vertical-align: top;
 }
 .n-layout {
