@@ -436,10 +436,11 @@ const posAdd = () => {
   if(parentID !== null) {
     url += '&parentID='+parentID
   }
-  axios.post(url, {title: addModelRef.value.addName, teamID: teamID.value, type: 'md', src: 'what fuck'}, {headers: headers}).then(res => {
+  axios.post(url, {title: addModelRef.value.addName, teamID: teamID.value, type: 'model1', src: 'what fuck'}, {headers: headers}).then(res => {
     addModelRef.value.addName = "";
     console.log(res.data)
     console.log('创建文档')
+    getDoc(crumbs.value[crumbs.value.length-1], false)
   })
   showAdd.value = false;
 };
