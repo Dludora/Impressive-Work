@@ -118,8 +118,6 @@ const onPositiveClick = () => {
   console.log("Identity:" + utils.getCookie('Authorization'))
   let url = '/team/' + route.query.teamID + '/invite?email=' + Email.value
   axios.put(url, {}, {headers: headers}).then(res => {
-    console.log(res.data)
-
     message.info(res.data.msg)
     getList()
   })
@@ -177,6 +175,8 @@ const getList = () => {
     console.log(members.value)
   })
   url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  console.log(url)
+  console.log('url')
   axios.get(url, {headers: headers}).then(res => {
     myIdentify.value = res.data.data.identify
   })
