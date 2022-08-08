@@ -96,6 +96,7 @@ a {
     flex-wrap: nowrap;
 }
 .options *{
+    user-select:none;
     white-space: nowrap;
 }
 .options a{

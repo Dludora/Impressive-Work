@@ -136,7 +136,7 @@ const scroll =(e:Event)=>{
 *{
   transition-duration:0.5s;
   transition-timing-function: ease;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
 }
 .figure{
   transition-duration:1.2s;
