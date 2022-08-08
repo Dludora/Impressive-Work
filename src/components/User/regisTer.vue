@@ -185,7 +185,7 @@ const register = () => {
                 'name': "示例项目"
               }, {headers: headers}).then(res5 => {
                 message.info("欢迎 " + res3.data.data.nickname)
-                router.push('/team/teamchoose')
+                router.push('/teamchoose')
               })
             })
           }
@@ -206,7 +206,7 @@ const login = () => {
         let teamIDTemp;
         if (res.data.msg === "成功") {
           message.info("用户" + res.data.data.nickname + "已登录")
-                                router.push('/team/teamchoose')
+                                router.push('/teamchoose')
         } else {
           axios.post('/auth/token', {
                 'email': email.value,
@@ -222,7 +222,7 @@ const login = () => {
                                 message.info("欢迎 " + res2.data.data.nickname)
                                 utils.setCookie('UserName',res2.data.data.nickname)
                                 
-                                router.push('/team/teamchoose')
+                                router.push('/teamchoose')
                             })
             }
           })
