@@ -12,12 +12,15 @@
             <Icon size="20" class="rename">
                 <Copy16Filled @click="copyThis"/>
             </Icon>
-        </div>
-        <div class="desc">
-            创建于&nbsp;{{date}}
+             <div class="del">
             <Icon size="20" class="del">
                 <CloseRound @click="delThis"/>
             </Icon>
+            </div>
+        </div>
+        <div class="desc">
+            创建于&nbsp;{{date}}
+           
         </div>
     </div>
 </template>
@@ -81,6 +84,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.del{
+  margin-top: 15px;
+  margin-left: auto;
+}
 * {
   transition: 0.2s;
 }

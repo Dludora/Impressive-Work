@@ -387,6 +387,8 @@ const onPositiveAddClick = () => {
   font-size: 13px;
   color: #A7AFBE;
   vertical-align: bottom;
+  margin-left: auto;
+  margin-right: 100px;
 }
 
 .main {
