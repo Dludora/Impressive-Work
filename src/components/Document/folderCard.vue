@@ -1,5 +1,5 @@
 <template>
-  <div class="card" @click="gotoProject">
+  <div class="card" @click="gotoProject" draggable="true">
     <div class="img">
     </div>
     <div class="bottom">
@@ -48,23 +48,15 @@ export default defineComponent({
     const route = useRoute()
     const gotoProject = () => {
       console.log("go")
-      utils.setCookie('proID', props.id)
-      utils.setCookie('proNAME', props.name)
-      utils.setCookie('proTeam', route.query.teamID)
-
-      // console.log("proID:" + utils.getCookie("proID"))
-      // console.log("proName:" + utils.getCookie("proName"))
-      // console.log("proTeam:" + utils.getCookie("proTeam"))
-      router.replace({name: 'project'})
     }
     const renameThis = () => {
-      event.stopPropagation();
-      console.log("rename" + props.id)
+      // event.stopPropagation();
+      // console.log("rename" + props.id)
       emit("rename")
     }
     const delThis = () => {
-      event.stopPropagation();
-      console.log("del" + props.id)
+      // event.stopPropagation();
+      // console.log("del" + props.id)
       emit("del")
     }
     return {

@@ -411,9 +411,7 @@ const negDel = () => {
 let opdocuID = ref();
 
 function openDocu(index) {
-
   //获取文档内容
-
   opdocuID.value = index;
 
   let urlOP = "/document/" + opdocuID.value;
@@ -505,7 +503,6 @@ function openDocu(index) {
 }
 
 .docu-cover {
-
   width: 100px;
   border-radius: 0 5px;
   height: 132px;

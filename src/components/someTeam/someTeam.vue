@@ -66,6 +66,7 @@ import axios from 'axios';
 import LeftNav from "../Team/LeftNav.vue"
 import TeamHead from "../Team/TeamHead.vue"
 import {Icon} from "@vicons/utils";
+import {Document} from "@vicons/carbon"
 import {Backspace24Filled} from "@vicons/fluent"
 import {ref, h, Component, defineComponent, onMounted} from 'vue'
 import {NIcon} from "naive-ui";
@@ -135,6 +136,19 @@ export default defineComponent({
             ),
         key: 'teammembers',
         icon: renderIcon(PersonIcon)
+      },
+      {
+        label: () =>
+            h(
+                RouterLink,
+                {
+                  to:
+                      '/team/teamDocuments?teamID=' + teamID.value
+                },
+                {default: () => '文档'}
+            ),
+        key: 'teamDocuments',
+        icon: renderIcon(Document)
       },
       {
         label: () =>
