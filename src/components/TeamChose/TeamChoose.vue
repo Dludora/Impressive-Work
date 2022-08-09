@@ -74,7 +74,7 @@ const onPositiveClick = () =>{
             message.warning(res.data.msg)
         }
         //getChildList.value.getList()
-        router.push('/teamchoose')
+        router.push('/')
     })
     showModalRef.value = false;
 }
