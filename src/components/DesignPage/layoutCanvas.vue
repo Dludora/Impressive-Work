@@ -6,6 +6,7 @@
     @mousedown="startDrag"
     id="board"
   >
+    <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
@@ -102,7 +103,7 @@ type Prop = {
 
 const props = defineProps<Prop>();
 
-const emits = defineEmits(["updateProps", "changeUpdate","initPageImgs"]);
+const emits = defineEmits(["updateProps", "changeUpdate", "initPageImgs"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const paramsDic: { [key: number]: elementParams } = {};
@@ -650,6 +651,54 @@ const download = (isDownload: boolean, type?: string) => {
   );
 };
 
+type Model = {
+  name: string;
+  elements: elementParams[];
+  srcs: string[];
+};
+
+let model:Model = {
+  name:"线上商城",
+  elements:[],
+  srcs:[]
+}
+let imgs: string[] = [];
+
+const importImages = () => {
+  var imgInputer = document.getElementById("ModelLoader");
+  imgInputer!.onchange = () => {
+    var counter = imgInputer.files.length;
+    for (var i = 0; i < imgInputer.files.length; ++i) {
+      var form = new FormData();
+      form.append("file", imgInputer.files[i]);
+      axios({
+        url: "/resource/img",
+        method: "post",
+        headers: headers,
+        data: form,
+      }).then((res) => {
+        console.log(res.data);
+        if (res.data.msg == "成功") {
+          imgs.push(res.data.data);
+        }
+        console.log(imgs);
+        counter--;
+        if(counter==0)
+        {
+          model.srcs = imgs;
+          axios.post("/layout/module",{
+            name:model.name,
+            content:JSON.stringify(model)
+          },{headers:headers})
+          .then((res)=>{
+            console.log(res.data)
+          })
+        }
+      });
+    }
+  };
+};
+
 defineExpose({
   PrepareElement,
   download,
@@ -681,6 +730,7 @@ const dragCanvas = (e: MouseEvent) => {
 onMounted(() => {
   initMoveable();
   initSelecto();
+  importImages();
   //updateServer();
   //setInterval(updateServer, 5000);
   document.onkeyup = (e) => {

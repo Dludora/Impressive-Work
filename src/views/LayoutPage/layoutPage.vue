@@ -131,10 +131,11 @@
           <div class="settingMenu" @click="switchSettingMenu('model')">模板</div>
           <div class="settingLine"></div>
           <n-scrollbar content-style="paddingRight:10px;">
-            <div
+            <div id="settingDeviceContent" class="settingContent">
+              <div
               :key="outkey"
               v-for="(outvalue, outkey) in resolutionModel"
-              id="settingDeviceContent"
+              
             >
               <div class="settingDevice">{{ outkey }}</div>
               <div
@@ -155,7 +156,10 @@
                 <div class="clear"></div>
               </div>
             </div>
-            <div id="settingModelContent"></div>
+            </div>
+            <div id="settingModelContent" class="settingContent" style="transform:translate(100%,0)">
+              <div v-for="(value, index) in models" :key="value.name" class="settingModel" @click="switchModel(index)"></div>
+            </div>
           </n-scrollbar>
         </div>
 
@@ -632,6 +636,17 @@ const property = reactive<Property>({
   borderColor: "transparent",
 });
 
+type Model = {
+  name:string,
+  elements:Property[],
+  srcs:string[]
+}
+const models = reactive<Model[]>([])
+const elementSrcs = reactive<string[]>([])
+const maxElementsNum = 6;
+const endingLeft = ref<boolean>(true);
+const endingRight = ref<boolean>(true);
+
 const changeUpdate = () => {
   update.value = true;
 };
@@ -684,6 +699,20 @@ const updateProps = (data: Property) => {
   }
 };
 
+const initModels = ()=>{
+  axios.get("/layout/module/list",
+    {headers:headers})
+    .then((res)=>{
+      console.log(res.data.data);
+      for(var i=0;i<res.data.data.length;++i)
+      {
+        var model = JSON.parse(res.data.data[i].content);
+        models[i]=model;
+        console.log(models);
+      }
+    })
+}
+
 const initPageImgs = () => {
   axios
     .get("/layout/list", {
@@ -707,6 +736,21 @@ const initPageImgs = () => {
     });
   //console.log(pageImgs);
 };
+
+const switchModel = (id: number)=>{
+  var to = 6;
+  endingLeft.value = false;
+  if(models[id].srcs.length<=maxElementsNum)
+  {
+    endingRight.value = false;
+    var to = models[id].srcs.length;
+  }
+  elementSrcs.splice(0)
+  for(var i=0;i<to;++i)
+  {
+    elementSrcs[i] = models[id].srcs[i];
+  }
+}
 
 const switchPage = (id: number) => {
   layoutId.value = id;
@@ -888,6 +932,7 @@ onMounted(() => {
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
   console.log("layoutId=" + layoutId.value);
   initPageImgs();
+  initModels();
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -1042,6 +1087,9 @@ const exit = () => {
   height: 1px;
   border-bottom: 1px solid #fff;
 }
+.settingContent{
+  position:absolute;
+}
 .settingDevice {
   font-weight: bold;
   font-family: "Microsoft Yahei";
@@ -1062,6 +1110,14 @@ const exit = () => {
 .settingDeviceResolution {
   float: right;
   color: #ccc;
+}
+.settingModel{
+  width: 240px;
+  height: 140px;
+  border-style: solid;
+  border-width: 3px;
+  margin-bottom: 25px;
+  background-size: cover;
 }
 .pageBoardBox {
   position: absolute;
