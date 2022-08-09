@@ -6,10 +6,7 @@
     </div>
     <div v-for="member in members" :key="member.ID" class="member-card">
       <div class="left" style="display:flex;align-items: center;flex: 1;">
-        <!-- <div class="member-avatar">
-          <n-avatar round class="avatar"/>
-        </div> -->
-        <div class="avatar">{{ member.nickname[0] }}</div>
+        <div class="avatar" :style="'background-color:'+member.src+';'">{{ member.nickname[0] }}</div>
         <div class="member-message">
           <p id="name">{{ member.nickname }}({{ member.name }})</p>
           <p id="email">{{ member.email }}</p>
@@ -166,7 +163,8 @@ const members = ref([
     nickname: '加载成员中...',
     name: '',
     email: '请宝贝耐心等待~',
-    identify: 0
+    identify: 0,
+    src:'',
   },
 
 ])

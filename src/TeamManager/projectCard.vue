@@ -68,7 +68,7 @@ export default defineComponent({
       utils.setCookie('proNAME', props.name)
       utils.setCookie('proTeam', route.query.teamID)
 
-      router.replace({name: 'project'})
+      router.replace({name: 'project', query:{teamID: route.query.teamID}})
     }
     const renameThis = () => {
       event.stopPropagation();

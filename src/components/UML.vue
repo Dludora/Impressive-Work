@@ -52,7 +52,7 @@
       </div>
       
       <div class="main">
-        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark&noSaveBtn=1&spin=1"/>
+        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark&noSaveBtn=1"/>
       </div>
   </div>
       <n-modal
@@ -149,7 +149,7 @@ export default defineComponent({
     }
     let proid=parseInt(utils.getCookie('proID'))
 
-    const getDiagrams=()=>{//TODO:动态获取UML图
+    const getDiagrams=()=>{
       axios.get('/uml/list', {headers: headers,params:{programID:proid,}})
       .then(res=>{
         // console.log('获取图列表')
@@ -289,7 +289,9 @@ export default defineComponent({
       showModalRenameRef.value = false
     }
     const teamMain= () =>{
-      router.push('/team')
+      let gototeamid=utils.getCookie('proTeam')
+      let url = '/team/teamprojects?teamID='+gototeamid
+      router.push(url)
     }
 
     const programView = () => {
@@ -318,8 +320,8 @@ export default defineComponent({
         }
       }
       for(var elementitem of menuitems){
-        console.log('target:'+selectid)
-        console.log('searching:'+elementitem.attributes['diagramid'].value)
+        // console.log('target:'+selectid)
+        // console.log('searching:'+elementitem.attributes['diagramid'].value)
         if(elementitem.attributes['diagramid'].value==selectid)
           elementitem.style['background']='#000'
         else
@@ -353,7 +355,7 @@ export default defineComponent({
               loadingscreen.parentNode.removeChild(loadingscreen);
           }, 800);
 
-          loaddiagram()
+          // loaddiagram()
         }else if(msg.event=='exit'){
           //drawio退出
           router.back()

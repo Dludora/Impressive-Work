@@ -1,10 +1,10 @@
 <template>
   <div class="frame">
     <div class="side">
-        <LeftNav @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+        <LeftNav @renew="renewMain" @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </div>
     <div class="main">
-      <router-view/>
+      <router-view :key="renewMainTag"/>
     </div>
   </div>
   <n-config-provider :theme="theme">
@@ -52,7 +52,7 @@ import utils from "@/Utils";
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-
+let renewMainTag=ref(114);
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -80,6 +80,13 @@ export default defineComponent({
       name: "",
       description: "",
     })
+    const renewMain=()=>{
+      if(renewMainTag.value<200)
+        renewMainTag.value++;
+      else
+        renewMainTag.value--;
+      console.log(renewMainTag.value)
+    }
     const getID = (msg:any) =>{
         console.log("father get:"+msg)
         teamID.value = parseInt(msg)
@@ -145,6 +152,8 @@ export default defineComponent({
       modelRef,
       formRef,
       teamID,
+      renewMainTag,
+      renewMain,
       formatFeedback(raw: string | undefined) {
         h('div', {style: 'color: green'}, [raw + '而且是绿的'])
       },

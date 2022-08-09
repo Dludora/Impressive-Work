@@ -13,7 +13,6 @@
         </n-config-provider>
         </div>
         <div class="clsR">
-          
           <div class="search search1">
                   <n-input size="small" v-model:value="searchText" round placeholder="搜索项目" >
                   <template #suffix>
