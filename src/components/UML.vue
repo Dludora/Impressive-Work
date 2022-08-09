@@ -15,26 +15,44 @@
           回到<a @click="programView">项目</a>/<a @click="teamMain">团队</a>
         </div>
 
+        <div class="projectname">
+          来自<br/>
+          <a @click="programView">{{projectname}}</a><br/>
+          的Drawio绘图<br/>
+        </div>
+
         <n-scrollbar>
           <div class="diagramlist">
-            <div class="diagramitem" v-for="item in diagrams" :key="item.id" @click="open(item)">
-              <Icon style="margin-right:8px;" size="20">
-                <ProjectDiagram/>
-              </Icon>
-              {{item.name}}
+            <div class="diagramitem" v-for="item in diagrams" :key="item.id" :diagramid="item.id" @click="open(item)">
+              <div class="left">
+                <Icon style="margin-right:8px;" size="20">
+                  <ProjectDiagram/>
+                </Icon>
+                <div style="overflow:hidden;max-height:70px;">{{item.name}}</div>
+              </div>
+              <div class="right">
+                <Icon style="margin-left:4px;" size="20" @click="renameDiagram(item)">
+                  <Edit16Regular/>
+                </Icon>
+                <Icon style="margin-left:4px;" size="20" @click="deleteDiagram(item)">
+                  <Delete48Regular/>
+                </Icon>
+              </div>
             </div>
             <div @click="newDiagram" class="diagramitem">
+              <div class="left">
               <Icon style="margin-right:8px;" size="20">
                 <Add12Filled/>
               </Icon>
               新建绘图
+              </div>
             </div>
           </div>
         </n-scrollbar>
       </div>
       
       <div class="main">
-        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark&noSaveBtn=1"/>
+        <iframe name="umleditor" id="umleditor" src="https://embed.diagrams.net?embed=1&ui=atlas&modified=unsavedChanges&proto=json&ui=dark&noSaveBtn=1&spin=1"/>
       </div>
   </div>
       <n-modal
@@ -42,7 +60,7 @@
           :mask-closable="false"
           preset="dialog"
           title="新建Drawio绘图"
-          positive-text="确认"
+          positive-text="新建"
           negative-text="取消"
           @positive-click="onPositiveClick"
           @negative-click="onNegativeClick"
@@ -50,6 +68,23 @@
         <n-form :model="modelAddRef">
           <n-form-item label="名称" :rule="ruleAdd" :render-feedback="formatFeedback">
             <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
+          </n-form-item>
+        </n-form>
+      </n-modal>
+
+      <n-modal
+          v-model:show="showModalRenameRef"
+          :mask-closable="false"
+          preset="dialog"
+          title="重命名Drawio绘图"
+          positive-text="确认"
+          negative-text="取消"
+          @positive-click="onPositiveRenameClick"
+          @negative-click="onNegativeRenameClick"
+      >
+        <n-form :model="modelRenameRef">
+          <n-form-item label="新的名称" :rule="ruleRename" :render-feedback="formatFeedback">
+            <n-input v-model:value="modelRenameRef.name" @keydown.enter.prevent/>
           </n-form-item>
         </n-form>
       </n-modal>
@@ -67,7 +102,9 @@ import { Icon } from '@vicons/utils'
 import {ArrowBackOutline} from '@vicons/ionicons5'
 import { Add12Filled } from '@vicons/fluent'
 import { ProjectDiagram } from '@vicons/fa'
+import {Edit16Regular} from '@vicons/fluent'
 import { provideCarouselContext } from "naive-ui/es/carousel/src/CarouselContext";
+import {Delete48Regular} from "@vicons/fluent";
 
 class Diagram{
   id:string;
@@ -76,13 +113,19 @@ class Diagram{
 let umleditor=null;
 let diagrams=ref([] as Diagram[]);
 let showModalRef=ref(false);
-let message=useMessage()
+let showModalRenameRef=ref(false);
+let renamingId=ref('')
+let projectname=ref('')
 const modelAddRef = ref({
+  name: ""
+})
+const modelRenameRef = ref({
   name: ""
 })
 const formatFeedback = (raw: string | undefined) => {
   h('div', {style: 'color: green'}, [raw + '而且是绿的'])
 }
+
 const emptyxml='<mxfile etag=\"jnyZEe7rajkKXGbV0i7T\" agent=\"5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36\" modified=\"2022-08-08T15:15:33.812Z\" host=\"embed.diagrams.net\" version=\"20.2.3\" type=\"embed\"><diagram name=\"第 1 页\" id=\"5_veikS2vmQ50BY-FqDE\">dZHBDsIgDIafhjuCmfM8p1487eCZjDpI2LowzKZP7xaYSNRL0379258Uwot2OlnRqwtKMIRRORF+IIxlNJ/jAh4ebHnmQWO19GgTQaWfECAN9K4lDInQIRqn+xTW2HVQu4QJa3FMZTc0qWsvmuBII6hqYeBLdtXSKU9ztov8DLpRq/Mm2/tOK1ZxWDwoIXH8QLwkvLCIzmftVIBZbrfexc8d/3TfD7PQuR8DcxJ3z0XyQbx8AQ==</diagram></mxfile>'
 
 export default defineComponent({
@@ -91,10 +134,16 @@ export default defineComponent({
     Icon,
     Add12Filled,
     ProjectDiagram,
+    Delete48Regular,
+    Edit16Regular,
   },
   
   setup () {
+    const message=useMessage();
+
     let selectid=utils.getCookie('UMLid')
+    projectname.value=utils.getCookie('proNAME')
+
     const headers = {
       Authorization: utils.getCookie('Authorization')
     }
@@ -127,6 +176,31 @@ export default defineComponent({
     const newDiagram=()=>{
       showModalRef.value = true
     }
+    const deleteDiagram=(item:Diagram)=>{
+      event.stopPropagation();
+      
+      axios.delete('/uml/'+item.id,{headers: headers})
+      .then(res=>{
+        if(res.data.msg=='成功'){
+          message.info('已删除')
+          for(let i=0;i < diagrams.value.length;i++){
+            if(item.id==diagrams.value[i].id){
+              diagrams.value.splice(i,1)
+            }
+          }
+          if(selectid==item.id)
+            open(diagrams.value[0])
+        }else{
+          console.log(res.data.msg)
+        }
+      })
+    }
+
+    const renameDiagram=(item:Diagram)=>{
+      event.stopPropagation();
+      renamingId.value=item.id;
+      showModalRenameRef.value=true;
+    }
     const ruleAdd = {
       required: true,
       validator() {
@@ -138,9 +212,23 @@ export default defineComponent({
       },
       trigger: ['input', 'blur']
     }
+    const ruleRename = {
+      required: true,
+      validator() {
+        if (modelRenameRef.value.name.length === 0) {
+          return new Error("名称不能为空")
+        }else if (modelRenameRef.value.name.length > 24) {
+          return new Error("名称太长了")
+        }
+      },
+      trigger: ['input', 'blur']
+    }
     const onPositiveClick = () => {
       if (modelAddRef.value.name.length === 0) {
         message.warning("名称不能为空")
+        return
+      }else if (modelAddRef.value.name.length > 24) {
+          message.warning("名称太长了")
         return
       }
       axios.post('/uml', {
@@ -156,10 +244,37 @@ export default defineComponent({
             "id":(res.data.data).toString(),
           }
           diagrams.value.push(item)
-          open(item)
-          message.info("添加成功！")
+          open(item as Diagram)
+          message.info("已添加")
+          router.push({name:'UML'})
         } else {
-          message.error("添加失败！")
+          message.error("添加失败")
+        }
+      })
+      showModalRef.value = false
+      // modelAddRef.value.name = ""
+    }
+    const onPositiveRenameClick = () => {
+      if (modelRenameRef.value.name.length === 0) {
+        message.warning("名称不能为空")
+        return
+      }else if (modelRenameRef.value.name.length > 24) {
+          message.warning("名称太长了")
+        return
+      }
+      axios.put('/uml', {
+        id:parseInt(renamingId.value),
+        name: modelRenameRef.value.name,
+      }, {headers: headers}).then(res => {
+        if (res.data.msg === "成功") {
+          for(var i in diagrams.value){
+            if(diagrams.value[i].id==renamingId.value)
+              diagrams.value[i].name=modelRenameRef.value.name
+          }
+          // message.info("重命名")
+          router.push({name:'UML'})
+        } else {
+          message.error("重命名失败")
         }
       })
       showModalRef.value = false
@@ -168,7 +283,11 @@ export default defineComponent({
     const onNegativeClick = () => {
       modelAddRef.value.name = ""
       showModalRef.value = false
-    };
+    }
+    const onNegativeRenameClick = () => {
+      modelRenameRef.value.name = ""
+      showModalRenameRef.value = false
+    }
     const teamMain= () =>{
       router.push('/team')
     }
@@ -177,8 +296,11 @@ export default defineComponent({
       router.push('/project')
     }
     const loaddiagram =() =>{
+      umleditor.contentWindow.postMessage(JSON.stringify({action: 'spinner', message: '加载文件中', show: true, enabled: true}),'*')
       let loaded=false;
-      for(var item of diagrams.value){
+      let menuitems=document.getElementsByClassName('diagramitem') as HTMLCollectionOf<HTMLElement>
+      for(var i in diagrams.value){
+        let item=diagrams.value[i]
         if(item.id==selectid){
           axios.get('/uml/'+item.id,{headers: headers})
           .then(res=>{
@@ -191,16 +313,24 @@ export default defineComponent({
 
             }
           })
-          // console.log(item.xml)
-          // umleditor.contentWindow.postMessage(JSON.stringify({action:'load',xml:item.xml,autosave:1}),'*')
           loaded=true
           break
         }
+      }
+      for(var elementitem of menuitems){
+        console.log('target:'+selectid)
+        console.log('searching:'+elementitem.attributes['diagramid'].value)
+        if(elementitem.attributes['diagramid'].value==selectid)
+          elementitem.style['background']='#000'
+        else
+          elementitem.style['background']='none'
       }
       if(loaded==false)
         umleditor.contentWindow.postMessage(JSON.stringify({action:'load',xml:emptyxml,autosave:1}),'*')
     }
     const open =(diagram:Diagram) =>{
+      console.log('openning:')
+      console.log(diagram)
       utils.setCookie('UMLid', diagram.id)
       selectid=diagram.id
       utils.setCookie('UMLname', diagram.name)
@@ -235,6 +365,9 @@ export default defineComponent({
           })
           if(msg.exit==true)
             routerBack()
+        }else if(msg.event=='load'){
+          //已载入文件
+          umleditor.contentWindow.postMessage(JSON.stringify({action: 'spinner', message: '加载文件中', show: false, enabled: false}),'*')
         }
       }
     });
@@ -253,6 +386,14 @@ export default defineComponent({
       formatFeedback,
       modelAddRef,
       darkTheme,
+      deleteDiagram,
+      renameDiagram,
+      showModalRenameRef,
+      onPositiveRenameClick,
+      onNegativeRenameClick,
+      modelRenameRef,
+      ruleRename,
+      projectname,
     }
   }
 })
@@ -295,14 +436,14 @@ a {
 .side{
   display: flex;
   height: 100%;
-  width: 200px;
+  width: 240px;
   background-color: #2A2A2A;
   border-right: 1px solid #4E5456;
   flex-direction: column;
   flex-wrap: nowrap;
 }
 .backnav{
-  margin: 0 9px;
+  padding: 0 9px;
   color:#CCCCCC;
   font-size: 14px;
   line-height: 30px;
@@ -312,7 +453,7 @@ a {
   flex-wrap: nowrap;
   border-bottom: 1px solid #4E5456;
 }
-.backnav a:hover,.hoverorange:hover{
+.backnav a:hover,.projectname a:hover,.hoverorange:hover{
   color:#DF6C0C;
   cursor:pointer;
 }
@@ -351,24 +492,42 @@ a {
   font-size:14px;
   color:#fff;
 
+  max-height: 70px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-content: center;
+
+  padding:6px 6px 6px 18px;
+  border-top: 1px solid #2A2A2A;
+  border-bottom: 1px solid #2A2A2A;
+  /*width:100%;*/
+}
+.diagramitem .left,.diagramitem .left{
+  
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: nowrap;
   flex-direction: row;
   align-content: center;
-
-  padding:6px 6px 6px 18px;
-  /*width:100%;*/
-}
-.diagramitem *{
   /*margin:2px;*/
 }
 .diagramitem:hover{
   cursor:pointer;
-  background-color: #000;
+  /*background-color: #161616;*/
+  border-top: 1px solid #4E5456;
+  border-bottom: 1px solid #4E5456;
 }
 .diagramitem:active{
   color:#DF6C0C;
+}
+.projectname{
+  margin:24px 0 12px 18px;
+  color: #cccccc;
 }
 </style>
