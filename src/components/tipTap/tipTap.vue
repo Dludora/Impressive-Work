@@ -1,25 +1,26 @@
 <template>
   <div class="big-bg">
 
-    <n-space class="head-bg" justify="space-between">
+    <n-space class="head-bg" justify="center">
 
-      <n-button @click="returnTO">返回</n-button>
+
       <h style="position: relative; top: 5px;color: #FFFFFF; display: inline">
         文档: {{title}}
       </h>
 
-      <p></p>
+      <n-button @click="returnTO">返回</n-button>
+
+      <n-button @click="downPDF">下载PDF</n-button>
+      <n-button @click="saveWord">下载word</n-button>
+      <n-button @click="saveMD">下载MD</n-button>
+      <n-button @click="saveHTML">下载HTML</n-button>
+      <n-button @click="saveJSON">下载JSON</n-button>
+      <n-button @click="saveText">下载纯文本</n-button>
+
 
     </n-space>
 
-    <n-button @click="returnTO">返回</n-button>
 
-    <n-button @click="downPDF">下载PDF</n-button>
-    <n-button @click="saveWord">下载word</n-button>
-    <n-button @click="saveMD">下载MD</n-button>
-    <n-button @click="saveHTML">下载HTML</n-button>
-    <n-button @click="saveJSON">下载JSON</n-button>
-    <n-button @click="saveText">下载纯文本</n-button>
 
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
@@ -429,8 +430,8 @@ export default {
   position: absolute;
   display: flex;
   flex-direction: column;
-  margin-left: 21rem;
-  margin-top: 5rem;
+  margin-left: 10rem;
+  margin-top: 10rem;
   height: 30rem;
   width: 50rem;
   color: #0D0D0D;
