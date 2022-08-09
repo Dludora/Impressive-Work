@@ -2,6 +2,8 @@
   <n-config-provider :theme="theme">
   <div class="nav">
     <!-- <div class="logo" @click="toMain"></div> -->
+    <n-popover trigger="hover" placement="right">
+       <template #trigger>
     <div class="user-info" @click="toMain">
       <div class="lineI"></div>
       <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
@@ -10,6 +12,19 @@
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
     </div>
+      </template>
+      <div class="paopao">
+       <span>昵称: {{profile.nickname}}</span><br/>
+        <span>姓名: {{profile.name}}</span><br/>
+        <span>邮箱: {{profile.email}}</span><br/>
+       <n-button size="tiny" quaternary @click="toMain">
+        返回主页
+      </n-button>
+      <n-button size="tiny" type="error" quaternary @click="logout">
+        注销登录
+      </n-button>
+      </div>
+    </n-popover>
     <div class="teamlist">
         <div class="teamsHead">
           <Icon size="18" style="margin:12px;">
@@ -83,7 +98,8 @@ export default defineComponent({
     BoxMultiple20Regular,
   },
   setup(props, {emit}) {
-    const route = useRoute()
+    const message = useMessage()
+    const route = useRoute();
     let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')
@@ -113,6 +129,25 @@ export default defineComponent({
         utils.setCookie("userID", profile.value.ID)
       })
     }
+    const logout = () => {
+  console.log()
+  axios.delete('/auth/token',{headers:headers}
+  ).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功")
+    {
+      utils.clearCookie('Authorization')
+      axios.defaults.headers.common['Authorization'] = '';
+      message.info("注销成功")
+      router.push('/')
+    }
+    else{
+      utils.clearCookie('Authorization')
+      axios.defaults.headers.common['Authorization'] = '';
+      message.error("用户未登录")
+    }
+  })
+}
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
           {headers: headers, params: {page: page, size: size}})
@@ -166,7 +201,9 @@ export default defineComponent({
       getAllTeams(0, 8)
     })
     return {
+      logout,
       route,
+      message,
       menuKey,
       theme: darkTheme,
       addTeam,

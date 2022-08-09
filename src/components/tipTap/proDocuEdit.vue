@@ -142,7 +142,7 @@ function openDocu(index) {
 
       utils.setCookie('DocTitle', opTitle);
 
-      this.timer = new Date().getTime();
+      location.reload()
     }
   })
 
