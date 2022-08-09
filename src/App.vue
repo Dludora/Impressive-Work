@@ -34,6 +34,13 @@ const themeOverrides: GlobalThemeOverrides = {
     borderFocus: "1px solid #A7AFBE",
     rippleColor: "#E2E4E9",
   },
+  
+  Form: {
+    "feedbackHeightSmall": "12px",
+    "feedbackHeightMedium": "12px",
+    "feedbackHeightLarge": "12px",
+    "feedbackPadding": "6px 0"
+  },
   Menu: {
     borderRadius: "2px",
     itemColorActive: "#414958ff",
@@ -119,6 +126,7 @@ const themeOverrides: GlobalThemeOverrides = {
   outline: none;
   z-index: inherit;
   overflow: visible;
+  transition-duration:0.2s;
 }
 body {
   background: #16181d;
