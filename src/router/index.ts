@@ -31,6 +31,7 @@ import UML from "../components/UML.vue";
 
 import tipTap from "../components/tipTap/tipTap.vue";
 
+import proDocuEdit from "../components/tipTap/proDocuEdit.vue"
 
 // @ts-ignore
 // @ts-ignore
@@ -232,6 +233,17 @@ const router = createRouter({
             name:'tipTap',
             path:'/tipTap',
             component: tipTap,
+            meta: {
+                auth: true
+            },
+        },
+        {
+            name:'proDocuEdit',
+            path:'/proDocuEdit',
+            component: proDocuEdit,
+            meta: {
+                auth: true
+            },
         }
 
         // {
