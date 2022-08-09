@@ -16,6 +16,8 @@ import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
 import teamDocuments from '../components/someTeam/teamDocument.vue'
 import teamChoose from '../components/TeamChose/TeamChoose.vue'
+import teamDocView from '../components/someTeam/teamDocView.vue'
+
 
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
@@ -31,6 +33,7 @@ import UML from "../components/UML.vue";
 
 import tipTap from "../components/tipTap/tipTap.vue";
 
+import proDocuEdit from "../components/tipTap/proDocuEdit.vue"
 
 // @ts-ignore
 // @ts-ignore
@@ -168,9 +171,16 @@ const router = createRouter({
                     meta: {
                         auth: true
                     }
-                }
-
+                },
             ]
+        },
+        {
+            name: 'teamDocView',
+            path: '/teamDocView',
+            component: teamDocView,
+            meta: {
+                auth: true
+            }
         },
         {
             name: 'vDitor',
@@ -232,6 +242,17 @@ const router = createRouter({
             name:'tipTap',
             path:'/tipTap',
             component: tipTap,
+            meta: {
+                auth: true
+            },
+        },
+        {
+            name:'proDocuEdit',
+            path:'/proDocuEdit',
+            component: proDocuEdit,
+            meta: {
+                auth: true
+            },
         }
 
         // {

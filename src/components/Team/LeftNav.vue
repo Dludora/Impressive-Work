@@ -2,6 +2,8 @@
   <n-config-provider :theme="theme">
   <div class="nav">
     <!-- <div class="logo" @click="toMain"></div> -->
+    <n-popover trigger="hover" placement="right">
+       <template #trigger>
     <div class="user-info" @click="toMain">
       <div class="lineI"></div>
       <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
@@ -10,6 +12,19 @@
         <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
       </div>
     </div>
+      </template>
+      <div class="paopao">
+       <span>昵称: {{profile.nickname}}</span><br/>
+        <span>姓名: {{profile.name}}</span><br/>
+        <span>邮箱: {{profile.email}}</span><br/>
+       <n-button size="tiny" quaternary @click="toMain">
+        返回主页
+      </n-button>
+      <n-button size="tiny" type="error" quaternary @click="logout">
+        注销登录
+      </n-button>
+      </div>
+    </n-popover>
     <div class="teamlist">
         <div class="teamsHead">
           <Icon size="18" style="margin:12px;">
@@ -39,7 +54,7 @@
     </div>
       <!-- <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
-                    :page-slot="4" size="small"
+                    :page-slot="5" size="small"
                     :on-update:page="changePage"
                     id="pagination">
       </n-pagination> -->
@@ -81,6 +96,7 @@ export default defineComponent({
     TandP,
   },
   setup(props, {emit}) {
+    const message = useMessage()
     let renewTag=500;
     const route = useRoute();
     let menuKey = ref('')
@@ -100,7 +116,7 @@ export default defineComponent({
       src: ""
     })
     const total = ref(0)
-    const currentPage = ref(0)
+    const currentPage = ref(1)
     const pageNum = ref(0)
     const addTeam = () => {
       emit('addTeam');
@@ -114,6 +130,25 @@ export default defineComponent({
         utils.setCookie("userID", profile.value.ID)
       })
     }
+    const logout = () => {
+  console.log()
+  axios.delete('/auth/token',{headers:headers}
+  ).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==="成功")
+    {
+      utils.clearCookie('Authorization')
+      axios.defaults.headers.common['Authorization'] = '';
+      message.info("注销成功")
+      router.push('/')
+    }
+    else{
+      utils.clearCookie('Authorization')
+      axios.defaults.headers.common['Authorization'] = '';
+      message.error("用户未登录")
+    }
+  })
+}
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
           {headers: headers, params: {
@@ -195,6 +230,7 @@ export default defineComponent({
     }
     const changePage = (page: number) => {
       getAllTeams(page - 1, 8)
+      currentPage.value=page
     }
     onMounted(() => {
       load()
@@ -206,6 +242,7 @@ export default defineComponent({
     return {
       renewNav,
       route,
+      message,
       menuKey,
       theme: darkTheme,
       addTeam,
@@ -256,7 +293,11 @@ export default defineComponent({
   height: 100%;
   overflow: hidden;
 }
+.user{
+  margin-left: 20px;
+}
 .user-info {
+
   display: flex;
   width: 100%;
   height: 50px;
@@ -400,10 +441,12 @@ cursor:pointer
   width:0;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
   transition-duration: 0.5s;
+  margin-right: 20px;
 }
 
 .user-info:hover .signI {
   width: 50px;
+  margin-right: 5px;
 }
 
 .lineI {

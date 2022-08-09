@@ -1,9 +1,5 @@
 <template>
-  <div
-    :id="'contentBox' + index"
-    class="contentBox"
-    v-if="exist"
-  >
+  <div :id="'contentBox' + index" class="contentBox" v-if="exist">
     <!-- <div
       :id="'content' + index"
       class="content"
@@ -168,7 +164,7 @@ const UnSelect = () => {
 defineExpose({
   UnSelect,
   Select,
-  selectContent
+  selectContent,
 });
 
 onMounted(() => {
@@ -257,8 +253,9 @@ const ResetTrans = (newVal: Params) => {
       document.getElementById(
         `contentBox${props.index}`
       )!.style.borderWidth = `${newVal.borderWidth}px`;
-      document.getElementById(`contentBox${props.index}`)!.style.backgroundColor =
-        newVal.color;
+      document.getElementById(
+        `contentBox${props.index}`
+      )!.style.backgroundColor = newVal.color;
       if (newVal.src == "" || newVal.src == "none" || newVal.src == null) {
         document.getElementById(
           `contentBox${props.index}`
@@ -303,10 +300,10 @@ const ResetTrans = (newVal: Params) => {
   border-width: 1px;
   width: 6px;
   height: 6px;
-  word-wrap:break-word;
+  word-wrap: break-word;
 }
-.textWrap{
-  word-wrap:break-word;
+.textWrap {
+  word-wrap: break-word;
 }
 .leftResizer {
   left: -8px;

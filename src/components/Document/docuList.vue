@@ -102,7 +102,6 @@ import {onMounted, ref} from "vue";
 import utils from "@/Utils";
 import router from "@/router";
 
-import documentItem from "@/components/Document/documentItem.vue"
 import DocumentItem from "@/components/Document/documentItem.vue";
 
 const headers = {
@@ -822,7 +821,7 @@ function openDocu(index) {
 
 
 
-      router.push("/tipTap");
+      router.push("/proDocuEdit");
     }
   })
 
