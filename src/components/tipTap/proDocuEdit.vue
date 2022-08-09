@@ -3,22 +3,21 @@
   <div class="big-bg">
 
     <div class="leftDoc">
-      <div @click="returnTO" class="user-info">
-        <p>项目:</p>
-        <p>{{proName}}</p>
+      <n-button @click="returnTO" style="width: 60px">返回</n-button>
+      <div @click="returnTO" class="user">
+        <p style="width: 100%">项目:</p>
+        <p style="font-size:40px;width: 100%">{{proName}}</p>
       </div>
       <div class="teamlist">
         <div class="teamsHead">
-          <Icon style="margin:12px;">
-            <Document/>
-          </Icon>
           项目文档
         </div>
         <div class="divline"/>
         <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
         <n-scrollbar>
           <div class="teams">
-
+            <left-docu-list v-for="document in documents" :key="document" :name="document.title"
+                            @op="openDocu(document.ID)" />
           </div>
         </n-scrollbar>
       </div>
@@ -84,8 +83,6 @@ import MenuBar from './MenuBar.vue'
 import utils from "@/Utils";
 import axios from "axios";
 
-import {Document} from "@vicons/carbon"
-
 import TurndownService from 'turndown';
 import router from "@/router";
 
@@ -95,6 +92,12 @@ import htmlDocx from 'html-docx-js/dist/html-docx';
 import saveAs from 'file-saver';
 
 import { darkTheme } from 'naive-ui'
+import LeftDocuList from "@/components/tipTap/leftDocuList";
+import {ref} from "vue";
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
@@ -109,6 +112,8 @@ const getRandomRoom = () => {
 }
 */
 
+let documents = ref([]);
+
 const getProName = () => {
   return utils.getCookie('proNAME');
 }
@@ -122,6 +127,78 @@ const getDocuID = () => {
 const UserName = () =>{
   return utils.getCookie("UserName");
 }
+
+const getDocuAbl = () => {
+
+  axios.get('/document/list', {
+        headers: headers,
+        params:
+            {
+              programID: parseInt(utils.getCookie('proID')), // proID.value,
+            }
+      }
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档列表成功");
+
+      documents.value = res.data.data.items;
+
+      console.log(documents.value);
+    }
+  })
+}
+
+function openDocu(index) {
+  //获取文档内容
+  opdocuID.value = index;
+
+  let urlOP = "/document/" + opdocuID.value;
+  console.log(urlOP);
+
+  axios.get(urlOP, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档内容成功");
+      let opContent;
+
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+
+
+      let opTitle = res.data.data.title;
+
+      utils.setCookie('editDocID', index);
+      utils.setCookie('DocTitle', opTitle);
+
+
+
+
+      router.push("/proDocuEdit");
+    }
+  })
+
+}
+
 /*
 const saveContent = () => {
   const docID=parseInt(getDocuID());
@@ -147,9 +224,9 @@ const saveContent = () => {
 
 export default {
   components: {
+    LeftDocuList,
     EditorContent,
     MenuBar,
-    Document,
   },
 
   data() {
@@ -175,6 +252,7 @@ export default {
 
   created() {
     this.title = utils.getCookie('DocTitle');
+    getDocuAbl();
   },
 
   mounted() {
@@ -551,17 +629,6 @@ export default {
   border-radius: 50%;
   background: skyblue;
   margin: 7px;
-}
-
-.user {
-  margin: 0 8px;
-  /*height: 65px;*/
-  color: #fff;
-  text-overflow: ellipsis;
-  /*width: 127px;*/
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: larger;
 }
 
 .user p {
