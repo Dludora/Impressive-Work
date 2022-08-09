@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="buttons">
-            <n-button class="newpage" @click="displayAdd" size="tiny">
+            <n-button class="newpage" @click="displayAdd" size="small">
               新 建 项 目&nbsp;
               <Icon size="14">
                 <Add28Regular/>
