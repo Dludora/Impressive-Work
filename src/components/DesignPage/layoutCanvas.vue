@@ -30,6 +30,8 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
+import Canvas2Image from "./canvas2image.js";
+import saveAs from "file-saver";
 import axios from "axios";
 import utils from "@/Utils";
 import { useMessage } from "naive-ui";
@@ -56,6 +58,7 @@ let transDragFromY: number = 0;
 let version: number = 0;
 let update = ref<boolean>(true);
 let locked: boolean = false;
+let layoutId: number = 0;
 
 const canvasTrans = {
   x: 0,
@@ -84,9 +87,9 @@ type elementParams = {
 };
 
 type ComServer = {
-  id: number,
-  content:string
-}
+  id: number;
+  content: string;
+};
 
 type Prop = {
   layoutId: number;
@@ -163,6 +166,7 @@ const initMoveable = () => {
     })
     .on("dragEnd", () => {
       changeUpdate();
+      updateUpdates();
     });
 
   /* resizable */
@@ -184,6 +188,7 @@ const initMoveable = () => {
     })
     .on("resizeEnd", () => {
       changeUpdate();
+      updateUpdates();
     })
     .on("resizeGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -205,6 +210,9 @@ const initMoveable = () => {
           layoutElementParams[selectedId.value[i]]
         );
       });
+    })
+    .on("resizeGroupEnd", () => {
+      updateUpdates();
     });
 
   /* scalable */
@@ -220,6 +228,7 @@ const initMoveable = () => {
     })
     .on("scaleEnd", () => {
       changeUpdate();
+      updateUpdates();
     });
 
   /* rotatable */
@@ -237,6 +246,7 @@ const initMoveable = () => {
     })
     .on("rotateEnd", () => {
       changeUpdate();
+      updateUpdates();
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -259,6 +269,9 @@ const initMoveable = () => {
           layoutElementParams[selectedId.value[i]]
         );
       });
+    })
+    .on("rotateGroupEnd", () => {
+      updateUpdates();
     });
 
   /* warpable */
@@ -327,74 +340,92 @@ const initSelecto = () => {
     });
 };
 
-let comServer:ComServer[] = []
+let comServer: ComServer[] = [];
 const changeUpdate = () => {
   update.value = true;
   emits("changeUpdate");
 };
 
-const updateUpdates = (modifyed: elementParams) => {
-  var updateIndex = updates.findIndex((cv, ci) => {
-    if (cv.id == modifyed.id) {
-      return true;
+const updateUpdates = () => {
+  for (var i = 0; i < selected.value.length; ++i) {
+    var modifyed = layoutElementParams[selectedId.value[i]];
+    if (modifyed.id == 0) {
+      return;
     }
-  });
-  if (updateIndex == -1) {
-    updates.push(modifyed);
-  } else {
-    updates[updateIndex] = modifyed;
+    var updateIndex = updates.findIndex((cv, ci) => {
+      if (cv.id == modifyed.id) {
+        return true;
+      }
+    });
+    if (updateIndex == -1) {
+      updates.push(modifyed);
+    } else {
+      updates[updateIndex] = modifyed;
+    }
   }
 };
 
 const updateServer = () => {
   comServer.splice(0);
-  for(var i=0;i<updates.length;++i)
-  {
-    let newCom:ComServer;
+  for (var i = 0; i < updates.length; ++i) {
+    let newCom: ComServer = { id: 0, content: "" };
     newCom.id = updates[i].id;
     newCom.content = JSON.stringify(updates[i]);
+    console.log(newCom.id);
     comServer.push(newCom);
   }
+  console.log(comServer);
   axios
-    .put(
-      `/layout/${props.layoutId}/element`,
-      {
-        elements: comServer,
-      },
-      { headers: headers }
-    )
-    // .then((res) => {
-    //   console.log(res.data);
-    //   if (res.data.msg == "成功") {
-    //     version = res.data.data.version;
-    //     var i = 0;
-    //     for (i = 0; i < res.data.data.elements.length; ++i) {
-    //       updateParams(res.data.data.elements[i]);
-    //       update.value = true;
-    //     }
-    //     for (; i < layoutElementParams.length; ++i) {
-    //       if (layoutElementParams[i].id != 0) {
-    //         layoutElementParams.splice(i, 1);
-    //       }
-    //     }
-    //   }
-    // });
+    .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
+    .then((res) => {
+      console.log(res.data);
+    });
+  download(false);
+
+  // .then((res) => {
+  //   console.log(res.data);
+  //   if (res.data.msg == "成功") {
+  //     version = res.data.data.version;
+  //     var i = 0;
+  //     for (i = 0; i < res.data.data.elements.length; ++i) {
+  //       updateParams(res.data.data.elements[i]);
+  //       update.value = true;
+  //     }
+  //     for (; i < layoutElementParams.length; ++i) {
+  //       if (layoutElementParams[i].id != 0) {
+  //         layoutElementParams.splice(i, 1);
+  //       }
+  //     }
+  //   }
+  // });
   updates = [];
 };
 
-const initFromServer = ()=>{
-  layoutElementParams.splice(0)
-  axios.get(`/layout/${props.layoutId}/elements`,{ headers: headers })
+const initFromServer = () => {
+  layoutElementParams.splice(0);
+  axios
+    .get(`/layout/${layoutId}/elements`, { headers: headers })
     .then((res) => {
-      console.log(res.data);
       if (res.data.msg == "成功") {
         version = res.data.data.version;
         var i = 0;
         for (i = 0; i < res.data.data.length; ++i) {
-          var el = JSON.parse(res.data.data[i].content)
+          var el = JSON.parse(res.data.data[i].content);
+          el.id = res.data.data[i].id;
           updateParams(el);
           update.value = true;
         }
+        setTimeout(() => {
+          for (var i = 0; i < layoutElementParams.length; ++i) {
+            updateTransform(
+              document.getElementsByName("elements")[i],
+              layoutElementParams[i]
+            );
+          }
+          selecto.selectableTargets = [].slice.call(
+            document.getElementsByName("elements")
+          );
+        });
         // for (; i < layoutElementParams.length; ++i) {
         //   if (layoutElementParams[i].id != 0) {
         //     layoutElementParams.splice(i, 1);
@@ -402,7 +433,7 @@ const initFromServer = ()=>{
         // }
       }
     });
-}
+};
 
 const updateSelects = (data: elementParams) => {
   console.log(data.text);
@@ -436,7 +467,10 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
 };
 
 const updateParams = (data: elementParams) => {
-  layoutElementParams.push(data)
+  if (data.id != 0) {
+    layoutElementParams.push(data);
+  }
+  console.log(layoutElementParams);
   // if (paramsDic[data.id] == null) {
   //   layoutElementParams.push(data);
   //   paramsDic[data.id] = data;
@@ -491,10 +525,13 @@ const cancelSelect = () => {
 
 const destroy = () => {
   selectedId.value.forEach((el) => {
-    axios.delete(
-      `/layout/${props.layoutId}/element/${layoutElementParams[el].id}`,
-      { headers: headers }
-    );
+    axios
+      .delete(`/layout/${layoutId}/element/${layoutElementParams[el].id}`, {
+        headers: headers,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
   });
   selectedId.value.sort();
   for (var i = selectedId.value.length - 1; i >= 0; --i) {
@@ -546,8 +583,7 @@ const ProduceElement = (e: MouseEvent) => {
       selecto.selectableTargets = [].slice.call(
         document.getElementsByName("elements")
       );
-      var el =
-        document.getElementsByName("elements")[index];
+      var el = document.getElementsByName("elements")[index];
       switch (layoutElementParams[index].type) {
         case "text": {
           layoutElementParams[index].height = -1;
@@ -556,56 +592,63 @@ const ProduceElement = (e: MouseEvent) => {
       updateTransform(el, layoutElementParams[index]);
       selecto.clickTarget(e, el);
     });
-    console.log(JSON.stringify(layoutElementParams[index]))
-    axios.post(
-      `/layout/${props.layoutId}/element`,
-      JSON.stringify(layoutElementParams[index]),
-      { headers: headers }
-    ).then((res)=>{
-      console.log(res.data)
-      if(res.data.msg=="成功")
-      {
-        layoutElementParams[index].id = res.data.data.id;
-      }
-    });
+    console.log(JSON.stringify(layoutElementParams[index]));
+    axios
+      .post(
+        `/layout/${layoutId}/element`,
+        { content: JSON.stringify(layoutElementParams[index]) },
+        { headers: headers }
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.msg == "成功") {
+          layoutElementParams[index].id = res.data.data.id;
+        }
+      });
   }
   //updateServer(layoutElementParams.length-1);
 };
 
 // let canvas2: any;
 let imgUri: string;
-const download = (isDownload: boolean) => {
-  // canvas2 = document.createElement("canvas");
-
-  // var w = canvasTrans.width;
-  // var h = canvasTrans.height;
-
-  // canvas2.width = w * 4;
-  // canvas2.height = h * 4;
-  // canvas2.style.width = w + "px";
-  // canvas2.style.height = h + "px";
-
-  // var context = canvas2.getContext("2d");
-  // context.scale(4, 4);
-  html2canvas(document.getElementById("canvas")!).then(function (canvas) {
-    imgUri = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    if (isDownload) {
-      window.location.href = imgUri;
-    }
-    axios
-      .put(
-        `/layout/${props.layoutId}/img`,
-        {
-          src: imgUri,
-        },
-        { headers: headers }
-      )
-      .then((res) => {
-        console.log(res.data);
+const download = (isDownload: boolean, type?: string) => {
+  html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
+    function (canvas) {
+      canvas.toBlob((blob) => {
+        if (isDownload) {
+          saveAs(blob, "test." + type);
+        }
+        var form = new FormData();
+        form.append(
+          "file",
+          new File([blob], "test.png", { type: "image/png" })
+        );
+        var imgUri: string;
+        axios({
+          url: "/resource/img",
+          method: "post",
+          headers: headers,
+          data: form,
+        }).then((res) => {
+          console.log(res.data);
+          if (res.data.msg == "成功") {
+            imgUri = res.data.data;
+            axios
+              .put(
+                `/layout/${layoutId}/img`,
+                {
+                  src: imgUri,
+                },
+                { headers: headers }
+              )
+              .then((res) => {
+                console.log(res.data);
+              });
+          }
+        });
       });
-  });
+    }
+  );
 };
 
 defineExpose({
@@ -639,7 +682,6 @@ const dragCanvas = (e: MouseEvent) => {
 onMounted(() => {
   initMoveable();
   initSelecto();
-  initFromServer();
   //updateServer();
   //setInterval(updateServer, 5000);
   document.onkeyup = (e) => {
@@ -798,7 +840,7 @@ watch(
     setTimeout(() => {
       moveable.target = selected.value;
     });
-    updateUpdates(layoutElementParams[selectedId.value[0]]);
+    updateUpdates();
   },
   {
     deep: true,
@@ -810,6 +852,14 @@ watch(
   () => props.canvasWidth,
   (newVal) => {
     initScale();
+  }
+);
+
+watch(
+  () => props.layoutId,
+  (newVal) => {
+    layoutId = props.layoutId;
+    initFromServer();
   }
 );
 

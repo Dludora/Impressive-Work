@@ -5,8 +5,21 @@
         <arrow-back-ios-round />
       </n-icon>
       {{ layoutName }}
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="download">
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
+        <settings28-regular />
+      </n-icon>
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon">
         <file-download-filled />
+        <div class="downloadSelector">
+          <div
+            v-for="(value, index) in downloadType"
+            :key="index"
+            class="downloadAlternative"
+            @click="download(value)"
+          >
+            {{ value }}
+          </div>
+        </div>
       </n-icon>
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
         <save16-regular />
@@ -125,6 +138,43 @@
             </div>
           </n-scrollbar>
         </div> -->
+
+        <div class="ui pageBoardBox" id="pageBoardBox">
+          <n-scrollbar class="pageBoard" id="pageBoard">
+            <div
+              v-for="(value, index) in pageImgs"
+              :class="
+                value.name != layoutName
+                  ? pageImageClass
+                  : pageImageSelectedClass
+              "
+              :key="index"
+              :style="{ backgroundImage: 'url(' + value.src + ')' }"
+            ></div>
+          </n-scrollbar>
+          <div
+            class="ui elementRightUnit elementBrowser pageBrowser"
+            @click="displayPageBoard"
+            id="pageBrowser"
+          >
+            <n-icon
+              size="18"
+              color="#A7AFBE"
+              class="elementArrow"
+              v-show="pageOn"
+            >
+              <arrow-back-ios-round />
+            </n-icon>
+            <n-icon
+              size="18"
+              color="#A7AFBE"
+              class="elementArrow"
+              v-show="!pageOn"
+            >
+              <arrow-forward-ios-round />
+            </n-icon>
+          </div>
+        </div>
 
         <div class="ui porpertyBar" v-show="property.type != 'none'">
           <div id="xPorperty" class="porpertyBarInpUnit">
@@ -291,13 +341,14 @@
             </div>
           </div>
         </div>
+
         <div class="ui elementBar">
           <div class="ui elementSubBar">
             <div class="elementLeftUnit elementBrowser">
-              <n-icon size="18" color="#A7AFBE" class="elementArrow" @click="exit">
+              <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-back-ios-round />
               </n-icon>
-              <div class="elementVerticalLine" style="right:0px"></div>
+              <div class="elementVerticalLine" style="right: 0px"></div>
             </div>
             <div class="ui elementBarUnit" @mousedown="PrepareElement('rect')">
               <div class="ui elementUnit elementRectangle"></div>
@@ -309,8 +360,8 @@
               <div class="ui elementUnit elementCircle"></div>
             </div>
             <div class="elementRightUnit elementBrowser">
-              <div class="elementVerticalLine" style="left:0px"></div>
-              <n-icon size="18" color="#A7AFBE" class="elementArrow" @click="exit">
+              <div class="elementVerticalLine" style="left: 0px"></div>
+              <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-forward-ios-round />
               </n-icon>
             </div>
@@ -332,6 +383,7 @@
         </div>
       </div>
     </div>
+    <canvas id="calcCanvas"></canvas>
   </div>
 </template>
 
@@ -346,6 +398,7 @@ import {
   ScaleFill24Regular,
   ArrowRotateClockwise16Regular,
   Crop20Filled,
+  Settings28Regular,
 } from "@vicons/fluent";
 import {
   FrontHandOutlined,
@@ -361,6 +414,7 @@ import { useMessage } from "naive-ui";
 
 import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
+import { gsap } from "gsap";
 import { useRoute, useRouter } from "vue-router";
 
 import utils from "@/Utils";
@@ -378,13 +432,14 @@ const PrepareElement = (elementType: string) => {
   canvas.value?.PrepareElement(elementType);
 };
 
-const download = () => {
-  canvas.value?.download(true);
+const download = (type: string) => {
+  canvas.value?.download(true, type);
 };
 
-const save = ()=>{
+const save = () => {
+  console.log(canvas.value);
   canvas.value?.updateServer();
-}
+};
 
 const layoutId = ref<number>(2);
 const layoutName = ref<string>("Home");
@@ -476,14 +531,24 @@ const toolAvailable: { [key: string]: boolean } = {
   clip: false,
   round: false,
 };
+const downloadType = reactive<string[]>(["jpg", "png", "jpeg"]);
 const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value);
 
 const showPalette = ref<boolean>(false);
 const showBorderPalette = ref<boolean>(false);
+const pageOn = ref<boolean>(false);
 
 const colorCircles = ref<any>([]);
 const borderCircles = ref<any>([]);
 const update = ref<boolean>(true);
+
+type ImgWithName = {
+  name: string;
+  src: string;
+};
+const pageImgs = reactive<ImgWithName[]>([]);
+const pageImageClass = ref<string>("pageImage");
+const pageImageSelectedClass = ref<string>("pageImageSelected");
 
 const tool = ref<string>("pointer");
 
@@ -510,7 +575,6 @@ type Property = {
   src: string;
   text: string;
   fontSize: number;
-  locked: boolean;
 };
 
 const property = reactive<Property>({
@@ -526,7 +590,6 @@ const property = reactive<Property>({
   borderWidth: 0,
   borderRadius: 0,
   type: "none",
-  locked: false,
   text: "",
   fontSize: 0,
   src: "",
@@ -584,6 +647,29 @@ const updateProps = (data: Property) => {
       selectedBorderColor = i;
     }
   }
+};
+
+const initPageImgs = () => {
+  axios
+    .get("/layout/list", {
+      headers: headers,
+      params: {
+        programID: parseInt(utils.getCookie("proID")), // proID.value,
+      },
+    })
+    .then((res) => {
+      if (res.data.msg === "成功") {
+        console.log("获取布局列表成功");
+
+        for (var i = 0; i < res.data.data.items.length; ++i) {
+          pageImgs.push({
+            name: res.data.data.items[i].name,
+            src: res.data.data.items[i].src,
+          });
+        }
+      }
+    });
+  console.log(pageImgs);
 };
 
 const switchType = (etype: string) => {
@@ -660,6 +746,30 @@ const updateBorder = (colorId: number) => {
   }
 };
 
+const displayPageBoard = () => {
+  if (pageOn.value) {
+    gsap.to("#pageBoard", {
+      duration: 0.2,
+      translateX: "-100%",
+    });
+    gsap.to("#pageBrowser", {
+      duration: 0.2,
+      translateX: "0px",
+    });
+    pageOn.value = false;
+  } else {
+    gsap.to("#pageBoard", {
+      duration: 0.2,
+      translateX: "0%",
+    });
+    gsap.to("#pageBrowser", {
+      duration: 0.2,
+      translateX: "279px",
+    });
+    pageOn.value = true;
+  }
+};
+
 const displayPalette = () => {
   showPalette.value = true;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
@@ -681,12 +791,25 @@ const ShutBoard = () => {
   document.getElementById("borderColor")!.style.backgroundColor = "";
 };
 
+const getBase64Image = (img) => {
+  let canvas = document.getElementById("calcCanvas") as HTMLCanvasElement;
+  canvas.width = img.width;
+  canvas.height = img.height;
+  let ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, img.width, img.height);
+  let ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+  let dataURL = canvas.toDataURL("image/" + ext);
+  return dataURL;
+};
+
 onMounted(() => {
   var imgInputer = document.getElementById("fileUploader");
   layoutId.value = parseInt(route.query.layoutId as string);
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string);
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
+  console.log("layoutId=" + layoutId.value);
+  initPageImgs();
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -699,7 +822,21 @@ onMounted(() => {
       console.log(res.data);
       if (res.data.msg == "成功") {
         update.value = true;
-        property.src = res.data.data;
+        //property.src = res.data.data;
+        var imgUrl = res.data.data;
+        var canvas=document.createElement("canvas"), //获取canvas
+          ctx = canvas.getContext("2d"), //对应的CanvasRenderingContext2D对象(画笔)
+          img = new Image(), //创建新的图片对象
+          base64 = "", //base64
+          num = Math.random()
+        img.src = imgUrl + "?" + num;
+        console.log(num)
+        img.setAttribute("crossOrigin", "Anonymous");
+        img.onload = function () {
+          ctx.drawImage(img, 0, 0);
+          base64 = canvas.toDataURL("image/png");
+          property.src = res.data.data;
+        };
       }
     });
   };
@@ -707,6 +844,7 @@ onMounted(() => {
 });
 
 const exit = () => {
+  save();
   router.push("/project/prototypes");
 };
 </script>
@@ -747,6 +885,23 @@ const exit = () => {
   float: right;
   margin-top: 9px;
   margin-right: 10px;
+}
+.downloadSelector {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  top: 27px;
+  background-color: #2b303b;
+}
+.downloadAlternative {
+  display: block;
+  text-align: center;
+  width: 60px;
+  line-height: 35px;
+  height: 35px;
+}
+.downloadAlternative:hover {
+  background-color: #3a404f;
 }
 .home {
   text-align: center;
@@ -828,21 +983,42 @@ const exit = () => {
   float: right;
   color: #ccc;
 }
-.pageBoard{
+.pageBoardBox {
+  position: absolute;
+  height: 100%;
+}
+.pageBoard {
   position: absolute;
   display: inline-block;
   background-color: #2b303b;
+  opacity: 70%;
+  border-width: 0px;
+  border-style: solid;
+  border-right-width: 3px;
+  border-color: #151515;
   left: 0px;
   top: 0px;
   bottom: 0px;
-  /* transform: translate(100%, 0); */
-  width: 70px;
+  transform: translate(-100%, 0);
   text-align: left;
   padding: 15px;
 }
-.pageImage{
-  width:240px;
-  height:140px;
+.pageImage {
+  width: 240px;
+  height: 140px;
+  border-style: solid;
+  border-width: 3px;
+  margin-bottom: 25px;
+  background-size: cover;
+}
+.pageImageSelected {
+  width: 240px;
+  height: 140px;
+  border-style: solid;
+  border-color: red;
+  border-width: 3px;
+  margin-bottom: 25px;
+  background-size: cover;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -955,24 +1131,24 @@ const exit = () => {
   width: 18px;
   height: 72px;
   background-color: #2b303b;
-  float:left;
-  position:relative;
+  float: left;
+  position: relative;
 }
 .elementLeftUnit {
   border-top-left-radius: 18px;
   border-bottom-left-radius: 18px;
 }
 .elementArrow {
-  position:absolute;
-  left:1px;
-  top:0;
+  position: absolute;
+  left: 1px;
+  top: 0;
   bottom: 0;
-  margin:auto;
+  margin: auto;
 }
-.elementBrowser:hover{
+.elementBrowser:hover {
   background-color: #3a404f;
 }
-.elementBrowser:active{
+.elementBrowser:active {
   background-color: #515868;
 }
 .elementRightUnit {
@@ -980,13 +1156,13 @@ const exit = () => {
   border-bottom-right-radius: 18px;
 }
 .elementVerticalLine {
-  position:absolute;
+  position: absolute;
   background: #4a4a4a;
   width: 1px;
-  top:0;
-  bottom:0;
-  margin:auto;
-  height:64px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: 64px;
 }
 .elementBarUnit {
   width: 72px;
@@ -1020,6 +1196,12 @@ const exit = () => {
 .elementText {
   width: 42px;
   height: 42px;
+}
+.pageBrowser {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 }
 .sider {
   width: 240px;
