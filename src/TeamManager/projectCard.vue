@@ -3,12 +3,12 @@
         <div class="img" @click="gotoProject">
         </div>
         <div class="bottom">
-            <div class="name" :focusable="false" v-if="!change">
-                {{name}}
-            </div>
-            <!-- <div class="name" v-else>
-              <n-input ref="inputInstRef" v-model:value="Name" />
+            <!-- <div class="name"  v-if="!change">
+                <n-input class="nameInput" autosize size="small" v-model:value="Name" />
             </div> -->
+            <div class="name">
+              <n-input class="nameInput" @change="changeName" @click="handleFocus" autosize size="small" ref="inputInstRef" v-model:value="Name" />
+            </div>
             <Icon size="20" class="rename">
                 <Edit16Regular  :focusable="false" @click="handleFocus"/>
             </Icon>
@@ -30,12 +30,12 @@ import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
 import {Copy16Filled} from '@vicons/fluent'
 import {Icon} from '@vicons/utils'
-import {defineComponent,onMounted,ref} from 'vue'
+import {defineComponent,onMounted,ref,computed,watch} from 'vue'
 import router from '@/router';
 import {useRoute} from 'vue-router'
 import utils from '../Utils'
-import { InputInst } from 'naive-ui'
-
+import { InputInst, useMessage } from 'naive-ui'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'PageCard',
@@ -54,7 +54,11 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
-    let Name = ref('123')
+    const message = useMessage()
+      const headers = {
+        Authorization: utils.getCookie('Authorization')
+      }
+    let Name = ref(props.name)
     let change = ref(false)
     const route = useRoute()
     const inputInstRef = ref<InputInst | null>(null);
@@ -81,7 +85,40 @@ export default defineComponent({
       console.log("copy"+props.id)
       emit("copy")
     }
+    
+    const changeName = () => {
+      if(props.name!=Name.value)
+      axios.put("/program", {
+              "ID": props.id,
+              "src": "src",
+              "name": Name.value
+              }, {headers: headers}).then(res => {
+
+              if (res.data.msg === "成功") {
+                message.info("修改成功")
+              } else {
+                message.error("修改失败")
+              }
+              })
+              else{
+                message.info("无修改")
+              }
+    }
+    const getGlobal = computed(() => {
+      return props.name
+    })
+    watch(getGlobal, (newVal, oldVal) => {
+        Name.value=newVal
+
+      }, {immediate: true, deep: true})
+    onMounted(()=>{
+      Name.value=props.name
+
+    })
     return {
+      changeName,
+      headers,
+      message,
       Name,
       inputInstRef,
       handleFocus () {
@@ -100,6 +137,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.nameInput{
+  min-width: 100px;background-color: #16181d;
+}
 * {
   transition: 0.2s;
 }
