@@ -22,11 +22,11 @@
       <n-scrollbar>
         <div class="teams">
           <div class="team">
-            <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/>
-            <!-- <TandP :options="teamAndProjects" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
+            <!-- <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
+            <TandP @renew="renewNav" :options="teamAndProjects" :key="renewTag"/>
           </div>
           <div class="addTeam" @click="addTeam">
-            <Icon style="margin-right:8px;" size="24">
+            <Icon style="margin:15px;" size="12">
               <Add12Filled/>
             </Icon>
             <div class="word">
@@ -35,17 +35,14 @@
           </div>
         </div>
       </n-scrollbar>
-      <div class="divline"/>
+      <!-- <div class="divline"/> -->
     </div>
-      <n-pagination v-model:page="currentPage"
+      <!-- <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
                     :page-slot="4" size="small"
                     :on-update:page="changePage"
                     id="pagination">
-        <!-- <template #goto>
-          请回答
-        </template> -->
-      </n-pagination>
+      </n-pagination> -->
       </div>
   </n-config-provider>
 </template>
@@ -81,8 +78,10 @@ export default defineComponent({
     Add12Filled,
     SvgI,
     BoxMultiple20Regular,
+    TandP,
   },
   setup(props, {emit}) {
+    let renewTag=500;
     const route = useRoute();
     let menuKey = ref('')
     const headers = {
@@ -106,7 +105,9 @@ export default defineComponent({
     const addTeam = () => {
       emit('addTeam');
     }
-
+    const renewNav=()=>{
+      emit('renew')
+    }
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
@@ -115,24 +116,57 @@ export default defineComponent({
     }
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
-          {headers: headers, params: {page: page, size: size}})
+          {headers: headers, params: {
+            // page: page, size: size
+            }})
           .then(res => {
-            console.log(res)
+            // console.log(res)
             const array = ref(res.data.data.items)
             dataList = res.data.data.items
+            // console.log(array)
             // console.log(res.data.data.items)
             total.value = res.data.data.total
             pageNum.value = total.value % 8 === 0 ? Math.floor(total.value / 8) : Math.floor(total.value / 8 + 1)
             sideMenuOptions.value.splice(0, sideMenuOptions.value.length)
             teamAndProjects.value.splice(0, teamAndProjects.value.length)
+            // console.log('array:')
+            // console.log(array)
             for (let i = 0; i < array.value.length; i++) {
               let idd = array.value[i].ID
+              let projectlist=[]
+              // async getData(){
+
+              // }
+              // async function axiosGetJsonData<T>(url: string): Promise<T> {
+              //   try {
+              //     const response = await axios.get<T>(url);
+              //     return response.data;
+              //   } catch (error) {
+              //     throw new Error(`Error in 'axiosGetJsonData(${url})': ${error.message}`);
+              //   }
+              // }
               teamAndProjects.value.push({
                 link:'/team/teamprojects?teamID=' + idd,
+                ID:idd,
                 name:array.value[i].name,
-                color:"#2350A9",
+                color:array.value[i].src,
                 projects:[],
               })
+              axios.get('/program/list',{headers: headers, params: {teamID:idd}}).then(prores=>{
+                // teamAndProjects.value.push({
+                //   link:'/team/teamprojects?teamID=' + idd,
+                //   ID:idd,
+                //   name:array.value[i].name,
+                //   color:array.value[i].src,
+                //   projects:prores.data.data.items,
+                // })
+                // console.log('pushed:')
+                // console.log(idd)
+                // console.log('teamAndProjects.value:')
+                // console.log(teamAndProjects.value)
+                teamAndProjects.value[i].projects=prores.data.data.items
+              })
+              // console.log(projectlist)
               sideMenuOptions.value.push(
                   {
                     label: () =>
@@ -148,8 +182,13 @@ export default defineComponent({
                     icon: renderIcon(Team)
                   }
               )
+                // console.log('sideMenuOptions.value:')
+                // console.log(sideMenuOptions.value)
             }
-            
+            if(renewTag<600)
+              renewTag++;
+            else renewTag--;
+            // this.$refs.teamAndProject.
             // emit("ID", array.value[0].ID)
             // router.push('/team/teamprojects?teamID=' + array.value[0].ID)
           })
@@ -161,10 +200,11 @@ export default defineComponent({
       load()
       if(typeof(route.query.teamID)!="undefined")
        menuKey.value=route.query.teamID.toString();
-       console.log("menuKey:"+menuKey.value)
+      //  console.log("menuKey:"+menuKey.value)
       getAllTeams(0, 8)
     })
     return {
+      renewNav,
       route,
       menuKey,
       theme: darkTheme,
@@ -172,6 +212,7 @@ export default defineComponent({
       toMain,
       load,
       getAllTeams,
+      renewTag,
       handleUpdateValue(key: string, item: MenuOption) {
         emit("ID", parseInt(key))
         utils.setCookie('teamID', parseInt(key))
@@ -264,6 +305,7 @@ cursor:pointer
   font-size: large;
   font-weight: 500;
   color: #E2E4E9;
+  margin: 4px 0;
 }
 
 .teamsHead {
@@ -315,15 +357,24 @@ cursor:pointer
   line-height: 42px;
   display: flex;
   font-size: 12px;
-  /*margin-right: 10px;
-  margin-left: -10px;*/
+  margin: 0 10px 24px 0;
+  /*margin-left: -10px;
   margin: 6px 8px 0 8px;
-  padding-left: 24px;
+  padding-left: 24px;*/
   color: #A7AFBE;
   border-radius: 2px;
+  border: 1px solid #A7AFBE00;
+  transition: 0.2s;
   align-items: center;
 }
-
+.addTeam:hover{
+  color: #E2E4E9;
+  cursor: pointer;
+  border: 1px solid #A7AFBE;
+}
+.addTeam:active{
+    background-color: #2B303B;
+}
 .addImg {
   height: 100%;
   width: 40px;
@@ -336,13 +387,6 @@ cursor:pointer
   margin-top: 12px;
   width: 20px;
   height: 20px;
-}
-
-.addTeam:hover {
-  color: #E2E4E9;
-  background: #414958aa;
-  cursor: pointer;
-  /*box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);*/
 }
 
 #pagination {

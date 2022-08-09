@@ -98,6 +98,23 @@ let password1 = ref('');
 let password2 = ref('');
 let nick = ref('');
 const message = useMessage();
+const colorList=[
+  '#2350A9',
+  '#55DD6C',
+  '#DDB055',
+  '#AA2293',
+  '#55DDD1',
+  '#8ED42B',
+  '#D42B39',
+  '#5A22AA',
+]
+const nextColor=()=>{
+  let max=colorList.length
+  let idx=max+2
+  while(idx>=max)
+    idx=Math.floor(Math.random() * max)
+  return colorList[idx]
+}
 
 
 const headers = {
@@ -186,7 +203,7 @@ const register = () => {
             // 利用token调用创建团队api
             axios.post('/team', {
               'name': '示例团队',
-              'src': res3.data.src,
+              'src': nextColor(),
               'introduction': '示例团队'
             }).then(res4 => {
               // 得到团队ID后创建示例项目
