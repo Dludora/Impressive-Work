@@ -19,31 +19,8 @@
       </n-config-provider>
       <div id="docuITEMS" class="items" :key="docuitemKey">
 
-        <n-config-provider :theme="darkTheme">
-          <n-list bordered>
-            <n-list-item  v-for="document in documents" :key="document">
-
-                <template #prefix>
-                  <p @click="openDocu(document.ID)" style="cursor: pointer;width: 100px;position: relative;display: flex">
-                    {{ document.title }}
-                  </p>
-                </template>
-
-                <template #suffix>
-                  <n-space justify="end" style="gap: 0; flex-wrap: nowrap;position: relative;display: flex">
-                    <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)">
-                      <Edit/>
-                    </Icon>
-                    <Icon id="del" size="24" @click="viewDelDocu(document.ID)">
-                      <Delete48Regular/>
-                    </Icon>
-                  </n-space>
-                </template>
-
-
-            </n-list-item>
-          </n-list>
-        </n-config-provider>
+        <document-item v-for="document in documents" :key="document" :name="document.title" :createTime="document.createTime"
+                       @op="openDocu(document.ID)" @modifyName="viewEdiDocu(document.ID)" @del="viewDelDocu(document.ID)" />
 
       </div>
     </div>
@@ -124,6 +101,9 @@ import VueRouter from 'vue-router';
 import {onMounted, ref} from "vue";
 import utils from "@/Utils";
 import router from "@/router";
+
+import documentItem from "@/components/Document/documentItem.vue"
+import DocumentItem from "@/components/Document/documentItem.vue";
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
