@@ -1,6 +1,6 @@
 <template>
   <div class="Team">
-    <div class="avator">
+    <div class="avator" :style="'background-color:'+teamData.src+';'">
       {{ teamData.name[0] }}
     </div>
     <div class="name">
@@ -51,18 +51,6 @@ const getMessage = () => {
   })
 }
 
-// const getIdentify = () => {
-//   let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
-//   axios.get(url, {headers: headers}).then(res => {
-//     myIdentify.value = res.data.data.identify
-//   })
-// }
-// const dissolve = () => {
-//   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
-//     // console.log(res)
-//     router.push('/team/teamprojects?teamID=undefined')
-//   })
-// }
 const getGlobal = computed(() => {
   return route.query.teamID
 })
@@ -112,7 +100,7 @@ defineExpose({
 .avator {
   width: 50px;
   height: 50px;
-  background: rgba(228, 27, 77, 1);
+  background-color: #A7AFBE;
   border-radius: 5px;
   font-size: 24px;
   color: whitesmoke;

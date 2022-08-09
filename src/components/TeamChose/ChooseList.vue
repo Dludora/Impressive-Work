@@ -4,31 +4,7 @@
       <div class="layout">
         <div class="discribe">
 
-          共{{ projects.length }}个团队
-          <!-- <div class="order">
-            <span>排序方式:</span>
-            <n-dropdown trigger="hover" :options="options" @select="handleSelect">
-              <n-button quaternary>{{ sortMethod }}</n-button>
-            </n-dropdown>
-            <div class="up" v-if="ifUp===true">
-              <n-button size="tiny" quaternary @click="changeUp">
-                <div class="upTag">
-                  <Icon size="20">
-                    <CaretUp24Filled/>
-                  </Icon>
-                </div>
-              </n-button>
-            </div>
-            <div class="up" v-if="ifUp===false">
-              <n-button size="tiny" quaternary @click="changeUp">
-                <div class="upTag">
-                  <Icon size="20">
-                    <CaretDown24Filled/>
-                  </Icon>
-                </div>
-              </n-button>
-            </div>
-          </div> -->
+          您加入了{{ projects.length }}个团队
           <div class="buttons">
             <n-button class="newpage" @click="displayAdd" size="small">
               新 建 团 队&nbsp;
@@ -39,9 +15,9 @@
           </div>
         </div>
         <div class="prolist">
-          <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.introduction"
+          <TeamCard v-for="(item, i) in projects" :key="i" :name="item.name" :color="item.src" :id="item.ID" :date="item.introduction"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
-                   @del="displayDel(item.ID)"/>axios
+                   @del="displayDel(item.ID)"/>
         </div>
       </div>
     </div>
@@ -79,16 +55,19 @@
           v-model:show="showModalAddRef"
           :mask-closable="false"
           preset="dialog"
-          title="创建项目"
+          title="创建团队"
           positive-text="确认"
           negative-text="取消"
           @positive-click="onPositiveAddClick"
           @negative-click="onNegativeAddClick"
       >
-        <n-form :model="modelAddRef">
-          <n-form-item label="项目名称" :rule="ruleAdd" :render-feedback="formatFeedback">
-            <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
-          </n-form-item>
+        <n-form :model="modelRef">
+        <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
+          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item label="团队描述" :rule="ruleDescription" :render-feedback="formatFeedback">
+          <n-input v-model:value="modelRef.introduction" @keydown.enter.prevent type="textarea"/>
+        </n-form-item>
         </n-form>
       </n-modal>
       <n-modal
@@ -114,7 +93,7 @@ import {
   Add28Regular
 } from '@vicons/fluent'
 // import { Icon } from '@vicons/utils'
-import ProCard from "@/components/TeamChose/projectCard.vue"
+import TeamCard from "@/components/TeamChose/teamCard.vue"
 import {Edit} from "@vicons/tabler"
 import {Icon} from "@vicons/utils";
 import {CaretUp24Filled} from "@vicons/fluent"
@@ -126,6 +105,23 @@ import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
 import utils from '../../Utils'
 import axios from "axios";
+const colorList=[
+  '#2350A9',
+  '#55DD6C',
+  '#DDB055',
+  '#AA2293',
+  '#55DDD1',
+  '#8ED42B',
+  '#D42B39',
+  '#5A22AA',
+]
+const nextColor=()=>{
+  let max=colorList.length
+  let idx=max+2
+  while(idx>=max)
+    idx=Math.floor(Math.random() * max)
+  return colorList[idx]
+}
 
 let shortcuts = [
   {
@@ -184,19 +180,11 @@ const modelRef = ref({
   introduction:""
 })
 const getList = () => {
-  // let direction = 0;
-  // if (ifUp.value)
-  //   direction = 1;
 
   const url = '/team/list?page=0&size=100'
-  console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
 
     projects.value = res.data.data.items
-    // for (let i = 0; i < projects.value.length; i++) {
-    //   let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-    //   projects.value[i].createTime = tempDate
-    // }
     for(let i =0;i<projects.value.length;i++)
     {
       if(projects.value[i].introduction.length>17)
@@ -204,26 +192,32 @@ const getList = () => {
           projects.value[i].introduction= projects.value[i].introduction.slice(0,16)+'...'
       }
     }
-    console.log("getList:" + projects.value)
+    // console.log("getList:" + projects.value)
   })
 }
 const getGlobal = computed(() => {
   return route.query.teamID + '&' + route.query.searchText
 })
-// watch(getGlobal, (newVal, oldVal) => {
-//   if (typeof (route.query.searchText) != "undefined")
-//     keyword.value = route.query.searchText.toString();
-//   getList()
-// }, {immediate: true, deep: true})
 onMounted(() => {
-  // if (typeof (route.query.teamID) != "undefined")
-  //   teamID.value = parseInt(route.query.teamID.toString())
-
-  // if (typeof (route.query.searchText) != "undefined")
-  //   keyword.value = route.query.searchText.toString();
   getList()
 
 })
+const ruleName = {
+  required: true,
+  validator() {
+    if (modelRef.value.name.length === 0) {
+      return new Error("新团队名不能为空!")
+    } else {
+      if (modelRef.value.name.length >= 8) {
+        return new Error("新团队名长度不能大于8!")
+      }
+    }
+  },
+  trigger: ['input', 'blur']
+}
+const ruleDescription = {
+  required: false,
+}
 const ruleAdd = {
   required: true,
   validator() {
@@ -245,7 +239,7 @@ const displayMedal = (ID) => {
   showModalRef.value = true
 }
 const displayCopy = (ID) => {
-  console.log("start copy " + ID)
+  // console.log("start copy " + ID)
   let url = '/program/copy?ID=' + ID;
   axios.put(url, {}, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -262,12 +256,12 @@ const onNegativeClick = () => {
 const onPositiveClick = () => {
 
   if (modelRef.value.name.length === 0) {
-    message.warning("项目名称不能为空～")
+    message.warning("团队名称不能为空～")
     return;
   }
   axios.put("/program", {
     "ID": opID.value,
-    "src": "src",
+    "src": nextColor(),
     "name": modelRef.value.name
   }, {headers: headers}).then(res => {
 
@@ -290,7 +284,7 @@ const onPositiveClick = () => {
 let delRef = ref(false)
 let opID = ref()
 const displayDel = (ID) => {
-  console.log(ID)
+  // console.log(ID)
   opID.value = ID
   delRef.value = true
 }
@@ -303,7 +297,7 @@ const onPositiveClickDel = () => {
   let deleUrl = '/program/' + opID.value
 
   axios.delete(deleUrl, {headers: headers}).then(res => {
-    console.log(res.data)
+    // console.log(res.data)
     for (let i = 0; i < projects.value.length; i++) {
       if (projects.value[i].ID === opID.value) {
         projects.value.splice(i, 1)
@@ -350,13 +344,13 @@ const onNegativeAddClick = () => {
 };
 
 const onPositiveAddClick = () => {
-  if (modelAddRef.value.name.length === 0) {
+  if (modelRef.value.name.length === 0) {
     message.warning("团队名称不能为空！")
     return
   }
    axios.post('/team', {
         'name': modelRef.value.name,
-        'src': '',
+        'src': nextColor(),
         'introduction': modelRef.value.introduction
       }, {headers: headers}).then(res => {
         // console.log(res)
@@ -395,40 +389,41 @@ const onPositiveAddClick = () => {
 }
 
 .card {
-  margin: 0 10px 20px 0;
+  margin: 0 8px 16px;
 }
 
 .prolist {
   overflow: auto;
-  margin-left: 5%;
-  max-height: 450px;
+  /*margin-left: 5%;
+  max-height: 450px;*/
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  overflow:visible;
 }
 
 .discribe {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 40px;
+  font-size: 12px;
+  line-height: 28px;
   align-items: center;
   margin-bottom: 6px;
-  margin-left: 10%;
+  margin-left: 16px;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
 
-  color: #414958;
+  color: #A7AFBE;
 }
 
 .buttons {
-  margin-right: 10%;
+  margin-right: 8px;
 }
 
 .layout {
-  margin: 20px 50px 0 60px;
+  /*margin: 20px 50px 0 60px;*/
 }
 </style>

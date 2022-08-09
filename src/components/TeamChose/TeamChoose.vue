@@ -1,11 +1,17 @@
 <template>
     <div class="out">
+        <div class="backimage"/>
+        <div class="mask"/>
+
+        <headNav style="z-index:1;"/>
         <div class="head">
             <teamHead></teamHead>
         </div>
+        
+        <n-scrollbar style="margin:0 97px;width:auto;padding:0 3px;">
         <div class="info">
 
-            <projectList></projectList>
+            <projectList ref="getChildList"></projectList>
 
         </div>
          <n-config-provider :theme="theme">
@@ -29,6 +35,7 @@
       </n-form>
     </n-modal>
     </n-config-provider>
+        </n-scrollbar>
     </div>
 </template>
 
@@ -40,6 +47,7 @@ import { useRoute, useRouter} from 'vue-router';
 import {darkTheme, useMessage} from "naive-ui"
 import utils from '@/Utils'
 import axios from 'axios'
+import headNav from "@/components/headNav.vue"
 
 const route= useRoute();
 const message = useMessage();
@@ -49,6 +57,7 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
+const  getChildList = ref<null | HTMLElement>(null);
 let showModalRef = ref(false)
 let code = ref('')
 let name = ref('')
@@ -64,6 +73,7 @@ const onPositiveClick = () =>{
         else{
             message.warning(res.data.msg)
         }
+        //getChildList.value.getList()
         router.push('/teamchoose')
     })
     showModalRef.value = false;
@@ -72,6 +82,7 @@ const onNegativeClick = () => {
     showModalRef.value = false;
 }
 onMounted(()=>{
+
     if(utils.getCookie('Authorization')!='')
     {
         if(typeof(route.query.code)!="undefined" || utils.getCookie('inviteCode')!=null){
@@ -91,7 +102,7 @@ onMounted(()=>{
                 showModalRef.value = true;
             }
             else{
-                message.info("链接已失效")
+                //message.info("链接已失效")
             }
         })
         utils.clearCookie('inviteCode');
@@ -107,20 +118,44 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+.backimage{
+    width: 100%;
+    height: 100%;
+    position:absolute;
+
+  z-index: -1;
+  background-image: url("@/assets/teamfigure.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: left;
+
+}
 .out{
+    display:flex;
+    flex-direction: column;
+
+    width:100%;
     height: 100%;
 }
+.mask{
+  z-index: -1;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  background-color: #16181Df0;
+}
 .head{
-margin: auto;
-    margin-top: 80px;
-    padding-bottom: 50px;
-    width: 70%;
+  z-index: 1;
+    margin: 0 100px;
+    /*width: 70%;*/
     border-bottom: 1px solid #414958;
 }
 .info{
-    height: 500px;
+  z-index: 1;
+    /*height: 500px;
     width: 90%;
     margin:auto;
-    margin-top: 30px;
+    margin-top: 30px;*/
+    margin:20px 0;
 }
 </style>
