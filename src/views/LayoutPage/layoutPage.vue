@@ -6,25 +6,35 @@
         <arrow-back-ios-round />
       </n-icon>
       {{ layoutName }}
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
+      <n-icon
+        size="21"
+        color="#A7AFBE"
+        class="downloadIcon"
+        @click="displaySetting"
+      >
         <settings28-regular />
       </n-icon>
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon">
+      <n-icon
+        size="21"
+        color="#A7AFBE"
+        class="downloadIcon"
+        @mouseenter="hoverDownload"
+      >
         <file-download-filled />
-        <div class="downloadSelector">
-          <div
-            v-for="(value, index) in downloadType"
-            :key="index"
-            class="downloadAlternative"
-            @click="download(value)"
-          >
-            {{ value }}
-          </div>
-        </div>
       </n-icon>
       <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
         <save16-regular />
       </n-icon>
+    </div>
+    <div class="downloadSelector ui" id="downloadSelector" @mousedown.stop>
+      <div
+        v-for="(value, index) in downloadType"
+        :key="index"
+        class="downloadAlternative"
+        @click.stop="download(value)"
+      >
+        {{ value }}
+      </div>
     </div>
     <div class="canvasBoard">
       <layout-canvas
@@ -33,6 +43,7 @@
         :update="update"
         @updateProps="updateProps"
         @changeUpdate="changeUpdate"
+        @initPageImgs="initPageImgs"
         :elementProps="property"
         :tool="tool"
         :layoutId="layoutId"
@@ -115,18 +126,25 @@
           </n-icon>
         </div>
 
-        <!-- <div class="settingBar">
-          <div class="settingMenu">设备</div>
-          <div class="settingMenu">模板</div>
+        <div class="settingBar" id="settingBoard" @mousedown.stop>
+          <div class="settingMenu" @click="switchSettingMenu('device')">设备</div>
+          <div class="settingMenu" @click="switchSettingMenu('model')">模板</div>
           <div class="settingLine"></div>
           <n-scrollbar content-style="paddingRight:10px;">
-            <div :key="outkey" v-for="(outvalue, outkey) in resolutionModel">
+            <div
+              :key="outkey"
+              v-for="(outvalue, outkey) in resolutionModel"
+              id="settingDeviceContent"
+            >
               <div class="settingDevice">{{ outkey }}</div>
               <div
                 :key="inkey"
                 v-for="(value, inkey) in outvalue"
                 class="settingDeviceModel"
-                @click="canvasWidth = value[0];canvasHeight = value[1]"
+                @click="
+                  canvasWidth = value[0];
+                  canvasHeight = value[1];
+                "
               >
                 <div class="settingDeviceModelName">
                   {{ inkey }}
@@ -137,21 +155,29 @@
                 <div class="clear"></div>
               </div>
             </div>
+            <div id="settingModelContent"></div>
           </n-scrollbar>
-        </div> -->
+        </div>
 
         <div class="ui pageBoardBox" id="pageBoardBox">
-          <n-scrollbar style="width:279px;height:100%">
+          <n-scrollbar
+            style="
+              width: 279px;
+              height: 100%;
+              transform: translate(-100%, 0);
+              position: absolute;
+            "
+            id="pageScrollBar"
+          >
             <div class="pageBoard" id="pageBoard">
               <div
                 v-for="(value, index) in pageImgs"
                 :class="
-                  value.id != id
-                    ? pageImageClass
-                    : pageImageSelectedClass
+                  value.id != layoutId ? pageImageClass : pageImageSelectedClass
                 "
                 :key="index"
                 :style="{ backgroundImage: 'url(' + value.src + ')' }"
+                @click="switchPage(value.id)"
               ></div>
             </div>
           </n-scrollbar>
@@ -437,6 +463,7 @@ const PrepareElement = (elementType: string) => {
 };
 
 const download = (type: string) => {
+  console.log(type);
   canvas.value?.download(true, type);
 };
 
@@ -449,6 +476,8 @@ const layoutId = ref<number>(2);
 const layoutName = ref<string>("Home");
 const canvasWidth = ref<number>(0);
 const canvasHeight = ref<number>(0);
+
+const settingAt = ref<string>("device");
 
 const resolutionModel: { [key: string]: { [key: string]: number[] } } =
   reactive({
@@ -541,13 +570,14 @@ const onlyAllowNumber = (value: string) => !value || /^\d+$/.test(value);
 const showPalette = ref<boolean>(false);
 const showBorderPalette = ref<boolean>(false);
 const pageOn = ref<boolean>(false);
+const settingOn = ref<boolean>(false);
 
 const colorCircles = ref<any>([]);
 const borderCircles = ref<any>([]);
 const update = ref<boolean>(true);
 
 type layoutImg = {
-  id:number,
+  id: number;
   name: string;
   src: string;
 };
@@ -664,18 +694,22 @@ const initPageImgs = () => {
     })
     .then((res) => {
       if (res.data.msg === "成功") {
-        console.log("获取布局列表成功");
+        console.log(res.data);
 
         for (var i = 0; i < res.data.data.items.length; ++i) {
-          pageImgs.push({
-            id: res.data.data.items[i].id,
+          pageImgs[i] = {
+            id: res.data.data.items[i].ID,
             name: res.data.data.items[i].name,
             src: res.data.data.items[i].src,
-          });
+          };
         }
       }
     });
-  console.log(pageImgs);
+  //console.log(pageImgs);
+};
+
+const switchPage = (id: number) => {
+  layoutId.value = id;
 };
 
 const switchType = (etype: string) => {
@@ -752,9 +786,16 @@ const updateBorder = (colorId: number) => {
   }
 };
 
+const hoverDownload = () => {
+  gsap.to("#downloadSelector", {
+    duration: 0.1,
+    translateY: "0",
+  });
+};
+
 const displayPageBoard = () => {
   if (pageOn.value) {
-    gsap.to("#pageBoard", {
+    gsap.to("#pageScrollBar", {
       duration: 0.2,
       translateX: "-100%",
     });
@@ -764,7 +805,7 @@ const displayPageBoard = () => {
     });
     pageOn.value = false;
   } else {
-    gsap.to("#pageBoard", {
+    gsap.to("#pageScrollBar", {
       duration: 0.2,
       translateX: "0%",
     });
@@ -773,6 +814,44 @@ const displayPageBoard = () => {
       translateX: "279px",
     });
     pageOn.value = true;
+  }
+};
+
+const switchSettingMenu = (settingMenu: string) => {
+  if (settingMenu == "device") {
+    gsap.to("#settingDeviceContent", {
+      duration: 0.2,
+      translateX: "0",
+    });
+    gsap.to("#settingModelContent", {
+      duration: 0.2,
+      translateX: "100%",
+    });
+  } else {
+    gsap.to("#settingDeviceContent", {
+      duration: 0.2,
+      translateX: "-100%",
+    });
+    gsap.to("#settingModelContent", {
+      duration: 0.2,
+      translateX: "0",
+    });
+  }
+};
+
+const displaySetting = () => {
+  if (settingOn.value) {
+    gsap.to("#settingBoard", {
+      duration: 0.2,
+      translateX: "100%",
+    });
+    settingOn.value = false;
+  } else {
+    gsap.to("#settingBoard", {
+      duration: 0.2,
+      translateX: "0",
+    });
+    settingOn.value = true;
   }
 };
 
@@ -795,17 +874,10 @@ const ShutBoard = () => {
   showBorderPalette.value = false;
   document.getElementById("fillColor")!.style.backgroundColor = "";
   document.getElementById("borderColor")!.style.backgroundColor = "";
-};
-
-const getBase64Image = (img) => {
-  let canvas = document.getElementById("calcCanvas") as HTMLCanvasElement;
-  canvas.width = img.width;
-  canvas.height = img.height;
-  let ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, img.width, img.height);
-  let ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
-  let dataURL = canvas.toDataURL("image/" + ext);
-  return dataURL;
+  gsap.to("#downloadSelector", {
+    duration: 0.1,
+    translateY: "-100%",
+  });
 };
 
 onMounted(() => {
@@ -894,9 +966,10 @@ const exit = () => {
 }
 .downloadSelector {
   position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  top: 27px;
+  right: 51px;
+  transform: translate(50%, -100%);
+  top: 36px;
+  z-index: 2;
   background-color: #2b303b;
 }
 .downloadAlternative {
@@ -949,11 +1022,12 @@ const exit = () => {
   right: 0px;
   top: 0px;
   bottom: 0px;
-  /* transform: translate(100%, 0); */
+  transform: translate(100%, 0);
   width: 270px;
   text-align: left;
   padding: 20px;
   padding-right: 0px;
+  overflow: hidden;
 }
 .settingMenu {
   display: inline-block;
@@ -1005,7 +1079,7 @@ const exit = () => {
   left: 0px;
   top: 0px;
   bottom: 0px;
-  transform: translate(-100%, 0);
+  /* transform: translate(-100%, 0); */
   text-align: left;
   padding: 15px;
 }

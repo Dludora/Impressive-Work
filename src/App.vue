@@ -126,7 +126,6 @@ const themeOverrides: GlobalThemeOverrides = {
   outline: none;
   z-index: inherit;
   overflow: visible;
-  transition-duration:0.2s;
 }
 body {
   background: #16181d;

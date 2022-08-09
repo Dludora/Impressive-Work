@@ -102,7 +102,7 @@ type Prop = {
 
 const props = defineProps<Prop>();
 
-const emits = defineEmits(["updateProps", "changeUpdate"]);
+const emits = defineEmits(["updateProps", "changeUpdate","initPageImgs"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const paramsDic: { [key: number]: elementParams } = {};
@@ -379,8 +379,8 @@ const updateServer = () => {
     .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
     .then((res) => {
       console.log(res.data);
+      download(false);
     });
-  download(false);
 
   // .then((res) => {
   //   console.log(res.data);
@@ -407,7 +407,6 @@ const initFromServer = () => {
     .get(`/layout/${layoutId}/elements`, { headers: headers })
     .then((res) => {
       if (res.data.msg == "成功") {
-        version = res.data.data.version;
         var i = 0;
         for (i = 0; i < res.data.data.length; ++i) {
           var el = JSON.parse(res.data.data[i].content);
@@ -592,7 +591,6 @@ const ProduceElement = (e: MouseEvent) => {
       updateTransform(el, layoutElementParams[index]);
       selecto.clickTarget(e, el);
     });
-    console.log(JSON.stringify(layoutElementParams[index]));
     axios
       .post(
         `/layout/${layoutId}/element`,
@@ -644,6 +642,7 @@ const download = (isDownload: boolean, type?: string) => {
               .then((res) => {
                 console.log(res.data);
               });
+            emits("initPageImgs");
           }
         });
       });
