@@ -30,9 +30,9 @@
             </div>
           </div> -->
           <div class="buttons">
-            <n-button class="newpage" @click="displayAdd" size="tiny">
+            <n-button class="newpage" @click="displayAdd" size="small">
               新 建 团 队&nbsp;
-              <Icon size="14">
+              <Icon size="16">
                 <Add28Regular/>
               </Icon>
             </n-button>
@@ -411,8 +411,8 @@ const onPositiveAddClick = () => {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 28px;
+  font-size: 16px;
+  line-height: 40px;
   align-items: center;
   margin-bottom: 6px;
   margin-left: 10%;
@@ -425,7 +425,7 @@ const onPositiveAddClick = () => {
 }
 
 .buttons {
-  margin-right: 10px;
+  margin-right: 10%;
 }
 
 .layout {

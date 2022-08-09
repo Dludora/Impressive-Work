@@ -1,6 +1,7 @@
 <template>
   <div class="back-g">
-    <n-card id="regis-card"
+    <div class="mask"/>
+    <!-- <n-card id="regis-card" size="small"
     >
       <n-tabs
           class="card-tabs"
@@ -67,7 +68,86 @@
           </div>
         </n-tab-pane>
       </n-tabs>
-    </n-card>
+    </n-card> -->
+    <div class="loginwindow">
+      <div class="post">
+        <div class="brand">
+          <div class="logo"/>
+          Impress Work · 印迹
+        </div>
+        <div>
+          长风破浪会有时，直挂云帆济沧海
+        </div>
+      </div>
+
+      <div class="loginpanel">
+        <n-tabs
+            class="card-tabs"
+            default-value="signin"
+            type="bar"
+            animated
+            justify-content="space-around"
+            tab-style="color:white"
+            pane-style="padding-left: 4px; color:white; padding-right: 4px; box-sizing: border-box;"
+            :on-update:value="SwitchState"
+        >
+          <n-tab-pane name="signin" tab="登录">
+            <div class="form">
+              <n-config-provider :theme="theme">
+                <n-form content-style="width:50%">
+                  <n-form-item-row label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail"
+                                  :render-feedback="formatFeedback">
+                    <n-input v-model:value="email"
+                            placeholder="请输入您的邮箱..."
+                    />
+                  </n-form-item-row>
+                  <n-form-item-row label-style="color:#C4C9D4" label="密码">
+                    <n-input type="password" placeholder="请输入密码" v-model:value="password1"/>
+                  </n-form-item-row>
+                </n-form>
+                <n-button type="error" class="logbutton" @click="login" block strong>
+                  登 录
+                </n-button>
+              </n-config-provider>
+            </div>
+          </n-tab-pane>
+          <n-tab-pane name="signup" tab="注册">
+            <div class="form">
+              <n-config-provider :theme="theme">
+                <n-form>
+                  <n-form-item label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail"
+                              :render-feedback="formatFeedback">
+                    <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
+                  </n-form-item>
+                  <n-form-item label-style="color:#C4C9D4" label="昵称">
+                    <n-input placeholder="请输入您的昵称" v-model:value="nick"/>
+                  </n-form-item>
+                  <n-form-item label-style="color:#C4C9D4" label="真实姓名">
+                    <n-input placeholder="请输入姓名" v-model:value="name"/>
+                  </n-form-item>
+                  <n-form-item label-style="color:#C4C9D4" label="密码" :rule="rulePass" :render-feedback="formatFeedback">
+                    <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
+                  </n-form-item>
+                  <n-form-item-row label-style="color:#C4C9D4" label="确认密码" :rule="rulePass2"
+                                  :render-feedback="formatFeedback">
+                    <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
+                  </n-form-item-row>
+
+                </n-form>
+                <n-button class="logbutton" v-if="password1===password2 " type="success" text-color="white"
+                          @click="register" block strong>
+                  注 册
+                </n-button>
+                <n-button class="logbutton" v-if="password1!=password2 " disabled="true" type="success" text-color="white"
+                          @click="register"
+                          block strong> 注 册
+                </n-button>
+              </n-config-provider>
+            </div>
+          </n-tab-pane>
+        </n-tabs>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -270,9 +350,17 @@ const SwitchState = (value: string | number) => {
 }
 
 .back-g {
+  background-image: url("@/assets/titlefigure.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: left;
+
   color: white;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 span {
@@ -284,11 +372,11 @@ span {
 }
 
 #regis-card {
-  position: absolute;
-  width: 480px;
-  height: 340px;
+  /*position: absolute;
   left: calc(50% - 480px / 2);
-  top: calc(40% - 430px / 2);
+  top: calc(40% - 430px / 2);*/
+  width: 360px;
+  height: 340px;
   /*color: white;*/
   background: rgba(43, 48, 59, 1);
   box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
@@ -313,6 +401,63 @@ logon-button {
 
 .logbutton {
   font-size: 16px;
+}
+.loginpanel{
+  z-index: 1;
+  width: 360px;
+  height: 520px;
+  overflow:hidden;
+  display: flex;
+  background-color: #16181De0;
+  align-items: center;
+  align-content: center;
+}
+.loginwindow{
+  z-index: 1;
+  background-image: url("@/assets/loginfigure.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: left;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  border:2px solid #E2E4E9;
+  border-radius: 3px;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
+}
+.logo{
+  height:60px;
+  width:60px;
+  background-image: url("@/assets/logoBordered1024.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+  margin-right:16px;
+}
+.brand{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+
+  font-size:48px;
+  font-weight: 100;
+  white-space: nowrap;
+  margin-bottom: 8px;
+
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
+}
+.post{
+  padding:200px 84px 18px 36px;
+  z-index: 1;
+  background: linear-gradient(to top, #16181Dff, 37%, #16181D00);
+}
+.mask{
+  width: 100%;
+  position: absolute;
+  z-index: 0;
+  height: 100%;
+  background-color: #000000ea;
 }
 </style>
 

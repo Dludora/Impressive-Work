@@ -18,26 +18,33 @@
         </div>
       </n-config-provider>
       <div id="docuITEMS" class="items" :key="docuitemKey">
-        <n-grid :x-gap="70" :y-gap="12" cols="5" responsive="screen">
-          <n-grid-item v-for="document in documents" :key="document">
-            <div class="docu-item">
-              <div class="docu-cover">
-              </div>
-              <div class="docu-title">
-                <p @click="openDocu(document.ID)" style="cursor: pointer;width: 80px;position: relative;display: flex">
-                  {{ document.title }}</p>
-                <n-space justify="end" style="gap: 0; flex-wrap: nowrap;">
-                  <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)">
-                    <Edit/>
-                  </Icon>
-                  <Icon id="del" size="24" @click="viewDelDocu(document.ID)">
-                    <Delete48Regular/>
-                  </Icon>
-                </n-space>
-              </div>
-            </div>
-          </n-grid-item>
-        </n-grid>
+
+        <n-config-provider :theme="darkTheme">
+          <n-list bordered>
+            <n-list-item  v-for="document in documents" :key="document">
+
+                <template #prefix>
+                  <p @click="openDocu(document.ID)" style="cursor: pointer;width: 100px;position: relative;display: flex">
+                    {{ document.title }}
+                  </p>
+                </template>
+
+                <template #suffix>
+                  <n-space justify="end" style="gap: 0; flex-wrap: nowrap;position: relative;display: flex">
+                    <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)">
+                      <Edit/>
+                    </Icon>
+                    <Icon id="del" size="24" @click="viewDelDocu(document.ID)">
+                      <Delete48Regular/>
+                    </Icon>
+                  </n-space>
+                </template>
+
+
+            </n-list-item>
+          </n-list>
+        </n-config-provider>
+
       </div>
     </div>
   </div>
@@ -636,7 +643,7 @@ const posAdd = () => {
         'src': null,
         'programID': proID.value,//proID.value
         'type': addModelRef.value.model,
-        'copy':false,
+        'copy':true,
       },{headers:headers}
   ).then(res=>{
     if(res.data.msg==='成功'){
@@ -803,15 +810,37 @@ function openDocu(index) {
     if (res.data.msg === '成功') {
 
       console.log("获取文档内容成功");
+      let opContent;
 
-      let opContent = res.data.data.content;
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+
+
       let opTitle = res.data.data.title;
 
       utils.setCookie('editDocID', index);
       utils.setCookie('DocTitle', opTitle);
-      utils.setCookie('DocContent', opContent);
 
-      console.log(opContent);
+
+
 
       router.push("/tipTap");
     }
@@ -876,47 +905,12 @@ function openDocu(index) {
   /*position: relative;
   left: 0px;
   top:-15px;*/
-}
-
-.docu-item {
-  height: 240px;
-  width: 140px;
-}
-
-.docu-cover {
-  width: 100px;
-  border-radius: 0 5px;
-  height: 132px;
-  display: flex;
-  background: #E2E4E9;
-  border-right: 8px solid #414958;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
-}
-
-.docu-cover:hover {
-  background-color: #FFFFFF;
-}
-
-.docu-cover-word {
   width: 100%;
-  height: 192px;
-
-  display: flex;
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 29px;
-
-  alignment: center;
-
-  color: #16181D;
 }
 
 .docu-title {
-  min-width: border-box;
 
-  width: 100px;
+  width: 1000px;
   height: 30px;
 
   font-family: 'Inter';
