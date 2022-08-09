@@ -191,7 +191,7 @@ const getList = () => {
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
-
+    console.log(res.data)
     projects.value = res.data.data.items
     for (let i = 0; i < projects.value.length; i++) {
       let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')

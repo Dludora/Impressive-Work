@@ -22,13 +22,11 @@
         <n-config-provider :theme="darkTheme">
           <n-list bordered>
             <n-list-item  v-for="document in documents" :key="document">
-
                 <template #prefix>
                   <p @click="openDocu(document.ID)" style="cursor: pointer;width: 100px;position: relative;display: flex">
                     {{ document.title }}
                   </p>
                 </template>
-
                 <template #suffix>
                   <n-space justify="end" style="gap: 0; flex-wrap: nowrap;position: relative;display: flex">
                     <Icon id="edi" size="24" @click="viewEdiDocu(document.ID)">
@@ -39,8 +37,6 @@
                     </Icon>
                   </n-space>
                 </template>
-
-
             </n-list-item>
           </n-list>
         </n-config-provider>

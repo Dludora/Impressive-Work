@@ -145,7 +145,7 @@ export default {
 
     const ydoc = new Y.Doc()
     this.provider = new HocuspocusProvider({
-      url: 'ws://127.0.0.1:80',
+      url: 'ws://82.156.125.202:8003',
       parameters: {
         //key: 'write_bqgvQ3Zwl34V4Nxt43zR',
       },

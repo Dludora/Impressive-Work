@@ -83,7 +83,7 @@ export default defineComponent({
     BoxMultiple20Regular,
   },
   setup(props, {emit}) {
-    const route = useRoute();
+    const route = useRoute()
     let menuKey = ref('')
     const headers = {
       Authorization: utils.getCookie('Authorization')

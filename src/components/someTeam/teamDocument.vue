@@ -146,7 +146,8 @@ const crumbs = ref([
     parentID: null,
     createTime: null,
     mdTime: null,
-    isPro: 0
+    isPro: 0,
+    doc: null
   },
 ])
 
@@ -160,7 +161,8 @@ const proDoc = {
   parentID: null,
   createTime: null,
   mdTime: null,
-  isPro: 1
+  isPro: 1,
+  doc: null
 }
 
 
@@ -176,6 +178,38 @@ const dblClickCrumb = (item, index) => {
 const dblClick = (item, add) => {
   if (!item.dir) {
     console.log('是文件')
+    let urlOP = '/document/'+item.doc.ID
+    axios.get(urlOP, {headers: headers}).then(res => {
+      console.log("获取文档内容成功");
+      let opContent;
+      console.log(item)
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+      let opTitle = res.data.data.title;
+      utils.setCookie('editDocID', item.doc.ID);
+      utils.setCookie('DocTitle', opTitle);
+      router.push({path: '/teamDocView', query: {teamID: route.query.teamID}});
+    })
+
+
   } else {
     console.log('是文件夹')
     if(item.isPro === 0) {
@@ -258,7 +292,8 @@ const getDoc = (fileID) => {
             parentID: array[i].parentID,
             createTime: array[i].createTime,
             mdTime: null,
-            isPro: 0
+            isPro: 0,
+            doc: array[i].doc
           },
       )
     }
