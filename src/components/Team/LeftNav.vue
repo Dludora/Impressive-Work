@@ -39,7 +39,7 @@
     </div>
       <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
-                    :page-slot="4" size="small"
+                    :page-slot="5" size="small"
                     :on-update:page="changePage"
                     id="pagination">
         <!-- <template #goto>
@@ -101,7 +101,7 @@ export default defineComponent({
       src: ""
     })
     const total = ref(0)
-    const currentPage = ref(0)
+    const currentPage = ref(1)
     const pageNum = ref(0)
     const addTeam = () => {
       emit('addTeam');
@@ -156,6 +156,7 @@ export default defineComponent({
     }
     const changePage = (page: number) => {
       getAllTeams(page - 1, 8)
+      currentPage.value=page
     }
     onMounted(() => {
       load()
@@ -215,7 +216,11 @@ export default defineComponent({
   height: 100%;
   overflow: hidden;
 }
+.user{
+  margin-left: 20px;
+}
 .user-info {
+
   display: flex;
   width: 100%;
   height: 50px;
@@ -356,10 +361,12 @@ cursor:pointer
   width:0;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
   transition-duration: 0.5s;
+  margin-right: 20px;
 }
 
 .user-info:hover .signI {
   width: 50px;
+  margin-right: 5px;
 }
 
 .lineI {

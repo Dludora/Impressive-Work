@@ -1,13 +1,16 @@
 <template>
-    <div class="card" @click="gotoProject">
-        <div class="img">
+    <div class="card" >
+        <div class="img" @click="gotoProject">
         </div>
         <div class="bottom">
-            <div class="name">
+            <div class="name" :focusable="false" v-if="!change">
                 {{name}}
             </div>
+            <!-- <div class="name" v-else>
+              <n-input ref="inputInstRef" v-model:value="Name" />
+            </div> -->
             <Icon size="20" class="rename">
-                <Edit16Regular @click="renameThis"/>
+                <Edit16Regular  :focusable="false" @click="handleFocus"/>
             </Icon>
             <Icon size="20" class="rename">
                 <Copy16Filled @click="copyThis"/>
@@ -27,10 +30,11 @@ import {EditTwotone, EditOutlined} from '@vicons/antd'
 import {Edit16Regular} from '@vicons/fluent'
 import {Copy16Filled} from '@vicons/fluent'
 import {Icon} from '@vicons/utils'
-import {defineComponent} from 'vue'
+import {defineComponent,onMounted,ref} from 'vue'
 import router from '@/router';
 import {useRoute} from 'vue-router'
 import utils from '../Utils'
+import { InputInst } from 'naive-ui'
 
 
 export default defineComponent({
@@ -50,7 +54,10 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
+    let Name = ref('123')
+    let change = ref(false)
     const route = useRoute()
+    const inputInstRef = ref<InputInst | null>(null);
     const gotoProject = () => {
       // console.log("go")
       utils.setCookie('proID', props.id)
@@ -75,11 +82,18 @@ export default defineComponent({
       emit("copy")
     }
     return {
+      Name,
+      inputInstRef,
+      handleFocus () {
+        change.value=!change.value;
+        inputInstRef.value?.select()
+      },
       gotoProject,
       renameThis,
       delThis,
       copyThis,
-      route
+      route,
+      change
     }
   },
 })
