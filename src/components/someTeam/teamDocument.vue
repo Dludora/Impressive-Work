@@ -21,7 +21,8 @@
       <div class="crumb">
         <n-config-provider :theme="theme">
           <n-breadcrumb>
-            <n-breadcrumb-item separator=">" v-for="(item, i) in crumbs" :key="i" @click="dblClickCrumb(item, i)" @drop="onDrop($event, item)" @dragover.prevent @dragenter.prevent>
+            <n-breadcrumb-item class="breadcrumb" separator=">" v-for="(item, i) in crumbs" :key="i" @click="dblClickCrumb(item, i)"
+                               @drop="onDrop2($event, item, i)" @dragover.prevent @dragenter.prevent>
               {{item.name}}
             </n-breadcrumb-item>
           </n-breadcrumb>
@@ -82,8 +83,13 @@
         <n-form-item label="文档名称" :rule="addRule">
           <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
         </n-form-item>
+        <n-form-item label="文档模版选择" :rule="modelRule">
+          <n-select   v-model:value="addModelRef.model"
+                      placeholder="请选择文档模版"
+                      :options="modeloptions"
+          />
+        </n-form-item>
       </n-form>
-
     </n-modal>
 
 
@@ -165,7 +171,6 @@ const revisable = (index) => {
 let timer = null
 const dblClickCrumb = (item, index) => {
   crumbs.value.splice(index+1, crumbs.value.length-index+1)
-  console.log(list.value)
   dblClick(item, false)
 }
 const dblClick = (item, add) => {
@@ -358,18 +363,71 @@ const negDel = () => {
   showDel.value = false
 }
 // 创建文档
+const modeloptions = [
+  {
+    label: "无模版创建",
+    value: 'model0',
+  },
+  {
+    label: '项目计划书',
+    value: 'model1'
+  },
+  {
+    label: '会议纪要',
+    value: 'model2'
+  },
+  {
+    label: "项目管理书",
+    value: 'model3',
+  },
+  {
+    label: '工作周报',
+    value: 'model4'
+  },
+  {
+    label: '项目方案规划',
+    value: 'model5'
+  },
+  {
+    label: '需求规格说明书',
+    value: 'model6'
+  },
+  {
+    label: '项目工作汇报',
+    value: 'model7',
+  },
+  {
+    label: '待解决问题清单',
+    value: 'model8',
+  },
+]
+
 const showAdd = ref(false)
 const addModelRef = ref({
-  addName: ""
+  addName: "",
+  model: '',
 })
+const modelRule = {
+  required: true,
+  validator() {
+    if (addModelRef.value.model.length === 0 ) {
+      return new Error("请选择相应模版")
+    }
+  },
+  trigger: ['input', 'blur']
+}
 const posAdd = () => {
   const parentID = crumbs.value[crumbs.value.length-1].fileID
   let url = '/doccenter/doc' + '?name='+addModelRef.value.addName
   if(parentID !== null) {
     url += '&parentID='+parentID
   }
-  axios.post(url, {title: addModelRef.value.addName, teamID: teamID.value, type: 'model1', src: 'what fuck'}, {headers: headers}).then(res => {
+  console.log(addModelRef.value.model)
+  axios.post(url, {title: addModelRef.value.addName, teamID: teamID.value, type: addModelRef.value.model, src: 'what fuck'}, {headers: headers}).then(res => {
+    console.log(res)
+    console.log('新建文档')
     addModelRef.value.addName = "";
+    addModelRef.value.model = "";
     getDoc(crumbs.value[crumbs.value.length-1].fileID)
   })
   showAdd.value = false;
@@ -407,6 +465,22 @@ const startDragDoc = (event, item) => {
 }
 
 const onDrop = (event, item) => {
+  event.preventDefault()
+  if(item.isPro === 0 && item.dir) {
+    const fileID = event.dataTransfer.getData('fileID')
+    const teamID = event.dataTransfer.getData('teamID')
+    const name = event.dataTransfer.getData('name')
+    const parentID = item.fileID
+    if(parentID != fileID) {
+      axios.put('/doccenter', {ID: fileID, teamID: teamID, name: name, parentID: parentID}, {headers: headers}).then(res => {
+        // console.log('拖拽')
+        getDoc(item.parentID)
+      })
+    }
+  }
+}
+const onDrop2 = (event, item, index) => {
+  event.preventDefault();
   if(item.isPro === 0 && item.dir) {
     const fileID = event.dataTransfer.getData('fileID')
     const teamID = event.dataTransfer.getData('teamID')
@@ -414,11 +488,24 @@ const onDrop = (event, item) => {
     const parentID = item.fileID
     axios.put('/doccenter', {ID: fileID, teamID: teamID, name: name, parentID: parentID}, {headers: headers}).then(res => {
       // console.log('拖拽')
-      getDoc(item.parentID)
+      dblClickCrumb(item, index)
     })
   }
 }
+const dragEnter = (event, item) => {
+  // event.preventDefault();
+  if(item.isPro === 0 && item.dir) {
+    const fileID = event.dataTransfer.getData('fileID')
+    const parentID = item.fileID
+    console.log(fileID)
+    if(fileID != parentID) {
+      console.log(event.target)
+    }
+  }
+}
+const dragOver = () => {
 
+}
 </script>
 
 <style scoped>
