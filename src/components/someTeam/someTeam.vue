@@ -110,6 +110,23 @@ export default defineComponent({
     Backspace24Filled
   },
   setup() {
+    const colorList=[
+      '#2350A9',
+      '#55DD6C',
+      '#DDB055',
+      '#AA2293',
+      '#55DDD1',
+      '#8ED42B',
+      '#D42B39',
+      '#5A22AA',
+    ]
+    const nextColor=()=>{
+      let max=colorList.length
+      let idx=max+2
+      while(idx>=max)
+        idx=Math.floor(Math.random() * max)
+      return colorList[idx]
+    }
     let judge = ref('');
     const router = useRouter();
     let menuOptions: MenuOption[] = [
@@ -223,7 +240,7 @@ export default defineComponent({
       showModalRef.value = false
       axios.post('/team', {
         'name': modelRef.value.name,
-        'src': profile.src,
+        'src': nextColor(),
         'introduction': modelRef.value.description
       }, {headers: headers}).then(res => {
         // console.log(res)

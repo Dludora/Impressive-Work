@@ -1,29 +1,20 @@
 <template>
-    <div class="card" @click="gotoProject">
-        <div class="img">
+    <div class="card" @click="gotoTeam">
+        <div class="img" :style="'background-color:'+color+';'">
+          {{name[0]+name[1]}}
         </div>
         <div class="bottom">
             <div class="name">
                 {{name}}
-                <!-- <Icon size="20" class="rename">
-                <Edit16Regular @click="renameThis"/>
-            </Icon> -->
             </div>
             
             <div class="desc">
-                简介：&nbsp;{{date}}
-                <!-- <br/>
-                <Icon size="20" class="del">
-                    <CloseRound @click="delThis"/>
-                </Icon> -->
+                {{date}}
             </div>
-            
         </div>
-        
-            
-
     </div>
 </template>
+
 <script lang="ts">
 import {CloseRound} from '@vicons/material'
 import {EditTwotone, EditOutlined} from '@vicons/antd'
@@ -42,6 +33,7 @@ export default defineComponent({
     name: String,
     img: Image,
     date: String,
+    color:String,
     id: {
       default: 0
     },
@@ -54,7 +46,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const route = useRoute()
-    const gotoProject = () => {
+    const gotoTeam = () => {
       console.log("teamchoose go"+props.id )
       let url = '/team/teamprojects?teamID='+props.id
       router.push(url)
@@ -75,7 +67,7 @@ export default defineComponent({
       emit("copy")
     }
     return {
-      gotoProject,
+      gotoTeam,
       renameThis,
       delThis,
       copyThis,
@@ -90,11 +82,10 @@ export default defineComponent({
   transition: 0.2s;
 }
 .card{
-    width: 240px;
-    height: 100px;
-    padding: 5px;
-    padding-left: 30px;
-    padding-right: 30px;
+    display: flex;
+    width: 270px;
+    height: 70px;
+    padding: 36px;
     /*background-color: #2B303B;*/
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 2px;
@@ -110,26 +101,35 @@ export default defineComponent({
   display: inline-block;
 }
 .img{
-    width:40%;
+    /*width: 40%;
     vertical-align: top;
-    margin-top: 15px;
+    margin-top: 15px;*/
+    margin-right:36px;
     height: 70px;
+    width: 70px;
+    display: flex;
+
+    color:#FFFFFF;
+    font-size:24px;
+
     background-color: #A7AFBE;
-    box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0px -2px 4px rgb(0 0 0 / 25%);
     border-radius: 4px;
-    display: inline-block;
+    /* display: inline-block; */
+    justify-content: center;
+    align-items: center;
 }
   .bottom{
-    margin-left: 20px;
+    /*margin-left: 20px;
     margin-top: 10px;
     display: inline-block;
-    /* justify-content: flex-start; */
+     justify-content: flex-start; */
     /* flex-direction: row;
     flex-wrap: nowrap; */
-    /*padding: 0 40px;*/
+    /*padding: 0 40px;
     width:50%;
     height: 100%;
-    /* align-items: center; */
+     align-items: center; */
 }
 .name{
     display:block;
@@ -156,11 +156,14 @@ export default defineComponent({
   /* text-overflow: ellipsis; */
   overflow: hidden;
   /* white-space: nowrap; */
-    width: 120%;
+    max-width: 140px;
     color:#A7AFBE;
     font-size: 12px;
     height: auto;
     max-height: 45px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     /*padding: 0 40px;*/
     
     /* justify-content: space-between;

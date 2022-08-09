@@ -8,7 +8,6 @@
                 <a @click="regisRouter">登录</a>
                 <a @click="logout">注销</a>
                 <a @click="teamMain">我的团队</a>
-                <a @click="programView">我的项目</a>
                 <a @click="tipTap">tipTap</a>
                 <!-- <a @click="UML">编写文档</a> -->
                 <a @click="UML">UML</a>
