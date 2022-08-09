@@ -1,6 +1,7 @@
 <template>
   <div class="out">
     <n-config-provider :theme="theme">
+    <div class="settings">
       <n-form
           ref="formRef"
           :model="model"
@@ -35,6 +36,17 @@
       <n-button style="margin-left:50px" size="large" type="tertiary">
         取消修改
       </n-button>
+      </div>
+      <div class="dismiss">
+        <div class="message">
+          <span> > 项目数量 : {{proNum}}</span> <br/>
+          <span> > 成员数量 : {{memNum}} </span> <br/>
+          <span> > 创立时间 : 2022.8.9 </span>
+        </div>
+        <div class="button">
+          <n-button @click="dissolve" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed >解 散 团 队</n-button>
+        </div>
+      </div>
     </n-config-provider>
 
   </div>
@@ -50,6 +62,8 @@ const theme = darkTheme
 const router = useRouter()
 const route = useRoute()
 const message = useMessage()
+const proNum = ref()
+const memNum = ref()
 const model = ref({
   inputValue: '',
   textareaValue: '',
@@ -57,6 +71,31 @@ const model = ref({
 })
 const headers = {
   Authorization: utils.getCookie('Authorization')
+}
+const dissolve = () => {
+  axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
+    if(res.data.msg==="成功")
+    {
+    message.success("团队已解散")
+    router.push('/teamchoose')
+    }
+    else{
+      message.info("你不是创建者,无法解散")
+    }
+  })
+}
+const getNum = () =>{
+   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort=0'
+    + '&direction=0' + '&keyword=';
+  axios.get(url, {headers: headers}).then(res => {
+    proNum.value = res.data.data.items.length
+  })
+    const url2 = '/team/' + route.query.teamID + '/members?page=0&size=100'
+  axios.get(url2, {headers: headers}).then(res => {
+
+    memNum.value = res.data.data.items.length
+
+  })
 }
 const ruleName = {
   required: true,
@@ -107,13 +146,34 @@ watch(getGlobal, (newVal,oldVal)=>{
 },{immediate:true,deep:true})
 onMounted(() => {
   getTeamInfo()
+  getNum()
 })
 </script>
 
 <style scoped>
+.button{
+  margin-top: 20px;
+  width: 100%;
+}
+.settings{
+  width: 50%;
+  display: inline-block;
+  padding-right: 8%;
+  border-right: 1px solid #414958;
+}
+.dismiss{
+  margin-left: 6%;
+  font-size: larger;
+  line-height: 45px;
+  vertical-align: top;
+  color: white;
+  width: 30%;
+  display: inline-block;
+}
 .out {
+  
   margin-top: 30px;
-  margin-left: 50px;
+  margin-left: 80px;
 }
 
 </style>

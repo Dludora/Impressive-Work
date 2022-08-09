@@ -1,8 +1,11 @@
 <template>
 <div class="out">
   <div class="list">
-    <div v-for="member in members" :key="member" class="member-card">
-      <div style="display:flex;align-items: center;flex: 1;">
+    <div class="top">
+      共有 {{members.length}} 名成员
+    </div>
+    <div v-for="member in members" :key="member.ID" class="member-card">
+      <div class="left" style="display:flex;align-items: center;flex: 1;">
         <!-- <div class="member-avatar">
           <n-avatar round class="avatar"/>
         </div> -->
@@ -45,7 +48,7 @@
           <PlusOutlined/>
         </Icon>
       </div>
-      <a @click="displayMedal" id="invite">邀请成员</a>
+      <a @click="displayMedal" id="invite">生成邀请链接</a>
     </div>
   </div>
   <n-config-provider :theme="theme">
@@ -143,10 +146,10 @@ const displayDel = (ID,nick) => {
 const members = ref([
   {
     ID: 0,
-    nickname: '获取中.',
+    nickname: '加载成员中...',
     name: '',
-    email: '请稍后~',
-    identity: 0
+    email: '请宝贝耐心等待~',
+    identify: 0
   },
 
 ])
@@ -239,7 +242,7 @@ const admin = (id, op) => {
     if (res.data.msg === "成功") {
       for (let i = 0; i < members.value.length; i++) {
         if (members.value[i].ID === opUserID.value) {
-          members.value[i].identity = isAdmin.value
+          members.value[i].identify = isAdmin.value
           break
         }
       }
@@ -265,6 +268,19 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.out{
+  margin-left: 20px;
+}
+.top{
+  color:#A7AFBEFF;
+  margin-left:80px;
+  font-size: small;
+  margin-top: 30px;
+
+}
+.left{
+  width: 300px;
+}
 * {
   transition: 0.2s;
 }
@@ -324,9 +340,10 @@ a {
   margin-right: 10px;
 }
 
-/* .member-message {
-  /*flex: 2;*/
-
+.member-message {
+  flex: 2;
+  width: 200px;
+}
 #name {
   font-family: 'Inter';
   font-style: normal;

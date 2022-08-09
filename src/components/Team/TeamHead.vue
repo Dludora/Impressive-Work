@@ -8,11 +8,9 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
-    <div class="dismiss" v-if="myIdentify === 2">
-      <!-- <n-config-provider :theme="theme"> -->
+    <!-- <div class="dismiss" v-if="myIdentify === 2">
         <n-button @click="dissolve">解散团队</n-button>
-
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup lang="ts">
@@ -59,12 +57,12 @@ const getMessage = () => {
 //     myIdentify.value = res.data.data.identify
 //   })
 // }
-const dissolve = () => {
-  axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
-    // console.log(res)
-    router.push('/team/teamprojects?teamID=undefined')
-  })
-}
+// const dissolve = () => {
+//   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
+//     // console.log(res)
+//     router.push('/team/teamprojects?teamID=undefined')
+//   })
+// }
 const getGlobal = computed(() => {
   return route.query.teamID
 })
