@@ -42,13 +42,13 @@
         </Icon>
       </div>
     </div>
-    <div class="member-add ">
+    <div class="member-add " @click="displayMedal">
       <div class="add-icon">
         <Icon size="36" id="add">
           <PlusOutlined/>
         </Icon>
       </div>
-      <a @click="displayMedal" id="invite">生成邀请链接</a>
+      <a  id="invite">生成邀请链接</a>
     </div>
   </div>
   <n-config-provider :theme="theme">
@@ -56,15 +56,16 @@
         v-model:show="showModalRef"
         :mask-closable="false"
         preset="dialog"
-        title="邀请成员"
-        positive-text="确认"
-        negative-text="取消"
+        title="邀请链接"
+
+        negative-text="确认"
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
       <n-form>
-        <n-form-item label="邀请用户的邮箱" :rule="ruleEmail" :render-feedback="formatFeedback">
-          <n-input v-model:value="Email" @keydown.enter.prevent placeholder="请输入被邀请者的邮箱"/>
+        <n-form-item label="链接24h内有效"  :render-feedback="formatFeedback">
+          
+          <n-input v-model:value="inviteUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接..."/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -111,10 +112,13 @@ let Email = ref('')
 let email = ref('')
 let opUserID = ref()
 let isAdmin = ref(0)
+let inviteUrl = ref('')
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 const displayMedal = () => {
+
+  getUrl()
   showModalRef.value = true
 }
 const onPositiveClick = () => {
@@ -142,6 +146,19 @@ const displayDel = (ID,nick) => {
   nickDel.value = nick;
   showModalRefDel.value = true;
   IDdel.value = ID;
+}
+const getUrl = () => {
+    let url = '/team/invite/code?teamID='+route.query.teamID+'&maxNum=5'
+    let base = 'http://127.0.0.1:8080/teamchoose?code='
+    axios.get(url,{headers:headers}).then(res=>{
+      if(res.data.msg==='成功'){
+        console.log(res.data)
+         inviteUrl.value=base+res.data.data
+      }
+      else{
+        message.warning("获取链接失败,请重试")
+      }
+    })
 }
 const members = ref([
   {

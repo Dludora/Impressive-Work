@@ -1,46 +1,70 @@
 <template>
+  <n-config-provider :theme="darkTheme">
   <div class="big-bg">
 
-    <n-space class="head-bg" justify="space-between">
-
-      <n-button @click="returnTO">返回</n-button>
-      <h style="position: relative; top: 5px;color: #FFFFFF; display: inline">
-        文档: {{title}}
-      </h>
-
-      <p></p>
-
-    </n-space>
-
-    <n-button @click="returnTO">返回</n-button>
-
-    <n-button @click="downPDF">下载PDF</n-button>
-    <n-button @click="saveWord">下载word</n-button>
-    <n-button @click="saveMD">下载MD</n-button>
-    <n-button @click="saveHTML">下载HTML</n-button>
-    <n-button @click="saveJSON">下载JSON</n-button>
-    <n-button @click="saveText">下载纯文本</n-button>
-
-    <div class="editor" v-if="editor">
-      <menu-bar class="editor__header" :editor="editor" />
-      <editor-content id="pdfDom" class="editor__content" :editor="editor" />
-      <div class="editor__footer">
-        <div :class="`editor__status editor__status--${status}`">
-          <template v-if="status === 'connected'">
-            {{ editor.storage.collaborationCursor.users.length }} 用户 正在编辑文档： {{ title }}
-          </template>
-          <template v-else>
-            offline
-          </template>
+    <div class="leftDoc">
+      <n-button @click="returnTO" style="width: 60px">返回</n-button>
+      <div @click="returnTO" class="user">
+        <p style="width: 100%">项目:</p>
+        <p style="font-size:40px;width: 100%">{{proName}}</p>
+      </div>
+      <div class="teamlist">
+        <div class="teamsHead">
+          项目文档
         </div>
-        <div class="editor__name">
-          <p>
-            {{ currentUser.name }}
-          </p>
+        <div class="divline"/>
+        <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
+        <n-scrollbar>
+          <div class="teams">
+            <left-docu-list v-for="document in documents" :key="document" :name="document.title"
+                            @op="openDocu(document.ID)" />
+          </div>
+        </n-scrollbar>
+      </div>
+    </div>
+
+    <div class="main">
+      <n-space class="head-bg" justify="center">
+
+        <h style="position: relative; top: 5px;color: #FFFFFF; display: inline">
+          文档: {{title}}
+        </h>
+
+      </n-space>
+
+      <n-space style="width: 50px">
+        <n-button @click="downPDF">下载PDF</n-button>
+        <n-button @click="saveWord">下载word</n-button>
+        <n-button @click="saveMD">下载MD</n-button>
+        <n-button @click="saveHTML">下载HTML</n-button>
+        <n-button @click="saveJSON">下载JSON</n-button>
+        <n-button @click="saveText">下载纯文本</n-button>
+      </n-space>
+
+
+
+      <div class="editor" v-if="editor">
+        <menu-bar class="editor__header" :editor="editor" />
+        <editor-content id="pdfDom" class="editor__content" :editor="editor" />
+        <div class="editor__footer">
+          <div :class="`editor__status editor__status--${status}`">
+            <template v-if="status === 'connected'">
+              {{ editor.storage.collaborationCursor.users.length }} 用户 正在编辑文档： {{ title }}
+            </template>
+            <template v-else>
+              offline
+            </template>
+          </div>
+          <div class="editor__name">
+            <p>
+              {{ currentUser.name }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  </n-config-provider>
 </template>
 
 <script>
@@ -67,6 +91,14 @@ import printJS from "print-js";
 import htmlDocx from 'html-docx-js/dist/html-docx';
 import saveAs from 'file-saver';
 
+import { darkTheme } from 'naive-ui'
+import LeftDocuList from "@/components/tipTap/leftDocuList";
+import {ref} from "vue";
+
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
+
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
 }
@@ -80,6 +112,12 @@ const getRandomRoom = () => {
 }
 */
 
+let documents = ref([]);
+
+const getProName = () => {
+  return utils.getCookie('proNAME');
+}
+
 //获取文档ID
 
 const getDocuID = () => {
@@ -89,6 +127,78 @@ const getDocuID = () => {
 const UserName = () =>{
   return utils.getCookie("UserName");
 }
+
+const getDocuAbl = () => {
+
+  axios.get('/document/list', {
+        headers: headers,
+        params:
+            {
+              programID: parseInt(utils.getCookie('proID')), // proID.value,
+            }
+      }
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档列表成功");
+
+      documents.value = res.data.data.items;
+
+      console.log(documents.value);
+    }
+  })
+}
+
+function openDocu(index) {
+  //获取文档内容
+  opdocuID.value = index;
+
+  let urlOP = "/document/" + opdocuID.value;
+  console.log(urlOP);
+
+  axios.get(urlOP, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档内容成功");
+      let opContent;
+
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+
+
+      let opTitle = res.data.data.title;
+
+      utils.setCookie('editDocID', index);
+      utils.setCookie('DocTitle', opTitle);
+
+
+
+
+      router.push("/proDocuEdit");
+    }
+  })
+
+}
+
 /*
 const saveContent = () => {
   const docID=parseInt(getDocuID());
@@ -114,6 +224,7 @@ const saveContent = () => {
 
 export default {
   components: {
+    LeftDocuList,
     EditorContent,
     MenuBar,
   },
@@ -129,11 +240,19 @@ export default {
       status: 'connecting',
       room: getDocuID(),
       title: '',
+      proName: getProName()
     }
+  },
+
+  setup() {
+    return {
+      darkTheme,
+    };
   },
 
   created() {
     this.title = utils.getCookie('DocTitle');
+    getDocuAbl();
   },
 
   mounted() {
@@ -409,9 +528,62 @@ export default {
 
 <style lang="scss">
 
+.main {
+  height: 100%;
+  /* max-height: 100%; */
+  /* overflow: auto; */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.user {
+  margin: 0 8px;
+  /*height: 65px;*/
+  color: #fff;
+  text-overflow: ellipsis;
+  /*width: 127px;*/
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 20px ;
+}
+
+.teamlist{
+  /* margin: 0 0 190px 0; */
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  align-items: stretch;
+  color: #FFFFFF;
+}
+
+.teamlist:hover .divline{
+  border-bottom: 1px solid #2B303B;
+}
+
+.teamlist:hover .teamsHead{
+  color:#fff;
+}
+
+.leftDoc{
+  display: flex;
+  flex-direction: column;
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  background-color: #16181D;
+  border-right: 1px solid #414958;
+  /*padding-top: 20px;*/
+  padding-left: 8px;
+  width: 192px;
+  height: 100%;
+  overflow: hidden;
+  color: #FFFFFF;
+}
+
 .head-bg{
   background-color: #2B303B;
-  min-width: 100%;
   height: 50px;
   display: inline-block;
   vertical-align: center;
@@ -423,6 +595,65 @@ export default {
   min-width: 100%;
   min-height: 100%;
   background-color: #414958;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 100%;
+}
+
+.user-info {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  margin-top: 25px;
+  font-size: 30px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  color: #FFFFFF;
+}
+.user-info:hover{
+
+  cursor:pointer
+}
+.avatar {
+  width: 70px;
+  height: 70px;
+}
+
+.pic {
+  width: 56px;
+  height: 56px;
+  text-align: center;
+  line-height: 56px;
+  border-radius: 50%;
+  background: skyblue;
+  margin: 7px;
+}
+
+.user p {
+  /*margin-top: 5px;*/
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.teams {
+  font-size: large;
+  font-weight: 500;
+  color: #E2E4E9;
+}
+
+.teamsHead {
+  margin: 23px 16px 0 4px;
+  color: #E2E4E9;
+  font-size: 12px;
+  line-height: 42px;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  /*font-weight:700;*/
+  /*border-bottom: 1px solid #414958;*/
 }
 
 .editor {

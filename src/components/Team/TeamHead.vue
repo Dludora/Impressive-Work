@@ -8,9 +8,9 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
-    <!-- <div class="dismiss" v-if="myIdentify === 2">
-        <n-button @click="dissolve">解散团队</n-button>
-    </div> -->
+    <div class="dismiss">
+      <div class="dismiss2"></div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -70,7 +70,21 @@ defineExpose({
 <style scoped>
 .dismiss{
   margin-left: auto;
-  margin-right: 200px;
+  margin-right: 120px;
+  width:350px;
+  height: 45px;
+  border-top: 3px solid #414958;
+  border-right: 3px solid #414958;
+  padding:4px;
+  text-align: right;
+}
+.dismiss2{
+
+  width: 95%;
+  margin-left: auto;
+  height: 90%;
+  border-top: 1px solid #414958;
+  border-right: 1px solid #414958;
 
 }
 .Team {
