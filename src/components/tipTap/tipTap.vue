@@ -2,6 +2,14 @@
 
   <div class="big-bg">
 
+    <n-space class="head-bg" justify="center">
+
+      <h style="position: relative; top: 0; bottom: 0;color: #FFFFFF; display: inline">
+        文档: {{title}}
+      </h>
+
+    </n-space>
+
     <n-button @click="returnTO">返回</n-button>
 
     <n-button @click="toHTML">打印html</n-button>
@@ -404,6 +412,16 @@ export default {
 </script>
 
 <style lang="scss">
+
+.head-bg{
+  background-color: #2B303B;
+  min-width: 100%;
+  height: 60px;
+  display: inline-block;
+  vertical-align: center;
+  font-size: 25px;
+  line-height: 60px;
+}
 
 .big-bg{
   min-width: 100%;
