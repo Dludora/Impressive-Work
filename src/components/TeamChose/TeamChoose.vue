@@ -82,10 +82,12 @@ const onNegativeClick = () => {
     showModalRef.value = false;
 }
 onMounted(()=>{
-
+    console.log(utils.getCookie('inviteCode'))
     if(utils.getCookie('Authorization')!='')
     {
-        if(typeof(route.query.code)!="undefined" || utils.getCookie('inviteCode')!=null){
+        if(typeof(route.query.code)!="undefined" || utils.getCookie('inviteCode')!=null&&
+        utils.getCookie('inviteCode')!=''){
+            console.log("start verify code")
             if(typeof(route.query.code)!="undefined")
             code.value=route.query.code.toString();
             else{
