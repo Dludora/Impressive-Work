@@ -30,6 +30,8 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
+import Canvas2Image from "./canvas2image.js";
+import saveAs from "file-saver";
 import axios from "axios";
 import utils from "@/Utils";
 import { useMessage } from "naive-ui";
@@ -56,6 +58,7 @@ let transDragFromY: number = 0;
 let version: number = 0;
 let update = ref<boolean>(true);
 let locked: boolean = false;
+let layoutId: number = 0;
 
 const canvasTrans = {
   x: 0,
@@ -83,6 +86,11 @@ type elementParams = {
   fontSize: number;
 };
 
+type ComServer = {
+  id: number;
+  content: string;
+};
+
 type Prop = {
   layoutId: number;
   tool: string;
@@ -94,7 +102,7 @@ type Prop = {
 
 const props = defineProps<Prop>();
 
-const emits = defineEmits(["updateProps", "changeUpdate"]);
+const emits = defineEmits(["updateProps", "changeUpdate","initPageImgs"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const paramsDic: { [key: number]: elementParams } = {};
@@ -131,21 +139,34 @@ const initMoveable = () => {
     .on("clickGroup", (e) => {
       selecto.clickTarget(e.inputEvent, e.inputTarget);
     })
+    .on("dragStart", () => {
+      updateProps();
+    })
     .on("drag", ({ target, translate, transform }) => {
-      target!.style.transform = transform;
       layoutElementParams[selectedId.value[0]].x = translate[0];
       layoutElementParams[selectedId.value[0]].y = translate[1];
+      updateTransform(
+        selected.value[0],
+        layoutElementParams[selectedId.value[0]]
+      );
       updateProps();
     })
     .on("dragGroup", ({ targets, events }) => {
       if (!locked) {
         var i = 0;
         for (i = 0; i < targets.length; ++i) {
-          moveable.target[i]!.style.transform = events[i].transform;
           layoutElementParams[selectedId.value[i]].x = events[i].translate[0];
           layoutElementParams[selectedId.value[i]].y = events[i].translate[1];
+          updateTransform(
+            selected.value[i],
+            layoutElementParams[selectedId.value[i]]
+          );
         }
       }
+    })
+    .on("dragEnd", () => {
+      changeUpdate();
+      updateUpdates();
     });
 
   /* resizable */
@@ -153,6 +174,7 @@ const initMoveable = () => {
     .on("resizeStart", (e) => {
       e.setOrigin(["%", "%"]);
       e.dragStart && e.dragStart.set([0, 0]);
+      updateProps();
     })
     .on("resize", ({ target, delta, width, height, transform, drag }) => {
       target!.style.width = `${width}px`;
@@ -164,9 +186,14 @@ const initMoveable = () => {
       layoutElementParams[selectedId.value[0]].y = drag.translate[1];
       updateProps();
     })
+    .on("resizeEnd", () => {
+      changeUpdate();
+      updateUpdates();
+    })
     .on("resizeGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
-        ev.dragStart && ev.dragStart.set([
+        ev.dragStart &&
+          ev.dragStart.set([
             layoutElementParams[selectedId.value[i]].x,
             layoutElementParams[selectedId.value[i]].y,
           ]);
@@ -183,6 +210,9 @@ const initMoveable = () => {
           layoutElementParams[selectedId.value[i]]
         );
       });
+    })
+    .on("resizeGroupEnd", () => {
+      updateUpdates();
     });
 
   /* scalable */
@@ -191,21 +221,32 @@ const initMoveable = () => {
       layoutElementParams[selectedId.value[0]].scaleX = scale[0];
       layoutElementParams[selectedId.value[0]].scaleY = scale[1];
       updateTransform(
-          selected.value[0],
-          layoutElementParams[selectedId.value[0]]
-        );
+        selected.value[0],
+        layoutElementParams[selectedId.value[0]]
+      );
       updateProps();
+    })
+    .on("scaleEnd", () => {
+      changeUpdate();
+      updateUpdates();
     });
 
   /* rotatable */
   moveable
+    .on("rotateStart", () => {
+      updateProps();
+    })
     .on("rotate", ({ target, rotation, transform }) => {
       layoutElementParams[selectedId.value[0]].rotation = rotation;
       updateTransform(
-          selected.value[0],
-          layoutElementParams[selectedId.value[0]]
-        );
-        updateProps();
+        selected.value[0],
+        layoutElementParams[selectedId.value[0]]
+      );
+      updateProps();
+    })
+    .on("rotateEnd", () => {
+      changeUpdate();
+      updateUpdates();
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -228,6 +269,9 @@ const initMoveable = () => {
           layoutElementParams[selectedId.value[i]]
         );
       });
+    })
+    .on("rotateGroupEnd", () => {
+      updateUpdates();
     });
 
   /* warpable */
@@ -292,83 +336,127 @@ const initSelecto = () => {
         });
       }
       updateProps();
+      changeUpdate();
     });
 };
 
+let comServer: ComServer[] = [];
 const changeUpdate = () => {
   update.value = true;
   emits("changeUpdate");
 };
 
-const updateUpdates = (modifyed: elementParams) => {
-  var updateIndex = updates.findIndex((cv, ci) => {
-    if (cv.id == modifyed.id) {
-      return true;
+const updateUpdates = () => {
+  for (var i = 0; i < selected.value.length; ++i) {
+    var modifyed = layoutElementParams[selectedId.value[i]];
+    if (modifyed.id == 0) {
+      return;
     }
-  });
-  if (updateIndex == -1) {
-    updates.push(modifyed);
-  } else {
-    updates[updateIndex] = modifyed;
+    var updateIndex = updates.findIndex((cv, ci) => {
+      if (cv.id == modifyed.id) {
+        return true;
+      }
+    });
+    if (updateIndex == -1) {
+      updates.push(modifyed);
+    } else {
+      updates[updateIndex] = modifyed;
+    }
   }
 };
 
 const updateServer = () => {
+  comServer.splice(0);
+  for (var i = 0; i < updates.length; ++i) {
+    let newCom: ComServer = { id: 0, content: "" };
+    newCom.id = updates[i].id;
+    newCom.content = JSON.stringify(updates[i]);
+    console.log(newCom.id);
+    comServer.push(newCom);
+  }
+  console.log(comServer);
   axios
-    .put(
-      `/layout/${props.layoutId}/element`,
-      {
-        version: version,
-        elements: updates,
-      },
-      { headers: headers }
-    )
+    .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
     .then((res) => {
       console.log(res.data);
-      if (res.data.msg == "成功") {
-        version = res.data.data.version;
-        var i = 0;
-        for (i = 0; i < res.data.data.elements.length; ++i) {
-          updateParams(res.data.data.elements[i]);
-          update.value = true;
-        }
-        for (; i < layoutElementParams.length; ++i) {
-          if (layoutElementParams[i].id != 0) {
-            layoutElementParams.splice(i, 1);
-          }
-        }
-      }
+      download(false);
     });
+
+  // .then((res) => {
+  //   console.log(res.data);
+  //   if (res.data.msg == "成功") {
+  //     version = res.data.data.version;
+  //     var i = 0;
+  //     for (i = 0; i < res.data.data.elements.length; ++i) {
+  //       updateParams(res.data.data.elements[i]);
+  //       update.value = true;
+  //     }
+  //     for (; i < layoutElementParams.length; ++i) {
+  //       if (layoutElementParams[i].id != 0) {
+  //         layoutElementParams.splice(i, 1);
+  //       }
+  //     }
+  //   }
+  // });
   updates = [];
 };
 
+const initFromServer = () => {
+  layoutElementParams.splice(0);
+  axios
+    .get(`/layout/${layoutId}/elements`, { headers: headers })
+    .then((res) => {
+      if (res.data.msg == "成功") {
+        var i = 0;
+        for (i = 0; i < res.data.data.length; ++i) {
+          var el = JSON.parse(res.data.data[i].content);
+          el.id = res.data.data[i].id;
+          updateParams(el);
+          update.value = true;
+        }
+        setTimeout(() => {
+          for (var i = 0; i < layoutElementParams.length; ++i) {
+            updateTransform(
+              document.getElementsByName("elements")[i],
+              layoutElementParams[i]
+            );
+          }
+          selecto.selectableTargets = [].slice.call(
+            document.getElementsByName("elements")
+          );
+        });
+        // for (; i < layoutElementParams.length; ++i) {
+        //   if (layoutElementParams[i].id != 0) {
+        //     layoutElementParams.splice(i, 1);
+        //   }
+        // }
+      }
+    });
+};
+
 const updateSelects = (data: elementParams) => {
-  console.log(data.text)
-  if(data.text == "" || data.text == null)
-  {
+  console.log(data.text);
+  if (data.text == "" || data.text == null) {
     destroy();
-  }
-  else{
+  } else {
     layoutElementParams[selectedId.value[0]].text = data.text;
   }
 };
 
-const editContent = (index:number)=>{
+const editContent = (index: number) => {
   var target = layoutElements.value[index];
   target.selectContent();
   moveable.target = null;
-}
+};
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
   element!.style.width = data.width * scale + "px";
-  if(data.height<0)
-  {
-    element!.style.height = "auto"
-  }
-  else{
+  if (data.height < 0) {
+    element!.style.height = "auto";
+  } else {
     element!.style.height = data.height * scale + "px";
   }
-  
+
   console.log(data);
 
   element!.style.transform =
@@ -378,31 +466,35 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
 };
 
 const updateParams = (data: elementParams) => {
-  if (paramsDic[data.id] == null) {
+  if (data.id != 0) {
     layoutElementParams.push(data);
-    paramsDic[data.id] = data;
-    return;
   }
+  console.log(layoutElementParams);
+  // if (paramsDic[data.id] == null) {
+  //   layoutElementParams.push(data);
+  //   paramsDic[data.id] = data;
+  //   return;
+  // }
 
-  paramsDic[data.id]!.id = data.id;
-  paramsDic[data.id]!.x = data.x;
-  paramsDic[data.id]!.y = data.y;
-  paramsDic[data.id]!.width = data.width;
-  paramsDic[data.id]!.height = data.height;
-  paramsDic[data.id]!.rotation = data.rotation;
-  paramsDic[data.id]!.borderWidth = data.borderWidth;
-  paramsDic[data.id]!.borderRadius = data.borderRadius;
-  paramsDic[data.id]!.type = data.type;
-  paramsDic[data.id]!.color = data.color;
-  paramsDic[data.id]!.borderColor = data.borderColor;
-  paramsDic[data.id]!.src = data.src;
-  paramsDic[data.id]!.text = data.text;
-  paramsDic[data.id]!.fontSize = data.fontSize;
-  update.value = false;
-  // setTimeout(() => {
-  //   update.value = true;
-  // }, 100);
-  updateProps();
+  // paramsDic[data.id]!.id = data.id;
+  // paramsDic[data.id]!.x = data.x;
+  // paramsDic[data.id]!.y = data.y;
+  // paramsDic[data.id]!.width = data.width;
+  // paramsDic[data.id]!.height = data.height;
+  // paramsDic[data.id]!.rotation = data.rotation;
+  // paramsDic[data.id]!.borderWidth = data.borderWidth;
+  // paramsDic[data.id]!.borderRadius = data.borderRadius;
+  // paramsDic[data.id]!.type = data.type;
+  // paramsDic[data.id]!.color = data.color;
+  // paramsDic[data.id]!.borderColor = data.borderColor;
+  // paramsDic[data.id]!.src = data.src;
+  // paramsDic[data.id]!.text = data.text;
+  // paramsDic[data.id]!.fontSize = data.fontSize;
+  // update.value = false;
+  // // setTimeout(() => {
+  // //   update.value = true;
+  // // }, 100);
+  // updateProps();
 };
 
 const updateProps = () => {
@@ -432,15 +524,17 @@ const cancelSelect = () => {
 
 const destroy = () => {
   selectedId.value.forEach((el) => {
-    axios.delete(
-      `/layout/${props.layoutId}/element/${layoutElementParams[el].id}`,
-      { headers: headers }
-    );
+    axios
+      .delete(`/layout/${layoutId}/element/${layoutElementParams[el].id}`, {
+        headers: headers,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
   });
   selectedId.value.sort();
-  for(var i=selectedId.value.length-1;i>=0;--i)
-  {
-    layoutElementParams.splice(selectedId.value[i],1);
+  for (var i = selectedId.value.length - 1; i >= 0; --i) {
+    layoutElementParams.splice(selectedId.value[i], 1);
   }
   selected.value.splice(0);
   selectedId.value.splice(0);
@@ -478,6 +572,7 @@ const ProduceElement = (e: MouseEvent) => {
       //update: true,
     });
     preparedType = "";
+    var index = layoutElementParams.length - 1;
 
     setTimeout(() => {
       //let el: HTMLElement[] = [];
@@ -487,66 +582,78 @@ const ProduceElement = (e: MouseEvent) => {
       selecto.selectableTargets = [].slice.call(
         document.getElementsByName("elements")
       );
-      var el =
-        document.getElementsByName("elements")[layoutElementParams.length - 1];
-      switch(layoutElementParams[layoutElementParams.length-1].type)
-      {
-        case "text":{
-          layoutElementParams[layoutElementParams.length-1].height = -1;
+      var el = document.getElementsByName("elements")[index];
+      switch (layoutElementParams[index].type) {
+        case "text": {
+          layoutElementParams[index].height = -1;
         }
       }
-      updateTransform(el, layoutElementParams[layoutElementParams.length - 1]);
+      updateTransform(el, layoutElementParams[index]);
       selecto.clickTarget(e, el);
     });
-
-    // axios.post(
-    //   `/layout/${props.layoutId}/element`,
-    //   layoutElementParams[layoutElementParams.length - 1],
-    //   { headers: headers }
-    // );
+    axios
+      .post(
+        `/layout/${layoutId}/element`,
+        { content: JSON.stringify(layoutElementParams[index]) },
+        { headers: headers }
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.msg == "成功") {
+          layoutElementParams[index].id = res.data.data.id;
+        }
+      });
   }
   //updateServer(layoutElementParams.length-1);
 };
 
 // let canvas2: any;
 let imgUri: string;
-const download = (isDownload: boolean) => {
-  // canvas2 = document.createElement("canvas");
-
-  // var w = canvasTrans.width;
-  // var h = canvasTrans.height;
-
-  // canvas2.width = w * 4;
-  // canvas2.height = h * 4;
-  // canvas2.style.width = w + "px";
-  // canvas2.style.height = h + "px";
-
-  // var context = canvas2.getContext("2d");
-  // context.scale(4, 4);
-  html2canvas(document.getElementById("canvas")!).then(function (canvas) {
-    imgUri = canvas
-      .toDataURL("image/png")
-      .replace("image/png", "image/octet-stream");
-    if (isDownload) {
-      window.location.href = imgUri;
-    }
-    axios
-      .put(
-        `/layout/${props.layoutId}/img`,
-        {
-          src: imgUri,
-        },
-        { headers: headers }
-      )
-      .then((res) => {
-        console.log(res.data);
+const download = (isDownload: boolean, type?: string) => {
+  html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
+    function (canvas) {
+      canvas.toBlob((blob) => {
+        if (isDownload) {
+          saveAs(blob, "test." + type);
+        }
+        var form = new FormData();
+        form.append(
+          "file",
+          new File([blob], "test.png", { type: "image/png" })
+        );
+        var imgUri: string;
+        axios({
+          url: "/resource/img",
+          method: "post",
+          headers: headers,
+          data: form,
+        }).then((res) => {
+          console.log(res.data);
+          if (res.data.msg == "成功") {
+            imgUri = res.data.data;
+            axios
+              .put(
+                `/layout/${layoutId}/img`,
+                {
+                  src: imgUri,
+                },
+                { headers: headers }
+              )
+              .then((res) => {
+                console.log(res.data);
+              });
+            emits("initPageImgs");
+          }
+        });
       });
-  });
+    }
+  );
 };
 
 defineExpose({
   PrepareElement,
   download,
+  updateServer,
 });
 
 const startDrag = (e: MouseEvent) => {
@@ -682,7 +789,7 @@ watch(
   () => props,
   (newVal) => {
     if (props.update == false) {
-      changeUpdate();
+      //changeUpdate();
       return;
     }
     if (selected.value.length > 1) {
@@ -724,12 +831,15 @@ watch(
     layoutElementParams[selectedId.value[0]]!.text = newVal.elementProps.text;
     layoutElementParams[selectedId.value[0]]!.fontSize =
       newVal.elementProps.fontSize;
-    updateTransform(selected.value[0], layoutElementParams[selectedId.value[0]]);
+    updateTransform(
+      selected.value[0],
+      layoutElementParams[selectedId.value[0]]
+    );
     moveable.target = null;
     setTimeout(() => {
       moveable.target = selected.value;
     });
-    updateUpdates(layoutElementParams[selectedId.value[0]]);
+    updateUpdates();
   },
   {
     deep: true,
@@ -741,6 +851,14 @@ watch(
   () => props.canvasWidth,
   (newVal) => {
     initScale();
+  }
+);
+
+watch(
+  () => props.layoutId,
+  (newVal) => {
+    layoutId = props.layoutId;
+    initFromServer();
   }
 );
 

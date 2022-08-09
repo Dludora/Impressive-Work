@@ -1,6 +1,6 @@
 <template>
   <div class="Team">
-    <div class="avator">
+    <div class="avator" :style="'background-color:'+teamData.src+';'">
       {{ teamData.name[0] }}
     </div>
     <div class="name">
@@ -8,9 +8,9 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
-    <!-- <div class="dismiss" v-if="myIdentify === 2">
-        <n-button @click="dissolve">解散团队</n-button>
-    </div> -->
+    <div class="dismiss">
+      <div class="dismiss2"></div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -51,18 +51,6 @@ const getMessage = () => {
   })
 }
 
-// const getIdentify = () => {
-//   let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
-//   axios.get(url, {headers: headers}).then(res => {
-//     myIdentify.value = res.data.data.identify
-//   })
-// }
-// const dissolve = () => {
-//   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
-//     // console.log(res)
-//     router.push('/team/teamprojects?teamID=undefined')
-//   })
-// }
 const getGlobal = computed(() => {
   return route.query.teamID
 })
@@ -82,7 +70,21 @@ defineExpose({
 <style scoped>
 .dismiss{
   margin-left: auto;
-  margin-right: 200px;
+  margin-right: 120px;
+  width:350px;
+  height: 45px;
+  border-top: 3px solid #414958;
+  border-right: 3px solid #414958;
+  padding:4px;
+  text-align: right;
+}
+.dismiss2{
+
+  width: 95%;
+  margin-left: auto;
+  height: 90%;
+  border-top: 1px solid #414958;
+  border-right: 1px solid #414958;
 
 }
 .Team {
@@ -98,7 +100,7 @@ defineExpose({
 .avator {
   width: 50px;
   height: 50px;
-  background: rgba(228, 27, 77, 1);
+  background-color: #A7AFBE;
   border-radius: 5px;
   font-size: 24px;
   color: whitesmoke;

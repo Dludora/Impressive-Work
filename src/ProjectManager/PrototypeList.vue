@@ -254,7 +254,7 @@ const openCard =(indx) => {
     layoutId: openID.value,
     layoutName: shortcuts.value[indx].name,
     canvasWidth: shortcuts.value[indx].width,
-    canvasHeight: shortcuts.value[indx].height
+    canvasHeight: shortcuts.value[indx].height,
   }
 })
 

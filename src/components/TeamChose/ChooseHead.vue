@@ -1,12 +1,10 @@
 <template>
   <div class="Team">
-    <div class="avator">
-      {{ teamData.name[0] }}
-    </div>
+    <div class="logo"/>
     <div class="name">
-      <h2>{{ teamData.name }}</h2>
-      <!-- <span>{{teamData.introduction}}</span> -->
-      <div>{{ teamData.introduction }}</div>
+      <h2>{{ introduct.name }}</h2>
+      <!-- <span>{{introduct.introduction}}</span> -->
+      <div class="intro">{{ introduct.introduction }}</div>
     </div>
   </div>
 </template>
@@ -20,11 +18,11 @@ import {darkTheme} from "naive-ui"
 const theme = darkTheme
 const route = useRoute()
 const router = useRouter()
-let teamData = ref({
+let introduct = ref({
   ID: null,
-  name: '选择团队来开启您的印迹之旅',
+  name: '选择你的团队',
   src: '',
-  introduction: '通过选择您的团队，然后来进行管理项目，成员等操作'
+  introduction: '此刻开始，留下你的印迹'
 })
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -33,19 +31,19 @@ const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 
 const getMessage = () => {
-  axios.get('/team/' + route.query.teamID + '/info', {headers: headers}).then(res => {
-    if (res.data.msg === "成功") {
-      teamData.value = res.data.data
-      if (res.data.data.introduction.length === 0) {
-        teamData.value.introduction = "队长很懒，什么都没写喔～"
-      }
-    }
-  })
-  let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
-  axios.get(url, {headers: headers}).then(res => {
-    if(res.data.msg === "成功")
-      myIdentify.value = res.data.data.identify
-  })
+  // axios.get('/team/' + route.query.teamID + '/info', {headers: headers}).then(res => {
+  //   if (res.data.msg === "成功") {
+  //     introduct.value = res.data.data
+  //     if (res.data.data.introduction.length === 0) {
+  //       introduct.value.introduction = "队长很懒，什么都没写喔～"
+  //     }
+  //   }
+  // })
+  // let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  // axios.get(url, {headers: headers}).then(res => {
+  //   if(res.data.msg === "成功")
+  //     myIdentify.value = res.data.data.identify
+  // })
 }
 
 // const getIdentify = () => {
@@ -66,14 +64,14 @@ const getGlobal = computed(() => {
 
 watch(getGlobal, (newVal, oldVal) => {
   console.log("value change" + newVal)
-  getMessage();
+  // getMessage();
 }, {immediate: true, deep: true})
 
 onMounted(() => {
-  getMessage()
+  // getMessage()
 })
 defineExpose({
-  teamData
+  introduct
 });
 </script>
 <style scoped>
@@ -89,6 +87,7 @@ defineExpose({
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  align-items: center;
   /*line-height: 70px;*/
 }
 
@@ -107,7 +106,6 @@ defineExpose({
 .name span {
   position: relative;
   top: 6px;
-  color: rgba(65, 73, 88, 1);
   height: 24px;
   line-height: 24px;
 }
@@ -115,7 +113,6 @@ defineExpose({
 .name div {
   position: relative;
   top: 6px;
-  color: rgba(65, 73, 88, 1);
   height: 24px;
   line-height: 24px;
 }
@@ -123,16 +120,26 @@ defineExpose({
 .name {
   height: 100%;
   /*display: inline-block;*/
-  color: white;
+  color: #A7AFBE;
   vertical-align: top;
-  margin-left: 20px;
-  /*margin-top: 5px;*/
-  font-size: 14px;
+   /*margin-left: 16px;
+  margin-top: 5px;*/
+  font-size: 18px;
 }
 
 .name h2 {
+  color: #FFFFFF;
   vertical-align: top;
-  font-size: 20px;
-  line-height: 22px;
+  font-size: 28px;
+  /*line-height: 22px;*/
+}
+.logo{
+  height:90px;
+  width:90px;
+  background-image: url("@/assets/logoBordered1024.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+  margin:36px;
 }
 </style>
