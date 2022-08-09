@@ -3,11 +3,6 @@
   <div class="big-bg">
 
     <div class="leftDoc">
-      <n-button @click="returnTO" style="width: 60px">返回</n-button>
-      <div @click="returnTO" class="user">
-        <p style="width: 100%">项目:</p>
-        <p style="font-size:40px;width: 100%">{{proName}}</p>
-      </div>
       <div class="teamlist">
         <div class="teamsHead">
           项目文档
@@ -24,7 +19,7 @@
     </div>
 
     <div class="main">
-      <tip-tap></tip-tap>
+      <tip-tap :key="timer"></tip-tap>
     </div>
   </div>
   </n-config-provider>
@@ -38,17 +33,23 @@ import router from "@/router";
 
 import { darkTheme } from 'naive-ui'
 import LeftDocuList from "./leftDocuList.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import TipTap from "./tipTap.vue";
+
+const proName=ref("");
+
+const proID=ref(0);
+
+const documents=ref([]);
+
+const timer=null;
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
 
-const getProName = () => {
-  return utils.getCookie('proNAME');
-}
+proName.value = utils.getCookie('proNAME');
 
 //获取文档ID
 
@@ -60,6 +61,92 @@ const UserName = () =>{
   return utils.getCookie("UserName");
 }
 
+onMounted(() => {
+  proID.value = parseInt(utils.getCookie('proID'));
+  console.log("成功获取项目ID:" + proID.value);
+  getDocuAbl();
+})
+
+//获取文档列表
+
+const getDocuAbl = () => {
+
+  axios.get('/document/list', {
+        headers: headers,
+        params:
+            {
+              programID: proID.value, // proID.value,
+            }
+      }
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档列表成功");
+
+      documents.value = res.data.data.items;
+
+      console.log(documents.value);
+    }
+  })
+}
+
+let opdocuID = ref();
+
+function openDocu(index) {
+  //获取文档内容
+  opdocuID.value = index;
+
+  let urlOP = "/document/" + opdocuID.value;
+  console.log(urlOP);
+
+  axios.get(urlOP, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档内容成功");
+      let opContent;
+
+      utils.setCookie('DocTitle',res.data.data.title)
+
+      console.log(res.data.data.title)
+
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+
+
+      let opTitle = res.data.data.title;
+
+      utils.setCookie('editDocID', index);
+
+      console.log(index);
+
+
+
+      utils.setCookie('DocTitle', opTitle);
+
+      this.timer = new Date().getTime();
+    }
+  })
+
+}
 
 </script>
 
