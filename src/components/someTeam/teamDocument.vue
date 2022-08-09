@@ -123,8 +123,6 @@ import utils from '../../Utils';
 import DocuItem from "@/components/someTeam/docuItem.vue";
 
 
-// import FolderCard from "@/components/Document/folderCard.vue";
-// import docCard from './documentCard.vue'
 
 const theme = darkTheme
 const length = ref(0)
@@ -180,10 +178,10 @@ const dblClick = (item, add) => {
     console.log('是文件')
     let urlOP = '/document/'+item.doc.ID
     axios.get(urlOP, {headers: headers}).then(res => {
-      console.log("获取文档内容成功");
-      let opContent;
+      console.log("获取文档内容成功")
+      let opContent
       console.log(item)
-      if(res.data.data.copy===true){
+      if(res.data.data.copy===true) {
         opContent = res.data.data.content;
         console.log("获取文档内容成功2");
         console.log(opContent);
@@ -208,8 +206,6 @@ const dblClick = (item, add) => {
       utils.setCookie('DocTitle', opTitle);
       router.push({path: '/teamDocView', query: {teamID: route.query.teamID}});
     })
-
-
   } else {
     console.log('是文件夹')
     if(item.isPro === 0) {
