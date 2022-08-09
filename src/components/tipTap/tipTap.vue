@@ -2,6 +2,16 @@
 
   <div class="big-bg">
 
+    <n-space class="head-bg" justify="center">
+
+      <h style="position: relative; top: 0; bottom: 0;color: #FFFFFF; display: inline">
+        文档: {{title}}
+      </h>
+
+    </n-space>
+
+    <n-button @click="returnTO">返回</n-button>
+
     <n-button @click="toHTML">打印html</n-button>
     <n-button @click="toJSON">打印json</n-button>
     <n-button @click="toMD">打印MD</n-button>
@@ -77,12 +87,34 @@ const getRandomRoom = () => {
 //获取文档ID
 
 const getDocuID = () => {
-  return "2"
+  return utils.getCookie('editDocID');
 }
 
 const UserName = () =>{
   return utils.getCookie("UserName");
 }
+/*
+const saveContent = () => {
+  const docID=parseInt(getDocuID());
+  const docContent=this.editor.getHTML();
+  const teamID=parseInt(utils.getCookie('proTeam'));
+
+  axios.put('/document/content',
+      {
+        'ID': docID,
+        'content': docContent,
+        'teamID': teamID,
+      }
+  ).then(res=>{
+    if(res.data.msg==='成功'){
+
+      console.log("保存文档成功");
+
+    }
+  })
+}
+
+ */
 
 export default {
   components: {
@@ -110,6 +142,7 @@ export default {
 
   mounted() {
     this.title = utils.getCookie('DocTitle');
+
     const ydoc = new Y.Doc()
     this.provider = new HocuspocusProvider({
       url: 'ws://127.0.0.1:80',
@@ -125,7 +158,7 @@ export default {
     })
 
     this.editor = new Editor({
-      content: "a",
+      content: utils.getCookie('DocContent'),
       extensions: [
         StarterKit.configure({
           history: false,
@@ -188,7 +221,6 @@ export default {
 
     downPDF(){
 
-
       async function back() {
         return 1;
       }
@@ -200,34 +232,6 @@ export default {
       const previewEl = document.querySelector("#pdfDom").innerHTML;
       window.document.body.innerHTML=previewEl;
       window.print();
-
-
-
-      /*
-            const turndown = new TurndownService({
-              emDelimiter: '_',
-              linkStyle: 'inlined',
-              headingStyle: 'atx'
-            })
-
-            const markdown = turndown.turndown(this.editor.getHTML());
-
-            var markdownpdf = require("markdown-pdf")
-            const fs = require('fs')
-            const path = require('path')
-            const rm = require('rimraf')
-
-            var md = "foo===\n* bar\n* baz\n\nLorem ipsum dolor sit"
-                , outputPath = "/Users/niezhanheng/Desktop/2er0/doc.pdf"
-
-            markdownpdf().from.string(md).to(outputPath, function () {
-              console.log("Created", outputPath)
-            })
-
-            //let aaa = document.querySelector("#pdfDom");
-            //htmlToPdf.downloadPDF(aaa, '1'); //右边文件名
-
-       */
     },
 
     billPrintClick(){
@@ -326,6 +330,34 @@ export default {
       saveAs(file);
     },
 
+    returnTO(){
+      const docID=parseInt(utils.getCookie('editDocID'));
+      console.log(docID);
+      const docContent=this.editor.getHTML();
+      console.log(docContent);
+      const TeamID=parseInt(utils.getCookie('proTeam'));
+      console.log(TeamID);
+
+      const headers = {
+        Authorization: utils.getCookie('Authorization')
+      }
+
+      axios.put('/document/content',
+          {
+            'ID': docID,
+            'content': docContent,
+            'teamID': TeamID,
+          },{headers:headers}
+      ).then(res=>{
+        if(res.data.msg==='成功'){
+
+          console.log("保存文档成功");
+          router.push('/project/documents');
+
+        }
+      })
+    },
+
     getRandomName() {
       return getRandomElement([
         'Lea Thompson', 'Cyndi Lauper', 'Tom Cruise', 'Madonna', 'Jerry Hall', 'Joan Collins', 'Winona Ryder', 'Christina Applegate', 'Alyssa Milano', 'Molly Ringwald', 'Ally Sheedy', 'Debbie Harry', 'Olivia Newton-John', 'Elton John', 'Michael J. Fox', 'Axl Rose', 'Emilio Estevez', 'Ralph Macchio', 'Rob Lowe', 'Jennifer Grey', 'Mickey Rourke', 'John Cusack', 'Matthew Broderick', 'Justine Bateman', 'Lisa Bonet',
@@ -349,6 +381,30 @@ export default {
   },
 
   beforeUnmount() {
+    const docID=parseInt(utils.getCookie('editDocID'));
+    console.log(docID);
+    const docContent=this.editor.getHTML();
+    console.log(docContent);
+    const teamID=parseInt(utils.getCookie('proTeam'));
+    console.log(teamID);
+
+    const headers = {
+      Authorization: utils.getCookie('Authorization')
+    }
+
+    axios.put('/document/content',
+        {
+          'ID': docID,
+          'content': docContent,
+          'teamID': teamID,
+        },{headers:headers}
+    ).then(res=>{
+      if(res.data.msg==='成功'){
+
+        console.log("保存文档成功");
+
+      }
+    })
     this.editor.destroy()
     this.provider.destroy()
   },
@@ -356,6 +412,16 @@ export default {
 </script>
 
 <style lang="scss">
+
+.head-bg{
+  background-color: #2B303B;
+  min-width: 100%;
+  height: 60px;
+  display: inline-block;
+  vertical-align: center;
+  font-size: 25px;
+  line-height: 60px;
+}
 
 .big-bg{
   min-width: 100%;

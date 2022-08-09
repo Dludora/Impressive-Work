@@ -15,6 +15,7 @@ import teamMembers from "../components/someTeam/teamMembers.vue";
 import teamSettings from "../components/someTeam/teamSettings.vue";
 import teamProjects from "../TeamManager/ProjectList.vue";
 import teamDocuments from '../components/someTeam/teamDocument.vue'
+import teamChoose from '../components/TeamChose/TeamChoose.vue'
 
 import vDitor from "../components/Document/vDitor.vue";
 import testVditor from "../views/Document/testVditor.vue"
@@ -40,6 +41,11 @@ const router = createRouter({
             name: 'homePage',
             path: '/',
             component: homePage,
+        },
+        {
+            name: 'teamChoose',
+            path: '/teamchoose',
+            component: teamChoose,
         },
         {
             name: 'regisTer',

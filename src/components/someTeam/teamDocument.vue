@@ -3,7 +3,7 @@
     <div class="layout">
       <div class="discribe">
         管理你的{{ length }}个文件夹
-        <div class="buttons">
+        <div class="buttons" v-if="crumbs[crumbs.length-1].isPro === 0">
           <n-button class="newpage" @click="showModalAddRef=true" size="tiny" style="margin-right: 30px">
             新 建 文 件 夹
             <Icon size="14">
@@ -18,42 +18,38 @@
           </n-button>
         </div>
       </div>
+      <div class="crumb">
+        <n-config-provider :theme="theme">
+          <n-breadcrumb>
+            <n-breadcrumb-item separator=">" v-for="(item, i) in crumbs" :key="i" @click="dblClickCrumb(item, i)" @drop="onDrop($event, item)" @dragover.prevent @dragenter.prevent>
+              {{item.name}}
+            </n-breadcrumb-item>
+          </n-breadcrumb>
+        </n-config-provider>
+      </div>
       <div class="prolist">
-        <FolderCard v-for="(item, i) in folders" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
-                    class="card" @rename="folderRename(i)" @del="delRef=true" @dragstart="startDragFolder($event, item, i)" @drop="onDrop($event)" @dragenter.prevent @dragover.prevent/>
-        <docCard v-for="(item, i) in documents" :key="i" @edit="docuEdit(i)" @del="showDel = true"
-                 :title="item.title" :ID="item.ID"/>
+        <docu-item v-for="(item, i) in list" :key="i" :dir="item.dir" :name="item.name" :md-time="item.mdTime" :revisable="revisable(i)"
+                   @dblclick="dblClick(item, true)" @modifyName="listRename(i)" @del="del(i)"
+                  @dragstart="startDragDoc($event, item)" @drop="onDrop($event, item)" @dragover.prevent @dragenter.prevent/>
       </div>
     </div>
   </div>
-
   <n-config-provider :theme="theme">
     <n-modal
         v-model:show="showModalRef"
         :mask-closable="false"
         preset="dialog"
-        title="重命名文件夹"
+        title="重命名文件夹/文档"
         positive-text="确认"
         negative-text="取消"
         @positive-click="onPositiveClick"
         @negative-click="onNegativeClick"
     >
       <n-form :model="modelRef">
-        <n-form-item label="文件夹名称" :rule="folderRenameRule" :render-feedback="formatFeedback">
+        <n-form-item label="文件夹/文档名称" :rule="listRenameRule" :render-feedback="formatFeedback">
           <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
-    </n-modal>
-    <n-modal
-        v-model:show="delRef"
-        :mask-closable="false"
-        preset="dialog"
-        title="确认要删除文件夹吗 ? "
-        positive-text="确认"
-        negative-text="取消"
-        @positive-click="onPositiveClickDel"
-        @negative-click="onNegativeClickDel"
-    >
     </n-modal>
     <n-modal
         v-model:show="showModalAddRef"
@@ -83,29 +79,13 @@
         @negative-click="negAdd"
     >
       <n-form ref="addFormRef" :model="addModelRef">
-        <n-form-item label="项目名称" :rule="addRule">
+        <n-form-item label="文档名称" :rule="addRule">
           <n-input v-model:value="addModelRef.addName" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
 
     </n-modal>
 
-    <n-modal
-        v-model:show="showEdi"
-        preset="dialog"
-        title="重命名文档"
-        positive-text="确认"
-        negative-text="取消"
-        @positive-click="posEdi"
-        @negative-click="negEdi"
-    >
-      <n-form ref="ediFormRef" :model="ediModelRef">
-        <n-form-item label="项目名称 · 新" :rule="ediRule">
-          <n-input v-model:value="ediModelRef.ediName" @keydown.enter.prevent/>
-        </n-form-item>
-      </n-form>
-
-    </n-modal>
 
     <n-modal
         v-model:show="showDel"
@@ -117,105 +97,211 @@
         @negative-click="negDel"
     >
       <p style="font-size: 15px">
-        确定删除文档
+        确定删除文档/文件夹
       </p>
     </n-modal>
   </n-config-provider>
-
 </template>
 <script setup lang="ts">
 import {
-  Export
-} from '@vicons/carbon'
-import {
   Add28Regular
 } from '@vicons/fluent'
+import axios from "axios"
 import {darkTheme, useMessage} from "naive-ui";
 import {defineComponent, computed, watch, h, onMounted, reactive, ref} from "vue";
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
-import {PlusOutlined} from "@vicons/antd";
-import utils from '../../Utils'
-import axios from "axios";
-import FolderCard from "@/components/Document/folderCard.vue";
-import docCard from './documentCard.vue'
+import {PlusOutlined} from "@vicons/antd"
+import {Icon} from '@vicons/utils'
+import utils from '../../Utils';
+import DocuItem from "@/components/someTeam/docuItem.vue";
 
-let length = 0
 
-const router = useRoute();
-const message = useMessage();
+// import FolderCard from "@/components/Document/folderCard.vue";
+// import docCard from './documentCard.vue'
+
+const theme = darkTheme
+const length = ref(0)
+const route = useRoute()
+const router = useRouter()
+const message = useMessage()
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-const teamID = ref(0)
-const theme = darkTheme
+const teamID = ref(route.query.teamID)
 
-// 文件夹
-let folders = ref([
+const crumbs = ref([
   {
-    ID: 1,
-    name: '项目文件夹',
-    createTime: '2022/08/08',
-    folders: [
-      {
-        ID: 1,
-        name: '项目文件夹',
-        createTime: '2022/08/08',
-        folders: []
-      },
-    ]
+    fileID: null,
+    teamID: teamID.value,
+    dir: true,
+    name: '文档中心',
+    parentID: null,
+    createTime: null,
+    mdTime: null,
+    isPro: 0
   },
-  {
-    ID: 2,
-    name: '文件夹一',
-    createTime: '2022/08/08',
-    folders: [
-      {
-        ID: 1,
-        name: '项目文件夹',
-        createTime: '2022/08/08',
-        folders: []
-      },
-    ]
-  }
 ])
+
+const list = ref([])
+
+const proDoc = {
+  fileID: -1,
+  teamID: teamID.value,
+  dir: true,
+  name: '项目文件夹',
+  parentID: null,
+  createTime: null,
+  mdTime: null,
+  isPro: 1
+}
+
+
+const revisable = (index) => {
+  return list.value[index].isPro === 0
+}
+// 获取
+let timer = null
+const dblClickCrumb = (item, index) => {
+  crumbs.value.splice(index+1, crumbs.value.length-index+1)
+  console.log(list.value)
+  dblClick(item, false)
+}
+const dblClick = (item, add) => {
+  if (!item.dir) {
+    console.log('是文件')
+  } else {
+    console.log('是文件夹')
+    if(item.isPro === 0) {
+      console.log('不是项目的文件夹')
+      if(add) {
+        crumbs.value.push(item)
+      }
+      getDoc(item.fileID)
+    } else if(item.isPro === 1) {
+      if(add) {
+        crumbs.value.push(item)
+      }
+      axios.get('/program/list'+'?teamID='+route.query.teamID, {headers: headers}).then(res => {
+        console.log(res.data)
+        const array = res.data.data.items
+        list.value.splice(0, list.value.length)
+        for(let i = 0; i < array.length; i++) {
+          list.value.push(
+              {
+                fileID: array[i].ID,
+                teamID: array[i].teamID,
+                dir: true,
+                name: array[i].name,
+                parentID: null,
+                createTime: null,
+                mdTime: null,
+                isPro: 2
+              }
+          )
+        }
+      })
+    } else {
+      if(add) {
+        crumbs.value.push(item)
+      }
+      axios.get('/document/list'+'?programID='+item.fileID, {headers: headers}).then(res => {
+        console.log(res)
+        const array = res.data.data.items
+        list.value.splice(0, list.value.length)
+        for(let i = 0; i < array.length; i++) {
+          list.value.push(
+              {
+                fileID: array[i].ID,
+                teamID: array[i].teamID,
+                dir: false,
+                name: array[i].title,
+                parentID: null,
+                createTime: null,
+                mdTime: null,
+                isPro: 2
+              }
+          )
+        }
+      })
+    }
+  }
+
+  console.log(item)
+}
+const getDoc = (fileID) => {
+  let url;
+  list.value.splice(0, list.value.length)
+  if(fileID !== null) {
+    url = '/doccenter/list'+'?teamID='+route.query.teamID+'&fileID='+fileID
+  } else {
+    list.value.push(proDoc)
+    url = '/doccenter/list'+'?teamID='+route.query.teamID
+  }
+  console.log(url)
+  axios.get(url, {headers: headers}).then(res => {
+    console.log(res.data.data.items)
+    const array = res.data.data.items
+    for (let i = 0; i < array.length; i++) {
+      list.value.push(
+          {
+            fileID: array[i].ID,
+            teamID: array[i].teamID,
+            dir: array[i].dir,
+            name: array[i].name,
+            parentID: array[i].parentID,
+            createTime: array[i].createTime,
+            mdTime: null,
+            isPro: 0
+          },
+      )
+    }
+  })
+}
+
+onMounted(() => {
+  getDoc(null)
+})
+
 // 重命名文件夹
 // 决定重命名弹窗是否出现
 const showModalRef = ref(false)
 const modelRef = ref({
-  name: ""
+  name: "",
+  ID: 0,
+  teamID: 0,
+  parentID: 0
 })
-const folderRename = (index) => {
-  modelRef.value.name = folders.value[index].name
+const listRename = (index) => {
+  modelRef.value.name = list.value[index].name
+  modelRef.value.ID = list.value[index].fileID
+  modelRef.value.teamID = list.value[index].teamID
+  modelRef.value.parentID = list.value[index].parentID
   showModalRef.value = true
 }
-const folderRenameRule = {
+const listRenameRule = {
   required: true,
   validator() {
     if (modelRef.value.name.length === 0) {
-      return new Error("文件夹名称不可为空")
+      return new Error("文件夹/文档名称不可为空")
     } else {
       if (modelRef.value.name.length >= 12) {
-        return new Error("文件夹名称长度不能大于8")
+        return new Error("文件夹/文档名称长度不能大于8")
       }
     }
   },
   trigger: ['input', 'blur']
 }
 const onPositiveClick = () => {
+  axios.put('/doccenter', modelRef.value, {headers: headers}).then(res => {
+    getDoc(modelRef.value.parentID)
+  })
   showModalRef.value = true
+
 }
 const onNegativeClick = () => {
   showModalRef.value = true
-}
-// 新建文件夹弹窗
-const delRef = ref(false)
-const onPositiveClickDel = () => {
-  delRef.value = false
-}
-const onNegativeClickDel = () => {
-  delRef.value = false
 }
 // 增加文件夹
 const showModalAddRef = ref(false)
@@ -224,6 +310,11 @@ const modelAddRef = ref({
 })
 const onPositiveAddClick = () => {
   showModalAddRef.value = false
+  console.log(crumbs.value[crumbs.value.length-1])
+  axios.post('/doccenter/dir', {teamID: teamID.value, name: modelAddRef.value.name, parentID: crumbs.value[crumbs.value.length-1].fileID}, {headers: headers}).then(res => {
+    modelAddRef.value.name = ""
+    getDoc(crumbs.value[crumbs.value.length-1].fileID)
+  })
 }
 const onNegativeAddClick = () => {
   showModalAddRef.value = false
@@ -241,44 +332,29 @@ const ruleAdd = {
   },
   trigger: ['input', 'blur']
 }
-// 文档
-let documents = [
-  {
-    ID: 1,
-    title: '文件一',
-  }
-]
-const showEdi = ref(false)
-// 编辑文档名称
-const ediModelRef = ref({
-  ediName: ""
-})
-const docuEdit = (i) => {
-  ediModelRef.value.ediName = documents[i].title
-  showEdi.value = true
-}
-const negEdi = () => {
-  showEdi.value = false
-}
-const posEdi = () => {
-  showEdi.value = false
-}
-const ediRule = {
-  required: true,
-  validator() {
-    if (ediModelRef.value.ediName.length === 0) {
-      return new Error("文档名称不可为空")
-    } else {
-      if (ediModelRef.value.ediName.length >= 12) {
-        return new Error("文档名称长度不能大于8")
-      }
-    }
-  },
-  trigger: ['input', 'blur']
-}
-// 删除文档
+
+// 删除文档/文件夹
 const showDel = ref(false)
+const delRef = ref(
+    {
+      ID: 0,
+      teamID: 0,
+      parentID: 0
+    }
+)
+const del = (index) => {
+  showDel.value = true
+  delRef.value.ID = list.value[index].fileID
+  delRef.value.teamID = list.value[index].teamID
+  delRef.value.parentID = list.value[index].parentID
+}
 const posDel = () => {
+  showDel.value = false
+  axios.post('/doccenter', delRef.value,{headers: headers}).then(res => {
+    getDoc(delRef.value.parentID)
+  })
+}
+const negDel = () => {
   showDel.value = false
 }
 // 创建文档
@@ -287,7 +363,15 @@ const addModelRef = ref({
   addName: ""
 })
 const posAdd = () => {
-  addModelRef.value.addName = "";
+  const parentID = crumbs.value[crumbs.value.length-1].fileID
+  let url = '/doccenter/doc' + '?name='+addModelRef.value.addName
+  if(parentID !== null) {
+    url += '&parentID='+parentID
+  }
+  axios.post(url, {title: addModelRef.value.addName, teamID: teamID.value, type: 'model1', src: 'what fuck'}, {headers: headers}).then(res => {
+    addModelRef.value.addName = "";
+    getDoc(crumbs.value[crumbs.value.length-1].fileID)
+  })
   showAdd.value = false;
 };
 const negAdd = () => {
@@ -310,21 +394,31 @@ const addRule = {
 
 
 // 拖拽
-const startDragFolder = (event, item, index) => {
+const startDragDoc = (event, item) => {
   // console.log(item)
-  // console.log(item.ID)
-  event.dataTransfer.dropEffect = 'move'
-  event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('itemID', item.ID)
+  // console.log(item.fileID)
+  if(item.isPro === 0) {
+    event.dataTransfer.dropEffect = 'move'
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('fileID', item.fileID)
+    event.dataTransfer.setData('teamID', item.teamID)
+    event.dataTransfer.setData('name', item.name)
+  }
 }
-const startDragDocument = (event, item, index) => {
 
+const onDrop = (event, item) => {
+  if(item.isPro === 0 && item.dir) {
+    const fileID = event.dataTransfer.getData('fileID')
+    const teamID = event.dataTransfer.getData('teamID')
+    const name = event.dataTransfer.getData('name')
+    const parentID = item.fileID
+    axios.put('/doccenter', {ID: fileID, teamID: teamID, name: name, parentID: parentID}, {headers: headers}).then(res => {
+      // console.log('拖拽')
+      getDoc(item.parentID)
+    })
+  }
+}
 
-}
-const onDrop = (event) => {
-  const itemID = event.dataTransfer.getData('itemID')
-  console.log(itemID)
-}
 </script>
 
 <style scoped>
@@ -334,6 +428,10 @@ const onDrop = (event) => {
 
 .card {
   margin: 0 10px 20px 0;
+}
+
+.crumb {
+  margin: 10px 0;
 }
 
 .prolist {

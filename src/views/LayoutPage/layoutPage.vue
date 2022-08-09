@@ -1,3 +1,4 @@
+
 <template>
   <div class="board" @mousedown="ShutBoard">
     <div class="layoutHeader home ui">
@@ -140,18 +141,21 @@
         </div> -->
 
         <div class="ui pageBoardBox" id="pageBoardBox">
-          <n-scrollbar class="pageBoard" id="pageBoard">
-            <div
-              v-for="(value, index) in pageImgs"
-              :class="
-                value.name != layoutName
-                  ? pageImageClass
-                  : pageImageSelectedClass
-              "
-              :key="index"
-              :style="{ backgroundImage: 'url(' + value.src + ')' }"
-            ></div>
+          <n-scrollbar style="width:279px;height:100%">
+            <div class="pageBoard" id="pageBoard">
+              <div
+                v-for="(value, index) in pageImgs"
+                :class="
+                  value.id != id
+                    ? pageImageClass
+                    : pageImageSelectedClass
+                "
+                :key="index"
+                :style="{ backgroundImage: 'url(' + value.src + ')' }"
+              ></div>
+            </div>
           </n-scrollbar>
+
           <div
             class="ui elementRightUnit elementBrowser pageBrowser"
             @click="displayPageBoard"
@@ -542,11 +546,12 @@ const colorCircles = ref<any>([]);
 const borderCircles = ref<any>([]);
 const update = ref<boolean>(true);
 
-type ImgWithName = {
+type layoutImg = {
+  id:number,
   name: string;
   src: string;
 };
-const pageImgs = reactive<ImgWithName[]>([]);
+const pageImgs = reactive<layoutImg[]>([]);
 const pageImageClass = ref<string>("pageImage");
 const pageImageSelectedClass = ref<string>("pageImageSelected");
 
@@ -663,6 +668,7 @@ const initPageImgs = () => {
 
         for (var i = 0; i < res.data.data.items.length; ++i) {
           pageImgs.push({
+            id: res.data.data.items[i].id,
             name: res.data.data.items[i].name,
             src: res.data.data.items[i].src,
           });
@@ -824,13 +830,13 @@ onMounted(() => {
         update.value = true;
         //property.src = res.data.data;
         var imgUrl = res.data.data;
-        var canvas=document.createElement("canvas"), //获取canvas
+        var canvas = document.createElement("canvas"), //获取canvas
           ctx = canvas.getContext("2d"), //对应的CanvasRenderingContext2D对象(画笔)
           img = new Image(), //创建新的图片对象
           base64 = "", //base64
-          num = Math.random()
+          num = Math.random();
         img.src = imgUrl + "?" + num;
-        console.log(num)
+        console.log(num);
         img.setAttribute("crossOrigin", "Anonymous");
         img.onload = function () {
           ctx.drawImage(img, 0, 0);

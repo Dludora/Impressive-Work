@@ -8,9 +8,6 @@
       <!-- <span>{{teamData.introduction}}</span> -->
       <div>{{ teamData.introduction }}</div>
     </div>
-    <!-- <div class="dismiss" v-if="myIdentify === 2">
-        <n-button @click="dissolve">解散团队</n-button>
-    </div> -->
   </div>
 </template>
 <script setup lang="ts">
@@ -25,7 +22,7 @@ const route = useRoute()
 const router = useRouter()
 let teamData = ref({
   ID: null,
-  name: '选择您的团队',
+  name: '选择团队来开启您的印迹之旅',
   src: '',
   introduction: '通过选择您的团队，然后来进行管理项目，成员等操作'
 })
@@ -57,12 +54,12 @@ const getMessage = () => {
 //     myIdentify.value = res.data.data.identify
 //   })
 // }
-// const dissolve = () => {
-//   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
-//     // console.log(res)
-//     router.push('/team/teamprojects?teamID=undefined')
-//   })
-// }
+const dissolve = () => {
+  axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
+    // console.log(res)
+    router.push('/team/teamprojects?teamID=undefined')
+  })
+}
 const getGlobal = computed(() => {
   return route.query.teamID
 })

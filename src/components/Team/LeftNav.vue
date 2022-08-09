@@ -2,7 +2,7 @@
   <n-config-provider :theme="theme">
   <div class="nav">
     <!-- <div class="logo" @click="toMain"></div> -->
-    <div class="user-info">
+    <div class="user-info" @click="toMain">
       <div class="lineI"></div>
       <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
       <div class="user">
@@ -106,6 +106,7 @@ export default defineComponent({
     const addTeam = () => {
       emit('addTeam');
     }
+
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
         profile.value = res.data.data
@@ -223,7 +224,10 @@ export default defineComponent({
   flex-wrap: nowrap;
   align-items: center;
 }
+.user-info:hover{
 
+cursor:pointer
+}
 .avatar {
   width: 70px;
   height: 70px;
