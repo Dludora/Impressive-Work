@@ -1,5 +1,5 @@
 <template>
-<div class="docu-item" tabindex="-1">
+<div class="docu-item" tabindex="-1" :draggable="revisable">
   <div class="docu-name">
 <!--    <div class="docu-icon">-->
       <Icon size="20" class="icons" v-if="dir"><Folder /></Icon>
@@ -10,7 +10,8 @@
   <div class="docu-time">{{mdTime}}</div>
   <div class="docu-type">{{dir ? '文件夹' : '文件'}}</div>
   <div class="docu-operate">
-    <Icon size="20" style="margin-right:8px"><Edit16Regular/> </Icon>
+    <Icon size="20" style="margin-right:8px; cursor: pointer" v-if="revisable"><Edit16Regular @click="modifyName"/> </Icon>
+    <Icon size="20" style="margin-right:8px; cursor: pointer" v-if="revisable"><CloseOutline @click="del"/> </Icon>
   </div>
 </div>
 </template>
@@ -21,7 +22,7 @@ import {
   Add28Regular
 } from '@vicons/fluent'
 import {darkTheme, useMessage} from "naive-ui";
-import {defineComponent, computed, watch, h, onMounted, reactive, ref, defineProps} from "vue";
+import {defineComponent, computed, watch, h, onMounted, reactive, ref, defineProps, defineEmits} from "vue";
 import {Folder} from '@vicons/ionicons5'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
@@ -29,16 +30,26 @@ import utils from '../../Utils'
 import axios from "axios";
 import {Icon} from "@vicons/utils"
 import {Document} from "@vicons/carbon"
+import {CloseOutline} from '@vicons/ionicons5'
+
 
 const props = defineProps({
   dir: Boolean,
   name: String,
   createTime: Date || null,
   mdTime: Date || null,
-  parentID: Number || null
+  parentID: Number || null,
+  revisable: Boolean
 })
 
+const emit = defineEmits(['modifyName', 'del'])
 
+const modifyName = () => {
+  emit('modifyName')
+}
+const del = () => {
+  emit('del')
+}
 </script>
 
 <style scoped>
