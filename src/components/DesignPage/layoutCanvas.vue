@@ -31,7 +31,6 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
-import Canvas2Image from "./canvas2image.js";
 import saveAs from "file-saver";
 import axios from "axios";
 import utils from "@/Utils";
@@ -40,7 +39,7 @@ import { useMessage } from "naive-ui";
 import Selecto from "selecto";
 import Moveable from "moveable";
 
-//const ws = new WebSocket("");
+const ws:WebSocket = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/1");
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -168,7 +167,7 @@ const initMoveable = () => {
     })
     .on("dragStart", () => {
       updateProps();
-      update.value = false
+      update.value = false;
     })
     .on("drag", ({ target, translate, transform }) => {
       layoutElementParams[selectedId.value[0]].x = translate[0];
@@ -484,24 +483,140 @@ const initFromServer = () => {
     });
 };
 
-// const initWS = ()=>{
-//   ws.onopen=()=>{
+const initWS = () => {
+  ws.onmessage = (res) => {
+    var data = JSON.parse(res as unknown as string);
+    switch (data.code) {
+      case 0: {
+        for (var i = 0; i < data.elements.length; ++i) {
+          wsResCreate(data.elements[i]);
+        }
+        setTimeout(() => {
+          for (var i = 0; i < layoutElementParams.length; ++i) {
+            updateTransform(
+              document.getElementsByName("elements")[i],
+              layoutElementParams[i]
+            );
+          }
+          selecto.selectableTargets = [].slice.call(
+            document.getElementsByName("elements")
+          );
+          moveable.elementGuidelines = [].slice.call(
+            document.getElementsByName("elements")
+          );
+          moveable.elementGuidelines.push(document.getElementById("canvas"));
+        });
+        var index = layoutElementParams.length - 1;
+        break;
+      }
+      case 1: {
+        for (var i = 0; i < data.elements.length; ++i) {
+          wsResMod(data.elements[i]);
+        }
+        break;
+      }
+      case 2: {
+        wsResDestroy(data.elements);
+        break;
+      }
+    }
+  };
+  ws.onerror = () => {
+    message.error("网络故障");
+  };
+  ws.onclose = () => {
+    message.warning("连接已断开");
+  };
+};
 
-//   }
-//   ws.onmessage=(res)=>{
+const wsResCreate = (data: ComServer) => {
+  var res = JSON.parse(data.content);
+  if (res.id != 0) {
+    if (!(res.type == "text" && res.text == "")) {
+      layoutElementParams.push(res);
+      paramsDic[res.id] = res;
+    }
+  }
+  console.log(layoutElementParams);
+};
 
-//   }
-//   ws.onerror = ()=>{
-//     message.error("网络故障");
-//   }
-//   ws.onclose = ()=>{
-//     message.warning("连接已断开");
-//   }
-// }
+const wsResMod = (data: ComServer) => {
+  var res = JSON.parse(data.content);
+  if (paramsDic[res.id] != null) {
+    if (!(res.type == "text" && res.text == "")) {
+      paramsDic[res.id] = res;
+    }
+  }
+};
+
+const wsResDestroy = (res) => {
+  for (var i = layoutElementParams.length; i >= 0; --i) {
+    for (var j = res.length; j >= 0; --j) {
+      if (layoutElementParams[i].id == res[j].id) {
+        layoutElementParams.splice(i, 1);
+        res.splice(j, 1);
+        break;
+      }
+    }
+  }
+};
+
+const wsUpdate = () => {
+  var form = {
+    code: 1,
+    elements: [],
+  };
+  for (var i = 0; i < updates.length; ++i) {
+    let newCom: ComServer = { id: 0, content: "" };
+    newCom.id = updates[i].id;
+    newCom.content = JSON.stringify(updates[i]);
+    console.log(newCom.id);
+    form.elements.push(newCom);
+  }
+  console.log(form);
+  ws.send(JSON.stringify(form));
+  updates = [];
+};
+
+const wsDestroy = () => {
+  var form = {
+    code: 2,
+    elements: [],
+  };
+  for (var i = 0; i < selectedId.value.length; ++i) {
+    let newCom: ComServer = { id: 0, content: "" };
+    newCom.id = layoutElementParams[selectedId.value[i]].id;
+    newCom.content = JSON.stringify(
+      layoutElementParams[selectedId.value[i]].id
+    );
+    form.elements.push(newCom);
+  }
+  ws.send(JSON.stringify(form));
+  selected.value.splice(0);
+  selectedId.value.splice(0);
+  moveable.target = null;
+  updateProps();
+};
+
+const wsCreate = (data: elementParams) => {
+  var form = {
+    code: 0,
+    elements: [],
+  };
+  let newCom: ComServer = { id: 0, content: "" };
+  newCom.id = data.id;
+  newCom.content = JSON.stringify(data);
+  form.elements.push(data);
+  ws.send(JSON.stringify(form));
+  selected.value.splice(0);
+  selectedId.value.splice(0);
+  moveable.target = null;
+  updateProps();
+};
 
 const updateSelects = (data: elementParams) => {
   if (data.text == "" || data.text == null) {
-    destroy();
+    wsDestroy();
   } else {
     layoutElementParams[selectedId.value[0]].text = data.text;
   }
@@ -516,8 +631,8 @@ const editContent = (index: number) => {
   selecto.selectableTargets = null;
   setTimeout(() => {
     selecto.selectableTargets = [].slice.call(
-        document.getElementsByName("elements")
-      );
+      document.getElementsByName("elements")
+    );
   });
 };
 
@@ -532,26 +647,22 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
 
   console.log(data);
 
-  if(data.type!="text")
-  {
+  if (data.type != "text") {
     element!.style.transform =
-    `translate(${data.x * scale}px,${data.y * scale}px)` +
-    ` scale(${data.scaleX},${data.scaleY})` +
-    ` rotate(${data.rotation}deg)`;
-  }
-  else
-  {
+      `translate(${data.x * scale}px,${data.y * scale}px)` +
+      ` scale(${data.scaleX},${data.scaleY})` +
+      ` rotate(${data.rotation}deg)`;
+  } else {
     element!.style.transform =
-    `translate(${data.x * scale}px,${data.y * scale}px)` +
-    ` scale(${data.scaleX*scale},${data.scaleY * scale})` +
-    ` rotate(${data.rotation}deg)`;
+      `translate(${data.x * scale}px,${data.y * scale}px)` +
+      ` scale(${data.scaleX * scale},${data.scaleY * scale})` +
+      ` rotate(${data.rotation}deg)`;
   }
 };
 
 const updateParams = (data: elementParams) => {
   if (data.id != 0) {
-    if(!(data.type=="text"&&data.text==""))
-    {
+    if (!(data.type == "text" && data.text == "")) {
       layoutElementParams.push(data);
     }
   }
@@ -645,14 +756,18 @@ const ProduceElement = (e: MouseEvent) => {
     preparedType = "rect";
     backColor = "transparent";
   }
+  var iheight = 200 * scale;
+  if (preparedType == "text") {
+    iheight = -1;
+  }
   if (preparedType != "") {
     update.value = true;
-    layoutElementParams.push({
+    wsCreate({
       id: 0,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
       width: 200 * scale,
-      height: 200 * scale,
+      height: iheight,
       scaleX: 1,
       scaleY: 1,
       rotation: 0,
@@ -667,42 +782,43 @@ const ProduceElement = (e: MouseEvent) => {
       //update: true,
     });
     preparedType = "";
-    var index = layoutElementParams.length - 1;
-
-    setTimeout(() => {
-      //let el: HTMLElement[] = [];
-      //el.push(
-
-      //);
-      selecto.selectableTargets = [].slice.call(
-        document.getElementsByName("elements")
-      );
-      var el = document.getElementsByName("elements")[index];
-      switch (layoutElementParams[index].type) {
-        case "text": {
-          layoutElementParams[index].height = -1;
-        }
-      }
-      updateTransform(el, layoutElementParams[index]);
-      selecto.clickTarget(e, el);
-      moveable.elementGuidelines = [].slice.call(
-        document.getElementsByName("elements")
-      );
-      moveable.elementGuidelines.push(document.getElementById("canvas"));
-    });
-    axios
-      .post(
-        `/layout/${layoutId}/element`,
-        { content: JSON.stringify(layoutElementParams[index]) },
-        { headers: headers }
-      )
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.msg == "成功") {
-          layoutElementParams[index].id = res.data.data.id;
-        }
-      });
   }
+  //   var index = layoutElementParams.length - 1;
+
+  //   setTimeout(() => {
+  //     //let el: HTMLElement[] = [];
+  //     //el.push(
+
+  //     //);
+  //     selecto.selectableTargets = [].slice.call(
+  //       document.getElementsByName("elements")
+  //     );
+  //     var el = document.getElementsByName("elements")[index];
+  //     switch (layoutElementParams[index].type) {
+  //       case "text": {
+  //         layoutElementParams[index].height = -1;
+  //       }
+  //     }
+  //     updateTransform(el, layoutElementParams[index]);
+  //     selecto.clickTarget(e, el);
+  //     moveable.elementGuidelines = [].slice.call(
+  //       document.getElementsByName("elements")
+  //     );
+  //     moveable.elementGuidelines.push(document.getElementById("canvas"));
+  //   });
+  //   axios
+  //     .post(
+  //       `/layout/${layoutId}/element`,
+  //       { content: JSON.stringify(layoutElementParams[index]) },
+  //       { headers: headers }
+  //     )
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       if (res.data.msg == "成功") {
+  //         layoutElementParams[index].id = res.data.data.id;
+  //       }
+  //     });
+  // }
   //updateServer(layoutElementParams.length-1);
 };
 
@@ -837,7 +953,7 @@ onMounted(() => {
   //setInterval(updateServer, 5000);
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
-      destroy();
+      wsDestroy();
     }
     if (e.key == " ") {
       selecto.dragCondition = () => {
@@ -916,7 +1032,6 @@ const wheelScale = () => {
       // layoutElementParams[i]!.height *= scope;
       //layoutElementParams[i]!.fontSize *= scope;
       if (layoutElementParams[i].type == "text") {
-        
       }
       updateTransform(
         document.getElementsByName("elements")[i],
@@ -992,8 +1107,7 @@ watch(
     );
     moveable.target = null;
     setTimeout(() => {
-      if(update.value)
-        moveable.target = selected.value;
+      if (update.value) moveable.target = selected.value;
     });
     updateUpdates();
   },
@@ -1014,6 +1128,7 @@ watch(
   () => props.layoutId,
   (newVal) => {
     layoutId = props.layoutId;
+    const ws = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/"+layoutId);
     initFromServer();
   }
 );

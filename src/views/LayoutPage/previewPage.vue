@@ -13,13 +13,13 @@
       >
         <div class="pageBoard" id="pageBoard">
           <div
-            v-for="(value, index) in pageImgs"
+            v-for="(value, index) in pageList"
             :class="
-              value.id != layoutId ? pageImageClass : pageImageSelectedClass
+              value.name != layoutId ? pageImageClass : pageImageSelectedClass
             "
             :key="index"
             :style="{ backgroundImage: 'url(' + value.src + ')' }"
-            @click="switchPage(value.id)"
+            @click="switchPage(index)"
           ></div>
         </div>
       </n-scrollbar>
@@ -42,6 +42,11 @@
 </template>
 
 <script setup lang="ts">
+import {
+  ArrowBackIosRound,
+  ArrowForwardIosRound,
+} from "@vicons/material";
+
 import axios from "axios"
 import gsap from "gsap"
 import { ref, reactive, onMounted } from "vue";
@@ -66,6 +71,10 @@ const pageList = reactive<Page[]>([])
 
 const pageOn = ref<boolean>(false)
 const empty = ref<boolean>(true);
+const layoutName = ref<string>("")
+
+const pageImageClass = ref<string>("pageImage");
+const pageImageSelectedClass = ref<string>("pageImageSelected")
 
 const screenW = document.body.clientWidth;
 const screenH = document.body.clientHeight;
@@ -80,12 +89,12 @@ const initPageImgs = () => {
       if (res.data.msg == "成功") {
         console.log(res.data);
 
-        for (var i = 0; i < res.data.data.items.length; ++i) {
+        for (var i = 0; i < res.data.data.length; ++i) {
           pageList[i]={
-            name: res.data.data.items[i].name,
-            src: res.data.data.items[i].src,
-            width: res.data.data.items[i].width,
-            height: res.data.data.items[i].height,
+            name: res.data.data[i].name,
+            src: res.data.data[i].src,
+            width: res.data.data[i].width,
+            height: res.data.data[i].height,
           };
         }
         if(pageList.length<=0)
@@ -94,7 +103,9 @@ const initPageImgs = () => {
         }
         else{
           empty.value = false;
-          switchPage(0);
+          setTimeout(() => {
+            switchPage(0);
+          });
         }
       }
     });
@@ -104,15 +115,16 @@ const switchPage = (id: number) => {
   var page = pageList[id];
   var calcH = page.width * ratiohw;
   var element = document.getElementById("img");
-  if(calcH>=screenH)
+  layoutName.value = pageList[id].name;
+  if(calcH<=pageList[id].height)
   {
     element.style.width = screenH*(pageList[id].width/pageList[id].height)+"px";
     element.style.height = screenH + "px";
   }
   else
   {
-    element.style.width = screenW +"px";
     element.style.height = screenW*(pageList[id].height/pageList[id].width) + "px";
+    element.style.width = screenW +"px";
   }
   element.style.backgroundImage="url("+page.src+")";
 };
@@ -142,7 +154,8 @@ const displayPageBoard = () => {
 };
 
 onMounted(()=>{
-  proCode = route.query.proCode as string;
+  console.log(route.query);
+  proCode = route.query.viewUrl as string;
   initPageImgs();
 })
 </script>
@@ -154,7 +167,7 @@ onMounted(()=>{
 .img{
   position:absolute;
   left:50%;
-  transform: -50%;
+  transform: translate(-50%,0);
   background-size: cover;
 }
 .pageBoardBox {
@@ -162,7 +175,7 @@ onMounted(()=>{
   height: 100%;
 }
 .pageBoard {
-  position: absolute;
+  /* position: absolute; */
   display: inline-block;
   background-color: #2b303b;
   opacity: 70%;
@@ -193,5 +206,39 @@ onMounted(()=>{
   border-width: 3px;
   margin-bottom: 25px;
   background-size: cover;
+}
+.elementBrowser {
+  width: 18px;
+  height: 72px;
+  background-color: #2b303b;
+  float: left;
+  position: relative;
+}
+.elementLeftUnit {
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+.elementArrow {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+.elementBrowser:hover {
+  background-color: #3a404f;
+}
+.elementBrowser:active {
+  background-color: #515868;
+}
+.elementRightUnit {
+  border-top-right-radius: 18px;
+  border-bottom-right-radius: 18px;
+}
+.pageBrowser {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 }
 </style>

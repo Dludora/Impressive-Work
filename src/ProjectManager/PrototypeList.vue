@@ -208,7 +208,7 @@ onMounted(()=>{
   getList();
 })
 const getUrl = () => {
-  let base = 'http://127.0.0.1:8080?viewUrl='
+  let base = 'http://127.0.0.1:8080/preview?viewUrl='
   let url = '/layout/preview?programID='+proID.value;
   axios.post(url,{},{headers:headers}).then(res=>{
     if(res.data.msg==="成功"){
