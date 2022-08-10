@@ -27,14 +27,11 @@
         }"
             />
           </n-form-item>
-          <!-- <n-form-item label="锁定加入" path="switchValue">
-            <n-switch v-model:value="model.switchValue"/>
-          </n-form-item> -->
         </n-form>
-        <n-button @click="change" style="margin-left:200px" size="large" type="primary">
+        <n-button @click="change" style="margin-left:200px" size="large" type="primary" v-if="myIdentify>=1">
           保存修改
         </n-button>
-        <n-button @click="cancel" style="margin-left:50px" size="large" type="tertiary">
+        <n-button @click="cancel" style="margin-left:50px" size="large" type="tertiary" v-if="myIdentify>=1">
           取消修改
         </n-button>
       </div>
@@ -47,7 +44,7 @@
         <div class="button">
           <n-button @click="showModalDissolve=true" style="padding-left: 40px;padding-right: 40px;font-size: 14px;"
                     dashed
-                    v-if="myIdentify==2">解 散 团 队
+                    v-if="myIdentify===2">解 散 团 队
           </n-button>
           <n-button @click="showModalExit=true" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed
                     v-else>退 出
