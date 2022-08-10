@@ -11,6 +11,7 @@
             <div class="teams">
               <n-tree
                   :block-line="true"
+                  draggable
                   :data="data"
                   :checked-keys="checkedKeys"
                   :on-load="handleLoad"
@@ -200,9 +201,13 @@ const nodeProps = ({option}:{option: TreeOption}) => {
     onClick () {
       if(!option.dir) {
         if(option.isPro==0) {
-          openDocu(option.doc.ID)
+          if(option.doc.ID !== utils.getCookie('editDocID')) {
+            openDocu(option.doc.ID)
+          }
         } else {
-          openDocu(option.fileID)
+          if(option.fileID !== utils.getCookie('editDocID')) {
+            openDocu(option.fileID)
+          }
         }
       }
     }

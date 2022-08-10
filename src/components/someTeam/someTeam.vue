@@ -9,7 +9,7 @@
       <div class="three-cls">
         <div class="clsL">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" default-value="" :value="judge"/>
+          <n-menu mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" :value="judge"/>
         </n-config-provider>
         </div>
         <div class="clsR">
@@ -85,8 +85,6 @@ import utils from "@/Utils";
 const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 
-
-
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -126,8 +124,9 @@ export default defineComponent({
         idx=Math.floor(Math.random() * max)
       return colorList[idx]
     }
-    let judge = ref('');
-    const router = useRouter();
+    let judge = ref('')
+    const router = useRouter()
+    const route = useRoute()
     let menuOptions: MenuOption[] = [
       {
         label: () =>
@@ -183,8 +182,6 @@ export default defineComponent({
         icon: renderIcon(Settings)
       },
     ]
-
-    const route = useRoute()
     let searchText = ref('')
     let teamID = ref('')
     const com = ref(null)
@@ -250,9 +247,8 @@ export default defineComponent({
     }
     onMounted(() => {
      if(typeof(route.query.teamID)!="undefined")
-     teamID.value=(route.query.teamID).toString();
+     teamID.value=(route.query.teamID).toString()
      judge.value=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
-     console.log('judge change to '+judge.value)
     })
     return {
        handleUpdateValue(key: string, item: MenuOption) {
