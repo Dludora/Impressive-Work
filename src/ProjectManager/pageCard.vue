@@ -1,7 +1,7 @@
 <template>
   <div class="card">
-    <div class="img">
-        <img style="width:192px;height:104px;" class="cover" :src="imgUrl" />
+    <div class="img" :style="'background-image:url('+imgUrl+');'">
+        <!-- <img style="width:192px;height:104px;" class="cover" :src="imgUrl" /> -->
       </div>  
     <div class="bottom">
       <SvgCreate class="svg-create" size="16" border="6" bordercolor="#A7AFBE" color="none" style="margin:10px;"/>
@@ -85,6 +85,10 @@ export default {
 }
 
 .img {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
   width: 100%;
   height: 104px;
   background-color: #A7AFBE;
