@@ -271,56 +271,6 @@ export default {
  */
     },
 
-    billPrintClick(){
-      const style = '@page {margin:0 10mm};'//打印时去掉眉页眉尾
-      //打印为什么要去掉眉页眉尾？因为眉页title时打印当前页面的title，相当于是获取html中title标签里面的内容，但是比如我打印的内容只是一个弹框里面的内容，是没有title的，这时候就会出现undefined，为了避免出现这种情况，就可以隐藏眉页眉尾
-      printJS({
-        printable: 'pdfDom',// 标签元素id
-        type: 'html',
-        header: '',
-        targetStyles: ['*'],
-        width:
-        style
-      });
-      //各个配置项
-      //printable:要打印的id。
-      //type:可以是 html 、pdf、 json 等。
-      //properties:是打印json时所需要的数据属性。
-      //gridHeaderStyle和gridStyle都是打印json时可选的样式。
-      //repeatTableHeader:在打印JSON数据时使用。设置为时false，数据表标题将仅在第一页显示。
-      //scanStyles:设置为false时，库将不处理应用于正在打印的html的样式。使用css参数时很有用，此时自己设置的原来想要打印的样式就会失效，在打印预览时可以看到效果
-      //targetStyles: [’*’],这样设置继承了页面要打印元素原有的css属性。
-      //style:传入自定义样式的字符串，使用在要打印的html页面 也就是纸上的样子。
-      //ignoreElements：传入要打印的div中的子元素id，使其不打印。非常好用
-    },
-
-    openPrint(){
-//判断iframe是否存在，不存在则创建iframe
-      let iframe = document.getElementById("pdfDom");
-      console.log("test")
-
-      if(!iframe){
-        const el = document.getElementById("pdfDom");
-        iframe = document.createElement('IFRAME');
-        let doc = null;
-        iframe.setAttribute("id", "print-iframe");
-        iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
-//left负值不会出现横向滚动条
-        document.body.appendChild(iframe);
-        doc = iframe.contentWindow.document;
-        //这里可以自定义样式
-        doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
-        doc.write('<div>' + el.innerHTML + '</div>');
-        doc.close();
-        iframe.contentWindow.focus();
-      }
-
-      iframe.contentWindow.print();
-      if (navigator.userAgent.indexOf("MSIE") > 0){
-        document.body.removeChild(iframe);
-      }
-    },
-
     saveWord(){
       let htmlStr = document.querySelector("#pdfDom").innerHTML;
       let page = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${htmlStr}
@@ -331,7 +281,7 @@ export default {
             orientation: "landscape"//跨域设置
           }),
           //文件名
-          "1"+".doc"
+          this.title+".doc"
       )
     },
 
@@ -345,25 +295,25 @@ export default {
 
       const markdown = turndown.turndown(this.editor.getHTML());
 
-      var file = new File([markdown], "1.md", {type: "text/plain;charset=utf-8"});
+      var file = new File([markdown], this.title+".md", {type: "text/plain;charset=utf-8"});
       saveAs(file);
     },
 
     saveHTML(){
 
-      var file = new File([this.editor.getHTML()], "1.html", {type: "text/plain;charset=utf-8"});
+      var file = new File([this.editor.getHTML()], this.title+".html", {type: "text/plain;charset=utf-8"});
       saveAs(file);
     },
 
     saveJSON(){
 
-      var file = new File([this.editor.getJSON()], "1.json", {type: "text/plain;charset=utf-8"});
+      var file = new File([this.editor.getJSON()], this.title+".json", {type: "text/plain;charset=utf-8"});
       saveAs(file);
     },
 
     saveText(){
 
-      var file = new File([this.editor.getText()], "1.txt", {type: "text/plain;charset=utf-8"});
+      var file = new File([this.editor.getText()], this.title+".txt", {type: "text/plain;charset=utf-8"});
       saveAs(file);
     },
 
@@ -418,6 +368,8 @@ export default {
   },
 
   beforeUnmount() {
+
+
     const docID=parseInt(utils.getCookie('editDocID'));
     console.log(docID);
     const docContent=this.editor.getHTML();
@@ -442,16 +394,19 @@ export default {
 
       }
     })
+
     this.editor.destroy()
     this.provider.destroy()
+
+
   },
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .head-bg{
-  /*background-color: #2B303B;*/
+  background-color: #535a75;
   min-width: 100%;
   height: 42px;
   /*display: inline-block;*/
@@ -562,7 +517,7 @@ export default {
 }
 </style>
 
-<style scoped>
+<style lang="scss">
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
   position: relative;

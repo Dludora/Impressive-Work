@@ -39,7 +39,7 @@ import { useMessage } from "naive-ui";
 import Selecto from "selecto";
 import Moveable from "moveable";
 
-const ws:WebSocket = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/1");
+let ws: WebSocket = null;
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -484,41 +484,48 @@ const initFromServer = () => {
 };
 
 const initWS = () => {
+  ws.onopen = () => {
+    ws.send("hi");
+  };
   ws.onmessage = (res) => {
-    var data = JSON.parse(res as unknown as string);
-    switch (data.code) {
-      case 0: {
-        for (var i = 0; i < data.elements.length; ++i) {
-          wsResCreate(data.elements[i]);
-        }
-        setTimeout(() => {
-          for (var i = 0; i < layoutElementParams.length; ++i) {
-            updateTransform(
-              document.getElementsByName("elements")[i],
-              layoutElementParams[i]
-            );
+    try {
+      var data = JSON.parse(res.data as unknown as string);
+      switch (data.code) {
+        case 0: {
+          for (var i = 0; i < data.elements.length; ++i) {
+            wsResCreate(data.elements[i]);
           }
-          selecto.selectableTargets = [].slice.call(
-            document.getElementsByName("elements")
-          );
-          moveable.elementGuidelines = [].slice.call(
-            document.getElementsByName("elements")
-          );
-          moveable.elementGuidelines.push(document.getElementById("canvas"));
-        });
-        var index = layoutElementParams.length - 1;
-        break;
-      }
-      case 1: {
-        for (var i = 0; i < data.elements.length; ++i) {
-          wsResMod(data.elements[i]);
+          setTimeout(() => {
+            for (var i = 0; i < layoutElementParams.length; ++i) {
+              updateTransform(
+                document.getElementsByName("elements")[i],
+                layoutElementParams[i]
+              );
+            }
+            selecto.selectableTargets = [].slice.call(
+              document.getElementsByName("elements")
+            );
+            moveable.elementGuidelines = [].slice.call(
+              document.getElementsByName("elements")
+            );
+            moveable.elementGuidelines.push(document.getElementById("canvas"));
+          });
+          var index = layoutElementParams.length - 1;
+          break;
         }
-        break;
+        case 1: {
+          for (var i = 0; i < data.elements.length; ++i) {
+            wsResMod(data.elements[i]);
+          }
+          break;
+        }
+        case 2: {
+          wsResDestroy(data.elements);
+          break;
+        }
       }
-      case 2: {
-        wsResDestroy(data.elements);
-        break;
-      }
+    } catch (error) {
+      console.log(res);
     }
   };
   ws.onerror = () => {
@@ -531,30 +538,46 @@ const initWS = () => {
 
 const wsResCreate = (data: ComServer) => {
   var res = JSON.parse(data.content);
-  if (res.id != 0) {
+  if (data.id != 0) {
     if (!(res.type == "text" && res.text == "")) {
+      res.id = data.id; 
       layoutElementParams.push(res);
-      paramsDic[res.id] = res;
+      paramsDic[data.id] = res;
     }
   }
-  console.log(layoutElementParams);
+  setTimeout(() => {
+    console.log(res);
+  }); 
+  
 };
 
 const wsResMod = (data: ComServer) => {
   var res = JSON.parse(data.content);
+  console.log(res);
   if (paramsDic[res.id] != null) {
     if (!(res.type == "text" && res.text == "")) {
-      paramsDic[res.id] = res;
+      for(var i=0;i<layoutElementParams.length;++i)
+      {
+        if(layoutElementParams[i].id==res.id)
+        {
+          layoutElementParams[i]=res;
+          updateTransform(
+              document.getElementsByName("elements")[i],
+              layoutElementParams[i]
+            );
+        }
+      }
     }
   }
 };
 
 const wsResDestroy = (res) => {
-  for (var i = layoutElementParams.length; i >= 0; --i) {
-    for (var j = res.length; j >= 0; --j) {
+  console.log(res);
+  for (var i = layoutElementParams.length-1; i >= 0; --i) {
+    for (var j = res.length-1; j >= 0; --j) {
       if (layoutElementParams[i].id == res[j].id) {
         layoutElementParams.splice(i, 1);
-        res.splice(j, 1);
+        //res.splice(j, 1);
         break;
       }
     }
@@ -606,8 +629,10 @@ const wsCreate = (data: elementParams) => {
   let newCom: ComServer = { id: 0, content: "" };
   newCom.id = data.id;
   newCom.content = JSON.stringify(data);
-  form.elements.push(data);
+  form.elements.push(newCom);
+  console.log(form);
   ws.send(JSON.stringify(form));
+
   selected.value.splice(0);
   selectedId.value.splice(0);
   moveable.target = null;
@@ -645,7 +670,7 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
   }
   element!.style.borderRadius = data.borderRadius;
 
-  console.log(data);
+  //console.log(data);
 
   if (data.type != "text") {
     element!.style.transform =
@@ -950,7 +975,7 @@ onMounted(() => {
   initSelecto();
   importImages();
   //updateServer();
-  //setInterval(updateServer, 5000);
+  setInterval(wsUpdate, 5000);
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       wsDestroy();
@@ -1128,8 +1153,14 @@ watch(
   () => props.layoutId,
   (newVal) => {
     layoutId = props.layoutId;
-    const ws = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/"+layoutId);
-    initFromServer();
+    ws = new WebSocket(
+      "ws://82.156.125.202/soft2/socket/websocket/layout/" +
+        layoutId +
+        "?Authorization=" +
+        [utils.getCookie("Authorization")]
+    );
+    initWS();
+    //initFromServer();
   }
 );
 
