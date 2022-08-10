@@ -197,8 +197,8 @@ type proj = {
   src: string,
   teamID: number
 }
-const projects = reactive<proj[]>([])
-
+let projects = reactive<proj[]>([])
+const projects_empty = reactive<proj[]>([])
 
 // 重命名表单
 let showModalRef = ref(false)
@@ -210,6 +210,7 @@ const getList = () => {
   if (ifUp.value)
     direction = 1;
   console.log("开始获取")
+  projects = projects_empty
   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort='
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
