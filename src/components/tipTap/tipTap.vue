@@ -406,7 +406,7 @@ export default {
 <style lang="scss">
 
 .head-bg{
-  background-color: #535a75;
+  //background-color: #535a75;
   min-width: 100%;
   height: 42px;
   /*display: inline-block;*/
