@@ -54,6 +54,7 @@
         </div>
       </div>
     </n-scrollbar>
+    
   </div>
   <!-- <n-space>
     <n-button @click="regisRouter">登录/注册</n-button>
@@ -69,14 +70,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import { useRouter,useRoute } from "vue-router";
 import axios from 'axios';
 import {useMessage} from "naive-ui"
 import headNav from "@/components/headNav.vue"
 import utils from "@/Utils";
+import { verify } from "crypto";
 const router = useRouter();
 const message = useMessage();
+const route = useRoute();
 
 const headers = {
   Authorization: utils.getCookie('Authorization')
@@ -105,7 +108,17 @@ const logout = () => {
 const teamMain= () =>{
   router.push('/teamchoose');
 }
-
+const viewVerify = () => {
+  if(typeof(route.query.viewUrl)!="undefined"){
+    if(utils.getCookie('Authorization')==='')
+    {
+      message.warning('请登录后预览项目')
+      return;
+    }
+    // TODO: Go to view
+    message.success('预览成功')
+  }
+}
 const programView = () => {
   router.push('/teamchoose');
 }
@@ -130,6 +143,9 @@ const scroll =(e:Event)=>{
     else figure.style.opacity='0.2'
   }else figure.style.opacity='1'
 }
+onMounted(()=>{
+  viewVerify()
+})
 </script>
 
 <style scoped>
