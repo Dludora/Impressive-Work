@@ -1,26 +1,31 @@
 <template>
-    <div class="card" >
-        <div class="img" @click="gotoProject" :style="'background-image:url('+imgUrl+');'">
-        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
+    <div class="card" @click="gotoProject" style="cursor: pointer;" @mouseenter="come" @mouseleave="leave">
+        <!-- <div class="img"  :style="'background-image:url('+imgUrl+');'" > -->
+          <div class="img">
+        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
                 <n-input class="nameInput" autosize size="small" v-model:value="Name" />
             </div> -->
-            <div class="name">
-              <n-input class="nameInput" @change="changeName" @click="handleFocus" autosize size="small" ref="inputInstRef" v-model:value="Name" />
+            <div class="name" >
+              <n-input class="nameInput" @change="changeName" @click.stop="handleFocus" autosize size="small" ref="inputInstRef" v-model:value="Name" />
             </div>
+
             <Icon size="20" class="rename">
-                <Edit16Regular  :focusable="false" @click="handleFocus"/>
+                <Edit16Regular  :focusable="false" @click.stop="handleFocus"/>
             </Icon>
             <Icon size="20" class="rename">
-                <Copy16Filled @click="copyThis"/>
+                <Copy16Filled @click.stop="copyThis"/>
             </Icon>
+
         </div>
         <div class="desc">
+
             创建于&nbsp;{{date}}
+
             <Icon size="20" class="del">
-                <CloseRound @click="delThis"/>
+                <CloseRound @click.stop="delThis"/>
             </Icon>
         </div>
     </div>
@@ -55,6 +60,18 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
+    const come = () => {
+      let temp = document.getElementsByClassName('nameInput')
+      console.log("变色龙")
+      // let on = <HTMLElement>(<unknown>temp)
+      // on.style.background="#2B303B";
+    }
+    const leave=()=>{
+      let temp = document.getElementsByClassName('nameInput')
+      console.log("变色龙")
+      // let on = <HTMLElement>(<unknown>temp);
+      // on.style.background="#16181d"
+    }
     const imgUrl = ref('')
     const message = useMessage()
       const headers = {
@@ -124,6 +141,8 @@ export default defineComponent({
 
     })
     return {
+      come,
+      leave,
       imgUrl,
       changeName,
       headers,
@@ -147,7 +166,7 @@ export default defineComponent({
 
 <style scoped>
 .nameInput{
-  min-width: 100px;background-color: #16181d;
+  min-width: 100px;background-color: transparent;
 }
 * {
   transition: 0.2s;

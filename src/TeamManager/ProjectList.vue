@@ -121,7 +121,7 @@ import {CaretUp24Filled} from "@vicons/fluent"
 import {CaretDown24Filled} from "@vicons/fluent"
 import {darkTheme, useMessage} from "naive-ui";
 import {defineComponent, computed, watch, h, onMounted, reactive, ref} from "vue";
-import {useRoute} from 'vue-router'
+import {useRoute,useRouter} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
 import utils from '../Utils'
@@ -136,14 +136,20 @@ let shortcuts = [
   },
 ]
 let length = 0
-const sortMethod = ref('修改时间')
+const sortMethod = ref('')
 const route = useRoute();
+const router = useRouter();
 const message = useMessage();
 const showDropdownRef = ref(false);
 let ifUp = ref(false);
 const changeUp = () => {
   ifUp.value = !ifUp.value
-  getList();
+  if(ifUp.value===true)
+  utils.setCookie('ifUp',1);
+  else
+  utils.setCookie('ifUp',0);
+  //getList();
+  router.go(0)
 }
 const sort = ref(0)
 const options = [
@@ -160,10 +166,19 @@ const handleSelect = (key: string | number) => {
   message.info(String(key))
   sortMethod.value = String(key)
   if (sortMethod.value === '创建时间')
-    sort.value = 0;
+    {
+      sort.value = 0;
+      utils.setCookie('sort',sort.value)
+      utils.setCookie('sortMethod',sortMethod.value)
+    }
   else if (sortMethod.value === "项目名称")
-    sort.value = 1;
+  {
+      sort.value = 1;
+      utils.setCookie('sort',sort.value)
+      utils.setCookie('sortMethod',sortMethod.value)
+  }
   getList();
+  router.go(0)
 }
 const handleClick = () => {
   showDropdownRef.value = !showDropdownRef.value
@@ -212,6 +227,9 @@ watch(getGlobal, (newVal, oldVal) => {
   }
 }, {immediate: true, deep: true})
 onMounted(() => {
+  sort.value = parseInt(utils.getCookie('sort').toString())
+  sortMethod.value = utils.getCookie('sortMethod')
+  ifUp.value =parseInt(utils.getCookie('ifUp'))===1
   if (typeof (route.query.teamID) != "undefined")
     teamID.value = parseInt(route.query.teamID.toString())
 
@@ -247,6 +265,7 @@ const displayCopy = (ID) => {
     if (res.data.msg === "成功") {
       getList();
       message.success("复制成功");
+      router.go(0)
     }
   })
 }
@@ -300,12 +319,9 @@ const onPositiveClickDel = () => {
 
   axios.delete(deleUrl, {headers: headers}).then(res => {
     console.log(res.data)
-    for (let i = 0; i < projects.value.length; i++) {
-      if (projects.value[i].ID === opID.value) {
-        projects.value.splice(i, 1)
-      }
-    }
+    getList()
     message.info("删除成功！")
+    router.go(0)
   })
   delRef.value = false
 }
@@ -352,7 +368,7 @@ const onPositiveAddClick = () => {
   }
   axios.post('/program', {
     'teamID': route.query.teamID,
-    "src": "",
+    "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
     "name": modelAddRef.value.name
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -360,7 +376,7 @@ const onPositiveAddClick = () => {
       let t = new Date();
       let item = {
         "name": modelAddRef.value.name,
-        "src": "nope",
+        "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
         "createTime": t,
         "ID": res.data.data
       }

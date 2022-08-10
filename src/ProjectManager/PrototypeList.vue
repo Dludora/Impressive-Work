@@ -128,8 +128,9 @@ import PageCard from "@/ProjectManager/pageCard.vue"
 import axios from "axios";
 import utils from "@/Utils";
 import {onMounted, ref,watch} from "vue";
-import {useRouter} from "vue-router"
+import {useRouter,useRoute} from "vue-router"
 import {Copy16Filled} from '@vicons/fluent'
+
 import {darkTheme, NIcon, useMessage,InputInst} from "naive-ui";
 import { MdCash } from '@vicons/ionicons4'
 let proID = ref(0);
@@ -249,7 +250,7 @@ const getList = () =>{ //TODO 前后端对接：获取页面列表
     }
   })
 }
-
+const route = useRoute()
 //删除布局
 const delID = ref(0)
 const theme = darkTheme
@@ -375,6 +376,7 @@ const openCard =(indx) => {
 
   router.push({path:"/layout",
   query:{
+    teamID:route.query.teamID,
     layoutId: openID.value,
     layoutName: shortcuts.value[indx].name,
     canvasWidth: shortcuts.value[indx].width,

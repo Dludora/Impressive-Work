@@ -68,7 +68,7 @@ const onPositiveClick = () =>{
     axios.post(url,{},{headers:headers}).then(res=>{
         console.log(res.data)
         if(res.data.msg==="成功"){
-            message.success("加入"+team.value+"团队成功！")
+            message.success("加入 "+team.value+" 团队成功！")
         }
         else{
             message.warning(res.data.msg)
