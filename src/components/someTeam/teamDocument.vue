@@ -175,8 +175,8 @@ const dblClickCrumb = (item, index) => {
 }
 const dblClick = (item, add) => {
   if (!item.dir) {
-    console.log('是文件')
-    let urlOP = '/document/'+item.doc.ID
+    let fileID = item.isPro == 0 ? item.doc.ID : item.fileID
+    let urlOP = '/document/' + fileID
     axios.get(urlOP, {headers: headers}).then(res => {
       console.log("获取文档内容成功")
       let opContent
@@ -202,7 +202,7 @@ const dblClick = (item, add) => {
         utils.setCookie('DocContent', opContent);
       }
       let opTitle = res.data.data.title;
-      utils.setCookie('editDocID', item.doc.ID);
+      utils.setCookie('editDocID', fileID);
       utils.setCookie('DocTitle', opTitle);
       router.push({path: '/teamDocView', query: {teamID: route.query.teamID}});
     })
