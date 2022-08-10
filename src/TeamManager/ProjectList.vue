@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="prolist">
-          <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+          <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -58,7 +58,7 @@
       >
         <n-form :model="modelRef">
           <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
-            <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+            <n-input v-model:value="modelRef.name" placeholder="请输入项目名称" @keydown.enter.prevent/>
           </n-form-item>
         </n-form>
       </n-modal>
@@ -87,7 +87,7 @@
       >
         <n-form :model="modelAddRef">
           <n-form-item label="项目名称" :rule="ruleAdd" :render-feedback="formatFeedback">
-            <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
+            <n-input v-model:value="modelAddRef.name" placeholder="请输入项目名称" @keydown.enter.prevent/>
           </n-form-item>
         </n-form>
       </n-modal>
@@ -191,22 +191,25 @@ const getList = () => {
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
-    console.log(res.data)
     projects.value = res.data.data.items
     for (let i = 0; i < projects.value.length; i++) {
       let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
       projects.value[i].createTime = tempDate
     }
-    console.log("getList:" + projects.value)
+    console.log(projects.value)
   })
 }
 const getGlobal = computed(() => {
   return route.query.teamID + '&' + route.query.searchText
 })
 watch(getGlobal, (newVal, oldVal) => {
-  if (typeof (route.query.searchText) != "undefined")
-    keyword.value = route.query.searchText.toString();
-  getList()
+  console.log(getGlobal)
+  if (typeof (route.query.searchText) != "undefined") {
+    keyword.value = route.query.searchText.toString()
+  }
+  if (typeof (route.query.teamID) != "undefined") {
+    getList()
+  }
 }, {immediate: true, deep: true})
 onMounted(() => {
   if (typeof (route.query.teamID) != "undefined")
@@ -349,7 +352,7 @@ const onPositiveAddClick = () => {
   }
   axios.post('/program', {
     'teamID': route.query.teamID,
-    "src": "what the fuck photos",
+    "src": "",
     "name": modelAddRef.value.name
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {

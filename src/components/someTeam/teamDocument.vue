@@ -2,7 +2,7 @@
   <div class="main">
     <div class="layout">
       <div class="discribe">
-        管理你的{{ length }}个文件夹
+        管理属于当前团队的文档
         <div class="buttons" v-if="crumbs[crumbs.length-1].isPro === 0">
           <n-button class="newpage" @click="showModalAddRef=true" size="tiny" style="margin-right: 30px">
             新 建 文 件 夹
@@ -48,7 +48,7 @@
     >
       <n-form :model="modelRef">
         <n-form-item label="文件夹/文档名称" :rule="listRenameRule" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelRef.name" placeholder="请输入新的文件夹/文档名称" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -64,7 +64,7 @@
     >
       <n-form :model="modelAddRef">
         <n-form-item label="文件夹名称" :rule="ruleAdd" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelAddRef.name" placeholder="请输入文件夹名称" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -174,6 +174,7 @@ const dblClickCrumb = (item, index) => {
   dblClick(item, false)
 }
 const dblClick = (item, add) => {
+  // 是文档
   if (!item.dir) {
     let fileID = item.isPro == 0 ? item.doc.ID : item.fileID
     let urlOP = '/document/' + fileID
@@ -304,13 +305,20 @@ const modelRef = ref({
   name: "",
   ID: 0,
   teamID: 0,
-  parentID: 0
+  parentID: 0,
+  dir: false,
+  docID: false
 })
 const listRename = (index) => {
   modelRef.value.name = list.value[index].name
   modelRef.value.ID = list.value[index].fileID
   modelRef.value.teamID = list.value[index].teamID
   modelRef.value.parentID = list.value[index].parentID
+  modelRef.value.dir = list.value[index].dir
+  if(!modelRef.value.dir) {
+    modelRef.value.docID = list.value[index].doc.ID
+  }
+
   showModalRef.value = true
 }
 const listRenameRule = {
@@ -327,7 +335,23 @@ const listRenameRule = {
   trigger: ['input', 'blur']
 }
 const onPositiveClick = () => {
-  axios.put('/doccenter', modelRef.value, {headers: headers}).then(res => {
+  if(!modelRef.value.dir) {
+    axios.put(
+        '/document/title',
+        {ID: modelRef.value.docID, title: modelRef.value.name},
+        {headers: headers}
+    )
+  }
+  axios.put(
+      '/doccenter',
+      {
+        ID: modelRef.value.ID,
+        teamID: modelRef.value.teamID,
+        name: modelRef.value.name,
+        parentID: modelRef.value.parentID
+      },
+      {headers: headers}
+  ).then(res => {
     getDoc(modelRef.value.parentID)
   })
   showModalRef.value = true

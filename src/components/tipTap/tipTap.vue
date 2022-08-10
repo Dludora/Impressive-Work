@@ -2,12 +2,10 @@
   <div class="item-bg">
 
     <n-space class="head-bg" justify="space-between">
-
       <div/>
       <h style="margin-left:40px;color: #FFFFFF; display: inline">
         {{title}}
       </h>
-
       <!-- <n-button @click="returnTO">返回</n-button>
 
       <n-button @click="downPDF">下载PDF</n-button>

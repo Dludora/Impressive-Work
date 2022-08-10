@@ -1,6 +1,7 @@
 <template>
     <div class="card" >
-        <div class="img" @click="gotoProject">
+        <div class="img" @click="gotoProject" :style="'background-image:url('+imgUrl+');'">
+        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -41,7 +42,7 @@ export default defineComponent({
   name: 'PageCard',
   props: {
     name: String,
-    img: Image,
+    img: String,
     date: String,
     id: {
       default: 0
@@ -54,6 +55,7 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
+    const imgUrl = ref('')
     const message = useMessage()
       const headers = {
         Authorization: utils.getCookie('Authorization')
@@ -66,6 +68,7 @@ export default defineComponent({
       // console.log("go")
       utils.setCookie('proID', props.id)
       utils.setCookie('proNAME', props.name)
+      utils.setCookie('proIMG', props.img)
       utils.setCookie('proTeam', route.query.teamID)
 
       router.replace({name: 'project', query:{teamID: route.query.teamID}})
@@ -90,7 +93,7 @@ export default defineComponent({
       if(props.name!=Name.value)
       axios.put("/program", {
               "ID": props.id,
-              "src": "src",
+              "src": props.img,
               "name": Name.value
               }, {headers: headers}).then(res => {
 
@@ -112,10 +115,15 @@ export default defineComponent({
 
       }, {immediate: true, deep: true})
     onMounted(()=>{
+      imgUrl.value=props.img
       Name.value=props.name
+      // if(imgUrl.value===''){
+      //   imgUrl.value='../assets/teamfigure.jpg'
+      // }
 
     })
     return {
+      imgUrl,
       changeName,
       headers,
       message,
@@ -162,8 +170,13 @@ export default defineComponent({
   display: flex;
 }
 .img{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  
     width:100%;
     height: 140px;
+    overflow: hidden;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
