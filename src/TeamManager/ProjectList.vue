@@ -166,17 +166,14 @@ const options = [
 const handleSelect = (key: string | number) => {
   message.info(String(key))
   sortMethod.value = String(key)
-  if (sortMethod.value === '创建时间')
-    {
-      sort.value = 0;
-      utils.setCookie('sort',sort.value)
-      utils.setCookie('sortMethod',sortMethod.value)
-    }
-  else if (sortMethod.value === "项目名称")
-  {
-      sort.value = 1;
-      utils.setCookie('sort',sort.value)
-      utils.setCookie('sortMethod',sortMethod.value)
+  if (sortMethod.value === '创建时间') {
+    sort.value = 0;
+    utils.setCookie('sort', sort.value)
+    utils.setCookie('sortMethod', sortMethod.value)
+  } else if (sortMethod.value === "项目名称") {
+    sort.value = 1;
+    utils.setCookie('sort', sort.value)
+    utils.setCookie('sortMethod', sortMethod.value)
   }
   getList();
   //router.go(0)
@@ -218,22 +215,23 @@ const getList = () => {
   axios.get(url, {headers: headers}).then(res => {
     console.log("get messages")
     console.log(res.data)
-    projects.value = res.data.data.items
-    for (let i = 0; i < res.data.data.items.length; i++) {
-
-      let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-      // projects[i]={
-      //   ID : res.data.data.items[i].ID,
-      //   name : res.data.data.items[i].name,
-      //   previewCode : res.data.data.items[i].previewCode,
-      //   src : res.data.data.items[i].src,
-      //   teamID : res.data.data.items[i].teamID,
-      //   createTime : tempDate
-      // }
-      projects.value[i].createTime = tempDate
+    if (res.data.msg === '成功') {
+      projects.value = res.data.data.items
+      for (let i = 0; i < res.data.data.items.length; i++) {
+        let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+        // projects[i]={
+        //   ID : res.data.data.items[i].ID,
+        //   name : res.data.data.items[i].name,
+        //   previewCode : res.data.data.items[i].previewCode,
+        //   src : res.data.data.items[i].src,
+        //   teamID : res.data.data.items[i].teamID,
+        //   createTime : tempDate
+        // }
+        projects.value[i].createTime = tempDate
+      }
     }
-    console.log("啊啊啊啊啊")
-    console.log(projects.value)
+    // console.log("啊啊啊啊啊")
+    // console.log(projects.value)
   })
 }
 const getGlobal = computed(() => {

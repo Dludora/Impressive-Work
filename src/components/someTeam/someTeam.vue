@@ -52,10 +52,10 @@
     >
       <n-form>
         <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelRef.name" @keydown.enter.prevent placeholder="请输入团队名称"/>
         </n-form-item>
         <n-form-item label="团队描述" :rule="ruleDescription" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.description" @keydown.enter.prevent type="textarea"/>
+          <n-input v-model:value="modelRef.description" @keydown.enter.prevent type="textarea" placeholder="请输入团队简介(非必须)"/>
         </n-form-item>
       </n-form>
     </n-modal>
