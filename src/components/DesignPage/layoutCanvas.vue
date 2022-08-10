@@ -599,6 +599,10 @@ const wsResDestroy = (res) => {
 };
 
 const wsUpdate = () => {
+  if(ws.readyState!=1)
+  {
+    return;
+  }
   var form = {
     code: 1,
     elements: [],
@@ -616,6 +620,10 @@ const wsUpdate = () => {
 };
 
 const wsDestroy = () => {
+  if(ws.readyState!=1)
+  {
+    return;
+  }
   var form = {
     code: 2,
     elements: [],
@@ -636,6 +644,10 @@ const wsDestroy = () => {
 };
 
 const wsCreate = (data: elementParams) => {
+  if(ws.readyState!=1)
+  {
+    return;
+  }
   var form = {
     code: 0,
     elements: [],
@@ -654,6 +666,10 @@ const wsCreate = (data: elementParams) => {
 };
 
 const wsClose = ()=>{
+  if(ws.readyState!=1)
+  {
+    return;
+  }
   ws.close();
 }
 

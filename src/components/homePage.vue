@@ -21,13 +21,38 @@
           </div>
         </div>
         <div class="wide feature">
-          <div class="pic teampic"/>
+          <!-- <div class="pic teampic"/> -->
+          <div class="steps">
+            <div class="astep teampic1">
+              <div class="step-introduce">
+                在选择团队界面<br/>
+                或团队和项目侧边栏找到“新建团队”按钮<br/>
+                按下它，开始你的开发之旅<br/>
+              </div>
+            </div>
+            <div class="astep teampic2">
+              <div class="step-introduce">
+                在团队的“成员”选项卡<br/>
+                点击“生成邀请链接”<br/>
+                把得到的链接发给你的合作者<br/>
+              </div>
+            </div>
+            <div class="astep teampic3">
+              <div class="step-introduce">
+                在团队的“项目”选项卡<br/>
+                找到“新建项目”按钮<br/>
+                你的宏图伟业从这里开始<br/>
+              </div>
+            </div>
+          </div>
           <div class="essay">
             <div class="describe">
               <!-- <div class="brand"> -->
               <!-- </div> -->
               组建<a>团队</a>、邀请其他开发者加入<br/>
               共同构建一个或多个<a>项目</a><br/>
+              <br/>
+              将光标放在图片上以查看指引<br/>
             </div>
             <div @click="programView" class="startnow">
               现在尝试
@@ -42,15 +67,42 @@
               <!-- </div> -->
               使用Impress Work的页面编辑器<br/>
               帮助完成<a>原型设计</a><br/>
-              配合内嵌的tipTap文档编辑器<br/>
-              让<a>文档管理</a>也不是难题<br/>
+              配合内嵌的diagram.net绘图工具<br/>
+              <a>绘制UML图</a>也不是难题<br/>
+              我们还内嵌了tipTap文档编辑器<br/>
+              让你更轻松地进行<a>文档管理</a><br/>
             </div>
             <div @click="programView" class="startnow">
               现在尝试
               <div class="rightarrow"/>
             </div>
           </div>
-          <div class="pic editorpic"/>
+          <!-- <div class="pic editorpic"/> -->
+          
+          <div class="steps">
+            <div class="astep editpic1">
+              <div class="step-introduce">
+                使用Impress Work原型设计工具<br/>
+                利用多种多样的模板和组件<br/>
+                搭建属于你的精彩页面<br/>
+              </div>
+            </div>
+            <div class="astep editpic2">
+              <div class="step-introduce">
+                团队沟通受阻？<br/>
+                尝试用绘图来表达！<br/>
+                Impress内嵌了diagram.net编辑器<br/>
+                你可以绘制各式各样的UML图<br/>
+              </div>
+            </div>
+            <div class="astep editpic3">
+              <div class="step-introduce">
+                正式的团队与项目当然少不了文档<br/>
+                尝试Impress内嵌的tipTap编辑器<br/>
+                与其他开发者一同编辑文档<br/>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </n-scrollbar>
@@ -220,7 +272,7 @@ onMounted(()=>{
   align-items: stretch;
   justify-content: space-between;
 }
-.feature .essay,.feature .pic{
+.feature .essay,.feature .pic,.feature .steps{
   margin:30px;
 }
 .pic{
@@ -231,6 +283,50 @@ onMounted(()=>{
   background-position: center;
   text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
 }
+.steps{
+  height:360px;
+  /*width:400px;*/
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
+  
+  display: flex;
+}
+.astep{
+  height:360px;
+  width:140px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
+
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px 0 30px 0;
+  margin:0 6px;
+  border:1px solid #fff;
+}
+.astep:hover{
+  width:300px;
+}
+.astep:hover .step-introduce{
+  opacity:1;
+}
+.step-introduce{
+  opacity:0;
+  width:160px;
+  display:flex;
+  color:#22AA9E;
+  font-weight: 100;
+  font-size:18px;
+  padding:24px;
+  background-color:#FFFFFFCC;
+  text-shadow: none;
+}
+
 .startnow{
   padding:4px 24px;
   display:flex;
@@ -266,6 +362,24 @@ onMounted(()=>{
 }
 .teampic{
   background-image: url("@/assets/teamup.jpg");
+}
+.teampic1{
+  background-image: url("@/assets/teamstep1.jpg");
+}
+.teampic2{
+  background-image: url("@/assets/teamstep2.jpg");
+}
+.teampic3{
+  background-image: url("@/assets/teamstep3.jpg");
+}
+.editpic1{
+  background-image: url("@/assets/editstep1.jpg");
+}
+.editpic2{
+  background-image: url("@/assets/editstep2.jpg");
+}
+.editpic3{
+  background-image: url("@/assets/editstep3.jpg");
 }
 .editorpic{
   background-image: url("@/assets/creation.jpg");
