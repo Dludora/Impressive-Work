@@ -242,6 +242,8 @@ onMounted(() => {
   sort.value = parseInt(utils.getCookie('sort').toString())
 
   sortMethod.value = utils.getCookie('sortMethod')
+  if(sortMethod.value==='')
+  sortMethod.value = '创建时间'
   ifUp.value = parseInt(utils.getCookie('ifUp')) === 1
   if (typeof (route.query.teamID) != "undefined")
     teamID.value = parseInt(route.query.teamID.toString())

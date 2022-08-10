@@ -70,7 +70,7 @@ import TeamHead from "../Team/TeamHead.vue"
 import {Icon} from "@vicons/utils";
 import {Document} from "@vicons/carbon"
 import {Backspace24Filled} from "@vicons/fluent"
-import {ref, h, Component, defineComponent, onMounted} from 'vue'
+import {ref, h, Component, defineComponent, onMounted,watch,computed} from 'vue'
 import {NIcon} from "naive-ui";
 import type {MenuOption} from "naive-ui";
 import {darkTheme} from "naive-ui";
@@ -245,6 +245,13 @@ export default defineComponent({
         modelRef.value.description = ""
       })
     }
+    const rout = computed(()=>{
+      return router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+    })
+    // watch(route,(newVal,oldVal)=>{
+    //     judge.value=newVal.toString()
+    //     console.log(judge.value+" 来了")
+    // })  
     onMounted(() => {
      if(typeof(route.query.teamID)!="undefined")
      teamID.value=(route.query.teamID).toString()

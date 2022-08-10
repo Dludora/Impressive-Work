@@ -38,7 +38,7 @@
           <div class="teams">
             <div class="team">
               <!-- <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
-              <TandP @renew="renewNav" :options="teamAndProjects" :key="renewTag"/>
+              <TandP @renew="renewNav" @get="getChild" :options="teamAndProjects" :key="renewTag"/>
             </div>
             <div class="addTeam" @click="addTeam">
               <Icon style="margin:15px;" size="12">
@@ -123,6 +123,10 @@ export default defineComponent({
     }
     const renewNav = () => {
       emit('renew')
+      
+    }
+    const getChild = () => {
+      emit('judgechild')
     }
     const load = () => {
       axios.get('/user/info', {headers: headers}).then(res => {
@@ -240,6 +244,7 @@ export default defineComponent({
       getAllTeams(0, 8)
     })
     return {
+      getChild,
       logout,
       renewNav,
       route,
