@@ -4,13 +4,16 @@
             <div class="left">
                 <router-link to="/">Impress Work · 印迹</router-link>
             </div>
-            <div class="right">
-                <a @click="regisRouter">登录</a>
-                <a @click="logout">注销</a>
+            <div :key="navRenewTag" class="right">
+                <a id="userintro" v-show="profile.ID">欢迎回来，{{ profile.nickname }} 
+                <div :style="'background-color:'+profile.src+';'" class="mini-avatar">{{ profile.nickname[0] }} </div>
+                </a>
+                <a @click="regisRouter" v-show="profile.ID==null">登录</a>
+                <a @click="logout" v-show="profile.ID">注销</a>
                 <a @click="teamMain">我的团队</a>
-                <a @click="tipTap">tipTap</a>
+                <!-- <a @click="tipTap">tipTap</a> -->
                 <!-- <a @click="UML">编写文档</a> -->
-                <a @click="UML">UML</a>
+                <!-- <a @click="UML">UML</a> -->
             </div>
         </div>
         <div class="divline"/>
@@ -18,38 +21,80 @@
 </template>
 
 <script setup lang="ts">
+import {onMounted, ref} from 'vue'
 import { useRouter } from "vue-router";
 import axios from 'axios';
 import {useMessage} from "naive-ui"
 import utils from "@/Utils";
+
 const router = useRouter();
 const message = useMessage();
-
+const profile = ref({
+  ID: null,
+  email: "",
+  id: null,
+  name: "",
+  nickname: "",
+  src: ""
+})
+let navRenewTag=ref(1);
+const load = () => {
+  axios.get('/user/info', {headers: headers}).then(res => {
+    profile.value = res.data.data
+    // console.log(profile.value)
+    utils.setCookie("userID", profile.value.ID)
+  })
+}
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
+const token = ref(utils.getCookie('Authorization'))
+const nickname = ref(utils.getCookie('UserName'))
+
 const regisRouter = () => {
   router.push('/regisTer');
 }
 const logout = () => {
-  console.log()
-  axios.delete('/auth/token',{headers:headers}
-  ).then(res=>{
+  profile.value={
+    ID: null,
+    email: "",
+    id: null,
+    name: "",
+    nickname: "",
+    src: ""
+  }
+  navRenewTag.value=new Date().getTime()
+  // console.log(navRenewTag.value)
+  console.log(new Date().getTime())
+  axios.delete('/auth/token', {headers: headers}
+  ).then(res => {
     console.log(res.data)
-    if(res.data.msg==="成功")
-    {
+    if (res.data.msg === "成功") {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
+      headers.Authorization=null;
       axios.defaults.headers.common['Authorization'] = '';
       message.info("注销成功")
-    }
-    else{
+      // profile.value={
+      //   ID: null,
+      //   email: "",
+      //   id: null,
+      //   name: "",
+      //   nickname: "",
+      //   src: ""
+      // }
+      // navRenewTag=1-navRenewTag
+      token.value = utils.getCookie('Authorization')
+    } else {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
       axios.defaults.headers.common['Authorization'] = '';
       message.error("用户未登录")
     }
   })
+  router.replace('/');
 }
-const teamMain= () =>{
+const teamMain = () => {
   router.push('/teamchoose');
 }
 
@@ -63,21 +108,24 @@ const UML = () => {
 const tipTap = () => {
   router.push('/tipTap');
 }
+onMounted(() => {
+  load()
+})
 </script>
 
 <script lang="ts">
 import {defineComponent, h, Component} from 'vue'
-export default defineComponent({
-    return:{
 
-    },
+export default defineComponent({
+  return: {},
 })
 </script>
 
 <style scoped>
-*{
-    transition:0.2s;
+* {
+  transition: 0.2s;
 }
+
 a {
   color: currentColor;
   text-decoration: none;
@@ -106,6 +154,9 @@ a {
     margin-right:30px;
     margin-left:8px;
 }
+.right{
+  display:flex;
+}
 .right a{
     margin-left:30px;
     margin-right:8px;
@@ -118,5 +169,26 @@ a {
     margin:0 100px;
     height:1px;
     border-bottom: 1px solid #fff;
+}
+#userintro{
+  display:flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-right:0;
+}
+#userintro:hover{
+  cursor:auto;
+}
+.mini-avatar{
+  height:24px;
+  width:24px;
+  margin-left: 12px;
+  border-radius: 50%;
+  border:1px solid #fff;
+  background-color: #A7AFBE;
+
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

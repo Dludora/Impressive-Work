@@ -28,9 +28,9 @@
               <n-config-provider :theme="theme">
                 <n-form content-style="width:50%">
                   <n-form-item-row label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail"
-                                  :render-feedback="formatFeedback">
+                                   :render-feedback="formatFeedback">
                     <n-input v-model:value="email"
-                            placeholder="请输入您的邮箱..."
+                             placeholder="请输入您的邮箱..."
                     />
                   </n-form-item-row>
                   <n-form-item-row label-style="color:#C4C9D4" label="密码">
@@ -48,7 +48,7 @@
               <n-config-provider :theme="theme">
                 <n-form>
                   <n-form-item label-style="color:#C4C9D4" label="电子邮箱" :rule="ruleEmail"
-                              :render-feedback="formatFeedback">
+                               :render-feedback="formatFeedback">
                     <n-input placeholder="请输入正确邮箱" v-model:value="email"/>
                   </n-form-item>
                   <n-form-item label-style="color:#C4C9D4" label="昵称">
@@ -57,11 +57,12 @@
                   <n-form-item label-style="color:#C4C9D4" label="真实姓名">
                     <n-input placeholder="请输入姓名" v-model:value="name"/>
                   </n-form-item>
-                  <n-form-item label-style="color:#C4C9D4" label="密码" :rule="rulePass" :render-feedback="formatFeedback">
+                  <n-form-item label-style="color:#C4C9D4" label="密码" :rule="rulePass"
+                               :render-feedback="formatFeedback">
                     <n-input placeholder="设置密码" type="password" v-model:value="password1"/>
                   </n-form-item>
                   <n-form-item-row label-style="color:#C4C9D4" label="确认密码" :rule="rulePass2"
-                                  :render-feedback="formatFeedback">
+                                   :render-feedback="formatFeedback">
                     <n-input placeholder="再次输入密码" type="password" v-model:value="password2"/>
                   </n-form-item-row>
 
@@ -70,7 +71,8 @@
                           @click="register" block strong>
                   注 册
                 </n-button>
-                <n-button class="logbutton" v-if="password1!=password2 " disabled="true" type="success" text-color="white"
+                <n-button class="logbutton" v-if="password1!=password2 " disabled="true" type="success"
+                          text-color="white"
                           @click="register"
                           block strong> 注 册
                 </n-button>
@@ -90,6 +92,7 @@ import axios from 'axios';
 import {h, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import utils from "@/Utils";
+
 const theme = darkTheme
 const router = useRouter();
 let email = ref('')
@@ -98,7 +101,7 @@ let password1 = ref('');
 let password2 = ref('');
 let nick = ref('');
 const message = useMessage();
-const colorList=[
+const colorList = [
   '#2350A9',
   '#55DD6C',
   '#DDB055',
@@ -108,11 +111,11 @@ const colorList=[
   '#D42B39',
   '#5A22AA',
 ]
-const nextColor=()=>{
-  let max=colorList.length
-  let idx=max+2
-  while(idx>=max)
-    idx=Math.floor(Math.random() * max)
+const nextColor = () => {
+  let max = colorList.length
+  let idx = max + 2
+  while (idx >= max)
+    idx = Math.floor(Math.random() * max)
   return colorList[idx]
 }
 
@@ -182,6 +185,7 @@ const register = () => {
         'nick': nick.value,
         'name': name.value,
         'passwd': password1.value,
+        'src': nextColor(),
       }
   ).then(res => {
     message.info(res.data.msg);
@@ -200,6 +204,7 @@ const register = () => {
         }
         axios.get('/user/info').then(res3 => {
           if (res3.data.msg === "成功") {
+            utils.setCookie('nickname', res3.data.data.nickname)
             // 利用token调用创建团队api
             axios.post('/team', {
               'name': '示例团队',
@@ -235,7 +240,7 @@ const login = () => {
         let teamIDTemp;
         if (res.data.msg === "成功") {
           message.info("用户" + res.data.data.nickname + "已登录")
-                                router.push('/teamchoose')
+          router.push('/teamchoose')
         } else {
           axios.post('/auth/token', {
                 'email': email.value,
@@ -243,16 +248,16 @@ const login = () => {
               }
           ).then(res => {
             if (res.data.msg === "成功") {
-                    axios.defaults.headers.common['Authorization'] = res.data.data;
-                    utils.setCookie('Authorization', res.data.data)
-                    axios.get('/user/info').then(res2 => {
-                              
-                              if (res2.data.msg === "成功")
-                                message.info("欢迎 " + res2.data.data.nickname)
-                                utils.setCookie('UserName',res2.data.data.nickname)
-                                
-                                router.push('/teamchoose')
-                            })
+              axios.defaults.headers.common['Authorization'] = res.data.data;
+              utils.setCookie('Authorization', res.data.data)
+              axios.get('/user/info').then(res2 => {
+
+                if (res2.data.msg === "成功")
+                  message.info("欢迎 " + res2.data.data.nickname)
+                utils.setCookie('UserName', res2.data.data.nickname)
+
+                router.push('/teamchoose')
+              })
             }
           })
         }
@@ -351,17 +356,19 @@ logon-button {
 .logbutton {
   font-size: 16px;
 }
-.loginpanel{
+
+.loginpanel {
   z-index: 1;
   width: 360px;
   height: 520px;
-  overflow:hidden;
+  overflow: hidden;
   display: flex;
   background-color: #16181De0;
   align-items: center;
   align-content: center;
 }
-.loginwindow{
+
+.loginwindow {
   z-index: 1;
   background-image: url("@/assets/loginfigure.jpg");
   background-size: cover;
@@ -371,37 +378,41 @@ logon-button {
   align-items: flex-end;
   justify-content: space-between;
 
-  border:2px solid #E2E4E9;
+  border: 2px solid #E2E4E9;
   border-radius: 3px;
   box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.35);
 }
-.logo{
-  height:60px;
-  width:60px;
+
+.logo {
+  height: 60px;
+  width: 60px;
   background-image: url("@/assets/logoBordered1024.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: left;
-  margin-right:16px;
+  margin-right: 16px;
 }
-.brand{
+
+.brand {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
 
-  font-size:48px;
+  font-size: 48px;
   font-weight: 100;
   white-space: nowrap;
   margin-bottom: 8px;
 
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);
 }
-.post{
-  padding:200px 84px 18px 36px;
+
+.post {
+  padding: 200px 84px 18px 36px;
   z-index: 1;
   background: linear-gradient(to top, #16181Dff, 37%, #16181D00);
 }
-.mask{
+
+.mask {
   width: 100%;
   position: absolute;
   z-index: 0;
