@@ -4,18 +4,33 @@
         <div class="discribe">
             管理你的{{shortcuts.length}}个页面
             <div class="buttons">
-              <n-button class="newpage" size="tiny"  @click="getUrl">
+              <n-breadcrumb>
+              <n-breadcrumb-item>
+                <n-button quaternary class="newpage" size="small"  @click="getUrl">
                     生成预览&nbsp;
                     <!-- <Icon size="14">
                         <Add28Regular/>
                     </Icon> -->
                 </n-button>
-                <n-button style="margin-left:30px;" class="newpage" size="tiny"  @click="viewAddDocu">
-                    新 建 页 面&nbsp;
+                </n-breadcrumb-item>
+              <n-breadcrumb-item>
+                <n-popselect v-model:value="nowCover" :options="CoverOptions" trigger="click">
+                   <n-button quaternary class="newpage" size="small" >
+                    设置封面
+                </n-button>
+                </n-popselect>
+                </n-breadcrumb-item>  
+              <n-breadcrumb-item>
+                 <n-button quaternary class="newpage" size="small"  @click="viewAddDocu">
+                    新建页面&nbsp;
                     <Icon size="14">
                         <Add28Regular/>
                     </Icon>
                 </n-button>
+                </n-breadcrumb-item> 
+            </n-breadcrumb>
+
+               
                 <!-- <n-button size="tiny" @click="exportLayout">
                     导 出 页 面&nbsp;
                     <Icon size="14">
@@ -112,13 +127,14 @@ import { Icon } from '@vicons/utils'
 import PageCard from "@/ProjectManager/pageCard.vue"
 import axios from "axios";
 import utils from "@/Utils";
-import {onMounted, ref} from "vue";
+import {onMounted, ref,watch} from "vue";
 import {useRouter} from "vue-router"
 import {Copy16Filled} from '@vicons/fluent'
 import {darkTheme, NIcon, useMessage,InputInst} from "naive-ui";
-
+import { MdCash } from '@vicons/ionicons4'
 let proID = ref(0);
 let page = ref(2);
+let assis = ref(0)
 const router = useRouter()
 const message = useMessage()
 const inputInstRef = ref<InputInst | null>(null);
@@ -127,6 +143,13 @@ let viewUrl = ref('')
 const onNegativeClickUrl = () => {
   showGetUrl.value = false;
 }
+const nowCover = ref('')
+let CoverOptions = ref([
+  {
+    label: '默认',
+    value: ''
+  }
+])
 const onPositiveClickUrl = () => {
   let url = '/layout/preview/disable?programID='+proID.value;
   axios.post(url,{},{headers:headers}).then(res=>{
@@ -147,6 +170,23 @@ const copyUrl = () => {
   message.success("复制成功")
 
 }
+
+//TODO:更换封面
+const setCover = () => {
+    axios.put('/program',{
+      'ID':proID.value,
+      'src':nowCover.value,
+      'name':utils.getCookie('proNAME')
+    },{headers:headers}).then(res=>{
+      console.log(res.data)
+      if(res.data.msg==="成功"){
+        message.success("封面更换成功")
+      }
+      else{
+        message.info(res.data.msg)
+      }
+    })
+}
 //原型项目
 
 let shortcuts=ref([]);
@@ -155,7 +195,12 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 
-
+watch(nowCover,(newCover,oldCover)=>{
+  console.log(assis.value)
+  if(assis.value>1)
+    setCover()
+    assis.value++;
+}, {immediate: true, deep: true})
 onMounted(()=>{
   proID.value=parseInt(utils.getCookie('proID')) ;
   console.log("成功获取项目ID:"+proID.value);
@@ -187,6 +232,20 @@ const getList = () =>{ //TODO 前后端对接：获取页面列表
 
       shortcuts.value = res.data.data.items;
 
+      
+      for(let i=0;i<shortcuts.value.length;i++)
+      {
+        let label = shortcuts.value[i].name
+        let value = shortcuts.value[i].src
+        if(value!='')
+        CoverOptions.value.push({label:label,value:value})
+      }
+      if(shortcuts.value.length>0){
+        nowCover.value = CoverOptions.value[1].value
+        
+      }
+      console.log("now:"+nowCover.value)
+      console.log("assis"+assis.value)
       console.log(shortcuts.value);
     }
   })
@@ -334,7 +393,10 @@ const exportLayout =() => {
 </script>
 
 <style scoped>
-
+.newpage{
+  padding-left: 0px;
+  padding-right: 0px;
+}
 .copyButton:hover{
     cursor:pointer;
 }

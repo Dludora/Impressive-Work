@@ -1,6 +1,7 @@
 <template>
     <div class="card" >
         <div class="img" @click="gotoProject">
+        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -41,7 +42,7 @@ export default defineComponent({
   name: 'PageCard',
   props: {
     name: String,
-    img: Image,
+    img: String,
     date: String,
     id: {
       default: 0
@@ -54,6 +55,7 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
+    const imgUrl = ref('@/assets/brand1920x292.png')
     const message = useMessage()
       const headers = {
         Authorization: utils.getCookie('Authorization')
@@ -112,10 +114,15 @@ export default defineComponent({
 
       }, {immediate: true, deep: true})
     onMounted(()=>{
+      imgUrl.value=props.img
       Name.value=props.name
+      // if(imgUrl.value===''){
+      //   imgUrl.value=''
+      // }
 
     })
     return {
+      imgUrl,
       changeName,
       headers,
       message,
@@ -164,6 +171,7 @@ export default defineComponent({
 .img{
     width:100%;
     height: 140px;
+    overflow: hidden;
     background-color: #A7AFBE;
     box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.25);
     border-radius: 4px;
