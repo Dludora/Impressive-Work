@@ -149,7 +149,7 @@ const changeUp = () => {
   else
   utils.setCookie('ifUp',0);
   getList();
-  router.go(0)
+  //router.go(0)
 }
 const sort = ref(0)
 const options = [
