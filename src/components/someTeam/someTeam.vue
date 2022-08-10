@@ -134,7 +134,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamprojects?teamID=' + teamID.value
+                      '/team/teamprojects?teamID=' + route.query.teamID
                 },
                 {default: () => '项目'}
             ),
@@ -148,7 +148,7 @@ export default defineComponent({
                 {
                   to:
                   // name: 'teamMembers',
-                      '/team/teammembers?teamID=' + teamID.value
+                      '/team/teammembers?teamID=' + route.query.teamID
                 },
                 {default: () => '成员'}
             ),
@@ -161,7 +161,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamDocuments?teamID=' + teamID.value
+                      '/team/teamDocuments?teamID=' + route.query.teamID
                 },
                 {default: () => '文档'}
             ),
@@ -174,7 +174,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamsettings?teamID=' + teamID.value
+                      '/team/teamsettings?teamID=' + route.query.teamID
                 },
                 {default: () => '设置'}
             ),
