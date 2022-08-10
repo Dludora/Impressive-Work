@@ -40,6 +40,8 @@ import { useMessage } from "naive-ui";
 import Selecto from "selecto";
 import Moveable from "moveable";
 
+//const ws = new WebSocket("");
+
 const headers = {
   Authorization: utils.getCookie("Authorization"),
 };
@@ -78,7 +80,7 @@ type elementParams = {
   scaleY: number;
   rotation: number;
   borderWidth: number;
-  borderRadius: number;
+  borderRadius: string;
   type: string;
   color: string;
   borderColor: string;
@@ -117,7 +119,26 @@ const initMoveable = () => {
     target: [].slice.call(document.getElementsByName("elements")),
     // If the container is null, the position is fixed. (default: parentElement(document.body))
     container: document.getElementById("canvas"),
+    elementGuidelines: [].slice.call(document.getElementsByName("elements")),
     renderDirections: ["n", "nw", "ne", "s", "se", "sw", "e", "w"],
+    snapDirections: {
+      left: true,
+      top: true,
+      right: true,
+      bottom: true,
+      center: true,
+      middle: true,
+    },
+    elementSnapDirections: {
+      left: true,
+      top: true,
+      right: true,
+      bottom: true,
+      center: true,
+      middle: true,
+    },
+    verticalGuidelines: [0],
+    horizontalGuidelines: [0],
     defaultGroupOrigin: "50% 50%",
     defaultGroupRotate: 0,
     draggable: true,
@@ -125,6 +146,11 @@ const initMoveable = () => {
     scalable: false,
     rotatable: true,
     warpable: false,
+    snappable: true,
+    roundable: true,
+    roundRelative: false,
+    snapGap: true,
+    snapThreshold: 5,
     origin: true,
     originDraggable: true,
     keepRatio: false,
@@ -285,6 +311,14 @@ const initMoveable = () => {
       target.style.transform = `matrix3d(${matrix.join(",")})`;
     }
   );
+
+  moveable.on("round", (e) => {
+    layoutElementParams[selectedId.value[0]].borderRadius = e.borderRadius;
+    updateTransform(
+      selected.value[0],
+      layoutElementParams[selectedId.value[0]]
+    );
+  });
 };
 
 let selecto: Selecto;
@@ -425,6 +459,10 @@ const initFromServer = () => {
           selecto.selectableTargets = [].slice.call(
             document.getElementsByName("elements")
           );
+          moveable.elementGuidelines = [].slice.call(
+            document.getElementsByName("elements")
+          );
+          moveable.elementGuidelines.push(document.getElementById("canvas"));
         });
         // for (; i < layoutElementParams.length; ++i) {
         //   if (layoutElementParams[i].id != 0) {
@@ -434,6 +472,21 @@ const initFromServer = () => {
       }
     });
 };
+
+// const initWS = ()=>{
+//   ws.onopen=()=>{
+
+//   }
+//   ws.onmessage=(res)=>{
+
+//   }
+//   ws.onerror = ()=>{
+//     message.error("网络故障");
+//   }
+//   ws.onclose = ()=>{
+//     message.warning("连接已断开");
+//   }
+// }
 
 const updateSelects = (data: elementParams) => {
   console.log(data.text);
@@ -457,6 +510,7 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
   } else {
     element!.style.height = data.height * scale + "px";
   }
+  element!.style.borderRadius = data.borderRadius;
 
   console.log(data);
 
@@ -525,6 +579,8 @@ const cancelSelect = () => {
 
 const destroy = () => {
   selectedId.value.forEach((el) => {
+    console.log(layoutId);
+    console.log(layoutElementParams[el].id);
     axios
       .delete(`/layout/${layoutId}/element/${layoutElementParams[el].id}`, {
         headers: headers,
@@ -551,13 +607,12 @@ const ProduceElement = (e: MouseEvent) => {
   if (dragging) {
     dragging = false;
   }
-  var src="";
+  var src = "";
   var backColor = "#D42B39";
-  if(preparedType!="rect"&&preparedType!="text"&&preparedType!="")
-  {
-    src=preparedType;
-    preparedType = "rect"
-    backColor = "transparent"
+  if (preparedType != "rect" && preparedType != "text" && preparedType != "") {
+    src = preparedType;
+    preparedType = "rect";
+    backColor = "transparent";
   }
   if (preparedType != "") {
     update.value = true;
@@ -571,7 +626,7 @@ const ProduceElement = (e: MouseEvent) => {
       scaleY: 1,
       rotation: 0,
       borderWidth: 0,
-      borderRadius: 0,
+      borderRadius: "0px",
       type: preparedType,
       color: backColor,
       borderColor: "transparent",
@@ -599,6 +654,10 @@ const ProduceElement = (e: MouseEvent) => {
       }
       updateTransform(el, layoutElementParams[index]);
       selecto.clickTarget(e, el);
+      moveable.elementGuidelines = [].slice.call(
+        document.getElementsByName("elements")
+      );
+      moveable.elementGuidelines.push(document.getElementById("canvas"));
     });
     axios
       .post(
@@ -665,11 +724,11 @@ type Model = {
   srcs: string[];
 };
 
-let model:Model = {
-  name:"线上商城",
-  elements:[],
-  srcs:[]
-}
+let model: Model = {
+  name: "线上商城",
+  elements: [],
+  srcs: [],
+};
 let imgs: string[] = [];
 
 const importImages = () => {
@@ -691,16 +750,20 @@ const importImages = () => {
         }
         console.log(imgs);
         counter--;
-        if(counter==0)
-        {
+        if (counter == 0) {
           model.srcs = imgs;
-          axios.post("/layout/module",{
-            name:model.name,
-            content:JSON.stringify(model)
-          },{headers:headers})
-          .then((res)=>{
-            console.log(res.data)
-          })
+          axios
+            .post(
+              "/layout/module",
+              {
+                name: model.name,
+                content: JSON.stringify(model),
+              },
+              { headers: headers }
+            )
+            .then((res) => {
+              console.log(res.data);
+            });
         }
       });
     }
@@ -820,7 +883,10 @@ const wheelScale = () => {
       // canvasTrans.y;
       // layoutElementParams[i]!.width *= scope;
       // layoutElementParams[i]!.height *= scope;
-      layoutElementParams[i]!.fontSize *= scope;
+      //layoutElementParams[i]!.fontSize *= scope;
+      if (layoutElementParams[i].type == "text") {
+        
+      }
       updateTransform(
         document.getElementsByName("elements")[i],
         layoutElementParams[i]

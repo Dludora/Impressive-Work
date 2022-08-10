@@ -1,8 +1,8 @@
 
 <template>
   <div class="board" @mousedown="ShutBoard">
-    <div class="layoutHeader home ui">
-      <n-icon size="18" color="#A7AFBE" class="backArrow" @click="exit">
+    <div class="layoutHeader home ui" @mousedown.stop>
+      <n-icon size="18" color="#A7AFBE" class="backArrow" @click.stop="exit">
         <arrow-back-ios-round />
       </n-icon>
       {{ layoutName }}
@@ -10,7 +10,7 @@
         size="21"
         color="#A7AFBE"
         class="downloadIcon"
-        @click="displaySetting"
+        @click.stop="displaySetting"
       >
         <settings28-regular />
       </n-icon>
@@ -22,7 +22,7 @@
       >
         <file-download-filled />
       </n-icon>
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click.stop="save">
         <save16-regular />
       </n-icon>
     </div>
@@ -57,7 +57,7 @@
             color="#A7AFBE"
             class="toolIcon toolIconTop"
             id="toolpointer"
-            @click="switchTool('pointer')"
+            @click.stop="switchTool('pointer')"
           >
             <cursor24-regular />
           </n-icon>
@@ -66,7 +66,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="tooldrag"
-            @click="switchTool('drag')"
+            @click.stop="switchTool('drag')"
           >
             <md-move />
           </n-icon>
@@ -75,7 +75,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="toolresize"
-            @click="switchTool('resize')"
+            @click.stop="switchTool('resize')"
           >
             <resize-large20-regular />
           </n-icon>
@@ -84,7 +84,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolscale"
-            @click="switchTool('scale')"
+            @click.stop="switchTool('scale')"
           >
             <scale-fill24-regular />
           </n-icon>
@@ -93,7 +93,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="toolrotate"
-            @click="switchTool('rotate')"
+            @click.stop="switchTool('rotate')"
           >
             <arrow-rotate-clockwise16-regular />
           </n-icon>
@@ -102,7 +102,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolwrap"
-            @click="switchTool('wrap')"
+            @click.stop="switchTool('wrap')"
           >
             <format-shapes-outlined />
           </n-icon>
@@ -111,7 +111,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolclip"
-            @click="switchTool('clip')"
+            @click.stop="switchTool('clip')"
           >
             <crop20-filled />
           </n-icon>
@@ -120,17 +120,17 @@
             color="#50555e"
             class="toolIcon toolIconBottom"
             id="toolround"
-            @click="switchTool('round')"
+            @click.stop="switchTool('round')"
           >
             <rounded-corner-round />
           </n-icon>
         </div>
 
         <div class="ui settingBar" id="settingBoard" @mousedown.stop>
-          <div class="settingMenu" @click="switchSettingMenu('device')">
+          <div class="settingMenu" @click.stop="switchSettingMenu('device')">
             设备
           </div>
-          <div class="settingMenu" @click="switchSettingMenu('model')">
+          <div class="settingMenu" @click.stop="switchSettingMenu('model')">
             模板
           </div>
           <div class="settingLine"></div>
@@ -142,7 +142,7 @@
                   :key="inkey"
                   v-for="(value, inkey) in outvalue"
                   class="settingDeviceModel"
-                  @click="
+                  @click.stop="
                     canvasWidth = value[0];
                     canvasHeight = value[1];
                   "
@@ -166,7 +166,7 @@
                 v-for="(value, index) in models"
                 :key="value.name"
                 class="settingModel"
-                @click="switchModel(index)"
+                @click.stop="switchModel(index)"
               ></div>
             </div>
           </n-scrollbar>
@@ -190,14 +190,14 @@
                 "
                 :key="index"
                 :style="{ backgroundImage: 'url(' + value.src + ')' }"
-                @click="switchPage(value.id)"
+                @click.stop="switchPage(value.id)"
               ></div>
             </div>
           </n-scrollbar>
 
           <div
             class="ui elementRightUnit elementBrowser pageBrowser"
-            @click="displayPageBoard"
+            @click.stop="displayPageBoard"
             id="pageBrowser"
           >
             <n-icon
@@ -333,7 +333,7 @@
           <div
             id="fillColor"
             class="porpertyBarIconUnit"
-            @click="displayPalette"
+            @click.stop="displayPalette"
           >
             <div class="porpertyIcon fillIcon"></div>
             <div class="porpertyExtension">
@@ -350,7 +350,7 @@
                 v-for="(color, index) in palette"
                 :key="index"
                 :style="'background-color:' + palette[index]"
-                @click="updateColor(index)"
+                @click.stop="updateColor(index)"
                 class="paletteColor"
                 ref="colorCircles"
               ></div>
@@ -359,7 +359,7 @@
           <div
             id="borderColor"
             class="porpertyBarIconUnit porpertyRightUnit"
-            @click="displayBorderPalette"
+            @click.stop="displayBorderPalette"
             v-show="property.type != 'text'"
           >
             <div class="porpertyIcon borderIcon"></div>
@@ -377,7 +377,7 @@
                 v-for="(color, index) in palette"
                 :key="index"
                 :style="'background-color:' + palette[index]"
-                @click="updateBorder(index)"
+                @click.stop="updateBorder(index)"
                 class="paletteColor"
                 ref="borderCircles"
               ></div>
@@ -387,7 +387,7 @@
 
         <div class="ui elementBar">
           <div class="ui elementSubBar" v-show="modelAt >= 0">
-            <div class="elementLeftUnit elementBrowser" @click="switchElement(-1)">
+            <div class="elementLeftUnit elementBrowser" @click.stop="switchElement(-1)">
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-back-ios-round />
               </n-icon>
@@ -411,7 +411,7 @@
                 :style="{ backgroundImage: 'url(' + value + ')' }"
               ></div>
             </div>
-            <div class="elementRightUnit elementBrowser" @click="switchElement(1)">
+            <div class="elementRightUnit elementBrowser" @click.stop="switchElement(1)">
               <div class="elementVerticalLine" style="left: 0px"></div>
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-forward-ios-round />
@@ -630,7 +630,7 @@ type Property = {
   scaleY: number;
   rotation: number;
   borderWidth: number;
-  borderRadius: number;
+  borderRadius: string;
   type: string;
   color: string;
   borderColor: string;
@@ -650,7 +650,7 @@ const property = reactive<Property>({
   scaleY: 1,
   rotation: 0,
   borderWidth: 0,
-  borderRadius: 0,
+  borderRadius: "0px",
   type: "none",
   text: "",
   fontSize: 0,
@@ -850,11 +850,11 @@ const switchType = (etype: string) => {
       toolAvailable["rotate"] = true;
       toolAvailable["wrap"] = false;
       toolAvailable["clip"] = false;
-      toolAvailable["round"] = false;
+      toolAvailable["round"] = true;
       document.getElementById("toolscale").style.color = "#50555e";
       document.getElementById("toolwrap").style.color = "#50555e";
       document.getElementById("toolclip").style.color = "#50555e";
-      document.getElementById("toolround").style.color = "#50555e";
+      document.getElementById("toolround").style.color = "#A7AFBE";
       break;
     }
   }
@@ -1209,7 +1209,7 @@ const exit = () => {
   border-style: solid;
   border-width: 3px;
   margin-bottom: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .pageImageSelected {
   width: 240px;
@@ -1218,7 +1218,7 @@ const exit = () => {
   border-color: red;
   border-width: 3px;
   margin-bottom: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .porpertyBar {
   background-color: #2b303b;

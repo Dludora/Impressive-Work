@@ -240,6 +240,7 @@ export default defineComponent({
       getAllTeams(0, 8)
     })
     return {
+      logout,
       renewNav,
       route,
       message,
