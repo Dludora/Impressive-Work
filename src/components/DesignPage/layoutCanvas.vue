@@ -701,6 +701,7 @@ const wsCreate = (datas: elementParams[]) => {
 };
 
 const wsClose = () => {
+  if(ws!=null)
   if (ws.readyState != 1) {
     return;
   }
@@ -857,7 +858,7 @@ const ProduceElement = (e: MouseEvent) => {
   }
   if (preparedType != "") {
     update.value = true;
-    wsCreate({
+    wsCreate([{
       id: 0,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
@@ -875,7 +876,7 @@ const ProduceElement = (e: MouseEvent) => {
       text: "",
       fontSize: 20 * mscale,
       //update: true,
-    });
+    }]);
     preparedType = "";
   }
   //   var index = layoutElementParams.length - 1;
@@ -921,6 +922,10 @@ const ProduceElement = (e: MouseEvent) => {
 let imgUri: string;
 
 const download = (isDownload: boolean, type?: string) => {
+  if(document.getElementById("canvas")==null)
+  {
+    return;
+  }
   html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
     function (canvas) {
       canvas.toBlob((blob) => {
@@ -1094,6 +1099,7 @@ onMounted(() => {
   initMoveable();
   initSelecto();
   importImages();
+  initScale();
   //updateServer();
 
   document.onkeyup = (e) => {
@@ -1130,6 +1136,10 @@ onMounted(() => {
 });
 
 const initScale = () => {
+  if(document.getElementById("canvas")==null)
+  {
+    return;
+  }
   document.getElementById("canvas")!.style.width =
     props.canvasWidth / 2.4 + "px";
   document.getElementById("canvas")!.style.height =
@@ -1266,10 +1276,15 @@ watch(
 watch(
   () => props.modelElements,
   (newVal) => {
+    console.log(newVal);
     if (newVal.length == 0) {
       return;
     }
     wsCreate(newVal);
+  },
+  {
+    deep:true,
+    //immediate:true,
   }
 );
 
@@ -1278,7 +1293,7 @@ watch(
   (newVal) => {
     initScale();
     download(false);
-  }
+  },
 );
 
 watch(

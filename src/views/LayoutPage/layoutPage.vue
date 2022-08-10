@@ -672,7 +672,7 @@ type Model = {
 const models = reactive<Model[]>([]);
 const modelAt = ref<number>(-1);
 const modelName = ref<string>("");
-const modelElements = reactive([]); 
+const modelElements = reactive<Property[]>([]); 
 const elementSrcs = reactive<string[]>([]);
 let firstSrc: number = 0;
 const maxElementsNum = 6;
@@ -743,6 +743,7 @@ const initModels = () => {
         {
           modelElements[j] = model.elements[j];
         }
+        console.log(modelElements);
       }
       console.log(models);
     }
@@ -1004,6 +1005,7 @@ const ShutBoard = () => {
 
 onMounted(() => {
   var imgInputer = document.getElementById("fileUploader");
+  console.log(route.query);
   layoutId.value = parseInt(route.query.layoutId as string);
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string);
