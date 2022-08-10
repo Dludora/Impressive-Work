@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="prolist">
-          <ProCard v-for="(item, i) in projects" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+          <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -197,7 +197,7 @@ const getList = () => {
       let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
       projects.value[i].createTime = tempDate
     }
-    console.log("getList:" + projects.value)
+    console.log(projects.value)
   })
 }
 const getGlobal = computed(() => {
@@ -349,7 +349,7 @@ const onPositiveAddClick = () => {
   }
   axios.post('/program', {
     'teamID': route.query.teamID,
-    "src": "what the fuck photos",
+    "src": "",
     "name": modelAddRef.value.name
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
