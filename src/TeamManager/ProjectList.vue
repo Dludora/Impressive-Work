@@ -236,9 +236,10 @@ watch(getGlobal, (newVal, oldVal) => {
   }
   if (typeof (route.query.teamID) != "undefined") {
     getList()
-  }
+  }1
 }, {immediate: true, deep: true})
 onMounted(() => {
+  if(utils.getCookie('sort')!='')
   sort.value = parseInt(utils.getCookie('sort').toString())
 
   sortMethod.value = utils.getCookie('sortMethod')
