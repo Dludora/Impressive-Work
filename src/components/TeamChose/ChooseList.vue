@@ -34,7 +34,7 @@
       >
         <n-form :model="modelRef">
           <n-form-item label="项目名称" :rule="rule" :render-feedback="formatFeedback">
-            <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+            <n-input v-model:value="modelRef.name" @keydown.enter.prevent placeholder="请输入项目名称"/>
           </n-form-item>
         </n-form>
       </n-modal>
@@ -63,10 +63,10 @@
       >
         <n-form :model="modelRef">
         <n-form-item label="团队名称" :rule="ruleName" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelRef.name" @keydown.enter.prevent placeholder="请输入团队名称"/>
         </n-form-item>
         <n-form-item label="团队描述" :rule="ruleDescription" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.introduction" @keydown.enter.prevent type="textarea"/>
+          <n-input v-model:value="modelRef.introduction" @keydown.enter.prevent type="textarea" placeholder="请输入团队描述(非必须)"/>
         </n-form-item>
         </n-form>
       </n-modal>

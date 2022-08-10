@@ -191,7 +191,6 @@ const getList = () => {
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
-    console.log(res.data)
     projects.value = res.data.data.items
     for (let i = 0; i < projects.value.length; i++) {
       let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
@@ -204,9 +203,13 @@ const getGlobal = computed(() => {
   return route.query.teamID + '&' + route.query.searchText
 })
 watch(getGlobal, (newVal, oldVal) => {
-  if (typeof (route.query.searchText) != "undefined")
-    keyword.value = route.query.searchText.toString();
-  getList()
+  console.log(getGlobal)
+  if (typeof (route.query.searchText) != "undefined") {
+    keyword.value = route.query.searchText.toString()
+  }
+  if (typeof (route.query.teamID) != "undefined") {
+    getList()
+  }
 }, {immediate: true, deep: true})
 onMounted(() => {
   if (typeof (route.query.teamID) != "undefined")

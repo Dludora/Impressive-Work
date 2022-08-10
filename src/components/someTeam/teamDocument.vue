@@ -174,6 +174,7 @@ const dblClickCrumb = (item, index) => {
   dblClick(item, false)
 }
 const dblClick = (item, add) => {
+  // 是文档
   if (!item.dir) {
     let fileID = item.isPro == 0 ? item.doc.ID : item.fileID
     let urlOP = '/document/' + fileID
@@ -304,13 +305,20 @@ const modelRef = ref({
   name: "",
   ID: 0,
   teamID: 0,
-  parentID: 0
+  parentID: 0,
+  dir: false,
+  docID: false
 })
 const listRename = (index) => {
   modelRef.value.name = list.value[index].name
   modelRef.value.ID = list.value[index].fileID
   modelRef.value.teamID = list.value[index].teamID
   modelRef.value.parentID = list.value[index].parentID
+  modelRef.value.dir = list.value[index].dir
+  if(!modelRef.value.dir) {
+    modelRef.value.docID = list.value[index].doc.ID
+  }
+
   showModalRef.value = true
 }
 const listRenameRule = {
@@ -327,7 +335,23 @@ const listRenameRule = {
   trigger: ['input', 'blur']
 }
 const onPositiveClick = () => {
-  axios.put('/doccenter', modelRef.value, {headers: headers}).then(res => {
+  if(!modelRef.value.dir) {
+    axios.put(
+        '/document/title',
+        {ID: modelRef.value.docID, title: modelRef.value.name},
+        {headers: headers}
+    )
+  }
+  axios.put(
+      '/doccenter',
+      {
+        ID: modelRef.value.ID,
+        teamID: modelRef.value.teamID,
+        name: modelRef.value.name,
+        parentID: modelRef.value.parentID
+      },
+      {headers: headers}
+  ).then(res => {
     getDoc(modelRef.value.parentID)
   })
   showModalRef.value = true
