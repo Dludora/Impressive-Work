@@ -5,6 +5,7 @@
         <router-link to="/">Impress Work · 印迹</router-link>
       </div>
       <div class="right">
+        <a @click="teamMain" v-if="token">{{nickname}}</a>
         <a @click="logout" v-if="token">注销</a>
         <a @click="regisRouter" v-else>登录</a>
         <a @click="teamMain">我的团队</a>
@@ -30,6 +31,7 @@ const headers = {
   Authorization: utils.getCookie('Authorization')
 }
 const token = ref(utils.getCookie('Authorization'))
+const nickname = ref(utils.getCookie('UserName'))
 
 const regisRouter = () => {
   router.push('/regisTer');
@@ -41,11 +43,13 @@ const logout = () => {
     console.log(res.data)
     if (res.data.msg === "成功") {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
       axios.defaults.headers.common['Authorization'] = '';
       message.info("注销成功")
       token.value = utils.getCookie('Authorization')
     } else {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
       axios.defaults.headers.common['Authorization'] = '';
       message.error("用户未登录")
     }
