@@ -1,7 +1,7 @@
 <template>
     <div class="card" >
-        <div class="img" @click="gotoProject">
-        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
+        <div class="img" @click="gotoProject" :style="'background-image:url('+imgUrl+');'">
+        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -170,6 +170,10 @@ export default defineComponent({
   display: flex;
 }
 .img{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  
     width:100%;
     height: 140px;
     overflow: hidden;

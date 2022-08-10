@@ -22,7 +22,7 @@ import UpBar from "@/components/Document/upBar.vue"
 
 import {h, Component, defineComponent, ref, onMounted} from 'vue'
 import {darkTheme, MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
-import {RouterLink, useRouter} from "vue-router";
+import {RouterLink, useRouter,useRoute} from "vue-router";
 
 import {PeopleTeam16Filled as Team} from "@vicons/fluent";
 import {Brush} from "@vicons/ionicons5";
@@ -38,15 +38,14 @@ export default defineComponent(
         UpBar
       },
       setup() {
+        const route = useRoute()
         const menuOptions: MentionOption[] = [
           {
             label: () =>
                 h(
                     RouterLink,
                     {
-                      to: {
-                        name: 'prototypes'
-                      }
+                      to: "/project/prototypes?teamID="+route.query.teamID
                     },
                     {default: () => '原型设计'}
                 ),
@@ -58,9 +57,7 @@ export default defineComponent(
                 h(
                     RouterLink,
                     {
-                      to: {
-                        name: 'UML'
-                      }
+                      to: "/UML"+route.query.teamID
                     },
                     {default: () => '图'}
                 ),
@@ -72,9 +69,7 @@ export default defineComponent(
                 h(
                     RouterLink,
                     {
-                      to: {
-                        name: 'documents'
-                      }
+                      to:"/project/documents?teamID="+route.query.teamID
                     },
                     {default: () => '文档'}
                 ),
@@ -85,7 +80,7 @@ export default defineComponent(
         const judge = ref('')
         const router = useRouter()
         onMounted(() => {
-          judge.value = router.currentRoute.value.fullPath.toString().split("/")[2]
+          judge.value = router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
           console.log('judge: ' + judge.value)
 
         })
@@ -93,6 +88,7 @@ export default defineComponent(
           judge.value = key
         }
         return {
+          route,
           theme: darkTheme,
           menuOptions,
           handleUpdateValue,

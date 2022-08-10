@@ -7,10 +7,12 @@
                     <div class="desc">{{item.name}}</div>
                 </div>
             <!-- </router-link> -->
-            <div v-for="pro in item.projects" :key="'pro'+pro.ID" class="projects option" :proid="''+pro.ID" @click="toProject(pro)">
+            <div v-if="nowTeam===item.ID" class="proS">
+            <div  v-for="pro in item.projects" :key="'pro'+pro.ID" class="projects option" :proid="''+pro.ID" @click="toProject(pro)">
                     <div class="colorTag" style="background:none;"/>
                     <div class="desc">{{pro.name}}</div>
             </div>
+            </div>  
         </div>
     </div>
 </template>
@@ -19,7 +21,7 @@
 import utils from '@/Utils'
 import {useRoute} from 'vue-router'
 import router from '@/router';
-import {defineComponent, h, Component,onMounted} from 'vue'
+import {defineComponent, h, Component,onMounted,onBeforeUpdate,ref,watch,computed,onUpdated} from 'vue'
 import { Undefined } from '@vicons/carbon';
 class Project{
     name:String;
@@ -31,6 +33,7 @@ export default defineComponent({
         options:[],
     },
     setup(props, {emit}) {
+        const nowTeam = ref(0)
         const route=useRoute()
         // console.log(props.options)
         const select=(teamId:Number,proId:Number)=>{
@@ -41,7 +44,7 @@ export default defineComponent({
             //     selectTeamId=-1
             // let selectProId=utils.getCookie('proID')
             let fullpath=router.currentRoute.value.fullPath
-            if(fullpath.slice(0,5)=='/team'){
+            // if(fullpath.slice(0,5)=='/team'){
             // if(teamId>=0&&proId<0){
                 let menuitems=document.getElementsByClassName('teams') as HTMLCollectionOf<HTMLElement>
                 // console.log('团队页面')
@@ -56,11 +59,11 @@ export default defineComponent({
                     else
                         elementitem.style['background']='none'
                 }
-            }else if(fullpath.slice(0,8)=='/project'){
-            // }else if(teamId<0&&proId>=0){
-                let menuitems=document.getElementsByClassName('projects') as HTMLCollectionOf<HTMLElement>
+            if(fullpath.slice(0,8)=='/project'){
+
+                let menuitems2=document.getElementsByClassName('projects') as HTMLCollectionOf<HTMLElement>
                 // console.log('项目页面')
-                for(var elementitem of menuitems){
+                for(var elementitem of menuitems2){
                     // console.log('target:'+selectTeamId)
                     // console.log('searching:')
                     // console.log(elementitem.attributes)
@@ -68,34 +71,56 @@ export default defineComponent({
                     if(elementitem.attributes['proid']==undefined)
                         continue
                     else if(elementitem.attributes['proid'].value==selectProId)
-                        elementitem.style['background']='#000'
+                        elementitem.style['background']='#212732'
                     else
                         elementitem.style['background']='none'
                 }
             }
         }
         const toTeam=(id:Number)=>{
-            select(id,-1)
+            
+            nowTeam.value = parseInt(id.toString());
             router.replace('/team/teamprojects?teamID=' + id)
         }
+        const nowPro = ref(0)
         const toProject=(item:Project)=>{
             utils.setCookie('proID', item.ID)
             utils.setCookie('proNAME', item.name)
             utils.setCookie('proTeam', item.teamID)
-
-            select(-1,item.ID)
-            router.replace({name: 'project'})
+            nowPro.value = parseInt(item.ID.toString())
+            //select(-1,item.ID)
+            router.push('/project/prototypes?teamID='+nowTeam.value)
             // select(-1,item.ID)
+            select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
             emit('renew')
         }
+        const getGlobal = computed(() => {
+            return route.query.teamID
+            })
+        watch([getGlobal,nowPro],([newTeam,nwePro],[oldTeam,oldPro])=>{
+            console.log("哇哦 我监听到了")
+            select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
+        },{immediate: true, deep: true})
         onMounted(() => {
             console.log('options:')
             console.log(props.options)
+            console.log(route.query.teamID+' '+parseInt(utils.getCookie('proID')))
+            
+            nowTeam.value = parseInt(''+route.query.teamID)
+            
             select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
         })
-        // select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
-        // select()
+        onBeforeUpdate(()=>{
+            nowPro.value = parseInt(utils.getCookie('proID'))
+            select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
+        })
+        onUpdated(()=>{
+            select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
+        })
+
         return{
+            nowPro,
+            nowTeam,
             toProject,
             select,
             toTeam,
@@ -125,6 +150,7 @@ a {
 .option:hover{
     cursor:pointer;
     border: 1px solid #A7AFBE;
+
 }
 .option:active{
     background-color: #2B303B;
