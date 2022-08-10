@@ -507,6 +507,7 @@ const initFromServer = () => {
     });
 };
 
+let createId:number = 0
 const initWS = () => {
   ws.onopen = () => {
     ws.send("hi");
@@ -546,6 +547,9 @@ const initWS = () => {
         case 2: {
           wsResDestroy(data.elements);
           break;
+        }
+        case 3: {
+          createId = data.elements[0].id;
         }
       }
     } catch (error) {
