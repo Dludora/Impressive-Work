@@ -9,7 +9,11 @@
             <!-- </router-link> -->
             <div v-if="nowTeam===item.ID" class="proS">
             <div  v-for="pro in item.projects" :key="'pro'+pro.ID" class="projects option" :proid="''+pro.ID" @click="toProject(pro)">
-                    <div class="colorTag" style="background:none;"/>
+                    <div class="colorTag" style="background:none;">
+                    <Icon size="18">
+                        <CaretRight20Regular  />
+                    </Icon>
+                    </div>
                     <div class="desc">{{pro.name}}</div>
             </div>
             </div>  
@@ -19,7 +23,10 @@
 
 <script lang="ts">
 import utils from '@/Utils'
+import {darkTheme, useMessage} from "naive-ui";
 import {useRoute} from 'vue-router'
+import {Icon} from "@vicons/utils";
+import {CaretRight20Regular} from "@vicons/fluent"
 import router from '@/router';
 import {defineComponent, h, Component,onMounted,onBeforeUpdate,ref,watch,computed,onUpdated} from 'vue'
 import { Undefined } from '@vicons/carbon';
@@ -29,10 +36,15 @@ class Project{
     teamID:Number
 }
 export default defineComponent({
+    components:{
+        Icon,
+        CaretRight20Regular
+    },
     props:{
         options:[],
     },
     setup(props, {emit}) {
+        const theme = darkTheme
         const nowTeam = ref(0)
         const route=useRoute()
         // console.log(props.options)
@@ -119,6 +131,7 @@ export default defineComponent({
         })
 
         return{
+            theme,
             nowPro,
             nowTeam,
             toProject,
@@ -134,9 +147,18 @@ a {
   color: currentColor;
   text-decoration: none;
 }
+.projects{
+    padding-left: 20px;
+    font-size: small;
+    height: 35px;
+    font-weight: 300;
+}
+.teams{
+    height: 42px;
+}
 .option{
     margin-right: 10px;
-    height: 42px;
+
     font-size: 12px;
     display: flex;
     /* width: 100%; */
@@ -155,10 +177,11 @@ a {
 .option:active{
     background-color: #2B303B;
 }
+
 .colorTag{
     background-color: #A7AFBE;
-    height:12px;
-    width:12px;
+    height:14px;
+    width:14px;
     margin:15px;
 }
 .desc{
