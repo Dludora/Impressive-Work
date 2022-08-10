@@ -197,7 +197,7 @@ type proj = {
   src: string,
   teamID: number
 }
-let projects = reactive<proj[]>([])
+let projects = ref([])
 const projects_empty = reactive<proj[]>([])
 
 // 重命名表单
@@ -210,30 +210,29 @@ const getList = () => {
   if (ifUp.value)
     direction = 1;
   console.log("开始获取")
-  projects = projects_empty
+  //projects = projects_empty
   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort='
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
     console.log("get messages")
     console.log(res.data)
+    projects.value = res.data.data.items
     for (let i = 0; i < res.data.data.items.length; i++) {
       
       let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-      projects[i]={
-        ID : res.data.data.items[i].ID,
-        name : res.data.data.items[i].name,
-        previewCode : res.data.data.items[i].previewCode,
-        src : res.data.data.items[i].src,
-        teamID : res.data.data.items[i].teamID,
-        createTime : tempDate
-      }
-      
-      
-      
+      // projects[i]={
+      //   ID : res.data.data.items[i].ID,
+      //   name : res.data.data.items[i].name,
+      //   previewCode : res.data.data.items[i].previewCode,
+      //   src : res.data.data.items[i].src,
+      //   teamID : res.data.data.items[i].teamID,
+      //   createTime : tempDate
+      // }
+      projects.value[i].createTime = tempDate
     }
     console.log("啊啊啊啊啊")
-    console.log(projects)
+    console.log(projects.value)
   })
 }
 const getGlobal = computed(() => {
@@ -310,7 +309,7 @@ const onPositiveClick = () => {
 
     if (res.data.msg === "成功") {
       message.info("修改成功")
-      for (let i = 0; i < projects.length; i++) {
+      for (let i = 0; i < projects.value.length; i++) {
         if (projects[i].ID === opID.value) {
           projects[i].name = modelRef.value.name
           break;
