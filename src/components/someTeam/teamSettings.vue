@@ -44,8 +44,8 @@
           <span> > 创立时间 : 2022.8.9 </span>
         </div>
         <div class="button">
-          <n-button @click="dissolve" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed>解 散 团 队
-          </n-button>
+          <n-button @click="dissolve" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed v-if="myIdentify==2">解 散 团 队</n-button>
+          <n-button @click="exitTeam" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed v-else>退 出 团 队</n-button>
         </div>
       </div>
     </n-config-provider>
@@ -59,6 +59,10 @@ import {darkTheme, useMessage} from 'naive-ui'
 import axios from "axios";
 import {useRouter, useRoute} from "vue-router";
 import utils from '../../Utils'
+
+
+const myID = ref(utils.getCookie('userID'))
+const myIdentify = ref(0)
 
 const theme = darkTheme
 const router = useRouter()
@@ -81,6 +85,17 @@ const dissolve = () => {
       router.push('/teamchoose')
     } else {
       message.info("你不是创建者,无法解散")
+    }
+  })
+}
+
+const exitTeam = () => {
+  axios.post(
+      '/team/'+route.query.teamID+'/quit'
+  ).then(res => {
+    if(res.data.msg === '成功') {
+      message.success("已退出团队")
+      router.push('/teamchoose')
     }
   })
 }
@@ -138,6 +153,14 @@ const getTeamInfo = () => {
 const getGlobal = computed(() => {
   return route.query.teamID
 })
+
+const getIdentify = () => {
+  let url = '/team/' + route.query.teamID + '/member/' + myID.value + '/info'
+  axios.get(url, {headers: headers}).then(res => {
+    myIdentify.value = res.data.data.identify
+  })
+}
+
 watch(getGlobal, (newVal, oldVal) => {
   console.log("value change" + newVal)
   getTeamInfo();
@@ -145,6 +168,7 @@ watch(getGlobal, (newVal, oldVal) => {
 onMounted(() => {
   getTeamInfo()
   getNum()
+  getIdentify()
 })
 </script>
 

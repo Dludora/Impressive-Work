@@ -663,6 +663,7 @@ type Model = {
   name: string;
   elements: Property[];
   srcs: string[];
+  cover: string
 };
 const models = reactive<Model[]>([]);
 let modelAt = ref<number>(-1);

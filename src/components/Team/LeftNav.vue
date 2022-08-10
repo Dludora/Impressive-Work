@@ -1,64 +1,64 @@
 <template>
   <n-config-provider :theme="theme">
-  <div class="nav">
-    <!-- <div class="logo" @click="toMain"></div> -->
-    <n-popover trigger="hover" placement="right">
-       <template #trigger>
-    <div class="user-info" @click="toMain">
-      <div class="lineI"></div>
-      <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
-      <div class="user">
-        <p>{{ profile.nickname }}</p>
-        <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
-      </div>
-    </div>
-      </template>
-      <div class="paopao">
-       <span>昵称: {{profile.nickname}}</span><br/>
-        <span>姓名: {{profile.name}}</span><br/>
-        <span>邮箱: {{profile.email}}</span><br/>
-       <n-button size="tiny" quaternary @click="toMain">
-        返回主页
-      </n-button>
-      <n-button size="tiny" type="error" quaternary @click="logout">
-        注销登录
-      </n-button>
-      </div>
-    </n-popover>
-    <div class="teamlist">
-        <div class="teamsHead">
-          <Icon size="18" style="margin:12px;">
-          <BoxMultiple20Regular/>
-          </Icon>
-           您的团队
-        </div>
-      <div class="divline"/>
-      <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
-      <n-scrollbar>
-        <div class="teams">
-          <div class="team">
-            <!-- <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
-            <TandP @renew="renewNav" :options="teamAndProjects" :key="renewTag"/>
-          </div>
-          <div class="addTeam" @click="addTeam">
-            <Icon style="margin:15px;" size="12">
-              <Add12Filled/>
-            </Icon>
-            <div class="word">
-              新建团队
+    <div class="nav">
+      <!-- <div class="logo" @click="toMain"></div> -->
+      <n-popover trigger="hover" placement="right">
+        <template #trigger>
+          <div class="user-info" @click="toMain">
+            <div class="lineI"></div>
+            <SvgI size="50" border="0.42" pricolor="none" secolor="none" class="signI"/>
+            <div class="user">
+              <p>{{ profile.nickname }}</p>
+              <p style="color:rgba(167, 175, 190, 1);font-size:small;">{{ profile.email }}</p>
             </div>
           </div>
+        </template>
+        <div class="paopao">
+          <span>昵称: {{ profile.nickname }}</span><br/>
+          <span>姓名: {{ profile.name }}</span><br/>
+          <span>邮箱: {{ profile.email }}</span><br/>
+          <n-button size="tiny" quaternary @click="toMain">
+            返回主页
+          </n-button>
+          <n-button size="tiny" type="error" quaternary @click="logout">
+            注销登录
+          </n-button>
         </div>
-      </n-scrollbar>
-      <!-- <div class="divline"/> -->
-    </div>
+      </n-popover>
+      <div class="teamlist">
+        <div class="teamsHead">
+          <Icon size="18" style="margin:12px;">
+            <BoxMultiple20Regular/>
+          </Icon>
+          您的团队
+        </div>
+        <div class="divline"/>
+        <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
+        <n-scrollbar>
+          <div class="teams">
+            <div class="team">
+              <!-- <n-menu :options="sideMenuOptions" @update:value="handleUpdateValue" :default-value="route.query.teamID"/> -->
+              <TandP @renew="renewNav" :options="teamAndProjects" :key="renewTag"/>
+            </div>
+            <div class="addTeam" @click="addTeam">
+              <Icon style="margin:15px;" size="12">
+                <Add12Filled/>
+              </Icon>
+              <div class="word">
+                新建团队
+              </div>
+            </div>
+          </div>
+        </n-scrollbar>
+        <!-- <div class="divline"/> -->
+      </div>
       <!-- <n-pagination v-model:page="currentPage"
                     :page-count="pageNum"
                     :page-slot="5" size="small"
                     :on-update:page="changePage"
                     id="pagination">
       </n-pagination> -->
-      </div>
+    </div>
   </n-config-provider>
 </template>
 
@@ -69,18 +69,18 @@ import {darkTheme, NIcon, useMessage} from 'naive-ui'
 import type {MenuOption} from 'naive-ui'
 import {RouterLink, useRoute} from "vue-router";
 import {PeopleTeam16Filled as Team} from "@vicons/fluent"
-import { Icon } from '@vicons/utils'
-import { Add12Filled,BoxMultiple20Regular } from '@vicons/fluent'
+import {Icon} from '@vicons/utils'
+import {Add12Filled, BoxMultiple20Regular} from '@vicons/fluent'
 import axios from "axios";
 import utils from "@/Utils";
 import router from '@/router';
 import SvgI from '@/components/svgI.vue'
-import { menuLight } from 'naive-ui/es/menu/styles';
+import {menuLight} from 'naive-ui/es/menu/styles';
 import TandP from '@/components/Team/teamAndProjects.vue'
 
 
 const sideMenuOptions = ref([] as MenuOption[])
-let teamAndProjects=ref([])
+let teamAndProjects = ref([])
 let dataList = ref([{ID: 0}])
 
 function renderIcon(icon: Component) {
@@ -97,7 +97,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const message = useMessage()
-    let renewTag=500;
+    let renewTag = 500;
     const route = useRoute();
     let menuKey = ref('')
     const headers = {
@@ -121,7 +121,7 @@ export default defineComponent({
     const addTeam = () => {
       emit('addTeam');
     }
-    const renewNav=()=>{
+    const renewNav = () => {
       emit('renew')
     }
     const load = () => {
@@ -131,29 +131,29 @@ export default defineComponent({
       })
     }
     const logout = () => {
-  console.log()
-  axios.delete('/auth/token',{headers:headers}
-  ).then(res=>{
-    console.log(res.data)
-    if(res.data.msg==="成功")
-    {
-      utils.clearCookie('Authorization')
-      axios.defaults.headers.common['Authorization'] = '';
-      message.info("注销成功")
-      router.push('/')
+      console.log()
+      axios.delete('/auth/token', {headers: headers}
+      ).then(res => {
+        console.log(res.data)
+        if (res.data.msg === "成功") {
+          utils.clearCookie('Authorization')
+          axios.defaults.headers.common['Authorization'] = '';
+          message.info("注销成功")
+          router.push('/')
+        } else {
+          utils.clearCookie('Authorization')
+          axios.defaults.headers.common['Authorization'] = '';
+          message.error("用户未登录")
+        }
+      })
     }
-    else{
-      utils.clearCookie('Authorization')
-      axios.defaults.headers.common['Authorization'] = '';
-      message.error("用户未登录")
-    }
-  })
-}
     const getAllTeams = (page: number, size: number) => {
       axios.get('/team/list',
-          {headers: headers, params: {
-            // page: page, size: size
-            }})
+          {
+            headers: headers, params: {
+              // page: page, size: size
+            }
+          })
           .then(res => {
             // console.log(res)
             const array = ref(res.data.data.items)
@@ -168,7 +168,7 @@ export default defineComponent({
             // console.log(array)
             for (let i = 0; i < array.value.length; i++) {
               let idd = array.value[i].ID
-              let projectlist=[]
+              let projectlist = []
               // async getData(){
 
               // }
@@ -181,13 +181,13 @@ export default defineComponent({
               //   }
               // }
               teamAndProjects.value.push({
-                link:'/team/teamprojects?teamID=' + idd,
-                ID:idd,
-                name:array.value[i].name,
-                color:array.value[i].src,
-                projects:[],
+                link: '/team/teamprojects?teamID=' + idd,
+                ID: idd,
+                name: array.value[i].name,
+                color: array.value[i].src,
+                projects: [],
               })
-              axios.get('/program/list',{headers: headers, params: {teamID:idd}}).then(prores=>{
+              axios.get('/program/list', {headers: headers, params: {teamID: idd}}).then(prores => {
                 // teamAndProjects.value.push({
                 //   link:'/team/teamprojects?teamID=' + idd,
                 //   ID:idd,
@@ -199,7 +199,7 @@ export default defineComponent({
                 // console.log(idd)
                 // console.log('teamAndProjects.value:')
                 // console.log(teamAndProjects.value)
-                teamAndProjects.value[i].projects=prores.data.data.items
+                teamAndProjects.value[i].projects = prores.data.data.items
               })
               // console.log(projectlist)
               sideMenuOptions.value.push(
@@ -217,10 +217,10 @@ export default defineComponent({
                     icon: renderIcon(Team)
                   }
               )
-                // console.log('sideMenuOptions.value:')
-                // console.log(sideMenuOptions.value)
+              // console.log('sideMenuOptions.value:')
+              // console.log(sideMenuOptions.value)
             }
-            if(renewTag<600)
+            if (renewTag < 600)
               renewTag++;
             else renewTag--;
             // this.$refs.teamAndProject.
@@ -230,12 +230,12 @@ export default defineComponent({
     }
     const changePage = (page: number) => {
       getAllTeams(page - 1, 8)
-      currentPage.value=page
+      currentPage.value = page
     }
     onMounted(() => {
       load()
-      if(typeof(route.query.teamID)!="undefined")
-       menuKey.value=route.query.teamID.toString();
+      if (typeof (route.query.teamID) != "undefined")
+        menuKey.value = route.query.teamID.toString();
       //  console.log("menuKey:"+menuKey.value)
       getAllTeams(0, 8)
     })
@@ -254,7 +254,7 @@ export default defineComponent({
       handleUpdateValue(key: string, item: MenuOption) {
         emit("ID", parseInt(key))
         utils.setCookie('teamID', parseInt(key))
-        menuKey.value=key
+        menuKey.value = key
         emit("judgechild")
         //     router.push({path:'/team/teamProjects',
         //   query:{teamID:utils.getCookie("teamID")}
@@ -294,9 +294,11 @@ export default defineComponent({
   height: 100%;
   overflow: hidden;
 }
-.user{
+
+.user {
   margin-left: 20px;
 }
+
 .user-info {
 
   display: flex;
@@ -307,10 +309,12 @@ export default defineComponent({
   flex-wrap: nowrap;
   align-items: center;
 }
-.user-info:hover{
 
-cursor:pointer
+.user-info:hover {
+
+  cursor: pointer
 }
+
 .avatar {
   width: 70px;
   height: 70px;
@@ -409,14 +413,17 @@ cursor:pointer
   transition: 0.2s;
   align-items: center;
 }
-.addTeam:hover{
+
+.addTeam:hover {
   color: #E2E4E9;
   cursor: pointer;
   border: 1px solid #A7AFBE;
 }
-.addTeam:active{
-    background-color: #2B303B;
+
+.addTeam:active {
+  background-color: #2B303B;
 }
+
 .addImg {
   height: 100%;
   width: 40px;
@@ -437,9 +444,10 @@ cursor:pointer
   padding: 5px 0 20px;
   justify-content: center;
 }
-.signI{
+
+.signI {
   overflow: hidden;
-  width:0;
+  width: 0;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
   transition-duration: 0.5s;
   margin-right: 20px;
@@ -458,10 +466,12 @@ cursor:pointer
   transition: 0.2s;
   transition-timing-function: cubic-bezier(0.29, 0.44, 0.25, 1);
 }
-.user-info:hover .lineI{
-  height:0;
+
+.user-info:hover .lineI {
+  height: 0;
 }
-.teamlist{
+
+.teamlist {
   /* margin: 0 0 190px 0; */
   overflow: overlay;
   display: flex;
@@ -471,15 +481,18 @@ cursor:pointer
   align-items: flex-start;
   align-items: stretch;
 }
-.teamlist:hover .divline{
+
+.teamlist:hover .divline {
   border-bottom: 1px solid #2B303B;
 }
-.teamlist:hover .teamsHead{
-  color:#fff;
+
+.teamlist:hover .teamsHead {
+  color: #fff;
 }
-.divline{
-  height:1px;
-  margin:0 12px 0 0;
+
+.divline {
+  height: 1px;
+  margin: 0 12px 0 0;
   /*background:#16181D;*/
   border-bottom: 1px solid #16181D;
   transition-duration: 0.3s;
