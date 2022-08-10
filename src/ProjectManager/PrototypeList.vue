@@ -505,11 +505,8 @@ const viewAddDocu = () => {
 }
 
 const posAdd = () => {
-
   console.log("确定添加布局");
-
   //成功添加文档
-
   if (addModelRef.value.addName === '') {
     message.warning("文档名不可为空！")
     return;
@@ -526,12 +523,24 @@ const posAdd = () => {
   ).then(res => {
     if (res.data.msg === '成功') {
       console.log(addModelRef.value.addName);
+      console.log(res);
       console.log("创建布局成功");
-
       //刷新 获取文档列表
       getList();
       //documents.value.push(newdoc);
-      console.log("添加布局成功");
+
+      router.push({
+        path: "/layout",
+        query: {
+          teamID: route.query.teamID,
+          layoutId: res.data.data,
+          layoutName: addModelRef.value.addName,
+          canvasWidth: addModelRef.value.addWidth,
+          canvasHeight: addModelRef.value.addHeight,
+          modelName: addModelRef.value.template.name
+        }
+      })
+
     }
   })
 
@@ -582,18 +591,18 @@ const heightRule = {
 let openID = ref(0); //要打开的布局ID
 
 const openCard = (indx) => {
-  //console.log(shortcuts.value[indx].ID)
   openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
 
-  router.push({path:"/layout",
-  query:{
-    teamID:route.query.teamID,
-    layoutId: openID.value,
-    layoutName: shortcuts.value[indx].name,
-    canvasWidth: shortcuts.value[indx].width,
-    canvasHeight: shortcuts.value[indx].height,
-  }
-})
+  router.push({
+    path: "/layout",
+    query: {
+      teamID: route.query.teamID,
+      layoutId: openID.value,
+      layoutName: shortcuts.value[indx].name,
+      canvasWidth: shortcuts.value[indx].width,
+      canvasHeight: shortcuts.value[indx].height,
+    }
+  })
 
 }
 

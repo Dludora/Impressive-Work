@@ -1,5 +1,5 @@
 <template>
-  <div class="board">
+  <div class="board" style="height: 100%">
     <div class="img" id="img" v-if="!empty"></div>
     <div class="ui pageBoardBox" id="pageBoardBox" v-if="!empty">
       <n-scrollbar
@@ -37,7 +37,15 @@
         </n-icon>
       </div>
     </div>
-    <div v-if="empty"></div>
+    <div v-if="empty" style="margin: auto">
+      <n-empty description="你什么也找不到" size="huge">
+        <template #extra>
+<!--          <n-button size="small">-->
+<!--            看看别的-->
+<!--          </n-button>-->
+        </template>
+      </n-empty>
+    </div>
   </div>
 </template>
 

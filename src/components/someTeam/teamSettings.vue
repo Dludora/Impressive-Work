@@ -93,8 +93,11 @@ const dissolve = () => {
 
 const exitTeam = () => {
   axios.post(
-      '/team/'+route.query.teamID+'/quit'
+      '/team/'+route.query.teamID+'/quit',
+      {},
+      {headers: headers}
   ).then(res => {
+
     if(res.data.msg === '成功') {
       message.success("已退出团队")
       router.push('/teamchoose')
