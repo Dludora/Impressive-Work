@@ -190,7 +190,7 @@ const setCover = () => {
 //原型项目
 
 let shortcuts=ref([]);
-
+let imgSrc = ref('')
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -203,6 +203,7 @@ watch(nowCover,(newCover,oldCover)=>{
 }, {immediate: true, deep: true})
 onMounted(()=>{
   proID.value=parseInt(utils.getCookie('proID')) ;
+  imgSrc.value=utils.getCookie('proIMG');
   console.log("成功获取项目ID:"+proID.value);
   getList();
 })
@@ -240,10 +241,8 @@ const getList = () =>{ //TODO 前后端对接：获取页面列表
         if(value!='')
         CoverOptions.value.push({label:label,value:value})
       }
-      if(shortcuts.value.length>0){
-        nowCover.value = CoverOptions.value[1].value
-        
-      }
+
+          nowCover.value = imgSrc.value
       console.log("now:"+nowCover.value)
       console.log("assis"+assis.value)
       console.log(shortcuts.value);

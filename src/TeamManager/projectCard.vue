@@ -55,7 +55,7 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
-    const imgUrl = ref('@/assets/brand1920x292.png')
+    const imgUrl = ref('')
     const message = useMessage()
       const headers = {
         Authorization: utils.getCookie('Authorization')
@@ -68,6 +68,7 @@ export default defineComponent({
       // console.log("go")
       utils.setCookie('proID', props.id)
       utils.setCookie('proNAME', props.name)
+      utils.setCookie('proIMG', props.img)
       utils.setCookie('proTeam', route.query.teamID)
 
       router.replace({name: 'project', query:{teamID: route.query.teamID}})
@@ -92,7 +93,7 @@ export default defineComponent({
       if(props.name!=Name.value)
       axios.put("/program", {
               "ID": props.id,
-              "src": "src",
+              "src": props.img,
               "name": Name.value
               }, {headers: headers}).then(res => {
 
@@ -117,7 +118,7 @@ export default defineComponent({
       imgUrl.value=props.img
       Name.value=props.name
       // if(imgUrl.value===''){
-      //   imgUrl.value=''
+      //   imgUrl.value='../assets/teamfigure.jpg'
       // }
 
     })
