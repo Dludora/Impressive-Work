@@ -126,36 +126,49 @@
           </n-icon>
         </div>
 
-        <div class="settingBar" id="settingBoard" @mousedown.stop>
-          <div class="settingMenu" @click="switchSettingMenu('device')">设备</div>
-          <div class="settingMenu" @click="switchSettingMenu('model')">模板</div>
+        <div class="ui settingBar" id="settingBoard" @mousedown.stop>
+          <div class="settingMenu" @click="switchSettingMenu('device')">
+            设备
+          </div>
+          <div class="settingMenu" @click="switchSettingMenu('model')">
+            模板
+          </div>
           <div class="settingLine"></div>
           <n-scrollbar content-style="paddingRight:10px;">
-            <div
-              :key="outkey"
-              v-for="(outvalue, outkey) in resolutionModel"
-              id="settingDeviceContent"
-            >
-              <div class="settingDevice">{{ outkey }}</div>
-              <div
-                :key="inkey"
-                v-for="(value, inkey) in outvalue"
-                class="settingDeviceModel"
-                @click="
-                  canvasWidth = value[0];
-                  canvasHeight = value[1];
-                "
-              >
-                <div class="settingDeviceModelName">
-                  {{ inkey }}
+            <div id="settingDeviceContent" class="settingContent">
+              <div :key="outkey" v-for="(outvalue, outkey) in resolutionModel">
+                <div class="settingDevice">{{ outkey }}</div>
+                <div
+                  :key="inkey"
+                  v-for="(value, inkey) in outvalue"
+                  class="settingDeviceModel"
+                  @click="
+                    canvasWidth = value[0];
+                    canvasHeight = value[1];
+                  "
+                >
+                  <div class="settingDeviceModelName">
+                    {{ inkey }}
+                  </div>
+                  <div class="settingDeviceResolution">
+                    {{ value[0] }}*{{ value[1] }}
+                  </div>
+                  <div class="clear"></div>
                 </div>
-                <div class="settingDeviceResolution">
-                  {{ value[0] }}*{{ value[1] }}
-                </div>
-                <div class="clear"></div>
               </div>
             </div>
-            <div id="settingModelContent"></div>
+            <div
+              id="settingModelContent"
+              class="settingContent"
+              style="transform: translate(110%, 0)"
+            >
+              <div
+                v-for="(value, index) in models"
+                :key="value.name"
+                class="settingModel"
+                @click="switchModel(index)"
+              ></div>
+            </div>
           </n-scrollbar>
         </div>
 
@@ -373,23 +386,32 @@
         </div>
 
         <div class="ui elementBar">
-          <div class="ui elementSubBar">
-            <div class="elementLeftUnit elementBrowser">
+          <div class="ui elementSubBar" v-show="modelAt >= 0">
+            <div class="elementLeftUnit elementBrowser" @click="switchElement(-1)">
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-back-ios-round />
               </n-icon>
               <div class="elementVerticalLine" style="right: 0px"></div>
             </div>
-            <div class="ui elementBarUnit" @mousedown="PrepareElement('rect')">
-              <div class="ui elementUnit elementRectangle"></div>
-            </div>
-            <div
+
+            <!-- <div
               class="ui elementBarUnit"
               @mousedown="PrepareElement('circle')"
             >
               <div class="ui elementUnit elementCircle"></div>
+            </div> -->
+            <div
+              class="ui elementBarUnit"
+              v-for="(value, index) in elementSrcs"
+              :key="index"
+              @mousedown="PrepareElement(value)"
+            >
+              <div
+                class="ui elementUnit"
+                :style="{ backgroundImage: 'url(' + value + ')' }"
+              ></div>
             </div>
-            <div class="elementRightUnit elementBrowser">
+            <div class="elementRightUnit elementBrowser" @click="switchElement(1)">
               <div class="elementVerticalLine" style="left: 0px"></div>
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-forward-ios-round />
@@ -398,7 +420,13 @@
           </div>
           <div class="ui elementSubBar">
             <div
-              class="ui elementBarUnit elementRightUnit elementLeftUnit"
+              class="ui elementBarUnit elementLeftUnit"
+              @mousedown="PrepareElement('rect')"
+            >
+              <div class="ui elementUnit elementRectangle"></div>
+            </div>
+            <div
+              class="ui elementBarUnit elementRightUnit"
               @mousedown="PrepareElement('text')"
             >
               <n-icon
@@ -413,7 +441,6 @@
         </div>
       </div>
     </div>
-    <canvas id="calcCanvas"></canvas>
   </div>
 </template>
 
@@ -632,6 +659,19 @@ const property = reactive<Property>({
   borderColor: "transparent",
 });
 
+type Model = {
+  name: string;
+  elements: Property[];
+  srcs: string[];
+};
+const models = reactive<Model[]>([]);
+let modelAt = ref<number>(-1);
+const elementSrcs = reactive<string[]>([]);
+let firstSrc: number = 0;
+const maxElementsNum = 6;
+const endingLeft = ref<boolean>(true);
+const endingRight = ref<boolean>(true);
+
 const changeUpdate = () => {
   update.value = true;
 };
@@ -684,6 +724,17 @@ const updateProps = (data: Property) => {
   }
 };
 
+const initModels = () => {
+  axios.get("/layout/module/list", { headers: headers }).then((res) => {
+    console.log(res.data.data);
+    for (var i = 0; i < res.data.data.length; ++i) {
+      var model = JSON.parse(res.data.data[i].content);
+      models[i] = model;
+      console.log(models);
+    }
+  });
+};
+
 const initPageImgs = () => {
   axios
     .get("/layout/list", {
@@ -706,6 +757,61 @@ const initPageImgs = () => {
       }
     });
   //console.log(pageImgs);
+};
+
+const switchModel = (id: number) => {
+  var to = 0;
+  modelAt.value = id;
+  endingLeft.value = true;
+  firstSrc = 0;
+  if (models[id].srcs.length <= maxElementsNum) {
+    endingRight.value = true;
+    var to = models[id].srcs.length;
+  }
+  else
+  {
+    endingRight.value = false;
+    to = maxElementsNum;
+  }
+  elementSrcs.splice(0);
+  for (var i = 0; i < to; ++i) {
+    elementSrcs[i] = models[id].srcs[i];
+  }
+  console.log(elementSrcs);
+};
+
+const switchElement = (dir: number) => {
+  console.log(endingRight.value)
+  console.log(models[modelAt.value].srcs);
+  if ((dir < 0 && endingLeft.value) || (dir > 0 && endingRight.value)) {
+    return;
+  }
+  var from = firstSrc + dir * maxElementsNum;
+  firstSrc = from;
+  if (from > models[modelAt.value].srcs.length || from < 0) {
+    return;
+  }
+  if(from > 0)
+  {
+    endingLeft.value = false;
+  }
+  else
+  {
+    endingLeft.value = true;
+  }
+  var to = from + maxElementsNum;
+  if (to >= models[modelAt.value].srcs.length) {
+    to = models[modelAt.value].srcs.length;
+    endingRight.value = true
+  }
+  else
+  {
+    endingRight.value = false;
+  }
+  elementSrcs.splice(0);
+  for (var i = from; i < to; ++i) {
+    elementSrcs[i - from] = models[modelAt.value].srcs[i];
+  }
 };
 
 const switchPage = (id: number) => {
@@ -825,12 +931,12 @@ const switchSettingMenu = (settingMenu: string) => {
     });
     gsap.to("#settingModelContent", {
       duration: 0.2,
-      translateX: "100%",
+      translateX: "110%",
     });
   } else {
     gsap.to("#settingDeviceContent", {
       duration: 0.2,
-      translateX: "-100%",
+      translateX: "-110%",
     });
     gsap.to("#settingModelContent", {
       duration: 0.2,
@@ -888,6 +994,7 @@ onMounted(() => {
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
   console.log("layoutId=" + layoutId.value);
   initPageImgs();
+  initModels();
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -971,6 +1078,7 @@ const exit = () => {
   top: 36px;
   z-index: 2;
   background-color: #2b303b;
+  color:#d4d4d4;
 }
 .downloadAlternative {
   display: block;
@@ -1042,6 +1150,10 @@ const exit = () => {
   height: 1px;
   border-bottom: 1px solid #fff;
 }
+.settingContent {
+  width:260px;
+  position: absolute;
+}
 .settingDevice {
   font-weight: bold;
   font-family: "Microsoft Yahei";
@@ -1062,6 +1174,14 @@ const exit = () => {
 .settingDeviceResolution {
   float: right;
   color: #ccc;
+}
+.settingModel {
+  width: 250px;
+  height: 140px;
+  border-style: solid;
+  border-width: 3px;
+  margin-top: 25px;
+  background-size: cover;
 }
 .pageBoardBox {
   position: absolute;
@@ -1261,6 +1381,11 @@ const exit = () => {
   top: 0;
   bottom: 0;
   margin: auto;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 42px;
+  height: 42px;
 }
 .elementRectangle {
   background-color: #ddb055;
