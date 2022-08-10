@@ -838,7 +838,7 @@ function openDocu(index) {
 
 .big-contain {
   /*width:fit-content;*/
-  margin: 39px 43px 0 61px;
+  margin: 20px 60px 0;
 }
 
 .docu-all {
@@ -855,8 +855,8 @@ function openDocu(index) {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 29px;
+  font-size: 12px;
+  line-height: 28px;
 
   align-items: center;
 
@@ -930,10 +930,10 @@ function openDocu(index) {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 29px;
+  font-size: 12px;
+  line-height: 28px;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 
   display: flex;
   flex-wrap: nowrap;

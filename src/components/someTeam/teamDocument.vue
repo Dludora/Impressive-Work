@@ -897,7 +897,7 @@ const dragOver = () => {
 }
 
 .buttons {
-  margin-right: 10px;
+  /*margin-right: 10px;*/
 }
 
 .newpage {
@@ -905,6 +905,6 @@ const dragOver = () => {
 }
 
 .layout {
-  margin: 20px 50px 0 60px;
+  margin: 20px 60px 0 60px;
 }
 </style>
