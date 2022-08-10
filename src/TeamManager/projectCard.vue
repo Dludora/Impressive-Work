@@ -1,8 +1,8 @@
 <template>
     <div class="card" @click="gotoProject" style="cursor: pointer;" @mouseenter="come" @mouseleave="leave">
-        <!-- <div class="img"  :style="'background-image:url('+imgUrl+');'" > -->
-          <div class="img">
-        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
+        <div class="img"  :style="'background-image:url('+imgUrl+');'" >
+          <!-- <div class="img"> -->
+        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -130,7 +130,11 @@ export default defineComponent({
     })
     watch(getGlobal, (newVal, oldVal) => {
         Name.value=newVal
+        
+      }, {immediate: true, deep: true})
+    watch(()=>props.img, (newUrl, oldVal) => {
 
+        imgUrl.value = newUrl
       }, {immediate: true, deep: true})
     onMounted(()=>{
       imgUrl.value=props.img
