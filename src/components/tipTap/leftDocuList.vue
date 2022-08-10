@@ -1,10 +1,10 @@
 <template>
-  <div class="docu-item" tabindex="-1">
-    <div class="docu-name" >
+  <div class="docu-item" tabindex="-1" @click="op" style="cursor: pointer">
+    <div class="docu-name"  >
       <!--    <div class="docu-icon">-->
       <Icon size="20" class="icons"><Document /></Icon>
       <!--    </div>-->
-      <div class="nametext" @click="op" style="cursor: pointer">{{name}}</div>
+      <div class="nametext">{{name}}</div>
     </div>
   </div>
 </template>

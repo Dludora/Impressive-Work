@@ -13,10 +13,11 @@
     }"
         >
           <n-form-item label="团队名称" path="inputValue" :rule="ruleName">
-            <n-input style="backgroud:green;" v-model:value="model.inputValue" placeholder="Input"/>
+            <n-input class="input" style="backgroud:green;" v-model:value="model.inputValue" placeholder="Input"/>
           </n-form-item>
           <n-form-item label="团队简介" path="textareaValue">
             <n-input
+            class="input"
                 v-model:value="model.textareaValue"
                 placeholder="请输入团队简介(非必须)"
                 type="textarea"
@@ -155,6 +156,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.input{
+  background-color: transparent;
+  border: #414958 1px solid;
+}
 .button {
   margin-top: 20px;
   width: 100%;
