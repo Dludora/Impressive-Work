@@ -1030,7 +1030,7 @@ onMounted(() => {
 
 const exit = () => {
   save();
-  router.push("/project/prototypes");
+  router.push("/project/prototypes?teamID="+route.query.teamID);
 };
 </script>
 
