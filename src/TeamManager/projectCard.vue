@@ -1,8 +1,9 @@
 <template>
     <div class="card" @click="gotoProject" style="cursor: pointer;" @mouseenter="come" @mouseleave="leave">
-        <!-- <div class="img"  :style="'background-image:url('+imgUrl+');'" > -->
-          <div class="img">
-        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
+
+        <div class="img"  :style="'background-image:url('+imgUrl+');'" >
+          <!-- <div class="img"> -->
+        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -108,6 +109,18 @@ export default defineComponent({
     }
     
     const changeName = () => {
+
+  if (Name.value.length === 0) {
+    message.warning("项目名称不能为空～")
+    Name.value=props.name
+    return;
+  }
+  if(Name.value.length>12)
+  {
+    message.warning("项目名称不能大于12～")
+    Name.value=props.name
+    return;
+  }
       if(props.name!=Name.value)
       axios.put("/program", {
               "ID": props.id,
@@ -117,6 +130,7 @@ export default defineComponent({
 
               if (res.data.msg === "成功") {
                 message.info("修改成功")
+                router.go(0)
               } else {
                 message.error("修改失败")
               }
@@ -130,7 +144,11 @@ export default defineComponent({
     })
     watch(getGlobal, (newVal, oldVal) => {
         Name.value=newVal
+        
+      }, {immediate: true, deep: true})
+    watch(()=>props.img, (newUrl, oldVal) => {
 
+        imgUrl.value = newUrl
       }, {immediate: true, deep: true})
     onMounted(()=>{
       imgUrl.value=props.img
@@ -166,7 +184,7 @@ export default defineComponent({
 
 <style scoped>
 .nameInput{
-  min-width: 100px;background-color: transparent;
+  min-width: 200px;background-color: transparent;
 }
 * {
   transition: 0.2s;

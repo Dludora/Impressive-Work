@@ -1,5 +1,5 @@
 <template>
-  <div class="board">
+  <div class="board" >
     <div class="img" id="img" v-if="!empty"></div>
     <div class="ui pageBoardBox" id="pageBoardBox" v-if="!empty">
       <n-scrollbar
@@ -37,8 +37,17 @@
         </n-icon>
       </div>
     </div>
-    <div v-if="empty"></div>
+    <div v-if="empty" class="empty">
+      <n-empty description="你什么也找不到" size="huge">
+        <template #extra>
+          <n-button size="large" @click="returnHome">
+            返回主页
+          </n-button>
+        </template>
+      </n-empty>
+    </div>
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -50,10 +59,11 @@ import {
 import axios from "axios"
 import gsap from "gsap"
 import { ref, reactive, onMounted } from "vue";
-import {useRoute} from "vue-router"
+import {useRoute, useRouter} from "vue-router"
 import utils from "@/Utils";
 
-const route = useRoute();
+const route = useRoute()
+const router = useRouter()
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -80,14 +90,17 @@ const screenW = document.body.clientWidth;
 const screenH = document.body.clientHeight;
 const ratiohw = screenH/screenW;
 
+const returnHome = () => {
+  router.push('/')
+}
 const initPageImgs = () => {
   axios
     .get("/layout/preview/code/"+proCode, {
       headers: headers,
     })
     .then((res) => {
+      console.log(res.data);
       if (res.data.msg == "成功") {
-        console.log(res.data);
 
         for (var i = 0; i < res.data.data.length; ++i) {
           pageList[i]={
@@ -162,6 +175,7 @@ onMounted(()=>{
 
 <style scoped>
 .board{
+  height: 100%;
   background-color: black;
 }
 .img{
@@ -240,5 +254,12 @@ onMounted(()=>{
   top: 0;
   bottom: 0;
   margin: auto;
+}
+.empty {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  top: calc(30% - 150px / 2);
+  left: calc(50% - 150px / 2);
 }
 </style>

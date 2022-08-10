@@ -49,6 +49,7 @@
         :layoutId="layoutId"
         :canvasWidth="canvasWidth"
         :canvasHeight="canvasHeight"
+        :modelElements="modelElements"
       ></layout-canvas>
       <div>
         <div class="toolBar">
@@ -338,7 +339,7 @@
             class="porpertyBarIconUnit"
             @click.stop="displayPalette"
           >
-            <div class="porpertyIcon fillIcon"></div>
+            <div class="porpertyIcon fillIcon" :style="'background-color:'+palette[selectedColor]+';'"></div>
             <div class="porpertyExtension">
               <n-icon size="18" color="#E2E4E9">
                 <keyboard-arrow-up-round />
@@ -426,7 +427,7 @@
               class="ui elementBarUnit elementLeftUnit"
               @mousedown="PrepareElement('rect')"
             >
-              <div class="ui elementUnit elementRectangle"></div>
+              <div class="ui elementUnit elementRectangle" :style="'background-color:'+palette[selectedColor]+';'"></div>
             </div>
             <div
               class="ui elementBarUnit elementRightUnit"
@@ -666,9 +667,12 @@ type Model = {
   name: string;
   elements: Property[];
   srcs: string[];
+  cover:string;
 };
 const models = reactive<Model[]>([]);
-let modelAt = ref<number>(-1);
+const modelAt = ref<number>(-1);
+const modelName = ref<string>("");
+const modelElements = reactive([]); 
 const elementSrcs = reactive<string[]>([]);
 let firstSrc: number = 0;
 const maxElementsNum = 6;
@@ -733,6 +737,13 @@ const initModels = () => {
     for (var i = 0; i < res.data.data.length; ++i) {
       var model = JSON.parse(res.data.data[i].content);
       models[i] = model;
+      if(model.name==modelName.value)
+      {
+        for(var j=0;j<model.elements.length;++j)
+        {
+          modelElements[j] = model.elements[j];
+        }
+      }
       console.log(models);
     }
   });
@@ -880,6 +891,8 @@ const updateColor = (colorId: number) => {
   selectedColor = colorId;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
   colorCircles.value[selectedColor].style.margin = "2.5px";
+  let fillicon=document.getElementsByClassName('fillIcons') as HTMLCollectionOf<HTMLElement>
+  fillicon[0].style['background']=palette[colorId]
 };
 
 const updateBorder = (colorId: number) => {
@@ -995,6 +1008,7 @@ onMounted(() => {
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string);
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
+  modelName.value = route.query.modelName as string;
   console.log("layoutId=" + layoutId.value);
   initPageImgs();
   initModels();
@@ -1034,7 +1048,7 @@ onMounted(() => {
 const exit = () => {
   save();
   canvas.value?.wsClose();
-  router.push("/project/prototypes");
+  router.push("/project/prototypes?teamID="+route.query.teamID);
 };
 </script>
 
