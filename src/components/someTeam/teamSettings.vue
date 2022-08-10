@@ -17,7 +17,7 @@
           </n-form-item>
           <n-form-item label="团队简介" path="textareaValue">
             <n-input
-            class="input"
+                class="input"
                 v-model:value="model.textareaValue"
                 placeholder="请输入团队简介(非必须)"
                 type="textarea"
@@ -45,10 +45,44 @@
           <span> > 创立时间 : 2022.8.9 </span>
         </div>
         <div class="button">
-          <n-button @click="dissolve" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed v-if="myIdentify==2">解 散 团 队</n-button>
-          <n-button @click="exitTeam" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed v-else>退 出 团 队</n-button>
+          <n-button @click="showModalDissolve=true" style="padding-left: 40px;padding-right: 40px;font-size: 14px;"
+                    dashed
+                    v-if="myIdentify==2">解 散 团 队
+          </n-button>
+          <n-button @click="showModalExit=true" style="padding-left: 40px;padding-right: 40px;font-size: 14px;" dashed
+                    v-else>退 出
+            团 队
+          </n-button>
         </div>
       </div>
+
+      <n-modal
+          v-model:show="showModalDissolve"
+          preset="dialog"
+          title="解散团队"
+          positive-text="确认"
+          negative-text="取消"
+          @positive-click="posDissolve"
+          @negative-click="negDissolve"
+      >
+        <p style="font-size: 15px">
+          确认解散团队
+        </p>
+      </n-modal>
+
+      <n-modal
+          v-model:show="showModalExit"
+          preset="dialog"
+          title="解散团队"
+          positive-text="确认"
+          negative-text="取消"
+          @positive-click="posExitTeam"
+          @negative-click="negExitTeam"
+      >
+        <p style="font-size: 15px">
+          确认退出团队
+        </p>
+      </n-modal>
     </n-config-provider>
 
   </div>
@@ -74,12 +108,14 @@ const memNum = ref()
 const model = ref({
   inputValue: '',
   textareaValue: '',
-  src:'',
+  src: '',
   switchValue: false
 })
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
+
+const showModalDissolve = ref(false)
 const dissolve = () => {
   axios.delete('/team/' + route.query.teamID, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -90,20 +126,36 @@ const dissolve = () => {
     }
   })
 }
+const posDissolve = () => {
+  showModalDissolve.value = false
+  dissolve()
+}
+const negDissolve = () => {
+  showModalDissolve.value = false
+}
 
+const showModalExit = ref(false)
 const exitTeam = () => {
   axios.post(
-      '/team/'+route.query.teamID+'/quit',
+      '/team/' + route.query.teamID + '/quit',
       {},
       {headers: headers}
   ).then(res => {
-
-    if(res.data.msg === '成功') {
+    if (res.data.msg === '成功') {
       message.success("已退出团队")
       router.push('/teamchoose')
     }
   })
 }
+const posExitTeam = () => {
+  showModalExit.value = false
+  exitTeam()
+}
+const negExitTeam = () => {
+  showModalExit.value = false
+}
+
+
 const getNum = () => {
   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort=0'
       + '&direction=0' + '&keyword=';
@@ -118,8 +170,8 @@ const getNum = () => {
   })
 }
 const cancel = () => {
-    getTeamInfo()
-    message.success("取消修改")
+  getTeamInfo()
+  message.success("取消修改")
 }
 const ruleName = {
   required: true,
@@ -154,10 +206,11 @@ const change = () => {
 const getTeamInfo = () => {
   console.log(route.query.teamID)
   axios.get('/team/' + route.query.teamID + '/info', {headers: headers}).then(res => {
-    console.log(res.data)
-    model.value.inputValue = res.data.data.name
-    model.value.textareaValue = res.data.data.introduction
-    model.value.src = res.data.data.src
+    if (res.data.msg === '成功') {
+      model.value.inputValue = res.data.data.name
+      model.value.textareaValue = res.data.data.introduction
+      model.value.src = res.data.data.src
+    }
   })
 }
 const getGlobal = computed(() => {
@@ -183,10 +236,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.input{
+.input {
   background-color: transparent;
   border: #414958 1px solid;
 }
+
 .button {
   margin-top: 20px;
   width: 100%;
