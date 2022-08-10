@@ -147,7 +147,7 @@ const initMoveable = () => {
     rotatable: true,
     warpable: false,
     snappable: true,
-    roundable: true,
+    roundable: false,
     roundRelative: false,
     snapGap: true,
     snapThreshold: 5,
@@ -175,8 +175,8 @@ const initMoveable = () => {
       update.value = false;
     })
     .on("drag", ({ target, translate, transform }) => {
-      layoutElementParams[selectedId.value[0]].x = translate[0]/mscale;
-      layoutElementParams[selectedId.value[0]].y = translate[1]/mscale;
+      layoutElementParams[selectedId.value[0]].x = translate[0] / mscale;
+      layoutElementParams[selectedId.value[0]].y = translate[1] / mscale;
       updateTransform(
         selected.value[0],
         layoutElementParams[selectedId.value[0]]
@@ -187,8 +187,10 @@ const initMoveable = () => {
       if (!locked) {
         var i = 0;
         for (i = 0; i < targets.length; ++i) {
-          layoutElementParams[selectedId.value[i]].x = events[i].translate[0]/mscale;
-          layoutElementParams[selectedId.value[i]].y = events[i].translate[1]/mscale;
+          layoutElementParams[selectedId.value[i]].x =
+            events[i].translate[0] / mscale;
+          layoutElementParams[selectedId.value[i]].y =
+            events[i].translate[1] / mscale;
           updateTransform(
             selected.value[i],
             layoutElementParams[selectedId.value[i]]
@@ -196,7 +198,7 @@ const initMoveable = () => {
         }
       }
     })
-    .on("dragGroupEnd",()=>{
+    .on("dragGroupEnd", () => {
       changeUpdate();
       updateUpdates();
       wsUpdate();
@@ -221,10 +223,10 @@ const initMoveable = () => {
       //target!.style.width = `${width}px`;
       //target!.style.height = `${height}px`;
       //target.style.transform = transform; //`translate(${drag.beforeTranslate[0]}px, ${drag.beforeTranslate[1]}px)`;
-      layoutElementParams[selectedId.value[0]].width = width/mscale;
-      layoutElementParams[selectedId.value[0]].height = height/mscale;
-      layoutElementParams[selectedId.value[0]].x = drag.translate[0]/mscale;
-      layoutElementParams[selectedId.value[0]].y = drag.translate[1]/mscale;
+      layoutElementParams[selectedId.value[0]].width = width / mscale;
+      layoutElementParams[selectedId.value[0]].height = height / mscale;
+      layoutElementParams[selectedId.value[0]].x = drag.translate[0] / mscale;
+      layoutElementParams[selectedId.value[0]].y = drag.translate[1] / mscale;
       updateTransform(
         selected.value[0],
         layoutElementParams[selectedId.value[0]]
@@ -233,8 +235,8 @@ const initMoveable = () => {
     })
     .on("resizeEnd", () => {
       changeUpdate();
-      updateUpdates()
-      wsUpdate()
+      updateUpdates();
+      wsUpdate();
       update.value = true;
     })
     .on("resizeGroupStart", ({ events }) => {
@@ -249,10 +251,12 @@ const initMoveable = () => {
     })
     .on("resizeGroup", ({ events }) => {
       events.forEach((ev, i) => {
-        layoutElementParams[selectedId.value[i]].x = ev.drag.translate[0]/mscale;
-        layoutElementParams[selectedId.value[i]].y = ev.drag.translate[1]/mscale;
-        layoutElementParams[selectedId.value[i]].width = ev.width/mscale;
-        layoutElementParams[selectedId.value[i]].height = ev.height/mscale;
+        layoutElementParams[selectedId.value[i]].x =
+          ev.drag.translate[0] / mscale;
+        layoutElementParams[selectedId.value[i]].y =
+          ev.drag.translate[1] / mscale;
+        layoutElementParams[selectedId.value[i]].width = ev.width / mscale;
+        layoutElementParams[selectedId.value[i]].height = ev.height / mscale;
         updateTransform(
           selected.value[i],
           layoutElementParams[selectedId.value[i]]
@@ -260,15 +264,15 @@ const initMoveable = () => {
       });
     })
     .on("resizeGroupEnd", () => {
-      updateUpdates()
-      wsUpdate()
+      updateUpdates();
+      wsUpdate();
     });
 
   /* scalable */
   moveable
     .on("scale", ({ target, transform, scale }) => {
-      layoutElementParams[selectedId.value[0]].scaleX = scale[0]/mscale;
-      layoutElementParams[selectedId.value[0]].scaleY = scale[1]/mscale;
+      layoutElementParams[selectedId.value[0]].scaleX = scale[0] / mscale;
+      layoutElementParams[selectedId.value[0]].scaleY = scale[1] / mscale;
       updateTransform(
         selected.value[0],
         layoutElementParams[selectedId.value[0]]
@@ -278,8 +282,8 @@ const initMoveable = () => {
     })
     .on("scaleEnd", () => {
       changeUpdate();
-      updateUpdates()
-      wsUpdate()
+      updateUpdates();
+      wsUpdate();
       update.value = true;
     });
 
@@ -299,8 +303,8 @@ const initMoveable = () => {
     })
     .on("rotateEnd", () => {
       changeUpdate();
-      updateUpdates()
-      wsUpdate()
+      updateUpdates();
+      wsUpdate();
       update.value = true;
     })
     .on("rotateGroupStart", ({ events }) => {
@@ -328,7 +332,7 @@ const initMoveable = () => {
     })
     .on("rotateGroupEnd", () => {
       updateUpdates();
-      wsUpdate()
+      wsUpdate();
     });
 
   /* warpable */
@@ -349,7 +353,7 @@ const initMoveable = () => {
       layoutElementParams[selectedId.value[0]]
     );
     updateUpdates();
-    wsUpdate()
+    wsUpdate();
   });
 };
 
@@ -443,7 +447,7 @@ const updateServer = () => {
   //   comServer.push(newCom);
   // }
   // console.log(comServer);
-  download(false)
+  download(false);
   // axios
   //   .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
   //   .then((res) => {
@@ -507,7 +511,8 @@ const initFromServer = () => {
     });
 };
 
-let createId:number = 0
+let createId: number = 0;
+let creator: boolean = false;
 const initWS = () => {
   ws.onopen = () => {
     ws.send("hi");
@@ -534,6 +539,12 @@ const initWS = () => {
               document.getElementsByName("elements")
             );
             moveable.elementGuidelines.push(document.getElementById("canvas"));
+            if (creator) {
+              selecto.clickTarget(produceClickE, document.getElementsByName("elements")[createId]);
+              layoutElements.value[createId].selectContent();
+              creator = false;
+              createId = 0;
+            }
           });
           var index = layoutElementParams.length - 1;
           break;
@@ -568,16 +579,18 @@ const wsResCreate = (data: ComServer) => {
   var res = JSON.parse(data.content);
   if (data.id != 0) {
     //if (!(res.type == "text" && res.text == "")) {
-      res.id = data.id; 
-      layoutElementParams.push(res);
-      paramsDic[data.id] = res;
+    res.id = data.id;
+    layoutElementParams.push(res);
+    paramsDic[data.id] = res;
     //}
   }
-  
+  if (data.id == createId) {
+    creator = true;
+    createId = layoutElementParams.length-1;
+  }
   setTimeout(() => {
     console.log(res);
-  }); 
-  
+  });
 };
 
 const wsResMod = (data: ComServer) => {
@@ -585,18 +598,16 @@ const wsResMod = (data: ComServer) => {
   console.log(res);
   if (paramsDic[res.id] != null) {
     if (!(res.type == "text" && res.text == "")) {
-      for(var i=0;i<layoutElementParams.length;++i)
-      {
-        if(layoutElementParams[i].id==res.id)
-        {
-          layoutElementParams[i]=res;
+      for (var i = 0; i < layoutElementParams.length; ++i) {
+        if (layoutElementParams[i].id == res.id) {
+          layoutElementParams[i] = res;
           updateTransform(
-              document.getElementsByName("elements")[i],
-              layoutElementParams[i]
-            );
+            document.getElementsByName("elements")[i],
+            layoutElementParams[i]
+          );
           moveable.target = null;
           setTimeout(() => {
-           moveable.target = selected.value; 
+            moveable.target = selected.value;
           });
         }
       }
@@ -606,8 +617,8 @@ const wsResMod = (data: ComServer) => {
 
 const wsResDestroy = (res) => {
   console.log(res);
-  for (var i = layoutElementParams.length-1; i >= 0; --i) {
-    for (var j = res.length-1; j >= 0; --j) {
+  for (var i = layoutElementParams.length - 1; i >= 0; --i) {
+    for (var j = res.length - 1; j >= 0; --j) {
       if (layoutElementParams[i].id == res[j].id) {
         layoutElementParams.splice(i, 1);
         //res.splice(j, 1);
@@ -618,8 +629,7 @@ const wsResDestroy = (res) => {
 };
 
 const wsUpdate = () => {
-  if(ws.readyState!=1)
-  {
+  if (ws.readyState != 1) {
     return;
   }
   var form = {
@@ -639,8 +649,7 @@ const wsUpdate = () => {
 };
 
 const wsDestroy = () => {
-  if(ws.readyState!=1)
-  {
+  if (ws.readyState != 1) {
     return;
   }
   var form = {
@@ -663,8 +672,7 @@ const wsDestroy = () => {
 };
 
 const wsCreate = (data: elementParams) => {
-  if(ws.readyState!=1)
-  {
+  if (ws.readyState != 1) {
     return;
   }
   var form = {
@@ -684,13 +692,12 @@ const wsCreate = (data: elementParams) => {
   updateProps();
 };
 
-const wsClose = ()=>{
-  if(ws.readyState!=1)
-  {
+const wsClose = () => {
+  if (ws.readyState != 1) {
     return;
   }
   ws.close();
-}
+};
 
 const updateSelects = (data: elementParams) => {
   if (data.text == "" || data.text == null) {
@@ -823,7 +830,9 @@ const PrepareElement = (elementType: string) => {
   preparedType = elementType;
 };
 
+let produceClickE: MouseEvent = null;
 const ProduceElement = (e: MouseEvent) => {
+  produceClickE = e;
   if (dragging) {
     dragging = false;
   }
@@ -902,6 +911,7 @@ const ProduceElement = (e: MouseEvent) => {
 
 // let canvas2: any;
 let imgUri: string;
+
 const download = (isDownload: boolean, type?: string) => {
   html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
     function (canvas) {
@@ -954,7 +964,7 @@ let model: Model = {
   name: "安卓简约",
   elements: [],
   srcs: [],
-  cover:"",
+  cover: "",
 };
 let imgs: string[] = [];
 
@@ -996,44 +1006,42 @@ const importImages = () => {
       });
     }
   };
-  coverInputer!.onchange = ()=>{
+  coverInputer!.onchange = () => {
     var form = new FormData();
-      form.append("file", coverInputer.files[0]);
-      axios({
-        url: "/resource/img",
-        method: "post",
-        headers: headers,
-        data: form,
-      }).then((res) => {
-        console.log(res.data);
-        if (res.data.msg == "成功") {
-          model.cover = res.data.data;
-          axios
-            .post(
-              "/layout/module",
-              {
-                name: model.name,
-                content: JSON.stringify(model),
-              },
-              { headers: headers }
-            )
-            .then((res) => {
-              console.log(res.data);
-            });
-        }
-      });
-  }
+    form.append("file", coverInputer.files[0]);
+    axios({
+      url: "/resource/img",
+      method: "post",
+      headers: headers,
+      data: form,
+    }).then((res) => {
+      console.log(res.data);
+      if (res.data.msg == "成功") {
+        model.cover = res.data.data;
+        axios
+          .post(
+            "/layout/module",
+            {
+              name: model.name,
+              content: JSON.stringify(model),
+            },
+            { headers: headers }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
+    });
+  };
 };
 
-const saveModel = ()=>{
-
-}
+const saveModel = () => {};
 
 defineExpose({
   PrepareElement,
   download,
   updateServer,
-  wsClose
+  wsClose,
 });
 
 const startDrag = (e: MouseEvent) => {
