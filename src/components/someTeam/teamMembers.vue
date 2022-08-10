@@ -61,8 +61,16 @@
     >
       <n-form>
         <n-form-item label="链接24h内有效"  :render-feedback="formatFeedback">
-          
-          <n-input v-model:value="inviteUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接..."/>
+            
+          <n-input ref="inputInstRef" id="url" v-model:value="inviteUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接...">
+          <template #suffix>
+              <div class="copyButton">
+                <Icon size="20" class="rename">
+                <Copy16Filled @click="copyUrl"/>
+            </Icon>
+              </div>
+          </template>
+          </n-input>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -93,7 +101,9 @@ import axios from 'axios'
 import {onMounted, ref, computed, watch, h} from 'vue'
 import {useRoute} from 'vue-router'
 import utils from '../../Utils'
-import {darkTheme, useMessage} from "naive-ui"
+import {darkTheme,useMessage,InputInst} from "naive-ui"
+import {Copy16Filled} from '@vicons/fluent'
+
 
 // 寇书瑞改动的部分
 const myID = ref(utils.getCookie('userID'))
@@ -129,6 +139,8 @@ const onPositiveClick = () => {
 }
 let IDdel = ref(null)
 let nickDel = ref('')
+const inputInstRef = ref<InputInst | null>(null);
+
 const onPositiveClickDel = () => {
   remove(IDdel.value);
   showModalRefDel.value = false
@@ -143,6 +155,13 @@ const displayDel = (ID,nick) => {
   nickDel.value = nick;
   showModalRefDel.value = true;
   IDdel.value = ID;
+}
+const copyUrl = () => {
+  const input = document.getElementById('url')! as any
+  inputInstRef.value?.select()
+  document.execCommand('copy')
+message.success("复制成功")
+
 }
 const getUrl = () => {
     let url = '/team/invite/code?teamID='+route.query.teamID+'&maxNum=5'
@@ -283,6 +302,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.copyButton:hover{
+    cursor:pointer;
+}
 .out{
   margin-left: 20px;
 }

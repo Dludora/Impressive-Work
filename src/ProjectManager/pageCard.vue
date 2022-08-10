@@ -1,6 +1,8 @@
 <template>
   <div class="card">
-    <div class="img"/>
+    <div class="img">
+        <img style="width:192px;height:104px;" class="cover" :src="imgUrl" />
+      </div>  
     <div class="bottom">
       <SvgCreate class="svg-create" size="16" border="6" bordercolor="#A7AFBE" color="none" style="margin:10px;"/>
       <div class="nameanddel">
@@ -21,11 +23,12 @@ import {
 } from '@vicons/material'
 import {Icon} from '@vicons/utils'
 import SvgCreate from "@/components/svgCreate.vue"
+import { onMounted ,ref} from 'vue'
 export default {
   name: 'PageCard',
   props: {
     name: String,
-    src: String,
+    img: String,
   },
   components: {
     CloseRound,
@@ -33,6 +36,11 @@ export default {
     SvgCreate,
   },
   setup(props, {emit}) {
+    let imgUrl = ref('')
+    onMounted(()=>{
+      console.log(props.img)
+      imgUrl.value = props.img
+    })
     const delCard = () => {
       emit('delCard')
     }
@@ -41,7 +49,8 @@ export default {
     }
     return {
       delCard,
-      openCard
+      openCard,
+      imgUrl
     }
   }
 }

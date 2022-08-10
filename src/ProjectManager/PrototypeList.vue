@@ -80,7 +80,15 @@
       <n-form>
         <n-form-item label="该链接24h内有效" >
           
-          <n-input v-model:value="viewUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接..."/>
+          <n-input ref="inputInstRef" id="url" v-model:value="viewUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接...">
+          <template #suffix>
+              <div class="copyButton">
+                <Icon size="20" class="rename">
+                <Copy16Filled @click="copyUrl"/>
+            </Icon>
+              </div>
+          </template>
+          </n-input>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -106,14 +114,14 @@ import axios from "axios";
 import utils from "@/Utils";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router"
-
-import {darkTheme, NIcon, useMessage} from "naive-ui";
+import {Copy16Filled} from '@vicons/fluent'
+import {darkTheme, NIcon, useMessage,InputInst} from "naive-ui";
 
 let proID = ref(0);
 let page = ref(2);
 const router = useRouter()
 const message = useMessage()
-
+const inputInstRef = ref<InputInst | null>(null);
 let showGetUrl = ref(false)
 let viewUrl = ref('')
 const onNegativeClickUrl = () => {
@@ -131,6 +139,12 @@ const onPositiveClickUrl = () => {
       message.info(res.data.msg)
     }
   })
+}
+const copyUrl = () => {
+  const input = document.getElementById('url')! as any
+  inputInstRef.value?.select()
+  document.execCommand('copy')
+  message.success("复制成功")
 
 }
 //原型项目
@@ -320,6 +334,10 @@ const exportLayout =() => {
 </script>
 
 <style scoped>
+
+.copyButton:hover{
+    cursor:pointer;
+}
 .main{
     width:100%;
     /*margin:39px 43px 0 61px;*/
