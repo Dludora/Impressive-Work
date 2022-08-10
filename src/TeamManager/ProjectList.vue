@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="prolist">
-          <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+            <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -189,14 +189,15 @@ const headers = {
 let keyword = ref('')
 const teamID = ref(0)
 const theme = darkTheme
-type proj ={
-  ID: Number,
-  createTime: String,
-  previewCode: String,
-  src: String,
-  teamID: Number
+type proj = {
+  ID: number,
+  createTime: string,
+  name: string,
+  previewCode: string,
+  src: string,
+  teamID: number
 }
-let projects = reactive([])
+const projects = reactive<proj[]>([])
 
 
 // 重命名表单
@@ -213,11 +214,24 @@ const getList = () => {
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
-    projects = res.data.data.items
-    for (let i = 0; i < projects.length; i++) {
-      let tempDate = new Date(projects[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-      projects[i].createTime = tempDate
+    console.log("get messages")
+    console.log(res.data)
+    for (let i = 0; i < res.data.data.items.length; i++) {
+      
+      let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+      projects[i]={
+        ID : res.data.data.items[i].ID,
+        name : res.data.data.items[i].name,
+        previewCode : res.data.data.items[i].previewCode,
+        src : res.data.data.items[i].src,
+        teamID : res.data.data.items[i].teamID,
+        createTime : tempDate
+      }
+      
+      
+      
     }
+    console.log("啊啊啊啊啊")
     console.log(projects)
   })
 }
@@ -380,14 +394,16 @@ const onPositiveAddClick = () => {
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
       console.log("添加项目成功！")
-      let t = new Date();
-      let item = {
-        "name": modelAddRef.value.name,
-        "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
-        "createTime": t,
-        "ID": res.data.data
-      }
-      projects.push(item)
+      // let t = new Date();
+      // let item = {
+      //   "name": modelAddRef.value.name,
+      //   "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
+      //   "createTime": t,
+      //   "ID": res.data.data,
+      //   "previewCode": 
+      // }
+      // projects.push(item)
+      getList()
       message.info("添加成功！")
     } else {
       message.error("添加失败！")
