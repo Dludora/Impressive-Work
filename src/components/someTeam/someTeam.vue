@@ -311,9 +311,7 @@ export default defineComponent({
 .search{
   display: inline-block;
 }
-.clsL,.clsR{
-  /*display: inline-block;*/
-}
+
 
 .clsR{
 

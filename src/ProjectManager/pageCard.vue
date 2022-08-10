@@ -1,14 +1,18 @@
 <template>
-  <div class="card">
-    <div class="img" :style="'background-image:url('+imgUrl+');'">
+  <div class="card" >
+    <div class="img" :style="'background-image:url('+imgUrl+');'"  style="cursor: pointer" @click="openCard">
         <!-- <img style="width:192px;height:104px;" class="cover" :src="imgUrl" /> -->
       </div>  
     <div class="bottom">
-      <SvgCreate class="svg-create" size="16" border="6" bordercolor="#A7AFBE" color="none" style="margin:10px;"/>
-      <div class="nameanddel">
-        <div class="name" style="cursor: pointer" @click="openCard">
-        {{ name }}
-        </div>
+      <div class="justForJump"  style="cursor: pointer" @click="openCard">
+          
+          <SvgCreate  class="svg-create" size="16" border="6" bordercolor="#A7AFBE" color="none" style="margin:10px;" />
+         </div> 
+         <div class="nameanddel">
+            <div class="name" style="cursor: pointer" @click="openCard">
+            {{ name }}
+            </div>
+      
         <Icon size="20" class="del" @click="delCard">
           <CloseRound/>
         </Icon>
@@ -117,6 +121,7 @@ export default {
 }
 .name {
   display: block;
+  width: 100%;
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
