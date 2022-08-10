@@ -12,7 +12,7 @@
         v-for="(params, index) in layoutElementParams"
         :key="index"
         :elementParams="params"
-        :update="update"
+        :update="true"
         :index="index"
         :data-index="index"
         @updateSelects="updateSelects"
@@ -168,6 +168,7 @@ const initMoveable = () => {
     })
     .on("dragStart", () => {
       updateProps();
+      update.value = false
     })
     .on("drag", ({ target, translate, transform }) => {
       layoutElementParams[selectedId.value[0]].x = translate[0];
@@ -194,6 +195,7 @@ const initMoveable = () => {
     .on("dragEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     });
 
   /* resizable */
@@ -202,6 +204,7 @@ const initMoveable = () => {
       e.setOrigin(["%", "%"]);
       e.dragStart && e.dragStart.set([0, 0]);
       updateProps();
+      update.value = false;
     })
     .on("resize", ({ target, delta, width, height, transform, drag }) => {
       target!.style.width = `${width}px`;
@@ -216,6 +219,7 @@ const initMoveable = () => {
     .on("resizeEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     })
     .on("resizeGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -225,6 +229,7 @@ const initMoveable = () => {
             layoutElementParams[selectedId.value[i]].y,
           ]);
       });
+      update.value = false;
     })
     .on("resizeGroup", ({ events }) => {
       events.forEach((ev, i) => {
@@ -252,16 +257,19 @@ const initMoveable = () => {
         layoutElementParams[selectedId.value[0]]
       );
       updateProps();
+      update.value = false;
     })
     .on("scaleEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     });
 
   /* rotatable */
   moveable
     .on("rotateStart", () => {
       updateProps();
+      update.value = false;
     })
     .on("rotate", ({ target, rotation, transform }) => {
       layoutElementParams[selectedId.value[0]].rotation = rotation;
@@ -274,6 +282,7 @@ const initMoveable = () => {
     .on("rotateEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -284,6 +293,7 @@ const initMoveable = () => {
             layoutElementParams[selectedId.value[i]].y,
           ]);
       });
+      update.value = false;
     })
     .on("rotateGroup", ({ events }) => {
       events.forEach((ev, i) => {
@@ -372,6 +382,7 @@ const initSelecto = () => {
       }
       updateProps();
       changeUpdate();
+      update.value = false;
     });
 };
 
@@ -489,18 +500,25 @@ const initFromServer = () => {
 // }
 
 const updateSelects = (data: elementParams) => {
-  console.log(data.text);
   if (data.text == "" || data.text == null) {
     destroy();
   } else {
     layoutElementParams[selectedId.value[0]].text = data.text;
   }
+  console.log(layoutElementParams[selectedId.value[0]]);
 };
 
 const editContent = (index: number) => {
   var target = layoutElements.value[index];
   target.selectContent();
+  update.value = false;
   moveable.target = null;
+  selecto.selectableTargets = null;
+  setTimeout(() => {
+    selecto.selectableTargets = [].slice.call(
+        document.getElementsByName("elements")
+      );
+  });
 };
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
@@ -514,15 +532,28 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
 
   console.log(data);
 
-  element!.style.transform =
+  if(data.type!="text")
+  {
+    element!.style.transform =
     `translate(${data.x * scale}px,${data.y * scale}px)` +
     ` scale(${data.scaleX},${data.scaleY})` +
     ` rotate(${data.rotation}deg)`;
+  }
+  else
+  {
+    element!.style.transform =
+    `translate(${data.x * scale}px,${data.y * scale}px)` +
+    ` scale(${data.scaleX*scale},${data.scaleY * scale})` +
+    ` rotate(${data.rotation}deg)`;
+  }
 };
 
 const updateParams = (data: elementParams) => {
   if (data.id != 0) {
-    layoutElementParams.push(data);
+    if(!(data.type=="text"&&data.text==""))
+    {
+      layoutElementParams.push(data);
+    }
   }
   console.log(layoutElementParams);
   // if (paramsDic[data.id] == null) {
@@ -912,7 +943,7 @@ const wheelScale = () => {
 watch(
   () => props,
   (newVal) => {
-    if (props.update == false) {
+    if (update.value == false) {
       //changeUpdate();
       return;
     }
@@ -961,7 +992,8 @@ watch(
     );
     moveable.target = null;
     setTimeout(() => {
-      moveable.target = selected.value;
+      if(update.value)
+        moveable.target = selected.value;
     });
     updateUpdates();
   },
