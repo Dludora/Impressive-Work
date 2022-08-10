@@ -167,6 +167,7 @@
                 :key="value.name"
                 class="settingModel"
                 @click.stop="switchModel(index)"
+                :style="{backgroundImage:'url('+value.cover+')'}"
               ></div>
             </div>
           </n-scrollbar>
@@ -1032,7 +1033,8 @@ onMounted(() => {
 
 const exit = () => {
   save();
-  router.push("/project/prototypes?teamID="+route.query.teamID);
+  canvas.value?.wsClose();
+  router.push("/project/prototypes");
 };
 </script>
 
@@ -1183,7 +1185,7 @@ const exit = () => {
   border-style: solid;
   border-width: 3px;
   margin-top: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .pageBoardBox {
   position: absolute;
