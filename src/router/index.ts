@@ -3,6 +3,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import regisTer from "../components/User/regisTer.vue";
 import homePage from "../components/homePage.vue";
 import layoutPage from "../views/LayoutPage/layoutPage.vue"
+import previewPage from "../views/LayoutPage/previewPage.vue"
 
 import prototypes from "../ProjectManager/PrototypeList.vue"
 
@@ -62,6 +63,11 @@ const router = createRouter({
             meta: {
                 auth: true
             }
+        },
+        {
+            name: 'previewPage',
+            path: "/preview",
+            component: previewPage,
         },
         {
             name: 'main',

@@ -40,7 +40,7 @@ type Params = {
   height: number;
   width: number;
   borderWidth: number;
-  borderRadius: number;
+  borderRadius: string;
   type: string;
   color: string;
   borderColor: string;
@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
       width: 0,
       height: 0,
       borderWidth: 0,
-      borderRadius: 0,
+      borderRadius: "0",
       type: "Rect",
       text: "",
       fontSize: 0,
@@ -90,7 +90,7 @@ const transform = reactive({
   width: 0,
   height: 0,
   borderWidth: 0,
-  borderRadius: 0,
+  borderRadius: "0",
   type: "Rect",
   text: "",
   fontSize: 0,
@@ -171,13 +171,13 @@ onMounted(() => {
   ResetTrans(props.elementParams);
   showContent.value = true;
   switch (props.elementParams.type) {
-    case "circle": {
-      document.getElementById(`contentBox${props.index}`)!.style.borderRadius =
-        "50% 50%";
-      // document.getElementById(`content${props.index}`)!.style.borderRadius =
-      //   "50% 50%";
-      break;
-    }
+    // case "circle": {
+    //   document.getElementById(`contentBox${props.index}`)!.style.borderRadius =
+    //     "50% 50%";
+    //   // document.getElementById(`content${props.index}`)!.style.borderRadius =
+    //   //   "50% 50%";
+    //   break;
+    // }
     case "text": {
       showContent.value = false;
       Object.assign(

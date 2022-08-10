@@ -21,9 +21,6 @@
       </Icon>
 
     </n-space>
-
-
-
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
       <editor-content id="pdfDom" class="editor__content" :editor="editor" />
@@ -243,7 +240,24 @@ export default {
     },
 
     downPDF(){
+      let iframe = document.getElementById("pdfDom");
 
+      const el=document.getElementById("pdfDom");
+      iframe=document.createElement('IFRAME');
+      iframe.setAttribute("id", "print-iframe");
+      iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
+      document.body.appendChild(iframe);
+      let doc = iframe.contentWindow.document;
+      doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
+      doc.write('<div>' + el.innerHTML + '</div>');
+      doc.close();
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+
+      if (navigator.userAgent.indexOf("MSIE") > 0){
+        document.body.removeChild(iframe);
+      }
+/*
       async function back() {
         return 1;
       }
@@ -255,6 +269,8 @@ export default {
       const previewEl = document.querySelector("#pdfDom").innerHTML;
       window.document.body.innerHTML=previewEl;
       window.print();
+
+ */
     },
 
     billPrintClick(){

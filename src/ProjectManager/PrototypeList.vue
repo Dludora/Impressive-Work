@@ -4,7 +4,13 @@
         <div class="discribe">
             管理你的{{shortcuts.length}}个页面
             <div class="buttons">
-                <n-button class="newpage" size="tiny"  @click="viewAddDocu">
+              <n-button class="newpage" size="tiny"  @click="getUrl">
+                    生成预览&nbsp;
+                    <!-- <Icon size="14">
+                        <Add28Regular/>
+                    </Icon> -->
+                </n-button>
+                <n-button style="margin-left:30px;" class="newpage" size="tiny"  @click="viewAddDocu">
                     新 建 页 面&nbsp;
                     <Icon size="14">
                         <Add28Regular/>
@@ -61,6 +67,31 @@
           @negative-click="onNegativeClick"
     >
     </n-modal>
+    <n-modal
+        v-model:show="showGetUrl"
+        :mask-closable="false"
+        preset="dialog"
+        title="项目预览链接"
+        negative-text="关闭链接"
+        positive-text="确认"
+        @negative-click="onPositiveClickUrl"
+        @positive-click="onNegativeClickUrl"
+    >
+      <n-form>
+        <n-form-item label="该链接24h内有效" >
+          
+          <n-input ref="inputInstRef" id="url" v-model:value="viewUrl" type="textarea" autosize @keydown.enter.prevent placeholder="正在生成链接...">
+          <template #suffix>
+              <div class="copyButton">
+                <Icon size="20" class="rename">
+                <Copy16Filled @click="copyUrl"/>
+            </Icon>
+              </div>
+          </template>
+          </n-input>
+        </n-form-item>
+      </n-form>
+    </n-modal>
     </n-config-provider>
 </template>
 <!-- <script lang="ts">
@@ -83,15 +114,39 @@ import axios from "axios";
 import utils from "@/Utils";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router"
-
-import {darkTheme, NIcon, useMessage} from "naive-ui";
+import {Copy16Filled} from '@vicons/fluent'
+import {darkTheme, NIcon, useMessage,InputInst} from "naive-ui";
 
 let proID = ref(0);
-
 let page = ref(2);
 const router = useRouter()
 const message = useMessage()
+const inputInstRef = ref<InputInst | null>(null);
+let showGetUrl = ref(false)
+let viewUrl = ref('')
+const onNegativeClickUrl = () => {
+  showGetUrl.value = false;
+}
+const onPositiveClickUrl = () => {
+  let url = '/layout/preview/disable?programID='+proID.value;
+  axios.post(url,{},{headers:headers}).then(res=>{
+    console.log(res.data)
+    if(res.data.msg==='成功'){
+      message.success("关闭预览成功")
+      showGetUrl.value = false;
+    }
+    else{
+      message.info(res.data.msg)
+    }
+  })
+}
+const copyUrl = () => {
+  const input = document.getElementById('url')! as any
+  inputInstRef.value?.select()
+  document.execCommand('copy')
+  message.success("复制成功")
 
+}
 //原型项目
 
 let shortcuts=ref([]);
@@ -106,7 +161,18 @@ onMounted(()=>{
   console.log("成功获取项目ID:"+proID.value);
   getList();
 })
-
+const getUrl = () => {
+  let base = 'http://127.0.0.1:8080?viewUrl='
+  let url = '/layout/preview?programID='+proID.value;
+  axios.post(url,{},{headers:headers}).then(res=>{
+    if(res.data.msg==="成功"){
+      console.log(res.data)
+      viewUrl.value = base + res.data.data
+      message.success("链接获取成功")
+      showGetUrl.value  = true;
+    }
+  })
+}
 const getList = () =>{ //TODO 前后端对接：获取页面列表
 
   axios.get('/layout/list',{headers:headers,
@@ -268,6 +334,10 @@ const exportLayout =() => {
 </script>
 
 <style scoped>
+
+.copyButton:hover{
+    cursor:pointer;
+}
 .main{
     width:100%;
     /*margin:39px 43px 0 61px;*/
@@ -298,9 +368,6 @@ const exportLayout =() => {
 }
 .buttons{
     margin-right: 10px;
-}
-.newpage{
-    /*margin-right: 10px;*/
 }
 .layout{
   margin:20px 50px 0 60px;

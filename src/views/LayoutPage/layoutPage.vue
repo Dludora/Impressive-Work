@@ -1,8 +1,8 @@
 
 <template>
   <div class="board" @mousedown="ShutBoard">
-    <div class="layoutHeader home ui">
-      <n-icon size="18" color="#A7AFBE" class="backArrow" @click="exit">
+    <div class="layoutHeader home ui" @mousedown.stop>
+      <n-icon size="18" color="#A7AFBE" class="backArrow" @click.stop="exit">
         <arrow-back-ios-round />
       </n-icon>
       {{ layoutName }}
@@ -10,7 +10,7 @@
         size="21"
         color="#A7AFBE"
         class="downloadIcon"
-        @click="displaySetting"
+        @click.stop="displaySetting"
       >
         <settings28-regular />
       </n-icon>
@@ -22,7 +22,7 @@
       >
         <file-download-filled />
       </n-icon>
-      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click="save">
+      <n-icon size="21" color="#A7AFBE" class="downloadIcon" @click.stop="save">
         <save16-regular />
       </n-icon>
     </div>
@@ -57,7 +57,7 @@
             color="#A7AFBE"
             class="toolIcon toolIconTop"
             id="toolpointer"
-            @click="switchTool('pointer')"
+            @click.stop="switchTool('pointer')"
           >
             <cursor24-regular />
           </n-icon>
@@ -66,7 +66,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="tooldrag"
-            @click="switchTool('drag')"
+            @click.stop="switchTool('drag')"
           >
             <md-move />
           </n-icon>
@@ -75,7 +75,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="toolresize"
-            @click="switchTool('resize')"
+            @click.stop="switchTool('resize')"
           >
             <resize-large20-regular />
           </n-icon>
@@ -84,7 +84,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolscale"
-            @click="switchTool('scale')"
+            @click.stop="switchTool('scale')"
           >
             <scale-fill24-regular />
           </n-icon>
@@ -93,7 +93,7 @@
             color="#A7AFBE"
             class="toolIcon"
             id="toolrotate"
-            @click="switchTool('rotate')"
+            @click.stop="switchTool('rotate')"
           >
             <arrow-rotate-clockwise16-regular />
           </n-icon>
@@ -102,7 +102,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolwrap"
-            @click="switchTool('wrap')"
+            @click.stop="switchTool('wrap')"
           >
             <format-shapes-outlined />
           </n-icon>
@@ -111,7 +111,7 @@
             color="#50555e"
             class="toolIcon"
             id="toolclip"
-            @click="switchTool('clip')"
+            @click.stop="switchTool('clip')"
           >
             <crop20-filled />
           </n-icon>
@@ -120,42 +120,55 @@
             color="#50555e"
             class="toolIcon toolIconBottom"
             id="toolround"
-            @click="switchTool('round')"
+            @click.stop="switchTool('round')"
           >
             <rounded-corner-round />
           </n-icon>
         </div>
 
-        <div class="settingBar" id="settingBoard" @mousedown.stop>
-          <div class="settingMenu" @click="switchSettingMenu('device')">设备</div>
-          <div class="settingMenu" @click="switchSettingMenu('model')">模板</div>
+        <div class="ui settingBar" id="settingBoard" @mousedown.stop>
+          <div class="settingMenu" @click.stop="switchSettingMenu('device')">
+            设备
+          </div>
+          <div class="settingMenu" @click.stop="switchSettingMenu('model')">
+            模板
+          </div>
           <div class="settingLine"></div>
           <n-scrollbar content-style="paddingRight:10px;">
-            <div
-              :key="outkey"
-              v-for="(outvalue, outkey) in resolutionModel"
-              id="settingDeviceContent"
-            >
-              <div class="settingDevice">{{ outkey }}</div>
-              <div
-                :key="inkey"
-                v-for="(value, inkey) in outvalue"
-                class="settingDeviceModel"
-                @click="
-                  canvasWidth = value[0];
-                  canvasHeight = value[1];
-                "
-              >
-                <div class="settingDeviceModelName">
-                  {{ inkey }}
+            <div id="settingDeviceContent" class="settingContent">
+              <div :key="outkey" v-for="(outvalue, outkey) in resolutionModel">
+                <div class="settingDevice">{{ outkey }}</div>
+                <div
+                  :key="inkey"
+                  v-for="(value, inkey) in outvalue"
+                  class="settingDeviceModel"
+                  @click.stop="
+                    canvasWidth = value[0];
+                    canvasHeight = value[1];
+                  "
+                >
+                  <div class="settingDeviceModelName">
+                    {{ inkey }}
+                  </div>
+                  <div class="settingDeviceResolution">
+                    {{ value[0] }}*{{ value[1] }}
+                  </div>
+                  <div class="clear"></div>
                 </div>
-                <div class="settingDeviceResolution">
-                  {{ value[0] }}*{{ value[1] }}
-                </div>
-                <div class="clear"></div>
               </div>
             </div>
-            <div id="settingModelContent"></div>
+            <div
+              id="settingModelContent"
+              class="settingContent"
+              style="transform: translate(110%, 0)"
+            >
+              <div
+                v-for="(value, index) in models"
+                :key="value.name"
+                class="settingModel"
+                @click.stop="switchModel(index)"
+              ></div>
+            </div>
           </n-scrollbar>
         </div>
 
@@ -177,14 +190,14 @@
                 "
                 :key="index"
                 :style="{ backgroundImage: 'url(' + value.src + ')' }"
-                @click="switchPage(value.id)"
+                @click.stop="switchPage(value.id)"
               ></div>
             </div>
           </n-scrollbar>
 
           <div
             class="ui elementRightUnit elementBrowser pageBrowser"
-            @click="displayPageBoard"
+            @click.stop="displayPageBoard"
             id="pageBrowser"
           >
             <n-icon
@@ -320,7 +333,7 @@
           <div
             id="fillColor"
             class="porpertyBarIconUnit"
-            @click="displayPalette"
+            @click.stop="displayPalette"
           >
             <div class="porpertyIcon fillIcon"></div>
             <div class="porpertyExtension">
@@ -337,7 +350,7 @@
                 v-for="(color, index) in palette"
                 :key="index"
                 :style="'background-color:' + palette[index]"
-                @click="updateColor(index)"
+                @click.stop="updateColor(index)"
                 class="paletteColor"
                 ref="colorCircles"
               ></div>
@@ -346,7 +359,7 @@
           <div
             id="borderColor"
             class="porpertyBarIconUnit porpertyRightUnit"
-            @click="displayBorderPalette"
+            @click.stop="displayBorderPalette"
             v-show="property.type != 'text'"
           >
             <div class="porpertyIcon borderIcon"></div>
@@ -364,7 +377,7 @@
                 v-for="(color, index) in palette"
                 :key="index"
                 :style="'background-color:' + palette[index]"
-                @click="updateBorder(index)"
+                @click.stop="updateBorder(index)"
                 class="paletteColor"
                 ref="borderCircles"
               ></div>
@@ -373,23 +386,32 @@
         </div>
 
         <div class="ui elementBar">
-          <div class="ui elementSubBar">
-            <div class="elementLeftUnit elementBrowser">
+          <div class="ui elementSubBar" v-show="modelAt >= 0">
+            <div class="elementLeftUnit elementBrowser" @click.stop="switchElement(-1)">
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-back-ios-round />
               </n-icon>
               <div class="elementVerticalLine" style="right: 0px"></div>
             </div>
-            <div class="ui elementBarUnit" @mousedown="PrepareElement('rect')">
-              <div class="ui elementUnit elementRectangle"></div>
-            </div>
-            <div
+
+            <!-- <div
               class="ui elementBarUnit"
               @mousedown="PrepareElement('circle')"
             >
               <div class="ui elementUnit elementCircle"></div>
+            </div> -->
+            <div
+              class="ui elementBarUnit"
+              v-for="(value, index) in elementSrcs"
+              :key="index"
+              @mousedown="PrepareElement(value)"
+            >
+              <div
+                class="ui elementUnit"
+                :style="{ backgroundImage: 'url(' + value + ')' }"
+              ></div>
             </div>
-            <div class="elementRightUnit elementBrowser">
+            <div class="elementRightUnit elementBrowser" @click.stop="switchElement(1)">
               <div class="elementVerticalLine" style="left: 0px"></div>
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-forward-ios-round />
@@ -398,7 +420,13 @@
           </div>
           <div class="ui elementSubBar">
             <div
-              class="ui elementBarUnit elementRightUnit elementLeftUnit"
+              class="ui elementBarUnit elementLeftUnit"
+              @mousedown="PrepareElement('rect')"
+            >
+              <div class="ui elementUnit elementRectangle"></div>
+            </div>
+            <div
+              class="ui elementBarUnit elementRightUnit"
               @mousedown="PrepareElement('text')"
             >
               <n-icon
@@ -413,7 +441,6 @@
         </div>
       </div>
     </div>
-    <canvas id="calcCanvas"></canvas>
   </div>
 </template>
 
@@ -603,7 +630,7 @@ type Property = {
   scaleY: number;
   rotation: number;
   borderWidth: number;
-  borderRadius: number;
+  borderRadius: string;
   type: string;
   color: string;
   borderColor: string;
@@ -623,7 +650,7 @@ const property = reactive<Property>({
   scaleY: 1,
   rotation: 0,
   borderWidth: 0,
-  borderRadius: 0,
+  borderRadius: "0px",
   type: "none",
   text: "",
   fontSize: 0,
@@ -631,6 +658,19 @@ const property = reactive<Property>({
   color: "#D42B39",
   borderColor: "transparent",
 });
+
+type Model = {
+  name: string;
+  elements: Property[];
+  srcs: string[];
+};
+const models = reactive<Model[]>([]);
+let modelAt = ref<number>(-1);
+const elementSrcs = reactive<string[]>([]);
+let firstSrc: number = 0;
+const maxElementsNum = 6;
+const endingLeft = ref<boolean>(true);
+const endingRight = ref<boolean>(true);
 
 const changeUpdate = () => {
   update.value = true;
@@ -684,6 +724,17 @@ const updateProps = (data: Property) => {
   }
 };
 
+const initModels = () => {
+  axios.get("/layout/module/list", { headers: headers }).then((res) => {
+    console.log(res.data.data);
+    for (var i = 0; i < res.data.data.length; ++i) {
+      var model = JSON.parse(res.data.data[i].content);
+      models[i] = model;
+      console.log(models);
+    }
+  });
+};
+
 const initPageImgs = () => {
   axios
     .get("/layout/list", {
@@ -706,6 +757,61 @@ const initPageImgs = () => {
       }
     });
   //console.log(pageImgs);
+};
+
+const switchModel = (id: number) => {
+  var to = 0;
+  modelAt.value = id;
+  endingLeft.value = true;
+  firstSrc = 0;
+  if (models[id].srcs.length <= maxElementsNum) {
+    endingRight.value = true;
+    var to = models[id].srcs.length;
+  }
+  else
+  {
+    endingRight.value = false;
+    to = maxElementsNum;
+  }
+  elementSrcs.splice(0);
+  for (var i = 0; i < to; ++i) {
+    elementSrcs[i] = models[id].srcs[i];
+  }
+  console.log(elementSrcs);
+};
+
+const switchElement = (dir: number) => {
+  console.log(endingRight.value)
+  console.log(models[modelAt.value].srcs);
+  if ((dir < 0 && endingLeft.value) || (dir > 0 && endingRight.value)) {
+    return;
+  }
+  var from = firstSrc + dir * maxElementsNum;
+  firstSrc = from;
+  if (from > models[modelAt.value].srcs.length || from < 0) {
+    return;
+  }
+  if(from > 0)
+  {
+    endingLeft.value = false;
+  }
+  else
+  {
+    endingLeft.value = true;
+  }
+  var to = from + maxElementsNum;
+  if (to >= models[modelAt.value].srcs.length) {
+    to = models[modelAt.value].srcs.length;
+    endingRight.value = true
+  }
+  else
+  {
+    endingRight.value = false;
+  }
+  elementSrcs.splice(0);
+  for (var i = from; i < to; ++i) {
+    elementSrcs[i - from] = models[modelAt.value].srcs[i];
+  }
 };
 
 const switchPage = (id: number) => {
@@ -744,11 +850,11 @@ const switchType = (etype: string) => {
       toolAvailable["rotate"] = true;
       toolAvailable["wrap"] = false;
       toolAvailable["clip"] = false;
-      toolAvailable["round"] = false;
+      toolAvailable["round"] = true;
       document.getElementById("toolscale").style.color = "#50555e";
       document.getElementById("toolwrap").style.color = "#50555e";
       document.getElementById("toolclip").style.color = "#50555e";
-      document.getElementById("toolround").style.color = "#50555e";
+      document.getElementById("toolround").style.color = "#A7AFBE";
       break;
     }
   }
@@ -825,12 +931,12 @@ const switchSettingMenu = (settingMenu: string) => {
     });
     gsap.to("#settingModelContent", {
       duration: 0.2,
-      translateX: "100%",
+      translateX: "110%",
     });
   } else {
     gsap.to("#settingDeviceContent", {
       duration: 0.2,
-      translateX: "-100%",
+      translateX: "-110%",
     });
     gsap.to("#settingModelContent", {
       duration: 0.2,
@@ -888,6 +994,7 @@ onMounted(() => {
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
   console.log("layoutId=" + layoutId.value);
   initPageImgs();
+  initModels();
   imgInputer!.onchange = () => {
     var form = new FormData();
     form.append("file", imgInputer.files[0]);
@@ -971,6 +1078,7 @@ const exit = () => {
   top: 36px;
   z-index: 2;
   background-color: #2b303b;
+  color:#d4d4d4;
 }
 .downloadAlternative {
   display: block;
@@ -1042,6 +1150,10 @@ const exit = () => {
   height: 1px;
   border-bottom: 1px solid #fff;
 }
+.settingContent {
+  width:260px;
+  position: absolute;
+}
 .settingDevice {
   font-weight: bold;
   font-family: "Microsoft Yahei";
@@ -1062,6 +1174,14 @@ const exit = () => {
 .settingDeviceResolution {
   float: right;
   color: #ccc;
+}
+.settingModel {
+  width: 250px;
+  height: 140px;
+  border-style: solid;
+  border-width: 3px;
+  margin-top: 25px;
+  background-size: cover;
 }
 .pageBoardBox {
   position: absolute;
@@ -1089,7 +1209,7 @@ const exit = () => {
   border-style: solid;
   border-width: 3px;
   margin-bottom: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .pageImageSelected {
   width: 240px;
@@ -1098,7 +1218,7 @@ const exit = () => {
   border-color: red;
   border-width: 3px;
   margin-bottom: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -1261,6 +1381,11 @@ const exit = () => {
   top: 0;
   bottom: 0;
   margin: auto;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 42px;
+  height: 42px;
 }
 .elementRectangle {
   background-color: #ddb055;

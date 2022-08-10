@@ -6,12 +6,13 @@
     @mousedown="startDrag"
     id="board"
   >
+    <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
         :key="index"
         :elementParams="params"
-        :update="update"
+        :update="true"
         :index="index"
         :data-index="index"
         @updateSelects="updateSelects"
@@ -38,6 +39,8 @@ import { useMessage } from "naive-ui";
 
 import Selecto from "selecto";
 import Moveable from "moveable";
+
+//const ws = new WebSocket("");
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -77,7 +80,7 @@ type elementParams = {
   scaleY: number;
   rotation: number;
   borderWidth: number;
-  borderRadius: number;
+  borderRadius: string;
   type: string;
   color: string;
   borderColor: string;
@@ -102,7 +105,7 @@ type Prop = {
 
 const props = defineProps<Prop>();
 
-const emits = defineEmits(["updateProps", "changeUpdate","initPageImgs"]);
+const emits = defineEmits(["updateProps", "changeUpdate", "initPageImgs"]);
 
 const layoutElementParams: (elementParams | null)[] = reactive([]);
 const paramsDic: { [key: number]: elementParams } = {};
@@ -116,7 +119,26 @@ const initMoveable = () => {
     target: [].slice.call(document.getElementsByName("elements")),
     // If the container is null, the position is fixed. (default: parentElement(document.body))
     container: document.getElementById("canvas"),
+    elementGuidelines: [].slice.call(document.getElementsByName("elements")),
     renderDirections: ["n", "nw", "ne", "s", "se", "sw", "e", "w"],
+    snapDirections: {
+      left: true,
+      top: true,
+      right: true,
+      bottom: true,
+      center: true,
+      middle: true,
+    },
+    elementSnapDirections: {
+      left: true,
+      top: true,
+      right: true,
+      bottom: true,
+      center: true,
+      middle: true,
+    },
+    verticalGuidelines: [0],
+    horizontalGuidelines: [0],
     defaultGroupOrigin: "50% 50%",
     defaultGroupRotate: 0,
     draggable: true,
@@ -124,6 +146,11 @@ const initMoveable = () => {
     scalable: false,
     rotatable: true,
     warpable: false,
+    snappable: true,
+    roundable: true,
+    roundRelative: false,
+    snapGap: true,
+    snapThreshold: 5,
     origin: true,
     originDraggable: true,
     keepRatio: false,
@@ -141,6 +168,7 @@ const initMoveable = () => {
     })
     .on("dragStart", () => {
       updateProps();
+      update.value = false
     })
     .on("drag", ({ target, translate, transform }) => {
       layoutElementParams[selectedId.value[0]].x = translate[0];
@@ -167,6 +195,7 @@ const initMoveable = () => {
     .on("dragEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     });
 
   /* resizable */
@@ -175,6 +204,7 @@ const initMoveable = () => {
       e.setOrigin(["%", "%"]);
       e.dragStart && e.dragStart.set([0, 0]);
       updateProps();
+      update.value = false;
     })
     .on("resize", ({ target, delta, width, height, transform, drag }) => {
       target!.style.width = `${width}px`;
@@ -189,6 +219,7 @@ const initMoveable = () => {
     .on("resizeEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     })
     .on("resizeGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -198,6 +229,7 @@ const initMoveable = () => {
             layoutElementParams[selectedId.value[i]].y,
           ]);
       });
+      update.value = false;
     })
     .on("resizeGroup", ({ events }) => {
       events.forEach((ev, i) => {
@@ -225,16 +257,19 @@ const initMoveable = () => {
         layoutElementParams[selectedId.value[0]]
       );
       updateProps();
+      update.value = false;
     })
     .on("scaleEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     });
 
   /* rotatable */
   moveable
     .on("rotateStart", () => {
       updateProps();
+      update.value = false;
     })
     .on("rotate", ({ target, rotation, transform }) => {
       layoutElementParams[selectedId.value[0]].rotation = rotation;
@@ -247,6 +282,7 @@ const initMoveable = () => {
     .on("rotateEnd", () => {
       changeUpdate();
       updateUpdates();
+      update.value = true;
     })
     .on("rotateGroupStart", ({ events }) => {
       events.forEach((ev, i) => {
@@ -257,6 +293,7 @@ const initMoveable = () => {
             layoutElementParams[selectedId.value[i]].y,
           ]);
       });
+      update.value = false;
     })
     .on("rotateGroup", ({ events }) => {
       events.forEach((ev, i) => {
@@ -284,6 +321,14 @@ const initMoveable = () => {
       target.style.transform = `matrix3d(${matrix.join(",")})`;
     }
   );
+
+  moveable.on("round", (e) => {
+    layoutElementParams[selectedId.value[0]].borderRadius = e.borderRadius;
+    updateTransform(
+      selected.value[0],
+      layoutElementParams[selectedId.value[0]]
+    );
+  });
 };
 
 let selecto: Selecto;
@@ -337,6 +382,7 @@ const initSelecto = () => {
       }
       updateProps();
       changeUpdate();
+      update.value = false;
     });
 };
 
@@ -424,6 +470,10 @@ const initFromServer = () => {
           selecto.selectableTargets = [].slice.call(
             document.getElementsByName("elements")
           );
+          moveable.elementGuidelines = [].slice.call(
+            document.getElementsByName("elements")
+          );
+          moveable.elementGuidelines.push(document.getElementById("canvas"));
         });
         // for (; i < layoutElementParams.length; ++i) {
         //   if (layoutElementParams[i].id != 0) {
@@ -434,19 +484,41 @@ const initFromServer = () => {
     });
 };
 
+// const initWS = ()=>{
+//   ws.onopen=()=>{
+
+//   }
+//   ws.onmessage=(res)=>{
+
+//   }
+//   ws.onerror = ()=>{
+//     message.error("网络故障");
+//   }
+//   ws.onclose = ()=>{
+//     message.warning("连接已断开");
+//   }
+// }
+
 const updateSelects = (data: elementParams) => {
-  console.log(data.text);
   if (data.text == "" || data.text == null) {
     destroy();
   } else {
     layoutElementParams[selectedId.value[0]].text = data.text;
   }
+  console.log(layoutElementParams[selectedId.value[0]]);
 };
 
 const editContent = (index: number) => {
   var target = layoutElements.value[index];
   target.selectContent();
+  update.value = false;
   moveable.target = null;
+  selecto.selectableTargets = null;
+  setTimeout(() => {
+    selecto.selectableTargets = [].slice.call(
+        document.getElementsByName("elements")
+      );
+  });
 };
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
@@ -456,18 +528,32 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
   } else {
     element!.style.height = data.height * scale + "px";
   }
+  element!.style.borderRadius = data.borderRadius;
 
   console.log(data);
 
-  element!.style.transform =
+  if(data.type!="text")
+  {
+    element!.style.transform =
     `translate(${data.x * scale}px,${data.y * scale}px)` +
     ` scale(${data.scaleX},${data.scaleY})` +
     ` rotate(${data.rotation}deg)`;
+  }
+  else
+  {
+    element!.style.transform =
+    `translate(${data.x * scale}px,${data.y * scale}px)` +
+    ` scale(${data.scaleX*scale},${data.scaleY * scale})` +
+    ` rotate(${data.rotation}deg)`;
+  }
 };
 
 const updateParams = (data: elementParams) => {
   if (data.id != 0) {
-    layoutElementParams.push(data);
+    if(!(data.type=="text"&&data.text==""))
+    {
+      layoutElementParams.push(data);
+    }
   }
   console.log(layoutElementParams);
   // if (paramsDic[data.id] == null) {
@@ -524,6 +610,8 @@ const cancelSelect = () => {
 
 const destroy = () => {
   selectedId.value.forEach((el) => {
+    console.log(layoutId);
+    console.log(layoutElementParams[el].id);
     axios
       .delete(`/layout/${layoutId}/element/${layoutElementParams[el].id}`, {
         headers: headers,
@@ -550,6 +638,13 @@ const ProduceElement = (e: MouseEvent) => {
   if (dragging) {
     dragging = false;
   }
+  var src = "";
+  var backColor = "#D42B39";
+  if (preparedType != "rect" && preparedType != "text" && preparedType != "") {
+    src = preparedType;
+    preparedType = "rect";
+    backColor = "transparent";
+  }
   if (preparedType != "") {
     update.value = true;
     layoutElementParams.push({
@@ -562,11 +657,11 @@ const ProduceElement = (e: MouseEvent) => {
       scaleY: 1,
       rotation: 0,
       borderWidth: 0,
-      borderRadius: 0,
+      borderRadius: "0px",
       type: preparedType,
-      color: "#D42B39",
+      color: backColor,
       borderColor: "transparent",
-      src: "",
+      src: src,
       text: "",
       fontSize: 20 * scale,
       //update: true,
@@ -590,6 +685,10 @@ const ProduceElement = (e: MouseEvent) => {
       }
       updateTransform(el, layoutElementParams[index]);
       selecto.clickTarget(e, el);
+      moveable.elementGuidelines = [].slice.call(
+        document.getElementsByName("elements")
+      );
+      moveable.elementGuidelines.push(document.getElementById("canvas"));
     });
     axios
       .post(
@@ -650,6 +749,58 @@ const download = (isDownload: boolean, type?: string) => {
   );
 };
 
+type Model = {
+  name: string;
+  elements: elementParams[];
+  srcs: string[];
+};
+
+let model: Model = {
+  name: "线上商城",
+  elements: [],
+  srcs: [],
+};
+let imgs: string[] = [];
+
+const importImages = () => {
+  var imgInputer = document.getElementById("ModelLoader");
+  imgInputer!.onchange = () => {
+    var counter = imgInputer.files.length;
+    for (var i = 0; i < imgInputer.files.length; ++i) {
+      var form = new FormData();
+      form.append("file", imgInputer.files[i]);
+      axios({
+        url: "/resource/img",
+        method: "post",
+        headers: headers,
+        data: form,
+      }).then((res) => {
+        console.log(res.data);
+        if (res.data.msg == "成功") {
+          imgs.push(res.data.data);
+        }
+        console.log(imgs);
+        counter--;
+        if (counter == 0) {
+          model.srcs = imgs;
+          axios
+            .post(
+              "/layout/module",
+              {
+                name: model.name,
+                content: JSON.stringify(model),
+              },
+              { headers: headers }
+            )
+            .then((res) => {
+              console.log(res.data);
+            });
+        }
+      });
+    }
+  };
+};
+
 defineExpose({
   PrepareElement,
   download,
@@ -681,6 +832,7 @@ const dragCanvas = (e: MouseEvent) => {
 onMounted(() => {
   initMoveable();
   initSelecto();
+  importImages();
   //updateServer();
   //setInterval(updateServer, 5000);
   document.onkeyup = (e) => {
@@ -762,7 +914,10 @@ const wheelScale = () => {
       // canvasTrans.y;
       // layoutElementParams[i]!.width *= scope;
       // layoutElementParams[i]!.height *= scope;
-      layoutElementParams[i]!.fontSize *= scope;
+      //layoutElementParams[i]!.fontSize *= scope;
+      if (layoutElementParams[i].type == "text") {
+        
+      }
       updateTransform(
         document.getElementsByName("elements")[i],
         layoutElementParams[i]
@@ -788,7 +943,7 @@ const wheelScale = () => {
 watch(
   () => props,
   (newVal) => {
-    if (props.update == false) {
+    if (update.value == false) {
       //changeUpdate();
       return;
     }
@@ -837,7 +992,8 @@ watch(
     );
     moveable.target = null;
     setTimeout(() => {
-      moveable.target = selected.value;
+      if(update.value)
+        moveable.target = selected.value;
     });
     updateUpdates();
   },
