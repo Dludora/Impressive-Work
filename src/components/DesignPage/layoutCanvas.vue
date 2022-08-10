@@ -551,6 +551,14 @@ const ProduceElement = (e: MouseEvent) => {
   if (dragging) {
     dragging = false;
   }
+  var src="";
+  var backColor = "#D42B39";
+  if(preparedType!="rect"&&preparedType!="text"&&preparedType!="")
+  {
+    src=preparedType;
+    preparedType = "rect"
+    backColor = "transparent"
+  }
   if (preparedType != "") {
     update.value = true;
     layoutElementParams.push({
@@ -565,9 +573,9 @@ const ProduceElement = (e: MouseEvent) => {
       borderWidth: 0,
       borderRadius: 0,
       type: preparedType,
-      color: "#D42B39",
+      color: backColor,
       borderColor: "transparent",
-      src: "",
+      src: src,
       text: "",
       fontSize: 20 * scale,
       //update: true,
