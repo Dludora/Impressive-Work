@@ -627,16 +627,24 @@ const posAdd = () => {
   ).then(res=>{
     if(res.data.msg==='成功'){
       console.log(addModelRef.value.addName);
+
+      console.log(res.data.data);
+      console.log(res.data.data);
+      console.log(res.data.data);
+
       console.log("创建文档成功");
+
 
       //刷新 获取文档列表
       getDocuAbl();
       //documents.value.push(newdoc);
       console.log("添加文档成功");
+      openDocu(res.data.data);
+
+      showAdd.value = false
     }
   })
 
-  showAdd.value = false
 }
 
 const negAdd = () => {
