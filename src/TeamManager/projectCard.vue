@@ -62,13 +62,13 @@ export default defineComponent({
   setup(props, {emit}) {
     const come = () => {
       let temp = document.getElementsByClassName('nameInput')
-      console.log("变色龙")
+
       // let on = <HTMLElement>(<unknown>temp)
       // on.style.background="#2B303B";
     }
     const leave=()=>{
       let temp = document.getElementsByClassName('nameInput')
-      console.log("变色龙")
+     
       // let on = <HTMLElement>(<unknown>temp);
       // on.style.background="#16181d"
     }

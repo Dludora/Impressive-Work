@@ -148,7 +148,7 @@ const changeUp = () => {
   utils.setCookie('ifUp',1);
   else
   utils.setCookie('ifUp',0);
-  //getList();
+  getList();
   router.go(0)
 }
 const sort = ref(0)
@@ -178,7 +178,7 @@ const handleSelect = (key: string | number) => {
       utils.setCookie('sortMethod',sortMethod.value)
   }
   getList();
-  router.go(0)
+  //router.go(0)
 }
 const handleClick = () => {
   showDropdownRef.value = !showDropdownRef.value
@@ -189,7 +189,14 @@ const headers = {
 let keyword = ref('')
 const teamID = ref(0)
 const theme = darkTheme
-let projects = ref([])
+type proj ={
+  ID: Number,
+  createTime: String,
+  previewCode: String,
+  src: String,
+  teamID: Number
+}
+let projects = reactive([])
 
 
 // 重命名表单
@@ -201,17 +208,17 @@ const getList = () => {
   let direction = 0;
   if (ifUp.value)
     direction = 1;
-
+  console.log("开始获取")
   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort='
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
-    projects.value = res.data.data.items
-    for (let i = 0; i < projects.value.length; i++) {
-      let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-      projects.value[i].createTime = tempDate
+    projects = res.data.data.items
+    for (let i = 0; i < projects.length; i++) {
+      let tempDate = new Date(projects[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+      projects[i].createTime = tempDate
     }
-    console.log(projects.value)
+    console.log(projects)
   })
 }
 const getGlobal = computed(() => {
@@ -288,9 +295,9 @@ const onPositiveClick = () => {
 
     if (res.data.msg === "成功") {
       message.info("修改成功")
-      for (let i = 0; i < projects.value.length; i++) {
-        if (projects.value[i].ID === opID.value) {
-          projects.value[i].name = modelRef.value.name
+      for (let i = 0; i < projects.length; i++) {
+        if (projects[i].ID === opID.value) {
+          projects[i].name = modelRef.value.name
           break;
         }
       }
@@ -380,7 +387,7 @@ const onPositiveAddClick = () => {
         "createTime": t,
         "ID": res.data.data
       }
-      projects.value.push(item)
+      projects.push(item)
       message.info("添加成功！")
     } else {
       message.error("添加失败！")
