@@ -53,27 +53,17 @@ const proDoc = {
   dir: true,
   parentID: null,
   isPro: 1,
-  doc: null,
+  doc: {},
 
   // 组件需要
   label: '项目文件夹',
   isLeaf: false,         // 需不需要
   key: 1,           // 可以视为key(fileID)
-  // children: []
 }
 
 const handleLoad =  (node: TreeOption) => {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
-      // node.children = []
-      // node.children.push(
-      //     {
-      //       label: '项目2',
-      //       isLeaf: true,         // 需不需要
-      //       key: 2,           // 可以视为key(fileID)
-      //     }
-      // )
-      // console.log(node)
       if(node.dir) {
         if(node.isPro === 1) {
           axios.get('/program/list'+'?teamID='+teamID.value,
@@ -147,14 +137,77 @@ const handleLoad =  (node: TreeOption) => {
   })
 }
 
+const timer = ref(null);
+const opdocuID = ref(0);
+const openDocu = (index) => {
+  //获取文档内容
+  opdocuID.value = index;
+
+  let urlOP = "/document/" + opdocuID.value;
+  console.log(urlOP);
+
+  axios.get(urlOP, {headers: headers}
+  ).then(res => {
+    if (res.data.msg === '成功') {
+
+      console.log("获取文档内容成功");
+      let opContent;
+
+      utils.setCookie('DocTitle',res.data.data.title)
+
+      console.log(res.data.data.title)
+
+      if(res.data.data.copy===true){
+        opContent = res.data.data.content;
+        console.log("获取文档内容成功2");
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+
+        axios.put(urlOP,
+            {
+              'title': res.data.data.title,
+              'src': null,
+              'programID': res.data.data.programID,
+              'copy': false,
+            },{headers:headers}
+        )
+      }else{
+        console.log("获取文档内容成功3");
+        opContent = "";
+        console.log(opContent);
+        utils.setCookie('DocContent', opContent);
+      }
+
+
+      let opTitle = res.data.data.title;
+
+      utils.setCookie('editDocID', index);
+
+      console.log(index);
+
+
+
+      utils.setCookie('DocTitle', opTitle);
+
+      timer.value = new Date().getTime();
+    }
+  })
+}
+
+
 const nodeProps = ({option}:{option: TreeOption}) => {
   return {
     onClick () {
-      console.log(option)
+      if(!option.dir) {
+        if(option.isPro==0) {
+          openDocu(option.doc.ID)
+        } else {
+          openDocu(option.fileID)
+        }
+      }
     }
   }
 }
-
 
 onMounted(() => {
   data.value.push(proDoc)
@@ -182,74 +235,6 @@ onMounted(() => {
 })
 
 
-
-
-const timer=null;
-
-// proName.value = utils.getCookie('proNAME');
-// //获取文档ID
-// const getDocuID = () => {
-//   return utils.getCookie('editDocID');
-// }
-// const UserName = () =>{
-//   return utils.getCookie("UserName");
-// }
-
-// let opdocuID = ref();
-// function openDocu(index) {
-//   //获取文档内容
-//   opdocuID.value = index;
-//
-//   let urlOP = "/document/" + opdocuID.value;
-//   console.log(urlOP);
-//
-//   axios.get(urlOP, {headers: headers}
-//   ).then(res => {
-//     if (res.data.msg === '成功') {
-//
-//       console.log("获取文档内容成功");
-//       let opContent;
-//
-//       utils.setCookie('DocTitle',res.data.data.title)
-//
-//       console.log(res.data.data.title)
-//
-//       if(res.data.data.copy===true){
-//         opContent = res.data.data.content;
-//         console.log("获取文档内容成功2");
-//         console.log(opContent);
-//         utils.setCookie('DocContent', opContent);
-//
-//         axios.put(urlOP,
-//             {
-//               'title': res.data.data.title,
-//               'src': null,
-//               'programID': res.data.data.programID,
-//               'copy': false,
-//             },{headers:headers}
-//         )
-//       }else{
-//         console.log("获取文档内容成功3");
-//         opContent = "";
-//         console.log(opContent);
-//         utils.setCookie('DocContent', opContent);
-//       }
-//
-//
-//       let opTitle = res.data.data.title;
-//
-//       utils.setCookie('editDocID', index);
-//
-//       console.log(index);
-//
-//
-//
-//       utils.setCookie('DocTitle', opTitle);
-//
-//       this.timer = new Date().getTime();
-//     }
-//   })
-// }
 </script>
 
 <style>
@@ -284,6 +269,7 @@ const timer=null;
   align-items: flex-start;
   align-items: stretch;
   color: #FFFFFF;
+  border-bottom: 1px solid ;
 }
 
 .teamlist:hover .divline{
