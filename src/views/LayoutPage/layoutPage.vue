@@ -726,7 +726,7 @@ const updateProps = (data: Property) => {
 
 const initModels = () => {
   axios.get("/layout/module/list", { headers: headers }).then((res) => {
-    console.log(res.data.data);
+    console.log(res.data);
     for (var i = 0; i < res.data.data.length; ++i) {
       var model = JSON.parse(res.data.data[i].content);
       models[i] = model;
