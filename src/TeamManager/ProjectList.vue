@@ -39,7 +39,8 @@
           </div>
         </div>
         <div class="prolist">
-            <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+          <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID"
+                   :date="item.createTime"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -121,7 +122,7 @@ import {CaretUp24Filled} from "@vicons/fluent"
 import {CaretDown24Filled} from "@vicons/fluent"
 import {darkTheme, useMessage} from "naive-ui";
 import {defineComponent, computed, watch, h, onMounted, reactive, ref} from "vue";
-import {useRoute,useRouter} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {Close} from "@vicons/ionicons5"
 import {PlusOutlined} from "@vicons/antd";
 import utils from '../Utils'
@@ -144,10 +145,10 @@ const showDropdownRef = ref(false);
 let ifUp = ref(false);
 const changeUp = () => {
   ifUp.value = !ifUp.value
-  if(ifUp.value===true)
-  utils.setCookie('ifUp',1);
+  if (ifUp.value === true)
+    utils.setCookie('ifUp', 1);
   else
-  utils.setCookie('ifUp',0);
+    utils.setCookie('ifUp', 0);
   getList();
   //router.go(0)
 }
@@ -165,17 +166,14 @@ const options = [
 const handleSelect = (key: string | number) => {
   message.info(String(key))
   sortMethod.value = String(key)
-  if (sortMethod.value === '创建时间')
-    {
-      sort.value = 0;
-      utils.setCookie('sort',sort.value)
-      utils.setCookie('sortMethod',sortMethod.value)
-    }
-  else if (sortMethod.value === "项目名称")
-  {
-      sort.value = 1;
-      utils.setCookie('sort',sort.value)
-      utils.setCookie('sortMethod',sortMethod.value)
+  if (sortMethod.value === '创建时间') {
+    sort.value = 0;
+    utils.setCookie('sort', sort.value)
+    utils.setCookie('sortMethod', sortMethod.value)
+  } else if (sortMethod.value === "项目名称") {
+    sort.value = 1;
+    utils.setCookie('sort', sort.value)
+    utils.setCookie('sortMethod', sortMethod.value)
   }
   getList();
   //router.go(0)
@@ -217,20 +215,18 @@ const getList = () => {
   axios.get(url, {headers: headers}).then(res => {
     console.log("get messages")
     console.log(res.data)
-    for (let i = 0; i < res.data.data.items.length; i++) {
-      
-      let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-      projects[i]={
-        ID : res.data.data.items[i].ID,
-        name : res.data.data.items[i].name,
-        previewCode : res.data.data.items[i].previewCode,
-        src : res.data.data.items[i].src,
-        teamID : res.data.data.items[i].teamID,
-        createTime : tempDate
+    if (res.data.msg === '成功') {
+      for (let i = 0; i < res.data.data.items.length; i++) {
+        let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+        projects[i] = {
+          ID: res.data.data.items[i].ID,
+          name: res.data.data.items[i].name,
+          previewCode: res.data.data.items[i].previewCode,
+          src: res.data.data.items[i].src,
+          teamID: res.data.data.items[i].teamID,
+          createTime: tempDate
+        }
       }
-      
-      
-      
     }
     console.log("啊啊啊啊啊")
     console.log(projects)
@@ -251,7 +247,7 @@ watch(getGlobal, (newVal, oldVal) => {
 onMounted(() => {
   sort.value = parseInt(utils.getCookie('sort').toString())
   sortMethod.value = utils.getCookie('sortMethod')
-  ifUp.value =parseInt(utils.getCookie('ifUp'))===1
+  ifUp.value = parseInt(utils.getCookie('ifUp')) === 1
   if (typeof (route.query.teamID) != "undefined")
     teamID.value = parseInt(route.query.teamID.toString())
 
