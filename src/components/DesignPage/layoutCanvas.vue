@@ -556,7 +556,17 @@ const wsResMod = (data: ComServer) => {
   console.log(res);
   if (paramsDic[res.id] != null) {
     if (!(res.type == "text" && res.text == "")) {
-      paramsDic[res.id] = res;
+      for(var i=0;i<layoutElementParams.length;++i)
+      {
+        if(layoutElementParams[i].id==res.id)
+        {
+          layoutElementParams[i]=res;
+          updateTransform(
+              document.getElementsByName("elements")[i],
+              layoutElementParams[i]
+            );
+        }
+      }
     }
   }
 };
