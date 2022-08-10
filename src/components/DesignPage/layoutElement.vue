@@ -130,6 +130,10 @@ const UnHighlight = () => {
 let selectEns = false;
 const Select = () => {
   selected.value = true;
+  // if(props.elementParams.type == "text")
+  // {
+  //   textModifying.value = true;
+  // }
 };
 
 const selectContent = () => {
