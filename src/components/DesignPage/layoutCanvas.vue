@@ -31,7 +31,6 @@
 import { ref, reactive, onMounted, watch } from "vue";
 import layoutElement from "./layoutElement.vue";
 import html2canvas from "html2canvas";
-import Canvas2Image from "./canvas2image.js";
 import saveAs from "file-saver";
 import axios from "axios";
 import utils from "@/Utils";
@@ -40,7 +39,7 @@ import { useMessage } from "naive-ui";
 import Selecto from "selecto";
 import Moveable from "moveable";
 
-const ws = new WebSocket("");
+const ws:WebSocket = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/1");
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
@@ -1129,6 +1128,7 @@ watch(
   () => props.layoutId,
   (newVal) => {
     layoutId = props.layoutId;
+    const ws = new WebSocket("ws://82.156.125.202/soft2/socket/websocket/layout/"+layoutId);
     initFromServer();
   }
 );
