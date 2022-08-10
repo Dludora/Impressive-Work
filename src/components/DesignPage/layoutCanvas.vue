@@ -7,6 +7,7 @@
     id="board"
   >
     <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
+    <input type="file" id="CoverLoader" accept="image/*" multiple="multiple" />
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
@@ -194,6 +195,7 @@ const initMoveable = () => {
     .on("dragEnd", () => {
       changeUpdate();
       updateUpdates();
+      wsUpdate();
       update.value = true;
     });
 
@@ -217,7 +219,8 @@ const initMoveable = () => {
     })
     .on("resizeEnd", () => {
       changeUpdate();
-      updateUpdates();
+      updateUpdates()
+      wsUpdate()
       update.value = true;
     })
     .on("resizeGroupStart", ({ events }) => {
@@ -243,7 +246,8 @@ const initMoveable = () => {
       });
     })
     .on("resizeGroupEnd", () => {
-      updateUpdates();
+      updateUpdates()
+      wsUpdate()
     });
 
   /* scalable */
@@ -260,7 +264,8 @@ const initMoveable = () => {
     })
     .on("scaleEnd", () => {
       changeUpdate();
-      updateUpdates();
+      updateUpdates()
+      wsUpdate()
       update.value = true;
     });
 
@@ -280,7 +285,8 @@ const initMoveable = () => {
     })
     .on("rotateEnd", () => {
       changeUpdate();
-      updateUpdates();
+      updateUpdates()
+      wsUpdate()
       update.value = true;
     })
     .on("rotateGroupStart", ({ events }) => {
@@ -308,6 +314,7 @@ const initMoveable = () => {
     })
     .on("rotateGroupEnd", () => {
       updateUpdates();
+      wsUpdate()
     });
 
   /* warpable */
@@ -327,6 +334,8 @@ const initMoveable = () => {
       selected.value[0],
       layoutElementParams[selectedId.value[0]]
     );
+    updateUpdates();
+    wsUpdate()
   });
 };
 
@@ -411,21 +420,22 @@ const updateUpdates = () => {
 };
 
 const updateServer = () => {
-  comServer.splice(0);
-  for (var i = 0; i < updates.length; ++i) {
-    let newCom: ComServer = { id: 0, content: "" };
-    newCom.id = updates[i].id;
-    newCom.content = JSON.stringify(updates[i]);
-    console.log(newCom.id);
-    comServer.push(newCom);
-  }
-  console.log(comServer);
-  axios
-    .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
-    .then((res) => {
-      console.log(res.data);
-      download(false);
-    });
+  // comServer.splice(0);
+  // for (var i = 0; i < updates.length; ++i) {
+  //   let newCom: ComServer = { id: 0, content: "" };
+  //   newCom.id = updates[i].id;
+  //   newCom.content = JSON.stringify(updates[i]);
+  //   console.log(newCom.id);
+  //   comServer.push(newCom);
+  // }
+  // console.log(comServer);
+  download(false)
+  // axios
+  //   .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
+  //   .then((res) => {
+  //     console.log(res.data);
+  //     download(false);
+  //   });
 
   // .then((res) => {
   //   console.log(res.data);
@@ -443,7 +453,7 @@ const updateServer = () => {
   //     }
   //   }
   // });
-  updates = [];
+  //updates = [];
 };
 
 const initFromServer = () => {
@@ -565,6 +575,10 @@ const wsResMod = (data: ComServer) => {
               document.getElementsByName("elements")[i],
               layoutElementParams[i]
             );
+          moveable.target = null;
+          setTimeout(() => {
+           moveable.target = selected.value; 
+          });
         }
       }
     }
@@ -638,6 +652,10 @@ const wsCreate = (data: elementParams) => {
   moveable.target = null;
   updateProps();
 };
+
+const wsClose = ()=>{
+  ws.close();
+}
 
 const updateSelects = (data: elementParams) => {
   if (data.text == "" || data.text == null) {
@@ -894,17 +912,20 @@ type Model = {
   name: string;
   elements: elementParams[];
   srcs: string[];
+  cover: string;
 };
 
 let model: Model = {
-  name: "线上商城",
+  name: "安卓简约",
   elements: [],
   srcs: [],
+  cover:"",
 };
 let imgs: string[] = [];
 
 const importImages = () => {
   var imgInputer = document.getElementById("ModelLoader");
+  var coverInputer = document.getElementById("CoverLoader");
   imgInputer!.onchange = () => {
     var counter = imgInputer.files.length;
     for (var i = 0; i < imgInputer.files.length; ++i) {
@@ -940,12 +961,44 @@ const importImages = () => {
       });
     }
   };
+  coverInputer!.onchange = ()=>{
+    var form = new FormData();
+      form.append("file", coverInputer.files[0]);
+      axios({
+        url: "/resource/img",
+        method: "post",
+        headers: headers,
+        data: form,
+      }).then((res) => {
+        console.log(res.data);
+        if (res.data.msg == "成功") {
+          model.cover = res.data.data;
+          axios
+            .post(
+              "/layout/module",
+              {
+                name: model.name,
+                content: JSON.stringify(model),
+              },
+              { headers: headers }
+            )
+            .then((res) => {
+              console.log(res.data);
+            });
+        }
+      });
+  }
 };
+
+const saveModel = ()=>{
+
+}
 
 defineExpose({
   PrepareElement,
   download,
   updateServer,
+  wsClose
 });
 
 const startDrag = (e: MouseEvent) => {
@@ -975,7 +1028,7 @@ onMounted(() => {
   initSelecto();
   importImages();
   //updateServer();
-  setInterval(wsUpdate, 5000);
+
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       wsDestroy();
@@ -1135,6 +1188,7 @@ watch(
       if (update.value) moveable.target = selected.value;
     });
     updateUpdates();
+    wsUpdate();
   },
   {
     deep: true,
