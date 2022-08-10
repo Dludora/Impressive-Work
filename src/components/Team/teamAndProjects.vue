@@ -55,7 +55,7 @@ export default defineComponent({
                     if(elementitem.attributes['teamid']==undefined)
                         continue
                     else if(elementitem.attributes['teamid'].value==selectTeamId)
-                        elementitem.style['background']='#000'
+                        elementitem.style['background']='#2B303B'
                     else
                         elementitem.style['background']='none'
                 }
@@ -71,7 +71,7 @@ export default defineComponent({
                     if(elementitem.attributes['proid']==undefined)
                         continue
                     else if(elementitem.attributes['proid'].value==selectProId)
-                        elementitem.style['background']='#212732'
+                        elementitem.style['background']='#414958'
                     else
                         elementitem.style['background']='none'
                 }
