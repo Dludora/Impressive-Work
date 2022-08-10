@@ -37,7 +37,7 @@
         </n-icon>
       </div>
     </div>
-    <div v-if="empty"></div>
+    <div v-if="empty" class="empty"></div>
   </div>
 </template>
 
@@ -86,8 +86,8 @@ const initPageImgs = () => {
       headers: headers,
     })
     .then((res) => {
+      console.log(res.data);
       if (res.data.msg == "成功") {
-        console.log(res.data);
 
         for (var i = 0; i < res.data.data.length; ++i) {
           pageList[i]={
