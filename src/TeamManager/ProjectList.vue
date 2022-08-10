@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="prolist">
-          <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
+            <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID" :date="item.createTime"
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -148,8 +148,8 @@ const changeUp = () => {
   utils.setCookie('ifUp',1);
   else
   utils.setCookie('ifUp',0);
-  //getList();
-  router.go(0)
+  getList();
+  //router.go(0)
 }
 const sort = ref(0)
 const options = [
@@ -178,7 +178,7 @@ const handleSelect = (key: string | number) => {
       utils.setCookie('sortMethod',sortMethod.value)
   }
   getList();
-  router.go(0)
+  //router.go(0)
 }
 const handleClick = () => {
   showDropdownRef.value = !showDropdownRef.value
@@ -189,8 +189,16 @@ const headers = {
 let keyword = ref('')
 const teamID = ref(0)
 const theme = darkTheme
+type proj = {
+  ID: number,
+  createTime: string,
+  name: string,
+  previewCode: string,
+  src: string,
+  teamID: number
+}
 let projects = ref([])
-
+const projects_empty = reactive<proj[]>([])
 
 // 重命名表单
 let showModalRef = ref(false)
@@ -201,16 +209,29 @@ const getList = () => {
   let direction = 0;
   if (ifUp.value)
     direction = 1;
-
+  console.log("开始获取")
+  //projects = projects_empty
   const url = '/program/list?' + 'teamID=' + route.query.teamID + '&page=0&size=100&sort='
       + sort.value + '&direction=' + direction + '&keyword=' + keyword.value;
   console.log("keyword is " + keyword.value)
   axios.get(url, {headers: headers}).then(res => {
+    console.log("get messages")
+    console.log(res.data)
     projects.value = res.data.data.items
-    for (let i = 0; i < projects.value.length; i++) {
-      let tempDate = new Date(projects.value[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+    for (let i = 0; i < res.data.data.items.length; i++) {
+      
+      let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
+      // projects[i]={
+      //   ID : res.data.data.items[i].ID,
+      //   name : res.data.data.items[i].name,
+      //   previewCode : res.data.data.items[i].previewCode,
+      //   src : res.data.data.items[i].src,
+      //   teamID : res.data.data.items[i].teamID,
+      //   createTime : tempDate
+      // }
       projects.value[i].createTime = tempDate
     }
+    console.log("啊啊啊啊啊")
     console.log(projects.value)
   })
 }
@@ -289,8 +310,8 @@ const onPositiveClick = () => {
     if (res.data.msg === "成功") {
       message.info("修改成功")
       for (let i = 0; i < projects.value.length; i++) {
-        if (projects.value[i].ID === opID.value) {
-          projects.value[i].name = modelRef.value.name
+        if (projects[i].ID === opID.value) {
+          projects[i].name = modelRef.value.name
           break;
         }
       }
@@ -373,14 +394,16 @@ const onPositiveAddClick = () => {
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
       console.log("添加项目成功！")
-      let t = new Date();
-      let item = {
-        "name": modelAddRef.value.name,
-        "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
-        "createTime": t,
-        "ID": res.data.data
-      }
-      projects.value.push(item)
+      // let t = new Date();
+      // let item = {
+      //   "name": modelAddRef.value.name,
+      //   "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
+      //   "createTime": t,
+      //   "ID": res.data.data,
+      //   "previewCode": 
+      // }
+      // projects.push(item)
+      getList()
       message.info("添加成功！")
     } else {
       message.error("添加失败！")

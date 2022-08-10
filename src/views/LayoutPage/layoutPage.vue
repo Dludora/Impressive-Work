@@ -339,7 +339,7 @@
             class="porpertyBarIconUnit"
             @click.stop="displayPalette"
           >
-            <div class="porpertyIcon fillIcon"></div>
+            <div class="porpertyIcon fillIcon" :style="'background-color:'+palette[selectedColor]+';'"></div>
             <div class="porpertyExtension">
               <n-icon size="18" color="#E2E4E9">
                 <keyboard-arrow-up-round />
@@ -427,7 +427,7 @@
               class="ui elementBarUnit elementLeftUnit"
               @mousedown="PrepareElement('rect')"
             >
-              <div class="ui elementUnit elementRectangle"></div>
+              <div class="ui elementUnit elementRectangle" :style="'background-color:'+palette[selectedColor]+';'"></div>
             </div>
             <div
               class="ui elementBarUnit elementRightUnit"
@@ -891,6 +891,8 @@ const updateColor = (colorId: number) => {
   selectedColor = colorId;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
   colorCircles.value[selectedColor].style.margin = "2.5px";
+  let fillicon=document.getElementsByClassName('fillIcons') as HTMLCollectionOf<HTMLElement>
+  fillicon[0].style['background']=palette[colorId]
 };
 
 const updateBorder = (colorId: number) => {
@@ -1046,7 +1048,7 @@ onMounted(() => {
 const exit = () => {
   save();
   canvas.value?.wsClose();
-  router.push("/project/prototypes");
+  router.push("/project/prototypes?teamID="+route.query.teamID);
 };
 </script>
 
