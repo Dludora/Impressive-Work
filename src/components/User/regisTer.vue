@@ -185,6 +185,7 @@ const register = () => {
         'nick': nick.value,
         'name': name.value,
         'passwd': password1.value,
+        'src': nextColor(),
       }
   ).then(res => {
     message.info(res.data.msg);
