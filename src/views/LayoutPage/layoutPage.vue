@@ -1188,7 +1188,7 @@ const exit = () => {
   height: 100%;
 }
 .pageBoard {
-  position: absolute;
+  /* position: absolute; */
   display: inline-block;
   background-color: #2b303b;
   opacity: 70%;
