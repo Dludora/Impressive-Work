@@ -1,7 +1,8 @@
 <template>
-    <div class="card" @click="gotoProject" style="cursor: pointer;">
-        <div class="img"  :style="'background-image:url('+imgUrl+');'" >
-        <!-- <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" /> -->
+    <div class="card" @click="gotoProject" style="cursor: pointer;" @mouseenter="come" @mouseleave="leave">
+        <!-- <div class="img"  :style="'background-image:url('+imgUrl+');'" > -->
+          <div class="img">
+        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
@@ -59,6 +60,18 @@ export default defineComponent({
     Copy16Filled
   },
   setup(props, {emit}) {
+    const come = () => {
+      let temp = document.getElementsByClassName('nameInput')
+      console.log("变色龙")
+      // let on = <HTMLElement>(<unknown>temp)
+      // on.style.background="#2B303B";
+    }
+    const leave=()=>{
+      let temp = document.getElementsByClassName('nameInput')
+      console.log("变色龙")
+      // let on = <HTMLElement>(<unknown>temp);
+      // on.style.background="#16181d"
+    }
     const imgUrl = ref('')
     const message = useMessage()
       const headers = {
@@ -128,6 +141,8 @@ export default defineComponent({
 
     })
     return {
+      come,
+      leave,
       imgUrl,
       changeName,
       headers,
@@ -151,7 +166,7 @@ export default defineComponent({
 
 <style scoped>
 .nameInput{
-  min-width: 100px;background-color: #16181d;
+  min-width: 100px;background-color: transparent;
 }
 * {
   transition: 0.2s;

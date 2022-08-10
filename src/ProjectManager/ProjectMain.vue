@@ -57,7 +57,7 @@ export default defineComponent(
                 h(
                     RouterLink,
                     {
-                      to: "/UML"+route.query.teamID
+                      to: "/UML"
                     },
                     {default: () => '图'}
                 ),

@@ -7,6 +7,7 @@
     id="board"
   >
     <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
+    <input type="file" id="CoverLoader" accept="image/*" multiple="multiple" />
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
@@ -146,14 +147,14 @@ const initMoveable = () => {
     rotatable: true,
     warpable: false,
     snappable: true,
-    roundable: true,
+    roundable: false,
     roundRelative: false,
     snapGap: true,
     snapThreshold: 5,
     origin: true,
     originDraggable: true,
     keepRatio: false,
-    // Resize, Scale Events at edges.
+    // Resize, mscale Events at edges.
     edge: true,
     throttleDrag: 0,
     throttleResize: 0,
@@ -169,9 +170,13 @@ const initMoveable = () => {
       updateProps();
       update.value = false;
     })
+    .on("dragGroupStart", () => {
+      updateProps();
+      update.value = false;
+    })
     .on("drag", ({ target, translate, transform }) => {
-      layoutElementParams[selectedId.value[0]].x = translate[0];
-      layoutElementParams[selectedId.value[0]].y = translate[1];
+      layoutElementParams[selectedId.value[0]].x = translate[0] / mscale;
+      layoutElementParams[selectedId.value[0]].y = translate[1] / mscale;
       updateTransform(
         selected.value[0],
         layoutElementParams[selectedId.value[0]]
@@ -182,8 +187,10 @@ const initMoveable = () => {
       if (!locked) {
         var i = 0;
         for (i = 0; i < targets.length; ++i) {
-          layoutElementParams[selectedId.value[i]].x = events[i].translate[0];
-          layoutElementParams[selectedId.value[i]].y = events[i].translate[1];
+          layoutElementParams[selectedId.value[i]].x =
+            events[i].translate[0] / mscale;
+          layoutElementParams[selectedId.value[i]].y =
+            events[i].translate[1] / mscale;
           updateTransform(
             selected.value[i],
             layoutElementParams[selectedId.value[i]]
@@ -191,9 +198,16 @@ const initMoveable = () => {
         }
       }
     })
+    .on("dragGroupEnd", () => {
+      changeUpdate();
+      updateUpdates();
+      wsUpdate();
+      update.value = true;
+    })
     .on("dragEnd", () => {
       changeUpdate();
       updateUpdates();
+      wsUpdate();
       update.value = true;
     });
 
@@ -206,18 +220,23 @@ const initMoveable = () => {
       update.value = false;
     })
     .on("resize", ({ target, delta, width, height, transform, drag }) => {
-      target!.style.width = `${width}px`;
-      target!.style.height = `${height}px`;
-      target.style.transform = transform; //`translate(${drag.beforeTranslate[0]}px, ${drag.beforeTranslate[1]}px)`;
-      layoutElementParams[selectedId.value[0]].width = width;
-      layoutElementParams[selectedId.value[0]].height = height;
-      layoutElementParams[selectedId.value[0]].x = drag.translate[0];
-      layoutElementParams[selectedId.value[0]].y = drag.translate[1];
+      //target!.style.width = `${width}px`;
+      //target!.style.height = `${height}px`;
+      //target.style.transform = transform; //`translate(${drag.beforeTranslate[0]}px, ${drag.beforeTranslate[1]}px)`;
+      layoutElementParams[selectedId.value[0]].width = width / mscale;
+      layoutElementParams[selectedId.value[0]].height = height / mscale;
+      layoutElementParams[selectedId.value[0]].x = drag.translate[0] / mscale;
+      layoutElementParams[selectedId.value[0]].y = drag.translate[1] / mscale;
+      updateTransform(
+        selected.value[0],
+        layoutElementParams[selectedId.value[0]]
+      );
       updateProps();
     })
     .on("resizeEnd", () => {
       changeUpdate();
       updateUpdates();
+      wsUpdate();
       update.value = true;
     })
     .on("resizeGroupStart", ({ events }) => {
@@ -232,10 +251,12 @@ const initMoveable = () => {
     })
     .on("resizeGroup", ({ events }) => {
       events.forEach((ev, i) => {
-        layoutElementParams[selectedId.value[i]].x = ev.drag.translate[0];
-        layoutElementParams[selectedId.value[i]].y = ev.drag.translate[1];
-        layoutElementParams[selectedId.value[i]].width = ev.width;
-        layoutElementParams[selectedId.value[i]].height = ev.height;
+        layoutElementParams[selectedId.value[i]].x =
+          ev.drag.translate[0] / mscale;
+        layoutElementParams[selectedId.value[i]].y =
+          ev.drag.translate[1] / mscale;
+        layoutElementParams[selectedId.value[i]].width = ev.width / mscale;
+        layoutElementParams[selectedId.value[i]].height = ev.height / mscale;
         updateTransform(
           selected.value[i],
           layoutElementParams[selectedId.value[i]]
@@ -244,13 +265,14 @@ const initMoveable = () => {
     })
     .on("resizeGroupEnd", () => {
       updateUpdates();
+      wsUpdate();
     });
 
   /* scalable */
   moveable
     .on("scale", ({ target, transform, scale }) => {
-      layoutElementParams[selectedId.value[0]].scaleX = scale[0];
-      layoutElementParams[selectedId.value[0]].scaleY = scale[1];
+      layoutElementParams[selectedId.value[0]].scaleX = scale[0] / mscale;
+      layoutElementParams[selectedId.value[0]].scaleY = scale[1] / mscale;
       updateTransform(
         selected.value[0],
         layoutElementParams[selectedId.value[0]]
@@ -261,6 +283,7 @@ const initMoveable = () => {
     .on("scaleEnd", () => {
       changeUpdate();
       updateUpdates();
+      wsUpdate();
       update.value = true;
     });
 
@@ -281,6 +304,7 @@ const initMoveable = () => {
     .on("rotateEnd", () => {
       changeUpdate();
       updateUpdates();
+      wsUpdate();
       update.value = true;
     })
     .on("rotateGroupStart", ({ events }) => {
@@ -308,6 +332,7 @@ const initMoveable = () => {
     })
     .on("rotateGroupEnd", () => {
       updateUpdates();
+      wsUpdate();
     });
 
   /* warpable */
@@ -327,6 +352,8 @@ const initMoveable = () => {
       selected.value[0],
       layoutElementParams[selectedId.value[0]]
     );
+    updateUpdates();
+    wsUpdate();
   });
 };
 
@@ -411,21 +438,22 @@ const updateUpdates = () => {
 };
 
 const updateServer = () => {
-  comServer.splice(0);
-  for (var i = 0; i < updates.length; ++i) {
-    let newCom: ComServer = { id: 0, content: "" };
-    newCom.id = updates[i].id;
-    newCom.content = JSON.stringify(updates[i]);
-    console.log(newCom.id);
-    comServer.push(newCom);
-  }
-  console.log(comServer);
-  axios
-    .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
-    .then((res) => {
-      console.log(res.data);
-      download(false);
-    });
+  // comServer.splice(0);
+  // for (var i = 0; i < updates.length; ++i) {
+  //   let newCom: ComServer = { id: 0, content: "" };
+  //   newCom.id = updates[i].id;
+  //   newCom.content = JSON.stringify(updates[i]);
+  //   console.log(newCom.id);
+  //   comServer.push(newCom);
+  // }
+  // console.log(comServer);
+  download(false);
+  // axios
+  //   .put(`/layout/${layoutId}/element`, comServer, { headers: headers })
+  //   .then((res) => {
+  //     console.log(res.data);
+  //     download(false);
+  //   });
 
   // .then((res) => {
   //   console.log(res.data);
@@ -443,7 +471,7 @@ const updateServer = () => {
   //     }
   //   }
   // });
-  updates = [];
+  //updates = [];
 };
 
 const initFromServer = () => {
@@ -483,6 +511,8 @@ const initFromServer = () => {
     });
 };
 
+let createId: number = 0;
+let creator: boolean = false;
 const initWS = () => {
   ws.onopen = () => {
     ws.send("hi");
@@ -509,6 +539,12 @@ const initWS = () => {
               document.getElementsByName("elements")
             );
             moveable.elementGuidelines.push(document.getElementById("canvas"));
+            if (creator) {
+              selecto.clickTarget(produceClickE, document.getElementsByName("elements")[createId]);
+              layoutElements.value[createId].selectContent();
+              creator = false;
+              createId = 0;
+            }
           });
           var index = layoutElementParams.length - 1;
           break;
@@ -522,6 +558,9 @@ const initWS = () => {
         case 2: {
           wsResDestroy(data.elements);
           break;
+        }
+        case 3: {
+          createId = data.elements[0].id;
         }
       }
     } catch (error) {
@@ -539,16 +578,19 @@ const initWS = () => {
 const wsResCreate = (data: ComServer) => {
   var res = JSON.parse(data.content);
   if (data.id != 0) {
-    if (!(res.type == "text" && res.text == "")) {
-      res.id = data.id; 
-      layoutElementParams.push(res);
-      paramsDic[data.id] = res;
-    }
+    //if (!(res.type == "text" && res.text == "")) {
+    res.id = data.id;
+    layoutElementParams.push(res);
+    paramsDic[data.id] = res;
+    //}
+  }
+  if (data.id == createId) {
+    creator = true;
+    createId = layoutElementParams.length-1;
   }
   setTimeout(() => {
     console.log(res);
-  }); 
-  
+  });
 };
 
 const wsResMod = (data: ComServer) => {
@@ -556,15 +598,17 @@ const wsResMod = (data: ComServer) => {
   console.log(res);
   if (paramsDic[res.id] != null) {
     if (!(res.type == "text" && res.text == "")) {
-      for(var i=0;i<layoutElementParams.length;++i)
-      {
-        if(layoutElementParams[i].id==res.id)
-        {
-          layoutElementParams[i]=res;
+      for (var i = 0; i < layoutElementParams.length; ++i) {
+        if (layoutElementParams[i].id == res.id) {
+          layoutElementParams[i] = res;
           updateTransform(
-              document.getElementsByName("elements")[i],
-              layoutElementParams[i]
-            );
+            document.getElementsByName("elements")[i],
+            layoutElementParams[i]
+          );
+          moveable.target = null;
+          setTimeout(() => {
+            moveable.target = selected.value;
+          });
         }
       }
     }
@@ -573,8 +617,8 @@ const wsResMod = (data: ComServer) => {
 
 const wsResDestroy = (res) => {
   console.log(res);
-  for (var i = layoutElementParams.length-1; i >= 0; --i) {
-    for (var j = res.length-1; j >= 0; --j) {
+  for (var i = layoutElementParams.length - 1; i >= 0; --i) {
+    for (var j = res.length - 1; j >= 0; --j) {
       if (layoutElementParams[i].id == res[j].id) {
         layoutElementParams.splice(i, 1);
         //res.splice(j, 1);
@@ -585,6 +629,9 @@ const wsResDestroy = (res) => {
 };
 
 const wsUpdate = () => {
+  if (ws.readyState != 1) {
+    return;
+  }
   var form = {
     code: 1,
     elements: [],
@@ -602,6 +649,9 @@ const wsUpdate = () => {
 };
 
 const wsDestroy = () => {
+  if (ws.readyState != 1) {
+    return;
+  }
   var form = {
     code: 2,
     elements: [],
@@ -622,6 +672,9 @@ const wsDestroy = () => {
 };
 
 const wsCreate = (data: elementParams) => {
+  if (ws.readyState != 1) {
+    return;
+  }
   var form = {
     code: 0,
     elements: [],
@@ -637,6 +690,13 @@ const wsCreate = (data: elementParams) => {
   selectedId.value.splice(0);
   moveable.target = null;
   updateProps();
+};
+
+const wsClose = () => {
+  if (ws.readyState != 1) {
+    return;
+  }
+  ws.close();
 };
 
 const updateSelects = (data: elementParams) => {
@@ -662,11 +722,11 @@ const editContent = (index: number) => {
 };
 
 const updateTransform = (element: HTMLElement, data: elementParams) => {
-  element!.style.width = data.width * scale + "px";
+  element!.style.width = data.width * mscale + "px";
   if (data.height < 0) {
     element!.style.height = "auto";
   } else {
-    element!.style.height = data.height * scale + "px";
+    element!.style.height = data.height * mscale + "px";
   }
   element!.style.borderRadius = data.borderRadius;
 
@@ -674,13 +734,13 @@ const updateTransform = (element: HTMLElement, data: elementParams) => {
 
   if (data.type != "text") {
     element!.style.transform =
-      `translate(${data.x * scale}px,${data.y * scale}px)` +
+      `translate(${data.x * mscale}px,${data.y * mscale}px)` +
       ` scale(${data.scaleX},${data.scaleY})` +
       ` rotate(${data.rotation}deg)`;
   } else {
     element!.style.transform =
-      `translate(${data.x * scale}px,${data.y * scale}px)` +
-      ` scale(${data.scaleX * scale},${data.scaleY * scale})` +
+      `translate(${data.x * mscale}px,${data.y * mscale}px)` +
+      ` scale(${data.scaleX * mscale},${data.scaleY * mscale})` +
       ` rotate(${data.rotation}deg)`;
   }
 };
@@ -770,7 +830,9 @@ const PrepareElement = (elementType: string) => {
   preparedType = elementType;
 };
 
+let produceClickE: MouseEvent = null;
 const ProduceElement = (e: MouseEvent) => {
+  produceClickE = e;
   if (dragging) {
     dragging = false;
   }
@@ -781,7 +843,7 @@ const ProduceElement = (e: MouseEvent) => {
     preparedType = "rect";
     backColor = "transparent";
   }
-  var iheight = 200 * scale;
+  var iheight = 200 * mscale;
   if (preparedType == "text") {
     iheight = -1;
   }
@@ -791,7 +853,7 @@ const ProduceElement = (e: MouseEvent) => {
       id: 0,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
-      width: 200 * scale,
+      width: 200 * mscale,
       height: iheight,
       scaleX: 1,
       scaleY: 1,
@@ -803,7 +865,7 @@ const ProduceElement = (e: MouseEvent) => {
       borderColor: "transparent",
       src: src,
       text: "",
-      fontSize: 20 * scale,
+      fontSize: 20 * mscale,
       //update: true,
     });
     preparedType = "";
@@ -849,6 +911,7 @@ const ProduceElement = (e: MouseEvent) => {
 
 // let canvas2: any;
 let imgUri: string;
+
 const download = (isDownload: boolean, type?: string) => {
   html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
     function (canvas) {
@@ -894,17 +957,20 @@ type Model = {
   name: string;
   elements: elementParams[];
   srcs: string[];
+  cover: string;
 };
 
 let model: Model = {
-  name: "线上商城",
+  name: "安卓简约",
   elements: [],
   srcs: [],
+  cover: "",
 };
 let imgs: string[] = [];
 
 const importImages = () => {
   var imgInputer = document.getElementById("ModelLoader");
+  var coverInputer = document.getElementById("CoverLoader");
   imgInputer!.onchange = () => {
     var counter = imgInputer.files.length;
     for (var i = 0; i < imgInputer.files.length; ++i) {
@@ -940,12 +1006,42 @@ const importImages = () => {
       });
     }
   };
+  coverInputer!.onchange = () => {
+    var form = new FormData();
+    form.append("file", coverInputer.files[0]);
+    axios({
+      url: "/resource/img",
+      method: "post",
+      headers: headers,
+      data: form,
+    }).then((res) => {
+      console.log(res.data);
+      if (res.data.msg == "成功") {
+        model.cover = res.data.data;
+        axios
+          .post(
+            "/layout/module",
+            {
+              name: model.name,
+              content: JSON.stringify(model),
+            },
+            { headers: headers }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
+    });
+  };
 };
+
+const saveModel = () => {};
 
 defineExpose({
   PrepareElement,
   download,
   updateServer,
+  wsClose,
 });
 
 const startDrag = (e: MouseEvent) => {
@@ -975,7 +1071,7 @@ onMounted(() => {
   initSelecto();
   importImages();
   //updateServer();
-  setInterval(wsUpdate, 5000);
+
   document.onkeyup = (e) => {
     if (e.key == "Delete") {
       wsDestroy();
@@ -1022,7 +1118,7 @@ const initScale = () => {
   document.getElementById("canvas")!.style.top = `${canvasTrans.y - 36}px`;
 };
 
-let scale = 1;
+let mscale = 1;
 const maxScale = 5;
 const minScale = 0.5;
 const wheelScale = () => {
@@ -1034,10 +1130,10 @@ const wheelScale = () => {
       scope = 1.25;
     }
 
-    if (scale * scope > maxScale || scale * scope < minScale) {
+    if (mscale * scope > maxScale || mscale * scope < minScale) {
       return;
     }
-    scale *= scope;
+    mscale *= scope;
     update.value = true;
 
     for (var i = 0; i < layoutElementParams.length; ++i) {
@@ -1135,6 +1231,7 @@ watch(
       if (update.value) moveable.target = selected.value;
     });
     updateUpdates();
+    wsUpdate();
   },
   {
     deep: true,

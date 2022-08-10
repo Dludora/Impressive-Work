@@ -30,7 +30,7 @@
           <Icon size="18" style="margin:12px;">
             <BoxMultiple20Regular/>
           </Icon>
-          您的团队
+           团队和项目
         </div>
         <div class="divline"/>
         <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->

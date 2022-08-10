@@ -167,6 +167,7 @@
                 :key="value.name"
                 class="settingModel"
                 @click.stop="switchModel(index)"
+                :style="{backgroundImage:'url('+value.cover+')'}"
               ></div>
             </div>
           </n-scrollbar>
@@ -179,6 +180,8 @@
               height: 100%;
               transform: translate(-100%, 0);
               position: absolute;
+              background-color: #2b303b;
+              border-right:2px solid #151515;
             "
             id="pageScrollBar"
           >
@@ -1031,6 +1034,7 @@ onMounted(() => {
 
 const exit = () => {
   save();
+  canvas.value?.wsClose();
   router.push("/project/prototypes");
 };
 </script>
@@ -1182,7 +1186,7 @@ const exit = () => {
   border-style: solid;
   border-width: 3px;
   margin-top: 25px;
-  background-size: cover;
+  background-size: 100% 100%;
 }
 .pageBoardBox {
   position: absolute;
@@ -1191,12 +1195,12 @@ const exit = () => {
 .pageBoard {
   /* position: absolute; */
   display: inline-block;
-  background-color: #2b303b;
+  /*background-color: #2b303b;
   opacity: 70%;
   border-width: 0px;
   border-style: solid;
   border-right-width: 3px;
-  border-color: #151515;
+  border-color: #151515;*/
   left: 0px;
   top: 0px;
   bottom: 0px;
@@ -1204,22 +1208,21 @@ const exit = () => {
   text-align: left;
   padding: 15px;
 }
-.pageImage {
+.pageImage,.pageImageSelected {
   width: 240px;
   height: 140px;
   border-style: solid;
-  border-width: 3px;
+  border-width: 2px;
   margin-bottom: 25px;
+  border-radius:6px;
   background-size: 100% 100%;
 }
+.pageImage{
+  border-color:#2b303b;
+
+}
 .pageImageSelected {
-  width: 240px;
-  height: 140px;
-  border-style: solid;
-  border-color: red;
-  border-width: 3px;
-  margin-bottom: 25px;
-  background-size: 100% 100%;
+  border-color: #D42B39;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -1407,6 +1410,7 @@ const exit = () => {
   position: absolute;
   top: 0;
   bottom: 0;
+  left:2px;
   margin: auto;
 }
 .sider {

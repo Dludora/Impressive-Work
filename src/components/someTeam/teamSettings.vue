@@ -13,10 +13,11 @@
     }"
         >
           <n-form-item label="团队名称" path="inputValue" :rule="ruleName">
-            <n-input style="backgroud:green;" v-model:value="model.inputValue" placeholder="Input"/>
+            <n-input class="input" style="backgroud:green;" v-model:value="model.inputValue" placeholder="Input"/>
           </n-form-item>
           <n-form-item label="团队简介" path="textareaValue">
             <n-input
+            class="input"
                 v-model:value="model.textareaValue"
                 placeholder="请输入团队简介(非必须)"
                 type="textarea"
@@ -33,7 +34,7 @@
         <n-button @click="change" style="margin-left:200px" size="large" type="primary">
           保存修改
         </n-button>
-        <n-button style="margin-left:50px" size="large" type="tertiary">
+        <n-button @click="cancel" style="margin-left:50px" size="large" type="tertiary">
           取消修改
         </n-button>
       </div>
@@ -73,6 +74,7 @@ const memNum = ref()
 const model = ref({
   inputValue: '',
   textareaValue: '',
+  src:'',
   switchValue: false
 })
 const headers = {
@@ -112,6 +114,10 @@ const getNum = () => {
 
   })
 }
+const cancel = () => {
+    getTeamInfo()
+    message.success("取消修改")
+}
 const ruleName = {
   required: true,
   validator() {
@@ -129,13 +135,13 @@ const change = () => {
   axios.put('/team', {
     "ID": route.query.teamID,
     "name": model.value.inputValue,
-    "src": "",
+    "src": model.value.src,
     "introduction": model.value.textareaValue
   }, {headers: headers}).then(res => {
     console.log(res.data)
     if (res.data.msg === "成功") {
       message.info("修改成功!")
-      // router.go(0)
+      router.go(0)
 
     } else {
       message.info(res.data.msg)
@@ -148,6 +154,7 @@ const getTeamInfo = () => {
     console.log(res.data)
     model.value.inputValue = res.data.data.name
     model.value.textareaValue = res.data.data.introduction
+    model.value.src = res.data.data.src
   })
 }
 const getGlobal = computed(() => {
@@ -173,6 +180,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.input{
+  background-color: transparent;
+  border: #414958 1px solid;
+}
 .button {
   margin-top: 20px;
   width: 100%;

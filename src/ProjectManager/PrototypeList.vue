@@ -129,7 +129,7 @@ import PageCard from "@/ProjectManager/pageCard.vue"
 import axios from "axios";
 import utils from "@/Utils";
 import {onMounted, ref, watch} from "vue";
-import {useRouter} from "vue-router"
+import {useRouter, useRoute} from "vue-router"
 import {Copy16Filled} from '@vicons/fluent'
 import {darkTheme, NIcon, useMessage, InputInst, DropdownOption} from "naive-ui";
 import {MdCash} from '@vicons/ionicons4'
@@ -244,7 +244,7 @@ const getList = () => { //TODO 前后端对接：获取页面列表
     }
   })
 }
-
+const route = useRoute()
 //删除布局
 const delID = ref(0)
 const theme = darkTheme
@@ -585,15 +585,15 @@ const openCard = (indx) => {
   //console.log(shortcuts.value[indx].ID)
   openID.value = shortcuts.value[indx].ID  //已成功获取要打开的布局ID
 
-  router.push({
-    path: "/layout",
-    query: {
-      layoutId: openID.value,
-      layoutName: shortcuts.value[indx].name,
-      canvasWidth: shortcuts.value[indx].width,
-      canvasHeight: shortcuts.value[indx].height,
-    }
-  })
+  router.push({path:"/layout",
+  query:{
+    teamID:route.query.teamID,
+    layoutId: openID.value,
+    layoutName: shortcuts.value[indx].name,
+    canvasWidth: shortcuts.value[indx].width,
+    canvasHeight: shortcuts.value[indx].height,
+  }
+})
 
 }
 
@@ -641,6 +641,7 @@ onMounted(() => {
   width: 100%;
   /*margin:39px 43px 0 61px;*/
 }
+
 
 .card {
   margin: 0 10px 20px 0;

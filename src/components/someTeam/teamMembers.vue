@@ -306,13 +306,14 @@ onMounted(() => {
     cursor:pointer;
 }
 .out{
-  margin-left: 20px;
+  /*margin-left: 20px;*/
 }
 .top{
-  color:#A7AFBEFF;
-  margin-left:80px;
-  font-size: small;
-  margin-top: 30px;
+  color:#414958;
+  margin-left:60px;
+  font-size: 12px;
+  line-height:28px;
+  margin-top: 20px;
 
 }
 .left{
@@ -327,20 +328,22 @@ a {
 }
 
 .member-card {
+  margin-left: 20px;
   /*margin-left: 60px;*/
   position: relative;
   /*width: 100%;
   height: 70px;*/
   height: 50px;
-  padding: 15px 60px;
+  padding: 15px 40px;
   display: flex;
   justify-content: space-between;
   background: #16181D;
 }
 
 .member-add {
+  margin-left: 20px;
   /*height: 70px;*/
-  padding: 15px 60px;
+  padding: 15px 40px;
   display: flex;
   background: #16181D;
   color: #A7AFBE;
