@@ -2,7 +2,7 @@
     <div class="card" @click="gotoProject" style="cursor: pointer;" @mouseenter="come" @mouseleave="leave">
         <!-- <div class="img"  :style="'background-image:url('+imgUrl+');'" > -->
           <div class="img">
-        <img  style="width:240px;heigth:140px;object-fit: fill;" :src="imgUrl" />
+        <img  style="width:240px;height:140px;object-fit: cover;" :src="imgUrl" />
         </div>
         <div class="bottom">
             <!-- <div class="name"  v-if="!change">
