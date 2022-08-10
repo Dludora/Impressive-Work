@@ -316,12 +316,12 @@ export default defineComponent({
   display: inline-block;
 }
 .clsL,.clsR{
-  display: inline-block;
+  /*display: inline-block;*/
 }
 
 .clsR{
 
-  margin-left: 30%;
+  /*margin-left: 30%;*/
   margin-right: 0;
   vertical-align: top;
 }
@@ -377,11 +377,13 @@ export default defineComponent({
 .three-cls {
   /*background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  position: absolute;*/
-  min-width: 100%;
+  position: absolute;
+  min-width: 100%;*/
   /*top:0%;*/
   padding: 0px 50px;
   z-index: 1;
+  display: flex;
+  justify-content: space-between;
 }
 .divline{
     height:1px;

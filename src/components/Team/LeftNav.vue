@@ -333,7 +333,7 @@ cursor:pointer
   /*width: 127px;*/
   overflow: hidden;
   white-space: nowrap;
-  font-size: larger;
+  /*font-size: larger;*/
 }
 
 .user p {

@@ -268,7 +268,7 @@ onMounted(() => {
 // }
 </script>
 
-<style>
+<style scoped>
 
 .main {
   height: 100%;

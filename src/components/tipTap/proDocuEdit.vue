@@ -3,13 +3,19 @@
   <div class="big-bg">
 
     <div class="leftDoc">
+      <div class="backnav" @click="routerBack">
+        <Icon size="18" style="margin:6px 6px 6px 0;">
+          <ArrowBackOutline/>
+        </Icon>
+        返回
+      </div>
       <div class="teamlist">
         <div class="teamsHead">
           项目文档
         </div>
         <div class="divline"/>
         <!-- <n-scrollbar style="margin:0 0 0 -8px;width:197px;padding-right:3px;"> -->
-        <n-scrollbar>
+        <n-scrollbar style="width:unset;">
           <div class="teams">
             <LeftDocuList v-for="document in documents" :key="document" :name="document.title"
                             @op="openDocu(document.ID)" />
@@ -30,6 +36,8 @@ import utils from "@/Utils";
 import axios from "axios";
 
 import router from "@/router";
+import { Icon } from '@vicons/utils'
+import {ArrowBackOutline} from '@vicons/ionicons5'
 
 import { darkTheme } from 'naive-ui'
 import LeftDocuList from "./leftDocuList.vue";
@@ -91,7 +99,9 @@ const getDocuAbl = () => {
 }
 
 let opdocuID = ref();
-
+const routerBack=()=>{
+  router.back()
+}
 function openDocu(index) {
   //获取文档内容
   opdocuID.value = index;
@@ -150,8 +160,10 @@ function openDocu(index) {
 
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+*{
+  transition-duration: 0.3s;
+}
 .main {
   height: 100%;
   /* max-height: 100%; */
@@ -183,9 +195,13 @@ function openDocu(index) {
   align-items: stretch;
   color: #FFFFFF;
 }
+.divline{
+  margin-right: 12px;
+  border-bottom: 2px solid #FFFFFF00;
+}
 
 .teamlist:hover .divline{
-  border-bottom: 1px solid #2B303B;
+  border-bottom: 2px solid #222222;
 }
 
 .teamlist:hover .teamsHead{
@@ -195,12 +211,13 @@ function openDocu(index) {
 .leftDoc{
   display: flex;
   flex-direction: column;
-  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
   background-color: #16181D;
-  border-right: 1px solid #414958;
+  border-right: 1px solid #414958;*/
   /*padding-top: 20px;*/
   padding-left: 8px;
-  width: 192px;
+  width: 160px;
+  min-width: 160px;
   height: 100%;
   overflow: hidden;
   color: #FFFFFF;
@@ -218,7 +235,7 @@ function openDocu(index) {
 .big-bg{
   min-width: 100%;
   min-height: 100%;
-  background-color: #414958;
+  background-color: #0d0d0d;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -265,18 +282,32 @@ function openDocu(index) {
   font-size: large;
   font-weight: 500;
   color: #E2E4E9;
+  padding-right: 12px;
+  margin-top: 6px;
 }
 
 .teamsHead {
-  margin: 23px 16px 0 4px;
+  margin: 8px 16px 0 4px;
   color: #E2E4E9;
-  font-size: 12px;
-  line-height: 42px;
+  font-size: 16px;
+  line-height: 28px;
   flex-direction: row;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  /*font-weight:700;*/
-  /*border-bottom: 1px solid #414958;*/
+}
+.backnav{
+  /*padding: 0 9px;*/
+  color:#E2E4E9;
+  font-size: 16px;
+  line-height: 42px;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+.backnav:hover{
+  cursor:pointer;
+  color:#fff;
 }
 </style>
