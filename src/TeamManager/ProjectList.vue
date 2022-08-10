@@ -352,7 +352,7 @@ const onPositiveAddClick = () => {
   }
   axios.post('/program', {
     'teamID': route.query.teamID,
-    "src": "",
+    "src": "../assets/teamfigure.jpg",
     "name": modelAddRef.value.name
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -360,7 +360,7 @@ const onPositiveAddClick = () => {
       let t = new Date();
       let item = {
         "name": modelAddRef.value.name,
-        "src": "nope",
+        "src": "../assets/teamfigure.jpg",
         "createTime": t,
         "ID": res.data.data
       }
