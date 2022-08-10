@@ -323,7 +323,7 @@ onMounted(()=>{
   font-weight: 100;
   font-size:18px;
   padding:24px;
-  background-color:#FFFFFFCC;
+  background-color:#FFFFFFe0;
   text-shadow: none;
 }
 
