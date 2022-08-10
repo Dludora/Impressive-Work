@@ -300,11 +300,7 @@ const onPositiveClickDel = () => {
 
   axios.delete(deleUrl, {headers: headers}).then(res => {
     console.log(res.data)
-    for (let i = 0; i < projects.value.length; i++) {
-      if (projects.value[i].ID === opID.value) {
-        projects.value.splice(i, 1)
-      }
-    }
+    getList()
     message.info("删除成功！")
   })
   delRef.value = false
@@ -352,7 +348,7 @@ const onPositiveAddClick = () => {
   }
   axios.post('/program', {
     'teamID': route.query.teamID,
-    "src": "../assets/teamfigure.jpg",
+    "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
     "name": modelAddRef.value.name
   }, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {
@@ -360,7 +356,7 @@ const onPositiveAddClick = () => {
       let t = new Date();
       let item = {
         "name": modelAddRef.value.name,
-        "src": "../assets/teamfigure.jpg",
+        "src": "https://soft2-1251130379.cos.ap-beijing.myqcloud.com/images/u/43/1077820300-489106011531900.jpg",
         "createTime": t,
         "ID": res.data.data
       }
