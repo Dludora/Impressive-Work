@@ -49,6 +49,7 @@
         :layoutId="layoutId"
         :canvasWidth="canvasWidth"
         :canvasHeight="canvasHeight"
+        :modelElements="modelElements"
       ></layout-canvas>
       <div>
         <div class="toolBar">
@@ -666,10 +667,12 @@ type Model = {
   name: string;
   elements: Property[];
   srcs: string[];
-  cover: string
+  cover:string;
 };
 const models = reactive<Model[]>([]);
-let modelAt = ref<number>(-1);
+const modelAt = ref<number>(-1);
+const modelName = ref<string>("");
+const modelElements = reactive([]); 
 const elementSrcs = reactive<string[]>([]);
 let firstSrc: number = 0;
 const maxElementsNum = 6;
@@ -734,6 +737,13 @@ const initModels = () => {
     for (var i = 0; i < res.data.data.length; ++i) {
       var model = JSON.parse(res.data.data[i].content);
       models[i] = model;
+      if(model.name==modelName.value)
+      {
+        for(var j=0;j<model.elements.length;++j)
+        {
+          modelElements[j] = model.elements[j];
+        }
+      }
       console.log(models);
     }
   });
@@ -998,6 +1008,7 @@ onMounted(() => {
   layoutName.value = route.query.layoutName as string;
   canvasWidth.value = parseInt(route.query.canvasWidth as string);
   canvasHeight.value = parseInt(route.query.canvasHeight as string);
+  modelName.value = route.query.modelName as string;
   console.log("layoutId=" + layoutId.value);
   initPageImgs();
   initModels();

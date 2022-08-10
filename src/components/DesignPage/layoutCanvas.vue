@@ -8,6 +8,7 @@
   >
     <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
     <input type="file" id="CoverLoader" accept="image/*" multiple="multiple" />
+    <n-button @click="saveModel"></n-button>
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
@@ -101,6 +102,7 @@ type Prop = {
   elementProps: elementParams;
   canvasWidth: number;
   canvasHeight: number;
+  modelElements: elementParams[];
 };
 
 const props = defineProps<Prop>();
@@ -540,7 +542,10 @@ const initWS = () => {
             );
             moveable.elementGuidelines.push(document.getElementById("canvas"));
             if (creator) {
-              selecto.clickTarget(produceClickE, document.getElementsByName("elements")[createId]);
+              selecto.clickTarget(
+                produceClickE,
+                document.getElementsByName("elements")[createId]
+              );
               layoutElements.value[createId].selectContent();
               creator = false;
               createId = 0;
@@ -571,7 +576,7 @@ const initWS = () => {
     message.error("网络故障");
   };
   ws.onclose = () => {
-    message.warning("连接已断开");
+    //message.warning("连接已断开");
   };
 };
 
@@ -586,7 +591,7 @@ const wsResCreate = (data: ComServer) => {
   }
   if (data.id == createId) {
     creator = true;
-    createId = layoutElementParams.length-1;
+    createId = layoutElementParams.length - 1;
   }
   setTimeout(() => {
     console.log(res);
@@ -671,7 +676,7 @@ const wsDestroy = () => {
   updateProps();
 };
 
-const wsCreate = (data: elementParams) => {
+const wsCreate = (datas: elementParams[]) => {
   if (ws.readyState != 1) {
     return;
   }
@@ -679,10 +684,13 @@ const wsCreate = (data: elementParams) => {
     code: 0,
     elements: [],
   };
-  let newCom: ComServer = { id: 0, content: "" };
-  newCom.id = data.id;
-  newCom.content = JSON.stringify(data);
-  form.elements.push(newCom);
+  datas.forEach((data) => {
+    let newCom: ComServer = { id: 0, content: "" };
+    newCom.id = data.id;
+    newCom.content = JSON.stringify(data);
+    form.elements.push(newCom);
+  });
+
   console.log(form);
   ws.send(JSON.stringify(form));
 
@@ -939,6 +947,8 @@ const download = (isDownload: boolean, type?: string) => {
                 `/layout/${layoutId}/img`,
                 {
                   src: imgUri,
+                  width:props.canvasWidth,
+                  height:props.canvasHeight,
                 },
                 { headers: headers }
               )
@@ -1035,7 +1045,21 @@ const importImages = () => {
   };
 };
 
-const saveModel = () => {};
+const saveModel = () => {
+  model.elements = layoutElementParams;
+  axios
+    .post(
+      "/layout/module",
+      {
+        name: model.name,
+        content: JSON.stringify(model),
+      },
+      { headers: headers }
+    )
+    .then((res) => {
+      console.log(res.data);
+    });
+};
 
 defineExpose({
   PrepareElement,
@@ -1240,9 +1264,20 @@ watch(
 );
 
 watch(
+  () => props.modelElements,
+  (newVal) => {
+    if (newVal.length == 0) {
+      return;
+    }
+    wsCreate(newVal);
+  }
+);
+
+watch(
   () => props.canvasWidth,
   (newVal) => {
     initScale();
+    download(false);
   }
 );
 
@@ -1250,6 +1285,7 @@ watch(
   () => props.layoutId,
   (newVal) => {
     layoutId = props.layoutId;
+    layoutElementParams.splice(0);
     ws = new WebSocket(
       "ws://82.156.125.202/soft2/socket/websocket/layout/" +
         layoutId +
