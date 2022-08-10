@@ -9,7 +9,7 @@
       <div class="three-cls">
         <div class="clsL">
         <n-config-provider :theme="theme">
-          <n-menu mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" default-value="" :value="judge"/>
+          <n-menu mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" :value="judge"/>
         </n-config-provider>
         </div>
         <div class="clsR">
@@ -85,8 +85,6 @@ import utils from "@/Utils";
 const myID = ref(utils.getCookie('userID'))
 const myIdentify = ref(0)
 
-
-
 function renderIcon(icon: Component) {
   return () => h(NIcon, null, {default: () => h(icon)})
 }
@@ -126,8 +124,9 @@ export default defineComponent({
         idx=Math.floor(Math.random() * max)
       return colorList[idx]
     }
-    let judge = ref('');
-    const router = useRouter();
+    let judge = ref('')
+    const router = useRouter()
+    const route = useRoute()
     let menuOptions: MenuOption[] = [
       {
         label: () =>
@@ -135,7 +134,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamprojects?teamID=' + teamID.value
+                      '/team/teamprojects?teamID=' + route.query.teamID
                 },
                 {default: () => '项目'}
             ),
@@ -149,7 +148,7 @@ export default defineComponent({
                 {
                   to:
                   // name: 'teamMembers',
-                      '/team/teammembers?teamID=' + teamID.value
+                      '/team/teammembers?teamID=' + route.query.teamID
                 },
                 {default: () => '成员'}
             ),
@@ -162,7 +161,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamDocuments?teamID=' + teamID.value
+                      '/team/teamDocuments?teamID=' + route.query.teamID
                 },
                 {default: () => '文档'}
             ),
@@ -175,7 +174,7 @@ export default defineComponent({
                 RouterLink,
                 {
                   to:
-                      '/team/teamsettings?teamID=' + teamID.value
+                      '/team/teamsettings?teamID=' + route.query.teamID
                 },
                 {default: () => '设置'}
             ),
@@ -183,8 +182,6 @@ export default defineComponent({
         icon: renderIcon(Settings)
       },
     ]
-
-    const route = useRoute()
     let searchText = ref('')
     let teamID = ref('')
     const com = ref(null)
@@ -250,9 +247,8 @@ export default defineComponent({
     }
     onMounted(() => {
      if(typeof(route.query.teamID)!="undefined")
-     teamID.value=(route.query.teamID).toString();
+     teamID.value=(route.query.teamID).toString()
      judge.value=router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
-     console.log('judge change to '+judge.value)
     })
     return {
        handleUpdateValue(key: string, item: MenuOption) {
@@ -316,12 +312,12 @@ export default defineComponent({
   display: inline-block;
 }
 .clsL,.clsR{
-  display: inline-block;
+  /*display: inline-block;*/
 }
 
 .clsR{
 
-  margin-left: 30%;
+  /*margin-left: 30%;*/
   margin-right: 0;
   vertical-align: top;
 }
@@ -377,11 +373,13 @@ export default defineComponent({
 .three-cls {
   /*background: #16181D;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  position: absolute;*/
-  min-width: 100%;
+  position: absolute;
+  min-width: 100%;*/
   /*top:0%;*/
   padding: 0px 50px;
   z-index: 1;
+  display: flex;
+  justify-content: space-between;
 }
 .divline{
     height:1px;

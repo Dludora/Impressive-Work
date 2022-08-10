@@ -9,7 +9,7 @@
     <div class="docu-time">{{createTime}}</div>
     <div class="docu-operate">
       <Icon size="20" style="margin-right:8px; cursor: pointer"><Edit16Regular @click="modifyName"/> </Icon>
-      <Icon size="20" style="margin-right:8px; cursor: pointer"><CloseOutline @click="del"/> </Icon>
+      <Icon size="20" style="margin-right:20px; cursor: pointer"><CloseOutline @click="del"/> </Icon>
     </div>
   </div>
 </template>
@@ -43,11 +43,19 @@ const del = () => {
 
 <style scoped>
 .docu-item {
+  user-select: none;
+  
   width: 100%;
   height: 50px;
   line-height: 50px;
   text-align: center;
+
   display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+
   border-radius: 3px;
   color: #FFFFFF;
   position: relative;
@@ -61,24 +69,35 @@ const del = () => {
 .docu-icon {
   width: 20%;
   height: 100%;
-  position: relative;
+  /*position: relative;*/
 }
 .docu-name {
-  flex: 1;
+  flex: 3;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .docu-time {
   flex: 2;
 }
 .docu-type {
-  flex: 3;
+  flex: 1;
 }
 .docu-operate {
-  flex: 4;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 .icons {
   margin-right:5px;
-  position: absolute;
-  top: calc(50% - 24px / 2);
-  left: 20px;
+  /*position: absolute;
+  top: calc(50% - 24px / 2);*/
+  margin-left: 20px;
 }
 </style>

@@ -4,7 +4,7 @@
       <!--    <div class="docu-icon">-->
       <Icon size="20" class="icons"><Document /></Icon>
       <!--    </div>-->
-      <p @click="op" style="cursor: pointer">{{name}}</p>
+      <div class="nametext" @click="op" style="cursor: pointer">{{name}}</div>
     </div>
   </div>
 </template>
@@ -29,8 +29,8 @@ const op = () => {
 <style scoped>
 .docu-item {
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: 42px;
+  line-height: 42px;
   text-align: center;
   display: flex;
   border-radius: 3px;
@@ -38,10 +38,10 @@ const op = () => {
   position: relative;
 }
 .docu-item:hover {
-  background: #414958;
+  background: #444444;
 }
 .docu-item:focus {
-  background: #343b46;
+  background: #333333;
 }
 .docu-icon {
   width: 20%;
@@ -50,6 +50,9 @@ const op = () => {
 }
 .docu-name {
   flex: 1;
+  align-items: center;
+  align-content: center;
+  display: flex;
 }
 .docu-time {
   flex: 2;
@@ -62,8 +65,15 @@ const op = () => {
 }
 .icons {
   margin-right:5px;
-  position: absolute;
-  top: calc(50% - 24px / 2);
-  left: 20px;
+  /*position: absolute;
+  top: calc(50% - 24px / 2);*/
+  margin-left: 8px;
+}
+.nametext{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  font-size:12px;
 }
 </style>

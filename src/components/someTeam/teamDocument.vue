@@ -2,7 +2,7 @@
   <div class="main">
     <div class="layout">
       <div class="discribe">
-        管理你的{{ length }}个文件夹
+        管理属于当前团队的文档
         <div class="buttons" v-if="crumbs[crumbs.length-1].isPro === 0">
           <n-button class="newpage" @click="showModalAddRef=true" size="tiny" style="margin-right: 30px">
             新 建 文 件 夹
@@ -48,7 +48,7 @@
     >
       <n-form :model="modelRef">
         <n-form-item label="文件夹/文档名称" :rule="listRenameRule" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelRef.name" placeholder="请输入新的文件夹/文档名称" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -64,7 +64,7 @@
     >
       <n-form :model="modelAddRef">
         <n-form-item label="文件夹名称" :rule="ruleAdd" :render-feedback="formatFeedback">
-          <n-input v-model:value="modelAddRef.name" @keydown.enter.prevent/>
+          <n-input v-model:value="modelAddRef.name" placeholder="请输入文件夹名称" @keydown.enter.prevent/>
         </n-form-item>
       </n-form>
     </n-modal>
@@ -897,7 +897,7 @@ const dragOver = () => {
 }
 
 .buttons {
-  margin-right: 10px;
+  /*margin-right: 10px;*/
 }
 
 .newpage {
@@ -905,6 +905,6 @@ const dragOver = () => {
 }
 
 .layout {
-  margin: 20px 50px 0 60px;
+  margin: 20px 60px 0 60px;
 }
 </style>

@@ -1,16 +1,25 @@
 <template>
-  <div class="big-bg">
-    <n-space class="head-bg" justify="center">
-      <h style="position: relative; top: 5px;color: #FFFFFF; display: inline">
-        文档: {{title}}
+  <div class="item-bg">
+
+    <n-space class="head-bg" justify="space-between">
+
+      <div/>
+      <h style="margin-left:40px;color: #FFFFFF; display: inline">
+        {{title}}
       </h>
-      <n-button @click="returnTO">返回</n-button>
+
+      <!-- <n-button @click="returnTO">返回</n-button>
+
       <n-button @click="downPDF">下载PDF</n-button>
       <n-button @click="saveWord">下载word</n-button>
       <n-button @click="saveMD">下载MD</n-button>
       <n-button @click="saveHTML">下载HTML</n-button>
       <n-button @click="saveJSON">下载JSON</n-button>
-      <n-button @click="saveText">下载纯文本</n-button>
+      <n-button @click="saveText">下载纯文本</n-button> -->
+      <Icon class="exportbutton" size="24px">
+        <Export @click="exportFile"/>
+      </Icon>
+
     </n-space>
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
@@ -32,9 +41,27 @@
       </div>
     </div>
   </div>
+  <n-modal v-model:show="showModalRef" :mask-closable="true">
+    <div class="export-panel">
+      <div class="export-desc">请选择导出格式</div>
+      <div class="export-list">
+        <div class="export-option head" @click="downPDF">PDF 文档</div>
+        <div class="export-option" @click="saveWord">Word 文档</div>
+        <div class="export-option" @click="saveMD">Markdown 文件</div>
+        <div class="export-option" @click="saveHTML">HTML 页面</div>
+        <!-- <div class="export-option" @click="saveJSON">JSON 文件</div> -->
+        <div class="export-option tail" @click="saveText">txt 文本文件</div>
+      </div>
+    </div>
+
+  </n-modal>
 </template>
 
 <script>
+import {
+    Export
+} from '@vicons/carbon'
+import { Icon } from '@vicons/utils'
 import {HocuspocusProvider} from '@hocuspocus/provider'
 import CharacterCount from '@tiptap/extension-character-count'
 import Collaboration from '@tiptap/extension-collaboration'
@@ -107,6 +134,8 @@ export default {
   components: {
     EditorContent,
     MenuBar,
+    Icon,
+    Export,
   },
 
   data() {
@@ -115,6 +144,7 @@ export default {
         name: /*this.getRandomName(),*/UserName(),
         color: this.getRandomColor(),
       },
+      showModalRef:false,
       provider: null,
       editor: null,
       status: 'connecting',
@@ -183,6 +213,9 @@ export default {
       ])
     },
 
+    exportFile(){
+      this.showModalRef=true;
+    },
     toHTML(){
       console.log(this.editor.getHTML());
     },
@@ -422,32 +455,37 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 .head-bg{
-  background-color: #2B303B;
+  /*background-color: #2B303B;*/
   min-width: 100%;
-  height: 50px;
-  display: inline-block;
+  height: 42px;
+  /*display: inline-block;*/
   vertical-align: center;
-  font-size: 30px;
-  line-height: 40px;
+  justify-content: space-between;
+  font-size: 16px;
+  line-height: 42px;
 }
 
-.big-bg{
+.item-bg{
   min-width: 100%;
   min-height: 100%;
-  background-color: #414958;
+  /*background-color: #414958;*/
 }
 
 .editor {
-  position: absolute;
   display: flex;
+  position: absolute;
+  bottom: 0;
+  top: 42px;
+  right: 0;
+  left: 168px;
   flex-direction: column;
-  margin-left: 10rem;
-  margin-top: 10rem;
-  height: 30rem;
-  width: 50rem;
+  /*margin-left: 10rem;
+  margin-top: 10rem;*/
+  /*height: 30rem;
+  width: 50rem;*/
   color: #0D0D0D;
   background-color: #FFF;
   border: 3px solid #0D0D0D;
@@ -531,7 +569,7 @@ export default {
 }
 </style>
 
-<style lang="scss">
+<style scoped>
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
   position: relative;
@@ -642,5 +680,50 @@ export default {
       }
     }
   }
+}
+.exportbutton{
+  color:#E2E4E9;
+  margin:9px 16px 0 0;
+  transition-duration: 0.3s;
+}
+.exportbutton:hover{
+  cursor:pointer;
+  color:#fff;
+}
+.export-panel{
+  width:240px;
+  padding:36px;
+  background-color:#0D0D0D;
+  border:2px solid #616161;
+}
+.export-desc{
+  text-align: center;
+  font-size:18px;
+  margin-bottom: 12px;
+}
+.export-list{
+  width:100%;
+}
+.export-list .head{
+  border-top:2px solid #616161;
+  border-radius: 6px 6px 0 0;
+}
+.export-list .tail{
+  border-bottom:2px solid #616161;
+  border-radius: 0 0 6px 6px;
+}
+.export-option{
+  text-align: center;
+  color:#FFF;
+  font-size: 14px;
+  line-height: 42px;
+  border-top:1px solid #616161;
+  border-left:2px solid #616161;
+  border-right:2px solid #616161;
+  border-bottom:1px solid #616161;
+}
+.export-option:hover{
+  cursor:pointer;
+  border-color: #FFF;
 }
 </style>

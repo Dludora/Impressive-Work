@@ -1,17 +1,21 @@
 <template>
 <div class="docu-item" tabindex="-1" :draggable="revisable">
+  <!-- <div class="left"> -->
   <div class="docu-name">
 <!--    <div class="docu-icon">-->
       <Icon size="20" class="icons" v-if="dir"><Folder /></Icon>
       <Icon size="20" class="icons" v-else><Document /></Icon>
 <!--    </div>-->
-    {{name}}
+    <div>{{name}}</div>
   </div>
   <div class="docu-time">{{mdTime}}</div>
   <div class="docu-type">{{dir ? '文件夹' : '文件'}}</div>
+  <!-- </div> -->
   <div class="docu-operate">
-    <Icon size="20" style="margin-right:8px; cursor: pointer" v-if="revisable"><Edit16Regular @click="modifyName"/> </Icon>
-    <Icon size="20" style="margin-right:8px; cursor: pointer" v-if="revisable"><CloseOutline @click="del"/> </Icon>
+    <Icon size="20" style="margin-right:8px; cursor: pointer" v-if="revisable">
+    <Edit16Regular @click="modifyName"/> </Icon>
+    <Icon size="20" style="margin-right:20px; cursor: pointer" v-if="revisable">
+    <CloseOutline @click="del"/> </Icon>
   </div>
 </div>
 </template>
@@ -54,6 +58,8 @@ const del = () => {
 
 <style scoped>
 .docu-item {
+  user-select: none;
+  
   width: 100%;
   height: 50px;
   line-height: 50px;
@@ -75,21 +81,42 @@ const del = () => {
   position: relative;
 }
 .docu-name {
-  flex: 1;
+  flex: 3;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .docu-time {
   flex: 2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .docu-type {
-  flex: 3;
+  flex: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .docu-operate {
-  flex: 4;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 .icons {
   margin-right:5px;
-  position: absolute;
-  top: calc(50% - 24px / 2);
-  left: 20px;
+  /*position: absolute;
+  top: calc(50% - 24px / 2);*/
+  margin-left: 20px;
+}
+.left{
+  display: flex;
+  align-items: center;
 }
 </style>
