@@ -65,12 +65,13 @@ export default defineComponent({
     const route = useRoute()
     const inputInstRef = ref<InputInst | null>(null);
     const gotoProject = () => {
-      // console.log("go")
+      console.log("我要的团队名称呢?"+Name.value)
+      utils.setCookie('proNAME', Name.value)
       utils.setCookie('proID', props.id)
-      utils.setCookie('proNAME', props.name)
+      
       utils.setCookie('proIMG', props.img)
       utils.setCookie('proTeam', route.query.teamID)
-
+      console.log("我要的团队名称呢?2"+utils.getCookie('proNAME'))
       router.replace({name: 'project', query:{teamID: route.query.teamID}})
     }
     const renameThis = () => {

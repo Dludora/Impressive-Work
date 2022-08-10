@@ -25,14 +25,15 @@ const headers = {
 }
 
   onMounted(()=>{
+    console.log("我要的团队名称呢？"+utils.getCookie('proNAME'))
     proid.value = parseInt(utils.getCookie('proID'));
-    programname.value=utils.getCookie('proNAME');
+    programname.value=utils.getCookie('proNAME').toString();
     teamID.value=utils.getCookie('proTeam');
 
     let getTeamURL = '/team/' + teamID.value +'/info';
 
 
-    axios.get(getTeamURL,{headers:headers,}
+    axios.get(getTeamURL,{headers:headers}
     ).then(res=>{
       if(res.data.msg==='成功'){
 
