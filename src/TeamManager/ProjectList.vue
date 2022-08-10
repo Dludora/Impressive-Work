@@ -219,14 +219,6 @@ const getList = () => {
       projects.value = res.data.data.items
       for (let i = 0; i < res.data.data.items.length; i++) {
         let tempDate = new Date(res.data.data.items[i].createTime).toLocaleString().replace(/:\d{1,2}$/, ' ')
-        // projects[i]={
-        //   ID : res.data.data.items[i].ID,
-        //   name : res.data.data.items[i].name,
-        //   previewCode : res.data.data.items[i].previewCode,
-        //   src : res.data.data.items[i].src,
-        //   teamID : res.data.data.items[i].teamID,
-        //   createTime : tempDate
-        // }
         projects.value[i].createTime = tempDate
       }
     }
