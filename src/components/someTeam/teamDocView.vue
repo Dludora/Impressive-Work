@@ -52,7 +52,9 @@ const teamID = ref(route.query.teamID)
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
-
+const routerBack = () => {
+  router.push('/team/teamDocuments?teamID='+route.query.teamID)
+}
 // 树形组件
 const checkedKeys = ref<string[]>([])
 const data = ref([] as TreeOption[])

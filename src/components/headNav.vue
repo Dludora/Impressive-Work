@@ -26,6 +26,7 @@ import { useRouter } from "vue-router";
 import axios from 'axios';
 import {useMessage} from "naive-ui"
 import utils from "@/Utils";
+
 const router = useRouter();
 const message = useMessage();
 const profile = ref({
@@ -47,6 +48,9 @@ const load = () => {
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
+const token = ref(utils.getCookie('Authorization'))
+const nickname = ref(utils.getCookie('UserName'))
+
 const regisRouter = () => {
   router.push('/regisTer');
 }
@@ -62,12 +66,12 @@ const logout = () => {
   navRenewTag.value=new Date().getTime()
   // console.log(navRenewTag.value)
   console.log(new Date().getTime())
-  axios.delete('/auth/token',{headers:headers}
-  ).then(res=>{
+  axios.delete('/auth/token', {headers: headers}
+  ).then(res => {
     console.log(res.data)
-    if(res.data.msg==="成功")
-    {
+    if (res.data.msg === "成功") {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
       headers.Authorization=null;
       axios.defaults.headers.common['Authorization'] = '';
       message.info("注销成功")
@@ -80,16 +84,17 @@ const logout = () => {
       //   src: ""
       // }
       // navRenewTag=1-navRenewTag
-    }
-    else{
+      token.value = utils.getCookie('Authorization')
+    } else {
       utils.clearCookie('Authorization')
+      utils.clearCookie('UserName')
       axios.defaults.headers.common['Authorization'] = '';
       message.error("用户未登录")
     }
   })
   router.replace('/');
 }
-const teamMain= () =>{
+const teamMain = () => {
   router.push('/teamchoose');
 }
 
@@ -110,17 +115,17 @@ onMounted(() => {
 
 <script lang="ts">
 import {defineComponent, h, Component} from 'vue'
-export default defineComponent({
-    return:{
 
-    },
+export default defineComponent({
+  return: {},
 })
 </script>
 
 <style scoped>
-*{
-    transition:0.2s;
+* {
+  transition: 0.2s;
 }
+
 a {
   color: currentColor;
   text-decoration: none;
