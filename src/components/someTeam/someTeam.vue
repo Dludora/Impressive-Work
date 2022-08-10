@@ -14,7 +14,7 @@
         </div>
         <div class="clsR">
           <div class="search search1">
-                  <n-input size="small" v-model:value="searchText" round placeholder="搜索项目" >
+                  <n-input id="search" size="small" v-model:value="searchText" round placeholder="搜索项目" >
                   <template #suffix>
                       <n-button quaternary size="tiny" @click="clear" >
                       <Icon size="16">
@@ -294,6 +294,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+#search{
+  background-color: transparent;
+  border: #414958 1px solid;
+}
 .box{
   
   display: inline-block;
