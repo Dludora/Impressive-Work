@@ -14,6 +14,7 @@
                   :data="data"
                   :checked-keys="checkedKeys"
                   :on-load="handleLoad"
+                  :node-props="nodeProps"
                   expand-on-click
               />
             </div>
@@ -21,7 +22,7 @@
         </div>
       </div>
       <div class="main">
-<!--        <tip-tap :key="timer"></tip-tap>-->
+        <tip-tap :key="timer"></tip-tap>
       </div>
     </div>
   </n-config-provider>
@@ -146,6 +147,13 @@ const handleLoad =  (node: TreeOption) => {
   })
 }
 
+const nodeProps = ({option}:{option: TreeOption}) => {
+  return {
+    onClick () {
+      console.log(option)
+    }
+  }
+}
 
 
 onMounted(() => {
@@ -176,10 +184,7 @@ onMounted(() => {
 
 
 
-// const proName=ref("");
-// const proID=ref(0)
-// const documents=ref([]);
-// const timer=null;
+const timer=null;
 
 // proName.value = utils.getCookie('proNAME');
 // //获取文档ID
@@ -189,28 +194,7 @@ onMounted(() => {
 // const UserName = () =>{
 //   return utils.getCookie("UserName");
 // }
-//
-// //获取文档列表
-// const getDocuAbl = () => {
-//
-//   axios.get('/document/list', {
-//         headers: headers,
-//         params:
-//             {
-//               programID: proID.value, // proID.value,
-//             }
-//       }
-//   ).then(res => {
-//     if (res.data.msg === '成功') {
-//
-//       console.log("获取文档列表成功");
-//
-//       documents.value = res.data.data.items;
-//
-//       console.log(documents.value);
-//     }
-//   })
-// }
+
 // let opdocuID = ref();
 // function openDocu(index) {
 //   //获取文档内容
