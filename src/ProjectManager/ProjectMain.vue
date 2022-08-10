@@ -80,7 +80,7 @@ export default defineComponent(
         const judge = ref('')
         const router = useRouter()
         onMounted(() => {
-          judge.value = router.currentRoute.value.fullPath.toString().split("/")[2]
+          judge.value = router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
           console.log('judge: ' + judge.value)
 
         })
