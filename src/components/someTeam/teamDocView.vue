@@ -2,6 +2,12 @@
   <n-config-provider :theme="darkTheme">
     <div class="big-bg">
       <div class="leftDoc">
+        <div class="backnav" @click="routerBack">
+          <Icon size="18" style="margin:6px 6px 6px 0;">
+            <ArrowBackOutline/>
+          </Icon>
+          返回
+        </div>
         <div class="teamlist">
           <div class="teamsHead">
             文档中心
@@ -35,6 +41,8 @@ import { darkTheme } from 'naive-ui'
 import {useRoute, useRouter} from "vue-router"
 import { TreeDropInfo, TreeOption } from 'naive-ui'
 import {onMounted, ref} from "vue";
+import { Icon } from '@vicons/utils'
+import {ArrowBackOutline} from '@vicons/ionicons5'
 import TipTap from "../tipTap/tipTap.vue";
 
 const route = useRoute()
@@ -272,8 +280,12 @@ onMounted(() => {
   border-bottom: 1px solid ;
 }
 
+.divline{
+  margin-right: 12px;
+  border-bottom: 2px solid #FFFFFF00;
+}
 .teamlist:hover .divline{
-  border-bottom: 1px solid #2B303B;
+  border-bottom: 2px solid #222222;
 }
 
 .teamlist:hover .teamsHead{
@@ -283,12 +295,13 @@ onMounted(() => {
 .leftDoc{
   display: flex;
   flex-direction: column;
-  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);*/
+  /*box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
   background-color: #16181D;
-  border-right: 1px solid #414958;
+  border-right: 1px solid #414958;*/
   /*padding-top: 20px;*/
   padding-left: 8px;
-  width: 192px;
+  width: 160px;
+  min-width: 160px;
   height: 100%;
   overflow: hidden;
   color: #FFFFFF;
@@ -306,7 +319,7 @@ onMounted(() => {
 .big-bg{
   min-width: 100%;
   min-height: 100%;
-  background-color: #414958;
+  background-color: #0d0d0d;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -353,18 +366,32 @@ onMounted(() => {
   font-size: large;
   font-weight: 500;
   color: #E2E4E9;
+  max-width: 148px;
+  overflow: hidden;
 }
 
 .teamsHead {
-  margin: 23px 16px 0 4px;
+  margin: 8px 16px 0 4px;
   color: #E2E4E9;
-  font-size: 12px;
-  line-height: 42px;
+  font-size: 16px;
+  line-height: 28px;
   flex-direction: row;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  /*font-weight:700;*/
-  /*border-bottom: 1px solid #414958;*/
+}
+.backnav{
+  /*padding: 0 9px;*/
+  color:#E2E4E9;
+  font-size: 16px;
+  line-height: 42px;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+.backnav:hover{
+  cursor:pointer;
+  color:#fff;
 }
 </style>

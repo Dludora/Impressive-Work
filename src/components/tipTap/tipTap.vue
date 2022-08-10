@@ -49,7 +49,7 @@
         <div class="export-option" @click="saveWord">Word 文档</div>
         <div class="export-option" @click="saveMD">Markdown 文件</div>
         <div class="export-option" @click="saveHTML">HTML 页面</div>
-        <div class="export-option" @click="saveJSON">JSON 文件</div>
+        <!-- <div class="export-option" @click="saveJSON">JSON 文件</div> -->
         <div class="export-option tail" @click="saveText">txt 文本文件</div>
       </div>
     </div>
