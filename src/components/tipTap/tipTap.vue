@@ -1,27 +1,17 @@
 <template>
   <div class="big-bg">
-
     <n-space class="head-bg" justify="center">
-
-
       <h style="position: relative; top: 5px;color: #FFFFFF; display: inline">
         文档: {{title}}
       </h>
-
       <n-button @click="returnTO">返回</n-button>
-
       <n-button @click="downPDF">下载PDF</n-button>
       <n-button @click="saveWord">下载word</n-button>
       <n-button @click="saveMD">下载MD</n-button>
       <n-button @click="saveHTML">下载HTML</n-button>
       <n-button @click="saveJSON">下载JSON</n-button>
       <n-button @click="saveText">下载纯文本</n-button>
-
-
     </n-space>
-
-
-
     <div class="editor" v-if="editor">
       <menu-bar class="editor__header" :editor="editor" />
       <editor-content id="pdfDom" class="editor__content" :editor="editor" />
@@ -217,7 +207,24 @@ export default {
     },
 
     downPDF(){
+      let iframe = document.getElementById("pdfDom");
 
+      const el=document.getElementById("pdfDom");
+      iframe=document.createElement('IFRAME');
+      iframe.setAttribute("id", "print-iframe");
+      iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-999em;top:-500px;');
+      document.body.appendChild(iframe);
+      let doc = iframe.contentWindow.document;
+      doc.write("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"css/print.css\">");
+      doc.write('<div>' + el.innerHTML + '</div>');
+      doc.close();
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+
+      if (navigator.userAgent.indexOf("MSIE") > 0){
+        document.body.removeChild(iframe);
+      }
+/*
       async function back() {
         return 1;
       }
@@ -229,6 +236,8 @@ export default {
       const previewEl = document.querySelector("#pdfDom").innerHTML;
       window.document.body.innerHTML=previewEl;
       window.print();
+
+ */
     },
 
     billPrintClick(){
