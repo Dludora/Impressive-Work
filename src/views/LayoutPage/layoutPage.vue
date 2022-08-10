@@ -1037,7 +1037,7 @@ onMounted(() => {
 const exit = () => {
   save();
   canvas.value?.wsClose();
-  router.push("/project/prototypes");
+  router.push("/project/prototypes?teamID="+route.query.teamID);
 };
 </script>
 
