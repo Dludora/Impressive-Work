@@ -387,6 +387,8 @@ export default {
   },
 
   beforeUnmount() {
+
+
     const docID=parseInt(utils.getCookie('editDocID'));
     console.log(docID);
     const docContent=this.editor.getHTML();
@@ -411,8 +413,11 @@ export default {
 
       }
     })
+
     this.editor.destroy()
     this.provider.destroy()
+
+
   },
 }
 </script>

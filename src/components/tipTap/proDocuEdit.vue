@@ -42,8 +42,6 @@ const proID=ref(0);
 
 const documents=ref([]);
 
-const timer=null;
-
 const headers = {
   Authorization: utils.getCookie('Authorization')
 }
@@ -52,6 +50,8 @@ const headers = {
 proName.value = utils.getCookie('proNAME');
 
 //获取文档ID
+
+const timer = ref(null);
 
 const getDocuID = () => {
   return utils.getCookie('editDocID');
@@ -142,7 +142,9 @@ function openDocu(index) {
 
       utils.setCookie('DocTitle', opTitle);
 
-      location.reload()
+      timer.value = new Date().getTime();
+
+      //location.reload()
     }
   })
 
