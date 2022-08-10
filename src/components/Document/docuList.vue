@@ -628,12 +628,12 @@ const posAdd = () => {
     if(res.data.msg==='成功'){
       console.log(addModelRef.value.addName);
 
-      console.log(res.data.data);
-      console.log(res.data.data);
+      addModelRef.value.addName = ""
+      addModelRef.value.model = ""
+
       console.log(res.data.data);
 
       console.log("创建文档成功");
-
 
       //刷新 获取文档列表
       getDocuAbl();
