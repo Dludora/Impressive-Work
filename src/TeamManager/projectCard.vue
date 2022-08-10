@@ -109,6 +109,18 @@ export default defineComponent({
     }
     
     const changeName = () => {
+
+  if (Name.value.length === 0) {
+    message.warning("项目名称不能为空～")
+    Name.value=props.name
+    return;
+  }
+  if(Name.value.length>12)
+  {
+    message.warning("项目名称不能大于12～")
+    Name.value=props.name
+    return;
+  }
       if(props.name!=Name.value)
       axios.put("/program", {
               "ID": props.id,
@@ -118,6 +130,7 @@ export default defineComponent({
 
               if (res.data.msg === "成功") {
                 message.info("修改成功")
+                router.go(0)
               } else {
                 message.error("修改失败")
               }
@@ -171,7 +184,7 @@ export default defineComponent({
 
 <style scoped>
 .nameInput{
-  min-width: 100px;background-color: transparent;
+  min-width: 200px;background-color: transparent;
 }
 * {
   transition: 0.2s;
