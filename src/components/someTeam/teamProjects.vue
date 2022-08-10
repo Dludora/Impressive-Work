@@ -151,8 +151,8 @@ const ruleAdd = {
     if (modelAddRef.value.name.length === 0) {
       return new Error("新项目名不能为空!")
     } else {
-      if (modelAddRef.value.name.length >= 8) {
-        return new Error("新项目名长度不能大于8!")
+      if (modelAddRef.value.name.length >= 12) {
+        return new Error("新项目名长度不能大于12!")
       }
     }
   },
@@ -175,6 +175,12 @@ const onPositiveClick = () => {
   console.log("修改：" + opID.value)
   if (modelRef.value.name.length === 0) {
     message.warning("项目名称不能为空～")
+
+    return;
+  }
+  if(modelRef.value.name.length>12)
+  {
+    message.warning("项目名称不能大于12～")
     return;
   }
   axios.put("/program", {

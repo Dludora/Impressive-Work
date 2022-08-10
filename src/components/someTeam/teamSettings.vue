@@ -147,7 +147,7 @@ const change = () => {
       router.go(0)
 
     } else {
-      message.info(res.data.msg)
+      message.info("权限不足，无法修改")
     }
   })
 }

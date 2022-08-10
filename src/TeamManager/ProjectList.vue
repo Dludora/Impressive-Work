@@ -40,7 +40,7 @@
         </div>
         <div class="prolist">
           <ProCard v-for="(item, i) in projects" :img="item.src" :key="i" :name="item.name" :id="item.ID"
-                   :date="item.createTime"
+                   :date="item.createTime" 
                    class="card" @rename="displayMedal(item.ID)" @copy="displayCopy(item.ID)"
                    @del="displayDel(item.ID)"/>
         </div>
@@ -137,7 +137,7 @@ let shortcuts = [
   },
 ]
 let length = 0
-const sortMethod = ref('')
+const sortMethod = ref('创建时间')
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
@@ -248,6 +248,7 @@ watch(getGlobal, (newVal, oldVal) => {
 }, {immediate: true, deep: true})
 onMounted(() => {
   sort.value = parseInt(utils.getCookie('sort').toString())
+
   sortMethod.value = utils.getCookie('sortMethod')
   ifUp.value = parseInt(utils.getCookie('ifUp')) === 1
   if (typeof (route.query.teamID) != "undefined")
@@ -264,8 +265,8 @@ const ruleAdd = {
     if (modelAddRef.value.name.length === 0) {
       return new Error("新项目名不能为空!")
     } else {
-      if (modelAddRef.value.name.length >= 8) {
-        return new Error("新项目名长度不能大于8!")
+      if (modelAddRef.value.name.length >= 12) {
+        return new Error("新项目名长度不能大于12!")
       }
     }
   },
@@ -298,6 +299,11 @@ const onPositiveClick = () => {
 
   if (modelRef.value.name.length === 0) {
     message.warning("项目名称不能为空～")
+    return;
+  }
+    if(modelRef.value.name.length>12)
+  {
+    message.warning("项目名称不能大于12～")
     return;
   }
   axios.put("/program", {
@@ -341,7 +347,7 @@ const onPositiveClickDel = () => {
     console.log(res.data)
     getList()
     message.info("删除成功！")
-    router.go(0)
+
   })
   delRef.value = false
 }
@@ -362,8 +368,8 @@ const rule = {
     if (modelAddRef.value.name.length === 0) {
       return new Error("项目名不能为空!")
     } else {
-      if (modelAddRef.value.name.length >= 8) {
-        return new Error("项目名长度不能大于8!")
+      if (modelAddRef.value.name.length >= 12) {
+        return new Error("项目名长度不能大于12!")
       }
     }
   },
