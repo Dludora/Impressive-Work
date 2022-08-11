@@ -1,7 +1,7 @@
 <template>
   <div class="frame">
     <div class="side">
-        <LeftNav @renew="renewMain" @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
+        <LeftNav @renew="renewMain"  @ID="getID" @addTeam="showModal=true" ref="getChildList"/>
     </div>
     <div class="main">
       <router-view :key="renewMainTag"/>
@@ -71,6 +71,9 @@ export default defineComponent({
     LeftNav,
   },
   setup() {
+    const getChild = () =>{
+      router.go(0)
+    }
     const router = useRouter()
     let teamID = ref(-1)
     const com = ref(null)
@@ -136,6 +139,7 @@ export default defineComponent({
       })
     }
     return {
+      getChild,
       theme: darkTheme,
     //   menuOptions,
       getChildList,

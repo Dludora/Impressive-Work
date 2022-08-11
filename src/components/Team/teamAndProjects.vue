@@ -105,6 +105,7 @@ export default defineComponent({
             router.push('/project/prototypes?teamID='+nowTeam.value)
             // select(-1,item.ID)
             select(parseInt(''+route.query.teamID),parseInt(utils.getCookie('proID')))
+            emit('get')
             emit('renew')
         }
         const getGlobal = computed(() => {
