@@ -129,16 +129,16 @@ const switchPage = (id: number) => {
   var calcH = page.width * ratiohw;
   var element = document.getElementById("img");
   layoutName.value = pageList[id].name;
-  if(calcH<=pageList[id].height)
-  {
-    element.style.width = screenH*(pageList[id].width/pageList[id].height)+"px";
-    element.style.height = screenH + "px";
-  }
-  else
-  {
-    element.style.height = screenW*(pageList[id].height/pageList[id].width) + "px";
-    element.style.width = screenW +"px";
-  }
+  // if(calcH<=pageList[id].height)
+  // {
+  //   element.style.width = screenH*(pageList[id].width/pageList[id].height)+"px";
+  //   element.style.height = screenH + "px";
+  // }
+  // else
+  // {
+  //   element.style.height = screenW*(pageList[id].height/pageList[id].width) + "px";
+  //   element.style.width = screenW +"px";
+  // }
   element.style.backgroundImage="url("+page.src+")";
 };
 
@@ -182,7 +182,7 @@ onMounted(()=>{
   position:absolute;
   left:50%;
   transform: translate(-50%,0);
-  background-size: cover;
+  background-size: contain;
 }
 .pageBoardBox {
   position: absolute;
