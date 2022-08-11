@@ -521,6 +521,7 @@ const initWS = () => {
   };
   ws.onmessage = (res) => {
     try {
+      console.log(res.data);
       var data = JSON.parse(res.data as unknown as string);
       switch (data.code) {
         case 0: {
@@ -621,16 +622,28 @@ const wsResMod = (data: ComServer) => {
 };
 
 const wsResDestroy = (res) => {
-  console.log(res);
+  console.log(layoutElementParams);
   for (var i = layoutElementParams.length - 1; i >= 0; --i) {
     for (var j = res.length - 1; j >= 0; --j) {
       if (layoutElementParams[i].id == res[j].id) {
         layoutElementParams.splice(i, 1);
-        //res.splice(j, 1);
+        res.splice(j, 1);
         break;
       }
     }
+    if (res.length == 0) {
+      break;
+    }
   }
+  setTimeout(() => {
+    for (; i < layoutElementParams.length; ++i) {
+      updateTransform(
+        document.getElementsByName("elements")[i],
+        layoutElementParams[i]
+      );
+    }
+  });
+  console.log(layoutElementParams);
 };
 
 const wsUpdate = () => {
@@ -676,7 +689,7 @@ const wsDestroy = () => {
   updateProps();
 };
 
-const wsCreate = (datas: elementParams[]) => {
+const wsCreate = (data: elementParams) => {
   if (ws.readyState != 1) {
     return;
   }
@@ -684,12 +697,12 @@ const wsCreate = (datas: elementParams[]) => {
     code: 0,
     elements: [],
   };
-  datas.forEach((data) => {
-    let newCom: ComServer = { id: 0, content: "" };
-    newCom.id = data.id;
-    newCom.content = JSON.stringify(data);
-    form.elements.push(newCom);
-  });
+  //datas.forEach((data) => {
+  let newCom: ComServer = { id: 0, content: "" };
+  newCom.id = data.id;
+  newCom.content = JSON.stringify(data);
+  form.elements.push(newCom);
+  //});
 
   console.log(form);
   ws.send(JSON.stringify(form));
@@ -701,10 +714,10 @@ const wsCreate = (datas: elementParams[]) => {
 };
 
 const wsClose = () => {
-  if(ws!=null)
-  if (ws.readyState != 1) {
-    return;
-  }
+  if (ws != null)
+    if (ws.readyState != 1) {
+      return;
+    }
   ws.close();
 };
 
@@ -714,6 +727,8 @@ const updateSelects = (data: elementParams) => {
   } else {
     layoutElementParams[selectedId.value[0]].text = data.text;
   }
+  updateUpdates();
+  wsUpdate();
   console.log(layoutElementParams[selectedId.value[0]]);
 };
 
@@ -858,7 +873,7 @@ const ProduceElement = (e: MouseEvent) => {
   }
   if (preparedType != "") {
     update.value = true;
-    wsCreate([{
+    wsCreate({
       id: 0,
       x: e.clientX - canvasTrans.x,
       y: e.clientY - canvasTrans.y,
@@ -876,7 +891,7 @@ const ProduceElement = (e: MouseEvent) => {
       text: "",
       fontSize: 20 * mscale,
       //update: true,
-    }]);
+    });
     preparedType = "";
   }
   //   var index = layoutElementParams.length - 1;
@@ -922,8 +937,7 @@ const ProduceElement = (e: MouseEvent) => {
 let imgUri: string;
 
 const download = (isDownload: boolean, type?: string) => {
-  if(document.getElementById("canvas")==null)
-  {
+  if (document.getElementById("canvas") == null) {
     return;
   }
   html2canvas(document.getElementById("canvas")!, { useCORS: true }).then(
@@ -952,8 +966,8 @@ const download = (isDownload: boolean, type?: string) => {
                 `/layout/${layoutId}/img`,
                 {
                   src: imgUri,
-                  width:props.canvasWidth,
-                  height:props.canvasHeight,
+                  width: props.canvasWidth,
+                  height: props.canvasHeight,
                 },
                 { headers: headers }
               )
@@ -1136,8 +1150,7 @@ onMounted(() => {
 });
 
 const initScale = () => {
-  if(document.getElementById("canvas")==null)
-  {
+  if (document.getElementById("canvas") == null) {
     return;
   }
   document.getElementById("canvas")!.style.width =
@@ -1280,10 +1293,12 @@ watch(
     if (newVal.length == 0) {
       return;
     }
-    wsCreate(newVal);
+    for (var i = 0; i < newVal.length; ++i) {
+      wsCreate(newVal[i]);
+    }
   },
   {
-    deep:true,
+    deep: true,
     //immediate:true,
   }
 );
@@ -1293,7 +1308,7 @@ watch(
   (newVal) => {
     initScale();
     download(false);
-  },
+  }
 );
 
 watch(
