@@ -20,7 +20,7 @@
 // import LeftNav from "@/components/Team/LeftNav.vue";
 import UpBar from "@/components/Document/upBar.vue"
 
-import {h, Component, defineComponent, ref, onMounted} from 'vue'
+import {h, Component, defineComponent, ref, onMounted,watch,computed} from 'vue'
 import {darkTheme, MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
 import {RouterLink, useRouter,useRoute} from "vue-router";
 
@@ -79,6 +79,12 @@ export default defineComponent(
         ]
         const judge = ref('')
         const router = useRouter()
+        const rout = computed(()=>{
+          return router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+        })
+        watch(rout,(newVal,oldVal)=>{
+          judge.value = newVal
+        })
         onMounted(() => {
           judge.value = router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
           console.log('judge: ' + judge.value)

@@ -1,14 +1,15 @@
 <template>
   <div class="frame">
     <div class="side">
-        <LeftNav :menu-options="sideMenuOptions"/>
+        <LeftNav @judgechild="judge='toLayout'" :menu-options="sideMenuOptions"/>
     </div>
     <div class="mainframe">
       
       <UpBar style="z-index:1;padding:25px 60px 22px"/>
       <div class="three-cls">
         <n-config-provider :theme="theme">
-          <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" />
+          <!-- <n-menu v-model:value="activeKey" mode="horizontal" :options="menuOptions" @update:value="handleUpdateValue" /> -->
+          <n-menu mode="horizontal" :options="menuOptions" />
         </n-config-provider>
       </div>
 
@@ -25,7 +26,7 @@
 import LeftNav from "@/components/Team/LeftNav.vue";
 import UpBar from "@/components/Document/upBar.vue"
 
-import {h, Component, defineComponent} from 'vue'
+import {h, Component, defineComponent,ref,watch,computed} from 'vue'
 import {darkTheme,MentionOption, MenuOption, NIcon, useMessage} from "naive-ui";
 import {RouterLink} from "vue-router";
 
@@ -41,7 +42,9 @@ export default defineComponent(
         UpBar
       },
       setup(){
+        let judge = ref('')
         return{
+          judge,
           theme: darkTheme,
           menuOptions,
           sideMenuOptions,
