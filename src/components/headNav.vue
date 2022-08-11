@@ -5,11 +5,11 @@
                 <router-link to="/">Impress Work · 印迹</router-link>
             </div>
             <div :key="navRenewTag" class="right">
-                <a id="userintro" v-show="profile.ID">欢迎回来，{{ profile.nickname }} 
+                <a id="userintro" v-if="isLogin">欢迎回来，{{ profile.nickname }} 
                 <div :style="'background-color:'+profile.src+';'" class="mini-avatar">{{ profile.nickname[0] }} </div>
                 </a>
-                <a @click="regisRouter" v-show="profile.ID==null">登录</a>
-                <a @click="logout" v-show="profile.ID">注销</a>
+                <a @click="regisRouter" v-if="!isLogin">登录</a>
+                <a @click="logout" v-if="isLogin">注销</a>
                 <a @click="teamMain">我的团队</a>
                 <!-- <a @click="tipTap">tipTap</a> -->
                 <!-- <a @click="UML">编写文档</a> -->
@@ -28,7 +28,11 @@ import {useMessage} from "naive-ui"
 import utils from "@/Utils";
 
 const router = useRouter();
+const isLogin = ref(false)
 const message = useMessage();
+const headers = {
+  Authorization: utils.getCookie('Authorization')
+}
 const profile = ref({
   ID: null,
   email: "",
@@ -40,14 +44,17 @@ const profile = ref({
 let navRenewTag=ref(1);
 const load = () => {
   axios.get('/user/info', {headers: headers}).then(res => {
-    profile.value = res.data.data
+    if(res.data.msg==="成功")
+    {
+      isLogin.value=true;
+      profile.value = res.data.data
     // console.log(profile.value)
-    utils.setCookie("userID", profile.value.ID)
+      utils.setCookie("userID", profile.value.ID)
+    }
+    
   })
 }
-const headers = {
-  Authorization: utils.getCookie('Authorization')
-}
+
 const token = ref(utils.getCookie('Authorization'))
 const nickname = ref(utils.getCookie('UserName'))
 
@@ -75,6 +82,7 @@ const logout = () => {
       headers.Authorization=null;
       axios.defaults.headers.common['Authorization'] = '';
       message.info("注销成功")
+      isLogin.value=false
       // profile.value={
       //   ID: null,
       //   email: "",
