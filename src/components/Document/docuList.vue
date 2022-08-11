@@ -830,6 +830,7 @@ function openDocu(index) {
 
 
       router.push("/proDocuEdit");
+
     }
   })
 
