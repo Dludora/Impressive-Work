@@ -507,7 +507,7 @@ const PrepareElement = (elementType: string) => {
 
 const download = (type: string) => {
   console.log(type);
-  canvas.value?.download(true, type);
+  canvas.value?.download(true, type,layoutName.value);
 };
 
 const save = () => {

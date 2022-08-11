@@ -936,7 +936,7 @@ const ProduceElement = (e: MouseEvent) => {
 // let canvas2: any;
 let imgUri: string;
 
-const download = (isDownload: boolean, type?: string) => {
+const download = (isDownload: boolean, type?: string, name?:string) => {
   if (document.getElementById("canvas") == null) {
     return;
   }
@@ -944,7 +944,7 @@ const download = (isDownload: boolean, type?: string) => {
     function (canvas) {
       canvas.toBlob((blob) => {
         if (isDownload) {
-          saveAs(blob, "test." + type);
+          saveAs(blob, name + "." + type);
         }
         var form = new FormData();
         form.append(
