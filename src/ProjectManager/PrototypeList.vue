@@ -202,7 +202,7 @@ watch(nowCover, (newCover, oldCover) => {
 }, {immediate: true, deep: true})
 
 const getUrl = () => {
-  let base = 'http://127.0.0.1:8080/preview?viewUrl='
+  let base = 'http://selmiss.xyz/preview?viewUrl='
   let url = '/layout/preview?programID=' + proID.value;
   axios.post(url, {}, {headers: headers}).then(res => {
     if (res.data.msg === "成功") {

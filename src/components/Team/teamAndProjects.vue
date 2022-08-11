@@ -92,6 +92,7 @@ export default defineComponent({
         const toTeam=(id:Number)=>{
             
             nowTeam.value = parseInt(id.toString());
+            emit('get')
             router.replace('/team/teamprojects?teamID=' + id)
         }
         const nowPro = ref(0)

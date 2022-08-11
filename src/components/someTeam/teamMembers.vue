@@ -165,7 +165,7 @@ message.success("复制成功")
 }
 const getUrl = () => {
     let url = '/team/invite/code?teamID='+route.query.teamID+'&maxNum=5'
-    let base = 'http://127.0.0.1:8080/teamchoose?code='
+    let base = 'http://selmiss.xyz/teamchoose?code='
     axios.get(url,{headers:headers}).then(res=>{
       if(res.data.msg==='成功'){
         console.log(res.data)
