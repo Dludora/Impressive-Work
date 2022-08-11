@@ -6,9 +6,9 @@
     @mousedown="startDrag"
     id="board"
   >
-    <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
+    <!-- <input type="file" id="ModelLoader" accept="image/*" multiple="multiple" />
     <input type="file" id="CoverLoader" accept="image/*" multiple="multiple" />
-    <n-button @click="saveModel"></n-button>
+    <n-button @click="saveModel"></n-button> -->
     <div class="innercanvas" id="canvas">
       <layout-element
         v-for="(params, index) in layoutElementParams"
@@ -982,103 +982,103 @@ const download = (isDownload: boolean, type?: string) => {
   );
 };
 
-type Model = {
-  name: string;
-  elements: elementParams[];
-  srcs: string[];
-  cover: string;
-};
+// type Model = {
+//   name: string;
+//   elements: elementParams[];
+//   srcs: string[];
+//   cover: string;
+// };
 
-let model: Model = {
-  name: "安卓简约",
-  elements: [],
-  srcs: [],
-  cover: "",
-};
-let imgs: string[] = [];
+// let model: Model = {
+//   name: "文档管理",
+//   elements: [],
+//   srcs: [],
+//   cover: "",
+// };
+// let imgs: string[] = [];
 
-const importImages = () => {
-  var imgInputer = document.getElementById("ModelLoader");
-  var coverInputer = document.getElementById("CoverLoader");
-  imgInputer!.onchange = () => {
-    var counter = imgInputer.files.length;
-    for (var i = 0; i < imgInputer.files.length; ++i) {
-      var form = new FormData();
-      form.append("file", imgInputer.files[i]);
-      axios({
-        url: "/resource/img",
-        method: "post",
-        headers: headers,
-        data: form,
-      }).then((res) => {
-        console.log(res.data);
-        if (res.data.msg == "成功") {
-          imgs.push(res.data.data);
-        }
-        console.log(imgs);
-        counter--;
-        if (counter == 0) {
-          model.srcs = imgs;
-          axios
-            .post(
-              "/layout/module",
-              {
-                name: model.name,
-                content: JSON.stringify(model),
-              },
-              { headers: headers }
-            )
-            .then((res) => {
-              console.log(res.data);
-            });
-        }
-      });
-    }
-  };
-  coverInputer!.onchange = () => {
-    var form = new FormData();
-    form.append("file", coverInputer.files[0]);
-    axios({
-      url: "/resource/img",
-      method: "post",
-      headers: headers,
-      data: form,
-    }).then((res) => {
-      console.log(res.data);
-      if (res.data.msg == "成功") {
-        model.cover = res.data.data;
-        axios
-          .post(
-            "/layout/module",
-            {
-              name: model.name,
-              content: JSON.stringify(model),
-            },
-            { headers: headers }
-          )
-          .then((res) => {
-            console.log(res.data);
-          });
-      }
-    });
-  };
-};
+// const importImages = () => {
+//   var imgInputer = document.getElementById("ModelLoader");
+//   var coverInputer = document.getElementById("CoverLoader");
+//   imgInputer!.onchange = () => {
+//     var counter = imgInputer.files.length;
+//     for (var i = 0; i < imgInputer.files.length; ++i) {
+//       var form = new FormData();
+//       form.append("file", imgInputer.files[i]);
+//       axios({
+//         url: "/resource/img",
+//         method: "post",
+//         headers: headers,
+//         data: form,
+//       }).then((res) => {
+//         console.log(res.data);
+//         if (res.data.msg == "成功") {
+//           imgs.push(res.data.data);
+//         }
+//         console.log(imgs);
+//         counter--;
+//         if (counter == 0) {
+//           model.srcs = imgs;
+//           axios
+//             .post(
+//               "/layout/module",
+//               {
+//                 name: model.name,
+//                 content: JSON.stringify(model),
+//               },
+//               { headers: headers }
+//             )
+//             .then((res) => {
+//               console.log(res.data);
+//             });
+//         }
+//       });
+//     }
+//   };
+//   coverInputer!.onchange = () => {
+//     var form = new FormData();
+//     form.append("file", coverInputer.files[0]);
+//     axios({
+//       url: "/resource/img",
+//       method: "post",
+//       headers: headers,
+//       data: form,
+//     }).then((res) => {
+//       console.log(res.data);
+//       if (res.data.msg == "成功") {
+//         model.cover = res.data.data;
+//         axios
+//           .post(
+//             "/layout/module",
+//             {
+//               name: model.name,
+//               content: JSON.stringify(model),
+//             },
+//             { headers: headers }
+//           )
+//           .then((res) => {
+//             console.log(res.data);
+//           });
+//       }
+//     });
+//   };
+// };
 
-const saveModel = () => {
-  model.elements = layoutElementParams;
-  axios
-    .post(
-      "/layout/module",
-      {
-        name: model.name,
-        content: JSON.stringify(model),
-      },
-      { headers: headers }
-    )
-    .then((res) => {
-      console.log(res.data);
-    });
-};
+// const saveModel = () => {
+//   model.elements = layoutElementParams;
+//   axios
+//     .post(
+//       "/layout/module",
+//       {
+//         name: model.name,
+//         content: JSON.stringify(model),
+//       },
+//       { headers: headers }
+//     )
+//     .then((res) => {
+//       console.log(res.data);
+//     });
+// };
 
 defineExpose({
   PrepareElement,
@@ -1112,7 +1112,6 @@ const dragCanvas = (e: MouseEvent) => {
 onMounted(() => {
   initMoveable();
   initSelecto();
-  importImages();
   initScale();
   //updateServer();
 
