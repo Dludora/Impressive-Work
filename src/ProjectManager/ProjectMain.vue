@@ -80,7 +80,13 @@ export default defineComponent(
         const judge = ref('')
         const router = useRouter()
         const rout = computed(()=>{
-          return router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+          try{
+            return router.currentRoute.value.fullPath.toString().split("/")[2].split("?")[0]
+          }catch(e){
+            console.log("route")
+          }
+          return 'null'
+          
         })
         watch(rout,(newVal,oldVal)=>{
           judge.value = newVal
