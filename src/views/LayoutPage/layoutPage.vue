@@ -132,7 +132,7 @@
             设备
           </div>
           <div class="settingMenu" @click.stop="switchSettingMenu('model')">
-            模板
+            组件
           </div>
           <div class="settingLine"></div>
           <n-scrollbar content-style="paddingRight:10px;">
@@ -168,7 +168,7 @@
                 :key="value.name"
                 class="settingModel"
                 @click.stop="switchModel(index)"
-                :style="{backgroundImage:'url('+value.cover+')'}"
+                :style="{ backgroundImage: 'url(' + value.cover + ')' }"
               ></div>
             </div>
           </n-scrollbar>
@@ -182,7 +182,7 @@
               transform: translate(-100%, 0);
               position: absolute;
               background-color: #2b303b;
-              border-right:2px solid #151515;
+              border-right: 2px solid #151515;
             "
             id="pageScrollBar"
           >
@@ -339,7 +339,10 @@
             class="porpertyBarIconUnit"
             @click.stop="displayPalette"
           >
-            <div class="porpertyIcon fillIcon" :style="'background-color:'+palette[selectedColor]+';'"></div>
+            <div
+              class="porpertyIcon fillIcon"
+              :style="'background-color:' + palette[selectedColor] + ';'"
+            ></div>
             <div class="porpertyExtension">
               <n-icon size="18" color="#E2E4E9">
                 <keyboard-arrow-up-round />
@@ -391,7 +394,10 @@
 
         <div class="ui elementBar">
           <div class="ui elementSubBar" v-show="modelAt >= 0">
-            <div class="elementLeftUnit elementBrowser" @click.stop="switchElement(-1)">
+            <div
+              class="elementLeftUnit elementBrowser"
+              @click.stop="switchElement(-1)"
+            >
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-back-ios-round />
               </n-icon>
@@ -415,7 +421,10 @@
                 :style="{ backgroundImage: 'url(' + value + ')' }"
               ></div>
             </div>
-            <div class="elementRightUnit elementBrowser" @click.stop="switchElement(1)">
+            <div
+              class="elementRightUnit elementBrowser"
+              @click.stop="switchElement(1)"
+            >
               <div class="elementVerticalLine" style="left: 0px"></div>
               <n-icon size="18" color="#A7AFBE" class="elementArrow">
                 <arrow-forward-ios-round />
@@ -427,7 +436,10 @@
               class="ui elementBarUnit elementLeftUnit"
               @mousedown="PrepareElement('rect')"
             >
-              <div class="ui elementUnit elementRectangle" :style="'background-color:'+palette[selectedColor]+';'"></div>
+              <div
+                class="ui elementUnit elementRectangle"
+                :style="'background-color:' + palette[selectedColor] + ';'"
+              ></div>
             </div>
             <div
               class="ui elementBarUnit elementRightUnit"
@@ -667,12 +679,12 @@ type Model = {
   name: string;
   elements: Property[];
   srcs: string[];
-  cover:string;
+  cover: string;
 };
 const models = reactive<Model[]>([]);
 const modelAt = ref<number>(-1);
 const modelName = ref<string>("");
-const modelElements = reactive<Property[]>([]); 
+const modelElements = reactive<Property[]>([]);
 const elementSrcs = reactive<string[]>([]);
 let firstSrc: number = 0;
 const maxElementsNum = 6;
@@ -737,10 +749,8 @@ const initModels = () => {
     for (var i = 0; i < res.data.data.length; ++i) {
       var model = JSON.parse(res.data.data[i].content);
       models[i] = model;
-      if(model.name==modelName.value)
-      {
-        for(var j=0;j<model.elements.length;++j)
-        {
+      if (model.name == modelName.value) {
+        for (var j = 0; j < model.elements.length; ++j) {
           modelElements[j] = model.elements[j];
         }
         console.log(modelElements);
@@ -782,9 +792,7 @@ const switchModel = (id: number) => {
   if (models[id].srcs.length <= maxElementsNum) {
     endingRight.value = true;
     var to = models[id].srcs.length;
-  }
-  else
-  {
+  } else {
     endingRight.value = false;
     to = maxElementsNum;
   }
@@ -796,7 +804,7 @@ const switchModel = (id: number) => {
 };
 
 const switchElement = (dir: number) => {
-  console.log(endingRight.value)
+  console.log(endingRight.value);
   console.log(models[modelAt.value].srcs);
   if ((dir < 0 && endingLeft.value) || (dir > 0 && endingRight.value)) {
     return;
@@ -806,21 +814,16 @@ const switchElement = (dir: number) => {
   if (from > models[modelAt.value].srcs.length || from < 0) {
     return;
   }
-  if(from > 0)
-  {
+  if (from > 0) {
     endingLeft.value = false;
-  }
-  else
-  {
+  } else {
     endingLeft.value = true;
   }
   var to = from + maxElementsNum;
   if (to >= models[modelAt.value].srcs.length) {
     to = models[modelAt.value].srcs.length;
-    endingRight.value = true
-  }
-  else
-  {
+    endingRight.value = true;
+  } else {
     endingRight.value = false;
   }
   elementSrcs.splice(0);
@@ -892,8 +895,10 @@ const updateColor = (colorId: number) => {
   selectedColor = colorId;
   colorCircles.value[selectedColor].style.borderWidth = "2px";
   colorCircles.value[selectedColor].style.margin = "2.5px";
-  let fillicon=document.getElementsByClassName('fillIcons') as HTMLCollectionOf<HTMLElement>
-  fillicon[0].style['background']=palette[colorId]
+  let fillicon = document.getElementsByClassName(
+    "fillIcons"
+  ) as HTMLCollectionOf<HTMLElement>;
+  fillicon[0].style["background"] = palette[colorId];
 };
 
 const updateBorder = (colorId: number) => {
@@ -1050,7 +1055,7 @@ onMounted(() => {
 const exit = () => {
   save();
   canvas.value?.wsClose();
-  router.push("/project/prototypes?teamID="+route.query.teamID);
+  router.push("/project/prototypes?teamID=" + route.query.teamID);
 };
 </script>
 
@@ -1098,7 +1103,7 @@ const exit = () => {
   top: 36px;
   z-index: 2;
   background-color: #2b303b;
-  color:#d4d4d4;
+  color: #d4d4d4;
 }
 .downloadAlternative {
   display: block;
@@ -1106,6 +1111,13 @@ const exit = () => {
   width: 60px;
   line-height: 35px;
   height: 35px;
+  border-width: 0;
+  border-color: #7b7a7a;
+  border-top-width: 2px;
+  margin-right: 4px;
+  margin-left: 4px;
+  transform: translate(0, -2px);
+  border-style: solid;
 }
 .downloadAlternative:hover {
   background-color: #3a404f;
@@ -1161,7 +1173,8 @@ const exit = () => {
   display: inline-block;
   cursor: pointer;
   color: #fff;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 18px;
   line-height: 42px;
   margin-right: 20px;
 }
@@ -1171,7 +1184,7 @@ const exit = () => {
   border-bottom: 1px solid #fff;
 }
 .settingContent {
-  width:260px;
+  width: 260px;
   position: absolute;
 }
 .settingDevice {
@@ -1223,21 +1236,21 @@ const exit = () => {
   text-align: left;
   padding: 15px;
 }
-.pageImage,.pageImageSelected {
+.pageImage,
+.pageImageSelected {
   width: 240px;
   height: 140px;
   border-style: solid;
   border-width: 2px;
   margin-bottom: 25px;
-  border-radius:6px;
+  border-radius: 6px;
   background-size: 100% 100%;
 }
-.pageImage{
-  border-color:#2b303b;
-
+.pageImage {
+  border-color: #2b303b;
 }
 .pageImageSelected {
-  border-color: #D42B39;
+  border-color: #d42b39;
 }
 .porpertyBar {
   background-color: #2b303b;
@@ -1425,7 +1438,7 @@ const exit = () => {
   position: absolute;
   top: 0;
   bottom: 0;
-  left:2px;
+  left: 2px;
   margin: auto;
 }
 .sider {
