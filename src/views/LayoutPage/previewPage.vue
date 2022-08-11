@@ -1,5 +1,5 @@
 <template>
-  <div class="board" >
+  <div class="board">
     <div class="img" id="img" v-if="!empty"></div>
     <div class="ui pageBoardBox" id="pageBoardBox" v-if="!empty">
       <n-scrollbar
@@ -40,81 +40,72 @@
     <div v-if="empty" class="empty">
       <n-empty description="你什么也找不到" size="huge">
         <template #extra>
-          <n-button size="large" @click="returnHome">
-            返回主页
-          </n-button>
+          <n-button size="large" @click="returnHome"> 返回主页 </n-button>
         </template>
       </n-empty>
     </div>
   </div>
-
 </template>
 
 <script setup lang="ts">
-import {
-  ArrowBackIosRound,
-  ArrowForwardIosRound,
-} from "@vicons/material";
+import { ArrowBackIosRound, ArrowForwardIosRound } from "@vicons/material";
 
-import axios from "axios"
-import gsap from "gsap"
+import axios from "axios";
+import gsap from "gsap";
 import { ref, reactive, onMounted } from "vue";
-import {useRoute, useRouter} from "vue-router"
+import { useRoute, useRouter } from "vue-router";
 import utils from "@/Utils";
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 const headers = {
   Authorization: utils.getCookie("Authorization"),
 };
 
 type Page = {
-  name: string,
-  src: string,
-  width: number,
-  height: number,
-}
+  name: string;
+  src: string;
+  width: number;
+  height: number;
+};
 
-let proCode:string = "";
-const pageList = reactive<Page[]>([])
+let proCode: string = "";
+const pageList = reactive<Page[]>([]);
 
-const pageOn = ref<boolean>(false)
+const pageOn = ref<boolean>(false);
 const empty = ref<boolean>(true);
-const layoutName = ref<string>("")
+const layoutName = ref<string>("");
 
 const pageImageClass = ref<string>("pageImage");
-const pageImageSelectedClass = ref<string>("pageImageSelected")
+const pageImageSelectedClass = ref<string>("pageImageSelected");
 
 const screenW = document.body.clientWidth;
 const screenH = document.body.clientHeight;
-const ratiohw = screenH/screenW;
+const ratiohw = screenH / screenW;
 
 const returnHome = () => {
-  router.push('/')
-}
+  router.push("/");
+};
 const initPageImgs = () => {
   axios
-    .get("/layout/preview/code/"+proCode, {
+    .get("/layout/preview/code/" + proCode, {
       headers: headers,
     })
     .then((res) => {
       console.log(res.data);
       if (res.data.msg == "成功") {
-
         for (var i = 0; i < res.data.data.length; ++i) {
-          pageList[i]={
+          pageList[i] = {
             name: res.data.data[i].name,
             src: res.data.data[i].src,
             width: res.data.data[i].width,
             height: res.data.data[i].height,
           };
         }
-        if(pageList.length<=0)
-        {
+        if (pageList.length <= 0) {
           empty.value = true;
-        }
-        else{
+        } else {
           empty.value = false;
           setTimeout(() => {
             switchPage(0);
@@ -139,7 +130,7 @@ const switchPage = (id: number) => {
   //   element.style.height = screenW*(pageList[id].height/pageList[id].width) + "px";
   //   element.style.width = screenW +"px";
   // }
-  element.style.backgroundImage="url("+page.src+")";
+  element.style.backgroundImage = "url(" + page.src + ")";
 };
 
 const displayPageBoard = () => {
@@ -166,23 +157,26 @@ const displayPageBoard = () => {
   }
 };
 
-onMounted(()=>{
+onMounted(() => {
   console.log(route.query);
   proCode = route.query.viewUrl as string;
   initPageImgs();
-})
+});
 </script>
 
 <style scoped>
-.board{
+.board {
   height: 100%;
   background-color: black;
 }
-.img{
-  position:absolute;
-  left:50%;
-  transform: translate(-50%,0);
+.img {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
   background-size: contain;
+  width: 100%;
+  height: 100%;
+  background-position: center;
 }
 .pageBoardBox {
   position: absolute;

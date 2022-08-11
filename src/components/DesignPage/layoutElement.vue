@@ -282,6 +282,7 @@ const ResetTrans = (newVal: Params) => {
   display: block;
   position: absolute;
   background-size: 100% 100%;
+  background-repeat: no-repeat;
   border-style: solid;
   box-sizing: border-box;
   /* border-color: blue;
